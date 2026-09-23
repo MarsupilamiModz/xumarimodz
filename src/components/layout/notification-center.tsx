@@ -44,6 +44,8 @@ const CATEGORY_KEYS = [
 
 export function NotificationCenter({ locale, userId }: { locale: string; userId?: string | null }) {
   const td = useTranslations("dashboard");
+  const tUi = useTranslations("ui");
+  const tCommon = useTranslations("common");
   const safeLocale = getSafeLocale(locale);
   const [open, setOpen] = useState(false);
   const [unread, setUnread] = useState(0);
@@ -108,18 +110,24 @@ export function NotificationCenter({ locale, userId }: { locale: string; userId?
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative" aria-label="Notifications">
-          <Bell className="h-5 w-5" />
+        <Button
+          variant="ghost"
+          size="icon"
+          className="relative"
+          aria-label={unread > 0 ? `${tUi("notifications")}, ${tUi("unreadCount", { count: unread })}` : tUi("notifications")}
+        >
+          <Bell className="h-5 w-5" aria-hidden />
           {unread > 0 && (
-            <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-neon-purple px-1 text-[10px] font-bold text-white">
+            <span aria-hidden
+              className="absolute right-1 top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-violet px-1 text-[10px] font-bold tabular-nums text-violet-on">
               {unread > 99 ? "99+" : unread}
             </span>
           )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[min(100vw-2rem,380px)] p-0 glass">
-        <div className="flex items-center justify-between border-b border-border/40 px-4 py-3">
-          <p className="font-semibold text-sm">{td("notifications")}</p>
+      <DropdownMenuContent align="end" className="w-[min(100vw-2rem,380px)] p-0">
+        <div className="flex items-center justify-between border-b border-line px-4 py-3">
+          <p className="text-sm font-semibold text-ink">{td("notifications")}</p>
           <Button
             variant="ghost"
             size="sm"
@@ -132,16 +140,16 @@ export function NotificationCenter({ locale, userId }: { locale: string; userId?
               })
             }
           >
-            <Check className="h-3.5 w-3.5 mr-1" /> {td("markAllRead")}
+            <Check className="h-3.5 w-3.5" aria-hidden /> {td("markAllRead")}
           </Button>
         </div>
 
-        <div className="px-3 py-2 space-y-2 border-b border-border/30">
+        <div className="space-y-2 border-b border-line px-3 py-2">
           <Input
             placeholder={td("searchNotifications")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="h-8 text-xs"
+            className="h-9 text-[13px]"
           />
           <div className="flex flex-wrap gap-1">
             {CATEGORY_KEYS.map((c) => (
@@ -149,10 +157,11 @@ export function NotificationCenter({ locale, userId }: { locale: string; userId?
                 key={c.id}
                 type="button"
                 onClick={() => setCategory(c.id)}
-                className={`rounded-full px-2 py-0.5 text-[10px] border transition ${
+                aria-pressed={category === c.id}
+                className={`rounded-sm border px-2 py-0.5 text-xs transition-colors duration-fast ${
                   category === c.id
-                    ? "border-neon-purple bg-neon-purple/20 text-neon-purple"
-                    : "border-border/50 text-muted-foreground"
+                    ? "border-violet-bright bg-violet-soft text-violet-bright"
+                    : "border-line text-ink-muted hover:text-ink"
                 }`}
               >
                 {td(c.labelKey)}
@@ -163,20 +172,20 @@ export function NotificationCenter({ locale, userId }: { locale: string; userId?
 
         <div className="max-h-80 overflow-y-auto">
           {items.length === 0 ? (
-            <p className="p-6 text-center text-sm text-muted-foreground">{td("noNotifications")}</p>
+            <p className="p-6 text-center text-sm text-ink-muted">{td("noNotifications")}</p>
           ) : (
             items.map((n) => (
               <div
                 key={n.id}
-                className={`flex gap-2 border-b border-border/20 px-4 py-3 text-sm last:border-0 ${
-                  !n.read ? "bg-neon-purple/5" : ""
+                className={`flex gap-2 border-b border-line px-4 py-3 text-sm last:border-0 ${
+                  !n.read ? "bg-elevated" : ""
                 }`}
               >
                 <div className="min-w-0 flex-1">
                   {n.link ? (
                     <Link
                       href={n.link}
-                      className="font-medium hover:text-neon-purple line-clamp-1"
+                      className="line-clamp-1 font-medium text-ink hover:text-violet-bright"
                       onClick={() => {
                         if (!n.read) void markNotificationRead(n.id);
                         setOpen(false);
@@ -187,10 +196,10 @@ export function NotificationCenter({ locale, userId }: { locale: string; userId?
                   ) : (
                     <p className="font-medium line-clamp-1">{n.title}</p>
                   )}
-                  <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">{n.body}</p>
+                  <p className="mt-0.5 line-clamp-2 text-[13px] text-ink-muted">{n.body}</p>
                   <div className="flex items-center gap-2 mt-1">
-                    {!n.read && <Badge variant="premium" className="text-[9px] px-1 py-0">New</Badge>}
-                    <span className="text-[10px] text-muted-foreground">
+                    {!n.read && <Badge variant="premium" className="px-1.5 py-0 text-[11px]">{tUi("new")}</Badge>}
+                    <span className="text-xs text-ink-faint">
                       {formatDateTime(n.createdAt, safeLocale)}
                     </span>
                   </div>
@@ -198,7 +207,8 @@ export function NotificationCenter({ locale, userId }: { locale: string; userId?
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-7 w-7 shrink-0"
+                  className="h-8 w-8 shrink-0"
+                  aria-label={tCommon("delete")}
                   disabled={pending}
                   onClick={() =>
                     startTransition(async () => {
@@ -207,14 +217,14 @@ export function NotificationCenter({ locale, userId }: { locale: string; userId?
                     })
                   }
                 >
-                  <Trash2 className="h-3.5 w-3.5 text-muted-foreground" />
+                  <Trash2 className="h-4 w-4" aria-hidden />
                 </Button>
               </div>
             ))
           )}
         </div>
 
-        <div className="border-t border-border/40 p-2">
+        <div className="border-t border-line p-2">
           <Button variant="ghost" size="sm" className="w-full text-xs" asChild>
             <Link href={`/${locale}/dashboard/notifications`} onClick={() => setOpen(false)}>
               {td("viewAllNotifications")}

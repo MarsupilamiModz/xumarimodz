@@ -15,8 +15,8 @@ import type { UserRole } from "@prisma/client";
 function AuthLoadingAvatar() {
   return (
     <div className="flex items-center gap-2 px-2">
-      <Avatar className="h-8 w-8 border border-neon-purple/30 animate-pulse">
-        <AvatarFallback className="bg-neon-purple/10 text-xs">…</AvatarFallback>
+      <Avatar className="h-8 w-8 animate-pulse">
+        <AvatarFallback className="text-xs">…</AvatarFallback>
       </Avatar>
     </div>
   );
@@ -112,14 +112,10 @@ export function AuthButtons({
     return <UserNav locale={locale} user={user} />;
   }
 
+  // Registrieren ist über die Anmeldeseite (umschaltbar) und das Mobil-Menü erreichbar.
   return (
-    <>
-      <Button variant="outline" size="sm" asChild className="hidden sm:inline-flex">
-        <Link href={`/${locale}/login`}>{t("login")}</Link>
-      </Button>
-      <Button variant="neon" size="sm" asChild>
-        <Link href={`/${locale}/register`}>{t("getStarted")}</Link>
-      </Button>
-    </>
+    <Button variant="outline" size="sm" asChild>
+      <Link href={`/${locale}/login`}>{t("login")}</Link>
+    </Button>
   );
 }

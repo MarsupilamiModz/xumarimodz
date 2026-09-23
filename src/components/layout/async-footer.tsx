@@ -9,7 +9,7 @@ async function FooterWithBranding({ locale }: { locale: string }) {
 
 export function AsyncFooter({ locale }: { locale: string }) {
   return (
-    <Suspense fallback={<footer className="h-48 border-t border-border/40" />}>
+    <Suspense fallback={<footer className="h-48 border-t border-line bg-footer" />}>
       <FooterWithBranding locale={locale} />
     </Suspense>
   );

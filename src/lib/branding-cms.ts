@@ -1,6 +1,19 @@
 import { getSiteSetting, setSiteSettingSafe } from "@/lib/site-settings";
 import type { Locale } from "@/i18n/config";
 import { locales } from "@/i18n/config";
+import {
+  DEFAULT_FOOTER,
+  DEFAULT_HEADER,
+  DEFAULT_HEADER_MENU,
+  type FooterLink,
+  type FooterSection,
+  type FooterSettings,
+  type HeaderMenuItem,
+  type HeaderSettings,
+} from "@/lib/branding-defaults";
+
+export { DEFAULT_FOOTER, DEFAULT_HEADER, DEFAULT_HEADER_MENU };
+export type { FooterLink, FooterSection, FooterSettings, HeaderMenuItem, HeaderSettings };
 
 /** SiteSetting keys — logical tables for branding CMS */
 export const CMS_KEYS = {
@@ -35,45 +48,6 @@ export type BrandingAssetSettings = {
   footerText: string | null;
   primaryColor: string;
   accentColor: string;
-};
-
-export type HeaderMenuItem = {
-  id: string;
-  label: string;
-  href: string;
-  hidden: boolean;
-  order: number;
-};
-
-export type HeaderSettings = {
-  menuItems: HeaderMenuItem[];
-  backgroundColor: string;
-  transparent: boolean;
-  blur: boolean;
-  sticky: boolean;
-  height: number;
-  mobileMenuExpanded: boolean;
-};
-
-export type FooterLink = {
-  id: string;
-  label: string;
-  href: string;
-  order: number;
-};
-
-export type FooterSection = {
-  id: string;
-  title: string;
-  order: number;
-  links: FooterLink[];
-};
-
-export type FooterSettings = {
-  sections: FooterSection[];
-  copyright: string;
-  tagline: string;
-  socialLinks: { discord?: string; twitter?: string; youtube?: string; tiktok?: string };
 };
 
 export type SeoLocaleSettings = {
@@ -119,19 +93,6 @@ export const ICON_LIBRARY = [
   { id: "rocket", label: "Rocket" },
 ] as const;
 
-export const DEFAULT_HEADER_MENU: HeaderMenuItem[] = [
-  { id: "games", label: "Games", href: "/games", hidden: false, order: 0 },
-  { id: "mods", label: "Mods", href: "/mods", hidden: false, order: 1 },
-  { id: "collections", label: "Collections", href: "/collections", hidden: false, order: 2 },
-  { id: "tutorials", label: "Tutorials", href: "/tutorials", hidden: false, order: 3 },
-  { id: "creators", label: "Creators", href: "/creators", hidden: false, order: 3 },
-  { id: "partners", label: "Partners", href: "/partners", hidden: false, order: 4 },
-  { id: "shop", label: "Shop", href: "/shop", hidden: false, order: 5 },
-  { id: "leaderboards", label: "Leaderboards", href: "/leaderboards", hidden: false, order: 6 },
-  { id: "premium", label: "Premium", href: "/premium", hidden: false, order: 7 },
-  { id: "custom-orders", label: "Custom Orders", href: "/custom-orders", hidden: false, order: 8 },
-];
-
 export const DEFAULT_BRANDING_ASSETS: BrandingAssetSettings = {
   siteTitle: "Xumari Modz",
   siteShortName: "Xumari",
@@ -154,57 +115,6 @@ export const DEFAULT_BRANDING_ASSETS: BrandingAssetSettings = {
   footerText: "© Xumari Modz. All rights reserved.",
   primaryColor: "#a855f7",
   accentColor: "#3b82f6",
-};
-
-export const DEFAULT_HEADER: HeaderSettings = {
-  menuItems: DEFAULT_HEADER_MENU,
-  backgroundColor: "",
-  transparent: true,
-  blur: true,
-  sticky: true,
-  height: 64,
-  mobileMenuExpanded: false,
-};
-
-export const DEFAULT_FOOTER: FooterSettings = {
-  sections: [
-    {
-      id: "platform",
-      title: "Platform",
-      order: 0,
-      links: [
-        { id: "mods", label: "Browse Mods", href: "/mods", order: 0 },
-        { id: "games", label: "Games", href: "/games", order: 1 },
-        { id: "premium", label: "Premium", href: "/premium", order: 2 },
-      ],
-    },
-    {
-      id: "support",
-      title: "Support",
-      order: 1,
-      links: [
-        { id: "support", label: "Support", href: "/dashboard/support", order: 0 },
-        { id: "faq", label: "FAQ", href: "/faq", order: 1 },
-        { id: "contact", label: "Contact", href: "/contact", order: 2 },
-      ],
-    },
-    {
-      id: "legal",
-      title: "Legal",
-      order: 2,
-      links: [
-        { id: "terms", label: "Terms", href: "/legal/terms", order: 0 },
-        { id: "privacy", label: "Privacy", href: "/legal/privacy", order: 1 },
-        { id: "dmca", label: "DMCA", href: "/legal/dmca", order: 2 },
-      ],
-    },
-  ],
-  copyright: "All rights reserved.",
-  tagline: "Premium mods marketplace for serious gamers",
-  socialLinks: {
-    discord: "https://discord.gg/xumarimodz",
-    twitter: "https://twitter.com/xumarimodz",
-  },
 };
 
 export const DEFAULT_SEO: SeoSettings = {

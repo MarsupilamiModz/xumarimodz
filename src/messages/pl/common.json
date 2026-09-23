@@ -16,7 +16,23 @@
     "search": "Szukaj modów",
     "collections": "Kolekcje",
     "developers": "Deweloperzy",
-    "language": "Język"
+    "language": "Język",
+    "mainNav": "Nawigacja główna",
+    "openMenu": "Otwórz menu",
+    "closeMenu": "Zamknij menu",
+    "downloadApp": "Pobierz aplikację",
+    "cart": "Koszyk",
+    "cartCount": "Koszyk, {count, plural, =0 {pusty} one {# produkt} few {# produkty} many {# produktów} other {# produktu}}",
+    "register": "Utwórz konto",
+    "account": "Moje konto",
+    "support": "Wsparcie",
+    "profile": "Profil",
+    "creatorStudio": "Studio twórcy",
+    "partnerStudio": "Studio partnera",
+    "designStudio": "Studio projektowe",
+    "adminPanel": "Panel administracyjny",
+    "logout": "Wyloguj się",
+    "userMenu": "Menu konta"
   },
   "footer": {
     "tagline": "Darmowe, w 100% legalne mody do Rage MP, tutoriale i poprawki do GTA. Od teraz codziennie nowe mody.",
@@ -34,7 +50,24 @@
     "legal": "Prawne",
     "terms": "Regulamin",
     "privacy": "Prywatność",
-    "rights": "Wszelkie prawa zastrzeżone."
+    "rights": "Wszelkie prawa zastrzeżone.",
+    "product": "Produkt",
+    "community": "Społeczność",
+    "help": "Pomoc",
+    "shop": "Sklep",
+    "collections": "Kolekcje",
+    "becomeCreator": "Zostań twórcą",
+    "partners": "Partnerzy",
+    "tutorials": "Poradniki",
+    "news": "Aktualności",
+    "team": "Zespół",
+    "developers": "Deweloperzy",
+    "dmca": "DMCA",
+    "imprint": "Nota prawna",
+    "termsShort": "Regulamin",
+    "withdrawal": "Prawo odstąpienia",
+    "disclaimer": "Brak powiązań z Rockstar Games, Cfx.re, Mojang, SCS Software ani GIANTS Software.",
+    "languages": "Języki"
   },
   "common": {
     "loading": "Ładowanie…",
@@ -71,6 +104,8 @@
       "retry": "Spróbuj ponownie"
     },
     "imageMissing": "Brak obrazu",
-    "placeholder": "Symbol zastępczy"
+    "placeholder": "Symbol zastępczy",
+    "new": "Nowe",
+    "unreadCount": "{count, plural, one {# nieprzeczytane} few {# nieprzeczytane} many {# nieprzeczytanych} other {# nieprzeczytanych}}"
   }
 }

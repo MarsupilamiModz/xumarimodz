@@ -36,6 +36,9 @@ export type LogoBranding = Pick<
   | "logoObjectPosition"
 >;
 
+/** Alte Standardfarbe aus dem Branding-CMS; wird durch den Akzent-Token ersetzt. */
+const LEGACY_SYMBOL_COLOR = "#a855f7";
+
 export function Logo({
   className,
   showText = true,
@@ -48,20 +51,30 @@ export function Logo({
   branding?: LogoBranding | null;
 }) {
   const sizes = {
-    sm: { box: "h-7 w-7 text-sm", text: "text-sm" },
-    md: { box: "h-9 w-9 text-base", text: "text-base" },
-    lg: { box: "h-12 w-12 text-xl", text: "text-xl" },
+    sm: { box: "h-8 w-8 text-base", text: "text-[17px]" },
+    md: { box: "h-9 w-9 text-lg", text: "text-lg" },
+    lg: { box: "h-12 w-12 text-2xl", text: "text-2xl" },
   };
   const title = branding?.siteTitle ?? "Xumari Modz";
-  const short = branding?.siteShortName ?? title;
+  // Flache Fläche, keine Verläufe. Eine im ACP gesetzte eigene Farbe bleibt erhalten.
+  const customColor =
+    branding?.siteSymbolColor && branding.siteSymbolColor.toLowerCase() !== LEGACY_SYMBOL_COLOR
+      ? branding.siteSymbolColor
+      : null;
+  const symbolClass = cn(
+    "flex shrink-0 items-center justify-center rounded-md font-extrabold text-violet-on",
+    !customColor && "bg-violet",
+    sizes[size].box
+  );
+  const symbolStyle = customColor ? { backgroundColor: customColor } : undefined;
 
   const symbolContent = () => {
     if (branding?.logoUrl) {
       return (
-        <span className={cn("relative block shrink-0 overflow-hidden rounded-lg", sizes[size].box)}>
+        <span className={cn("relative block shrink-0 overflow-hidden rounded-md", sizes[size].box)}>
           <SafeImage
             src={branding.logoUrl}
-            alt={title}
+            alt=""
             fill
             className="object-contain"
             style={{ objectPosition: branding.logoObjectPosition ?? "center" }}
@@ -73,7 +86,7 @@ export function Logo({
 
     if (branding?.siteSymbolMode === "image" && branding.siteSymbolUrl) {
       return (
-        <span className={cn("relative block shrink-0 overflow-hidden rounded-lg", sizes[size].box)}>
+        <span className={cn("relative block shrink-0 overflow-hidden rounded-md", sizes[size].box)}>
           <SafeImage src={branding.siteSymbolUrl} alt="" fill className="object-contain" sizes="48px" />
         </span>
       );
@@ -82,43 +95,25 @@ export function Logo({
     if (branding?.siteSymbolMode === "library" && branding.siteSymbolLibrary) {
       const Icon = LIBRARY_ICONS[branding.siteSymbolLibrary as keyof typeof LIBRARY_ICONS] ?? Sparkles;
       return (
-        <span
-          className={cn(
-            "flex items-center justify-center rounded-lg font-black text-white shadow-neon shrink-0",
-            sizes[size].box
-          )}
-          style={{
-            background: `linear-gradient(135deg, ${branding.siteSymbolColor}, ${branding.siteSymbolColor}99)`,
-          }}
-        >
+        <span className={symbolClass} style={symbolStyle} aria-hidden>
           <Icon className="h-[55%] w-[55%]" aria-hidden />
         </span>
       );
     }
 
     const letter = branding?.siteSymbolLetter?.slice(0, 1) ?? "X";
-    const color = branding?.siteSymbolColor ?? "#a855f7";
     return (
-      <span
-        className={cn(
-          "flex items-center justify-center rounded-lg font-black text-white shadow-neon shrink-0",
-          sizes[size].box
-        )}
-        style={{ background: `linear-gradient(135deg, ${color}, ${color}99)` }}
-        aria-hidden
-      >
+      <span className={symbolClass} style={symbolStyle} aria-hidden>
         {letter}
       </span>
     );
   };
 
   return (
-    <span className={cn("inline-flex items-center gap-2 font-bold", className)}>
+    <span className={cn("inline-flex items-center gap-2.5", className)}>
       {symbolContent()}
       {showText && (
-        <span className={cn("bg-gradient-to-r from-neon-purple to-neon-blue bg-clip-text text-transparent", sizes[size].text)}>
-          {size === "sm" ? short : title}
-        </span>
+        <span className={cn("font-bold tracking-tight text-ink", sizes[size].text)}>{title}</span>
       )}
     </span>
   );

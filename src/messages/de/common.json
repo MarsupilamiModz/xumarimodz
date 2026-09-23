@@ -16,7 +16,23 @@
     "search": "Mods suchen",
     "collections": "Sammlungen",
     "developers": "Entwickler",
-    "language": "Sprache"
+    "language": "Sprache",
+    "mainNav": "Hauptnavigation",
+    "openMenu": "Menü öffnen",
+    "closeMenu": "Menü schließen",
+    "downloadApp": "App herunterladen",
+    "cart": "Warenkorb",
+    "cartCount": "Warenkorb, {count, plural, =0 {leer} one {# Artikel} other {# Artikel}}",
+    "register": "Konto erstellen",
+    "account": "Mein Konto",
+    "support": "Support",
+    "profile": "Profil",
+    "creatorStudio": "Creator-Studio",
+    "partnerStudio": "Partner-Studio",
+    "designStudio": "Design-Studio",
+    "adminPanel": "Admin Control Panel",
+    "logout": "Abmelden",
+    "userMenu": "Konto-Menü"
   },
   "footer": {
     "tagline": "Kostenlose, 100 % legale Mods für Rage MP, Tutorials und Fixes für GTA. Ab sofort täglich neue Mods.",
@@ -34,7 +50,24 @@
     "legal": "Rechtliches",
     "terms": "Nutzungsbedingungen",
     "privacy": "Datenschutz",
-    "rights": "Alle Rechte vorbehalten."
+    "rights": "Alle Rechte vorbehalten.",
+    "product": "Produkt",
+    "community": "Community",
+    "help": "Hilfe",
+    "shop": "Shop",
+    "collections": "Sammlungen",
+    "becomeCreator": "Creator werden",
+    "partners": "Partner",
+    "tutorials": "Tutorials",
+    "news": "News",
+    "team": "Team",
+    "developers": "Entwickler",
+    "dmca": "DMCA",
+    "imprint": "Impressum",
+    "termsShort": "AGB",
+    "withdrawal": "Widerrufsbelehrung",
+    "disclaimer": "Nicht verbunden mit Rockstar Games, Cfx.re, Mojang, SCS Software oder GIANTS Software.",
+    "languages": "Sprachen"
   },
   "common": {
     "loading": "Lädt…",
@@ -89,6 +122,8 @@
       "retry": "Erneut versuchen"
     },
     "imageMissing": "Kein Bild vorhanden",
-    "placeholder": "Platzhalter"
+    "placeholder": "Platzhalter",
+    "new": "Neu",
+    "unreadCount": "{count, plural, one {# ungelesene} other {# ungelesene}}"
   }
 }

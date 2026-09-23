@@ -16,7 +16,23 @@
     "search": "Buscar mods",
     "collections": "Colecciones",
     "developers": "Desarrolladores",
-    "language": "Idioma"
+    "language": "Idioma",
+    "mainNav": "Navegación principal",
+    "openMenu": "Abrir menú",
+    "closeMenu": "Cerrar menú",
+    "downloadApp": "Descargar app",
+    "cart": "Carrito",
+    "cartCount": "Carrito, {count, plural, =0 {vacío} one {# artículo} other {# artículos}}",
+    "register": "Crear cuenta",
+    "account": "Mi cuenta",
+    "support": "Soporte",
+    "profile": "Perfil",
+    "creatorStudio": "Estudio de creador",
+    "partnerStudio": "Estudio de socio",
+    "designStudio": "Estudio de diseño",
+    "adminPanel": "Panel de administración",
+    "logout": "Cerrar sesión",
+    "userMenu": "Menú de cuenta"
   },
   "footer": {
     "tagline": "Mods 100 % legales y gratuitas para Rage MP, tutoriales y fixes para GTA. Nuevas mods cada día, desde ahora.",
@@ -34,7 +50,24 @@
     "legal": "Legal",
     "terms": "Términos de servicio",
     "privacy": "Privacidad",
-    "rights": "Todos los derechos reservados."
+    "rights": "Todos los derechos reservados.",
+    "product": "Producto",
+    "community": "Comunidad",
+    "help": "Ayuda",
+    "shop": "Tienda",
+    "collections": "Colecciones",
+    "becomeCreator": "Hazte creador",
+    "partners": "Socios",
+    "tutorials": "Tutoriales",
+    "news": "Noticias",
+    "team": "Equipo",
+    "developers": "Desarrolladores",
+    "dmca": "DMCA",
+    "imprint": "Aviso legal",
+    "termsShort": "Condiciones",
+    "withdrawal": "Derecho de desistimiento",
+    "disclaimer": "Sin afiliación con Rockstar Games, Cfx.re, Mojang, SCS Software ni GIANTS Software.",
+    "languages": "Idiomas"
   },
   "common": {
     "loading": "Cargando…",
@@ -71,6 +104,8 @@
       "retry": "Reintentar"
     },
     "imageMissing": "No hay imagen",
-    "placeholder": "Marcador de posición"
+    "placeholder": "Marcador de posición",
+    "new": "Nuevo",
+    "unreadCount": "{count, plural, one {# sin leer} other {# sin leer}}"
   }
 }

@@ -3,15 +3,62 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Logo, type LogoBranding } from "@/components/brand/logo";
-import type { FooterSettings } from "@/lib/branding-cms";
+import { DEFAULT_FOOTER, type FooterSettings } from "@/lib/branding-defaults";
 import { getLanguageDisplayCatalog } from "@/lib/language-catalog";
 import { LanguageFlagLabel } from "@/components/i18n/language-flag-label";
+import { cn } from "@/lib/utils";
 
 function resolveHref(locale: string, href: string) {
   if (href.startsWith("http")) return href;
   const path = href.startsWith("/") ? href : `/${href}`;
   return `/${locale}${path === "/" ? "" : path}`;
 }
+
+type FooterColumn = { id: string; title: string; links: { id: string; label: string; href: string }[] };
+
+const linkClass = "text-sm text-ink-muted transition-colors duration-fast hover:text-ink";
+
+const SECTION_TITLE_KEYS: Record<string, string> = {
+  product: "product",
+  platform: "product",
+  community: "community",
+  help: "help",
+  support: "help",
+  legal: "legal",
+};
+
+const LINK_LABEL_KEYS: Record<string, string> = {
+  mods: "browseMods",
+  games: "games",
+  collections: "collections",
+  premium: "premium",
+  shop: "shop",
+  creators: "creators",
+  "become-creator": "becomeCreator",
+  partners: "partners",
+  leaderboards: "leaderboards",
+  tutorials: "tutorials",
+  news: "news",
+  team: "team",
+  faq: "faq",
+  support: "supportTickets",
+  contact: "contact",
+  "custom-orders": "customWork",
+  developers: "developers",
+  imprint: "imprint",
+  privacy: "privacy",
+  terms: "termsShort",
+  withdrawal: "withdrawal",
+  dmca: "dmca",
+};
+
+// TODO(content): Seiten /legal/imprint und /legal/withdrawal fehlen im Projekt – Rechtstexte liefern.
+const REQUIRED_LEGAL_LINKS = [
+  { id: "imprint", href: "/legal/imprint", order: -2 },
+  { id: "privacy", href: "/legal/privacy", order: -1 },
+  { id: "terms", href: "/legal/terms", order: 0 },
+  { id: "withdrawal", href: "/legal/withdrawal", order: 1 },
+];
 
 export function Footer({
   locale,
@@ -24,105 +71,112 @@ export function Footer({
 }) {
   const t = useTranslations("footer");
   const siteName = branding?.siteTitle ?? "Xumari Modz";
-  const tagline = footer?.tagline?.trim() || t("tagline");
-  const copyright = footer?.copyright?.trim() || t("rights");
-  const sections = footer?.sections?.length
-    ? [...footer.sections].sort((a, b) => a.order - b.order)
-    : null;
+  // Unveränderte englische Standardtexte aus dem CMS durch die Übersetzung ersetzen.
+  const cmsTagline = footer?.tagline?.trim();
+  const cmsCopyright = footer?.copyright?.trim();
+  const tagline = cmsTagline && cmsTagline !== DEFAULT_FOOTER.tagline ? cmsTagline : t("tagline");
+  const copyright =
+    cmsCopyright && cmsCopyright !== DEFAULT_FOOTER.copyright ? cmsCopyright : t("rights");
+
+  // Spalten kommen aus dem ACP (Branding → Footer, Standard siehe DEFAULT_FOOTER).
+  // Bekannte IDs werden übersetzt; eigene Einträge behalten ihren Text.
+  const columns: FooterColumn[] = [...(footer?.sections ?? DEFAULT_FOOTER.sections)]
+    .sort((a, b) => a.order - b.order)
+    .map((section) => {
+      const links = [...section.links]
+        .sort((a, b) => a.order - b.order)
+        .map((link) => ({
+          ...link,
+          label: LINK_LABEL_KEYS[link.id] ? t(LINK_LABEL_KEYS[link.id]) : link.label,
+        }));
+      if (section.id === "legal") {
+        // Pflichtangaben immer anzeigen, auch wenn sie im ACP fehlen.
+        for (const required of REQUIRED_LEGAL_LINKS) {
+          if (!links.some((l) => l.id === required.id || l.href === required.href)) {
+            links.push({ ...required, label: t(LINK_LABEL_KEYS[required.id]) });
+          }
+        }
+      }
+      return {
+        id: section.id,
+        title: SECTION_TITLE_KEYS[section.id] ? t(SECTION_TITLE_KEYS[section.id]) : section.title,
+        links,
+      };
+    });
+
+  const socials = [
+    footer?.socialLinks?.discord && { label: "Discord", href: footer.socialLinks.discord },
+    footer?.socialLinks?.twitter && { label: "X", href: footer.socialLinks.twitter },
+    footer?.socialLinks?.youtube && { label: "YouTube", href: footer.socialLinks.youtube },
+  ].filter(Boolean) as { label: string; href: string }[];
+
+  const languages = getLanguageDisplayCatalog().filter((l) => l.isActive);
 
   return (
-    <footer className="border-t border-border/40 bg-card/30">
-      <div className="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:grid-cols-2 lg:grid-cols-4 sm:px-6">
-        <div>
-          <Logo branding={branding} />
-          <p className="mt-3 text-sm text-muted-foreground leading-relaxed max-w-xs">{tagline}</p>
-          {footer?.socialLinks && (
-            <div className="mt-4 flex flex-wrap gap-3 text-xs text-muted-foreground">
-              {footer.socialLinks.discord && (
-                <a href={footer.socialLinks.discord} target="_blank" rel="noreferrer" className="hover:text-foreground">
-                  Discord
-                </a>
-              )}
-              {footer.socialLinks.twitter && (
-                <a href={footer.socialLinks.twitter} target="_blank" rel="noreferrer" className="hover:text-foreground">
-                  X / Twitter
-                </a>
-              )}
-              {footer.socialLinks.youtube && (
-                <a href={footer.socialLinks.youtube} target="_blank" rel="noreferrer" className="hover:text-foreground">
-                  YouTube
-                </a>
-              )}
-            </div>
+    <footer className="border-t border-line bg-footer">
+      <div className="page-container grid gap-10 py-14 md:grid-cols-2 lg:grid-cols-6">
+        <div className="lg:col-span-2">
+          <Logo branding={branding} size="sm" />
+          <p className="mt-4 max-w-xs text-sm leading-relaxed text-ink-muted">{tagline}</p>
+          {socials.length > 0 && (
+            <ul className="mt-5 flex flex-wrap gap-x-4 gap-y-2">
+              {socials.map((s) => (
+                <li key={s.label}>
+                  <a href={s.href} target="_blank" rel="noreferrer" className={linkClass}>
+                    {s.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
           )}
         </div>
 
-        {sections ? (
-          sections.map((section) => (
-            <div key={section.id}>
-              <h4 className="font-semibold mb-3">{section.title}</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                {[...section.links]
-                  .sort((a, b) => a.order - b.order)
-                  .map((link) => (
-                    <li key={link.id}>
-                      <Link
-                        href={resolveHref(locale, link.href)}
-                        prefetch
-                        className="hover:text-foreground transition-colors"
-                      >
-                        {link.label}
-                      </Link>
-                    </li>
-                  ))}
-              </ul>
-            </div>
-          ))
-        ) : (
-          <>
-            <div>
-              <h4 className="font-semibold mb-3">{t("platform")}</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link href={`/${locale}/mods`} prefetch className="hover:text-foreground transition-colors">{t("browseMods")}</Link></li>
-                <li><Link href={`/${locale}/games`} prefetch className="hover:text-foreground transition-colors">{t("games")}</Link></li>
-                <li><Link href={`/${locale}/premium`} prefetch className="hover:text-foreground transition-colors">{t("premium")}</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-3">Support</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link href={`/${locale}/dashboard/support`} prefetch className="hover:text-foreground transition-colors">Support</Link></li>
-                <li><Link href={`/${locale}/faq`} prefetch className="hover:text-foreground transition-colors">FAQ</Link></li>
-                <li><Link href={`/${locale}/contact`} prefetch className="hover:text-foreground transition-colors">Contact</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-3">{t("legal")}</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link href={`/${locale}/legal/terms`} className="hover:text-foreground transition-colors">{t("terms")}</Link></li>
-                <li><Link href={`/${locale}/legal/privacy`} className="hover:text-foreground transition-colors">{t("privacy")}</Link></li>
-              </ul>
-            </div>
-          </>
-        )}
+        {columns.map((column) => (
+          <nav key={column.id} aria-label={column.title}>
+            <h2 className="mb-4 text-[13px] font-semibold text-ink">{column.title}</h2>
+            <ul className="space-y-2.5">
+              {column.links.map((link) => (
+                <li key={link.id}>
+                  <Link href={resolveHref(locale, link.href)} className={linkClass}>
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ))}
       </div>
-      <div className="border-t border-border/40 py-4 px-4 sm:px-6">
-        <div className="mx-auto max-w-7xl flex flex-wrap justify-center gap-3">
-          {getLanguageDisplayCatalog()
-            .filter((l) => l.isActive)
-            .map((l) => (
-              <Link
-                key={l.code}
-                href={`/${l.code}`}
-                className={`rounded-md px-2 py-1 text-xs hover:bg-accent/30 transition-colors ${locale === l.code ? "text-neon-purple" : "text-muted-foreground"}`}
-              >
-                <LanguageFlagLabel language={l} compact />
-              </Link>
-            ))}
+
+      <div className="border-t border-line">
+        <div className="page-container flex flex-col gap-4 py-6 lg:flex-row lg:items-center lg:justify-between">
+          <div className="space-y-1 text-[13px] text-ink-muted">
+            <p>
+              © {new Date().getFullYear()} {siteName}. {copyright}
+            </p>
+            <p>{t("disclaimer")}</p>
+          </div>
+          {languages.length > 1 && (
+            <nav aria-label={t("languages")}>
+              <ul className="flex flex-wrap gap-1">
+                {languages.map((l) => (
+                  <li key={l.code}>
+                    <Link
+                      href={`/${l.code}`}
+                      hrefLang={l.code}
+                      aria-current={locale === l.code ? "true" : undefined}
+                      className={cn(
+                        "inline-flex rounded-md px-2 py-1 text-xs transition-colors duration-fast hover:bg-hover",
+                        locale === l.code ? "text-violet-bright" : "text-ink-muted"
+                      )}
+                    >
+                      <LanguageFlagLabel language={l} compact />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )}
         </div>
-      </div>
-      <div className="border-t border-border/40 py-6 text-center text-sm text-muted-foreground">
-        © {new Date().getFullYear()} {siteName}. {copyright}
       </div>
     </footer>
   );

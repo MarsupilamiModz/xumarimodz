@@ -16,7 +16,23 @@
     "search": "Rechercher des mods",
     "collections": "Collections",
     "developers": "Développeurs",
-    "language": "Langue"
+    "language": "Langue",
+    "mainNav": "Navigation principale",
+    "openMenu": "Ouvrir le menu",
+    "closeMenu": "Fermer le menu",
+    "downloadApp": "Télécharger l’app",
+    "cart": "Panier",
+    "cartCount": "Panier, {count, plural, =0 {vide} one {# article} other {# articles}}",
+    "register": "Créer un compte",
+    "account": "Mon compte",
+    "support": "Support",
+    "profile": "Profil",
+    "creatorStudio": "Studio créateur",
+    "partnerStudio": "Studio partenaire",
+    "designStudio": "Studio design",
+    "adminPanel": "Panneau d’administration",
+    "logout": "Se déconnecter",
+    "userMenu": "Menu du compte"
   },
   "footer": {
     "tagline": "Mods 100 % légaux et gratuits pour Rage MP, tutoriels et correctifs pour GTA. De nouvelles mods chaque jour, dès maintenant.",
@@ -34,7 +50,24 @@
     "legal": "Mentions légales",
     "terms": "Conditions d'utilisation",
     "privacy": "Confidentialité",
-    "rights": "Tous droits réservés."
+    "rights": "Tous droits réservés.",
+    "product": "Produit",
+    "community": "Communauté",
+    "help": "Aide",
+    "shop": "Boutique",
+    "collections": "Collections",
+    "becomeCreator": "Devenir créateur",
+    "partners": "Partenaires",
+    "tutorials": "Tutoriels",
+    "news": "Actualités",
+    "team": "Équipe",
+    "developers": "Développeurs",
+    "dmca": "DMCA",
+    "imprint": "Mentions légales",
+    "termsShort": "CGV",
+    "withdrawal": "Droit de rétractation",
+    "disclaimer": "Non affilié à Rockstar Games, Cfx.re, Mojang, SCS Software ou GIANTS Software.",
+    "languages": "Langues"
   },
   "common": {
     "loading": "Chargement…",
@@ -71,6 +104,8 @@
       "retry": "Réessayer"
     },
     "imageMissing": "Aucune image disponible",
-    "placeholder": "Espace réservé"
+    "placeholder": "Espace réservé",
+    "new": "Nouveau",
+    "unreadCount": "{count, plural, one {# non lue} other {# non lues}}"
   }
 }

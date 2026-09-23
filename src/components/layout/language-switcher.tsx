@@ -61,18 +61,18 @@ export function LanguageSwitcher({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" aria-label={tNav("language")} className="dark-reader-lock" disabled={switching}>
+        <Button variant="ghost" size="icon" aria-label={tNav("language")} disabled={switching}>
           <span className="text-base leading-none" aria-hidden>
             {current?.flagIcon ?? "🌐"}
           </span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="glass max-h-72 overflow-y-auto dark-reader-lock min-w-[11rem]">
+      <DropdownMenuContent align="end" className="max-h-72 min-w-[11rem] overflow-y-auto">
         {options.map((l) => (
           <DropdownMenuItem
             key={l.code}
             onClick={() => switchLocale(l.code as Locale)}
-            className={locale === l.code ? "text-neon-purple font-medium" : ""}
+            className={locale === l.code ? "font-semibold text-violet-bright" : ""}
           >
             <LanguageFlagLabel language={l} showCountry />
           </DropdownMenuItem>

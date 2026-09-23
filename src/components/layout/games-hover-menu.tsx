@@ -71,7 +71,7 @@ export const GamesHoverMenu = memo(function GamesHoverMenu({
       <Link
         href={`/${locale}/games`}
         prefetch
-        className="rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-white/5 hover:text-foreground"
+        className="flex h-full items-center text-sm font-medium text-ink-muted transition-colors duration-fast hover:text-ink"
         aria-haspopup="true"
         aria-expanded={open}
       >
@@ -86,13 +86,13 @@ export const GamesHoverMenu = memo(function GamesHoverMenu({
         )}
         aria-hidden={!open}
       >
-        <div className="w-[min(92vw,720px)] overflow-hidden rounded-2xl border border-white/10 bg-background/90 shadow-2xl backdrop-blur-xl">
-          <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
+        <div className="w-[min(92vw,720px)] overflow-hidden rounded-xl border border-line bg-raised">
+          <div className="flex items-center justify-between border-b border-line px-4 py-3">
             <p className="text-sm font-semibold">{label}</p>
             <Link
               href={`/${locale}/games`}
               prefetch
-              className="text-xs text-neon-purple hover:underline"
+              className="text-xs font-medium text-violet-bright hover:underline"
               onClick={() => setOpen(false)}
             >
               {allGamesLabel}
@@ -104,7 +104,7 @@ export const GamesHoverMenu = memo(function GamesHoverMenu({
                 key={game.id}
                 href={resolveHref(game)}
                 prefetch
-                className="games-hover-item group flex flex-col overflow-hidden rounded-xl border border-border/40 bg-background/40"
+                className="games-hover-item group flex flex-col overflow-hidden rounded-lg border border-line bg-elevated transition-colors duration-fast hover:bg-hover"
                 onClick={() => setOpen(false)}
               >
                 <div className="relative aspect-[4/3] overflow-hidden">
@@ -113,21 +113,21 @@ export const GamesHoverMenu = memo(function GamesHoverMenu({
                       src={game.coverUrl}
                       alt={game.name}
                       fill
-                      className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      className="object-cover"
                       sizes="160px"
                     />
                   ) : (
-                    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-neon-purple/20 to-neon-blue/10">
-                      <Gamepad2 className="h-8 w-8 text-muted-foreground/40" />
+                    <div className="flex h-full w-full items-center justify-center bg-elevated">
+                      <Gamepad2 className="h-8 w-8 text-ink-faint" aria-hidden />
                     </div>
                   )}
                   {game.logoUrl && (
-                    <div className="absolute bottom-1.5 left-1.5 h-7 w-7 overflow-hidden rounded-md border border-white/20 bg-background/80">
+                    <div className="absolute bottom-1.5 left-1.5 h-7 w-7 overflow-hidden rounded-md border border-line bg-canvas">
                       <SafeImage src={game.logoUrl} alt="" fill className="object-contain p-0.5" sizes="28px" />
                     </div>
                   )}
                 </div>
-                <p className="truncate px-2 py-2 text-xs font-medium group-hover:text-neon-purple">
+                <p className="truncate px-2 py-2 text-xs font-medium text-ink">
                   {game.name}
                 </p>
               </Link>

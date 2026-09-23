@@ -47,7 +47,7 @@ function ResultRow({
     <Link
       href={item.href}
       onClick={onSelect}
-      className="block rounded-lg px-3 py-2 text-sm transition-colors hover:bg-white/5"
+      className="block rounded-md px-3 py-2 text-sm transition-colors duration-fast hover:bg-hover"
     >
       <p className="truncate font-medium">{item.title}</p>
       {item.subtitle && (
@@ -115,17 +115,17 @@ export const HeaderSearch = memo(function HeaderSearch({ locale }: { locale: str
       <button
         type="button"
         aria-label={t("title")}
-        className="inline-flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-white/5 hover:text-foreground"
+        className="inline-flex h-10 w-10 items-center justify-center rounded-md text-ink-muted transition-colors duration-fast hover:bg-hover hover:text-ink"
         onClick={() => setOpen(true)}
       >
-        <Search className="h-4 w-4" />
+        <Search className="h-5 w-5" aria-hidden />
       </button>
     );
   }
 
   return (
     <div ref={containerRef} className="relative flex items-center">
-      <div className="flex w-[min(420px,70vw)] items-center gap-2 rounded-lg border border-border/50 bg-background/90 px-2 py-1">
+      <div className="flex w-[min(420px,70vw)] items-center gap-2 rounded-md border border-line-control bg-elevated px-2 py-1">
         <Input
           ref={inputRef}
           value={query}
@@ -137,7 +137,7 @@ export const HeaderSearch = memo(function HeaderSearch({ locale }: { locale: str
         <button
           type="button"
           aria-label={t("close")}
-          className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md hover:bg-white/5"
+          className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-ink-muted hover:bg-hover hover:text-ink"
           onClick={close}
         >
           <X className="h-4 w-4" />

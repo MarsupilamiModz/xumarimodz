@@ -16,7 +16,23 @@
     "search": "Mod ara",
     "collections": "Koleksiyonlar",
     "developers": "Geliştiriciler",
-    "language": "Dil"
+    "language": "Dil",
+    "mainNav": "Ana gezinme",
+    "openMenu": "Menüyü aç",
+    "closeMenu": "Menüyü kapat",
+    "downloadApp": "Uygulamayı indir",
+    "cart": "Sepet",
+    "cartCount": "Sepet, {count, plural, =0 {boş} other {# ürün}}",
+    "register": "Hesap oluştur",
+    "account": "Hesabım",
+    "support": "Destek",
+    "profile": "Profil",
+    "creatorStudio": "Üretici Stüdyosu",
+    "partnerStudio": "Partner Stüdyosu",
+    "designStudio": "Tasarım Stüdyosu",
+    "adminPanel": "Yönetim Paneli",
+    "logout": "Çıkış yap",
+    "userMenu": "Hesap menüsü"
   },
   "footer": {
     "tagline": "Rage MP için %100 yasal ücretsiz modlar, GTA eğitimleri ve düzeltmeleri. Artık her gün yeni modlar.",
@@ -34,7 +50,24 @@
     "legal": "Yasal",
     "terms": "Kullanım şartları",
     "privacy": "Gizlilik",
-    "rights": "Tüm hakları saklıdır."
+    "rights": "Tüm hakları saklıdır.",
+    "product": "Ürün",
+    "community": "Topluluk",
+    "help": "Yardım",
+    "shop": "Mağaza",
+    "collections": "Koleksiyonlar",
+    "becomeCreator": "İçerik üreticisi ol",
+    "partners": "Partnerler",
+    "tutorials": "Eğitimler",
+    "news": "Haberler",
+    "team": "Ekip",
+    "developers": "Geliştiriciler",
+    "dmca": "DMCA",
+    "imprint": "Künye",
+    "termsShort": "Koşullar",
+    "withdrawal": "Cayma hakkı",
+    "disclaimer": "Rockstar Games, Cfx.re, Mojang, SCS Software veya GIANTS Software ile bağlantılı değildir.",
+    "languages": "Diller"
   },
   "common": {
     "loading": "Yükleniyor…",
@@ -71,6 +104,8 @@
       "retry": "Tekrar dene"
     },
     "imageMissing": "Görsel yok",
-    "placeholder": "Yer tutucu"
+    "placeholder": "Yer tutucu",
+    "new": "Yeni",
+    "unreadCount": "{count, plural, other {# okunmamış}}"
   }
 }
