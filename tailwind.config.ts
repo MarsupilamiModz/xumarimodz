@@ -1,5 +1,9 @@
 import type { Config } from "tailwindcss";
 import animate from "tailwindcss-animate";
+import { fontFamily } from "tailwindcss/defaultTheme";
+
+// Alle Farben kommen aus src/styles/tokens.css.
+const token = (name: string) => `rgb(var(--${name}) / <alpha-value>)`;
 
 const config: Config = {
   darkMode: ["class"],
@@ -11,29 +15,75 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
-        card: { DEFAULT: "hsl(var(--card))", foreground: "hsl(var(--card-foreground))" },
-        popover: { DEFAULT: "hsl(var(--popover))", foreground: "hsl(var(--popover-foreground))" },
-        primary: { DEFAULT: "hsl(var(--primary))", foreground: "hsl(var(--primary-foreground))" },
-        secondary: { DEFAULT: "hsl(var(--secondary))", foreground: "hsl(var(--secondary-foreground))" },
-        muted: { DEFAULT: "hsl(var(--muted))", foreground: "hsl(var(--muted-foreground))" },
-        accent: { DEFAULT: "hsl(var(--accent))", foreground: "hsl(var(--accent-foreground))" },
-        destructive: { DEFAULT: "hsl(var(--destructive))", foreground: "hsl(var(--destructive-foreground))" },
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        neon: { purple: "#a855f7", blue: "#3b82f6", cyan: "#22d3ee" },
+        // Design-Tokens
+        canvas: token("bg-base"),
+        raised: token("bg-raised"),
+        elevated: token("bg-elevated"),
+        hover: token("bg-hover"),
+        footer: token("bg-footer"),
+        sidebar: token("bg-sidebar"),
+        line: { DEFAULT: token("line"), control: token("line-control") },
+        ink: { DEFAULT: token("ink"), muted: token("ink-muted"), faint: token("ink-faint") },
+        violet: {
+          DEFAULT: token("violet"),
+          hover: token("violet-hover"),
+          bright: token("violet-bright"),
+          soft: "rgb(var(--violet) / var(--violet-soft-alpha))",
+          on: token("on-violet"),
+        },
+        success: { DEFAULT: token("success"), soft: "rgb(var(--success) / var(--status-bg-alpha))" },
+        warning: { DEFAULT: token("warning"), soft: "rgb(var(--warning) / var(--status-bg-alpha))" },
+        danger: { DEFAULT: token("danger"), soft: "rgb(var(--danger) / var(--status-bg-alpha))" },
+        game: {
+          gta: token("game-gta"),
+          fivem: token("game-fivem"),
+          minecraft: token("game-minecraft"),
+          ets2: token("game-ets2"),
+          ls25: token("game-ls25"),
+        },
+
+        // shadcn/ui-Namen, auf die Tokens abgebildet
+        background: token("bg-base"),
+        foreground: token("ink"),
+        card: { DEFAULT: token("bg-raised"), foreground: token("ink") },
+        popover: { DEFAULT: token("bg-raised"), foreground: token("ink") },
+        primary: { DEFAULT: token("violet"), foreground: token("on-violet") },
+        secondary: { DEFAULT: token("bg-elevated"), foreground: token("ink") },
+        muted: { DEFAULT: token("bg-elevated"), foreground: token("ink-muted") },
+        accent: { DEFAULT: token("bg-hover"), foreground: token("ink") },
+        destructive: { DEFAULT: token("danger"), foreground: token("bg-base") },
+        border: token("line"),
+        input: token("line-control"),
+        ring: token("violet-bright"),
+
+        // Veraltet: alte Neon-Klassen, bis alle Komponenten umgestellt sind
+        neon: { purple: token("violet-bright"), blue: token("ink-muted"), cyan: token("ink-muted") },
       },
-      borderRadius: { lg: "var(--radius)", md: "calc(var(--radius) - 2px)", sm: "calc(var(--radius) - 4px)" },
-      backgroundImage: {
-        "hero-glow": "radial-gradient(ellipse 80% 50% at 50% -20%, rgba(168,85,247,0.35), transparent)",
-        glass: "linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%)",
+      fontFamily: {
+        sans: ["var(--font-sans)", ...fontFamily.sans],
+        mono: ["var(--font-mono)", ...fontFamily.mono],
       },
-      boxShadow: {
-        neon: "0 0 20px rgba(168, 85, 247, 0.35), 0 0 40px rgba(59, 130, 246, 0.15)",
-        glass: "0 8px 32px rgba(0, 0, 0, 0.37)",
+      borderRadius: {
+        sm: "var(--radius-badge)",
+        md: "var(--radius-control)",
+        lg: "var(--radius-card)",
+        xl: "var(--radius-dialog)",
       },
+      spacing: {
+        header: "var(--header-height)",
+        gutter: "var(--page-gutter)",
+        "acp-sidebar": "var(--acp-sidebar-width)",
+      },
+      transitionDuration: {
+        DEFAULT: "200ms",
+        fast: "var(--duration-fast)",
+        base: "var(--duration-base)",
+        slow: "var(--duration-slow)",
+      },
+      letterSpacing: { display: "-0.025em" },
+      // Veraltet: Verläufe und Glows sind im neuen Design verboten
+      backgroundImage: { "hero-glow": "none", glass: "none" },
+      boxShadow: { neon: "none", glass: "none" },
       keyframes: {
         shimmer: { "0%": { backgroundPosition: "-200% 0" }, "100%": { backgroundPosition: "200% 0" } },
       },

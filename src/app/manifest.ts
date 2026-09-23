@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { getCachedPublicBranding } from "@/lib/branding-data";
+import { SITE } from "@/lib/site";
 
 export default async function manifest(): Promise<MetadataRoute.Manifest> {
   const { branding } = await getCachedPublicBranding();
@@ -11,8 +12,8 @@ export default async function manifest(): Promise<MetadataRoute.Manifest> {
     description: branding.siteTagline,
     start_url: "/",
     display: "standalone",
-    background_color: "#0a0a0f",
-    theme_color: branding.primaryColor,
+    background_color: SITE.themeColor,
+    theme_color: SITE.themeColor,
     icons: [
       {
         src: icon,
@@ -41,7 +42,7 @@ export async function generateMetadata() {
       icon: [{ url: icon, type: icon.endsWith(".svg") ? "image/svg+xml" : "image/png" }],
       apple: [{ url: branding.appleTouchIconUrl ?? icon }],
     },
-    themeColor: branding.primaryColor,
+    themeColor: SITE.themeColor,
     applicationName: branding.siteShortName,
   };
 }

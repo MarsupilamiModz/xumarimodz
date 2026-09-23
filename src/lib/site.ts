@@ -9,5 +9,6 @@ export const SITE = {
   url: getAppUrl(),
   discord: "https://discord.gg/xumarimodz",
   twitter: "https://twitter.com/xumarimodz",
-  themeColor: "#a855f7",
+  // Muss bg-base aus src/styles/tokens.css entsprechen (Meta-Tag braucht einen festen Wert).
+  themeColor: "#121212",
 } as const;

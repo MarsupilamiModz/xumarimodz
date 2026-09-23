@@ -1,0 +1,61 @@
+/*
+ * Design-Tokens Xumari Modz (nur Dark Theme).
+ * Einzige Stelle im Projekt mit Farbwerten. Farben als RGB-Kanäle,
+ * damit Tailwind-Deckkraft-Modifier (z. B. bg-violet/15) funktionieren.
+ */
+:root {
+  color-scheme: dark;
+
+  /* Flächen */
+  --bg-base: 18 18 18; /* #121212 */
+  --bg-raised: 24 24 24; /* #181818 – Karten, Panels */
+  --bg-elevated: 30 30 30; /* #1e1e1e – Eingaben */
+  --bg-hover: 38 38 43; /* #26262b */
+  --bg-footer: 15 15 17; /* #0f0f11 */
+  --bg-sidebar: 21 21 23; /* #151517 – ACP-Sidebar */
+
+  /* Linien */
+  --line: 42 42 47; /* #2a2a2f – dekorativ */
+  --line-control: 107 105 117; /* #6b6975 – Rahmen von Eingaben und Toggles */
+
+  /* Text */
+  --ink: 242 241 245; /* #f2f1f5 */
+  --ink-muted: 163 161 171; /* #a3a1ab */
+  --ink-faint: 138 136 148; /* #8a8894 */
+
+  /* Akzent */
+  --violet: 124 77 255; /* #7c4dff – Primär-Button, Toggle an */
+  --violet-hover: 111 63 245; /* #6f3ff5 */
+  --violet-bright: 182 156 255; /* #b69cff – Links, aktive Zustände, Fokus */
+  --on-violet: 255 255 255; /* Text auf violet */
+  --violet-soft-alpha: 0.16;
+
+  /* Status (Hintergrund jeweils mit --status-bg-alpha) */
+  --success: 61 214 140; /* #3dd68c */
+  --warning: 255 181 71; /* #ffb547 */
+  --danger: 255 107 122; /* #ff6b7a */
+  --status-bg-alpha: 0.14;
+
+  /* Spielfarben (Platzhalter-Cover) */
+  --game-gta: 29 77 58; /* #1d4d3a */
+  --game-fivem: 107 52 19; /* #6b3413 */
+  --game-minecraft: 61 90 30; /* #3d5a1e */
+  --game-ets2: 30 58 95; /* #1e3a5f */
+  --game-ls25: 107 84 18; /* #6b5412 */
+
+  /* Form */
+  --radius-badge: 6px;
+  --radius-control: 8px;
+  --radius-card: 12px;
+  --radius-dialog: 14px;
+
+  /* Bewegung */
+  --duration-fast: 150ms;
+  --duration-base: 200ms;
+  --duration-slow: 250ms;
+
+  /* Layout */
+  --header-height: 68px;
+  --page-gutter: 48px;
+  --acp-sidebar-width: 232px;
+}
