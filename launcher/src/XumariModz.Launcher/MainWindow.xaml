@@ -1,0 +1,60 @@
+<Window
+    x:Class="XumariModz.Launcher.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:XumariModz.Launcher.Controls"
+    Title="XUMARI MODZ Launcher"
+    ExtendsContentIntoTitleBar="True">
+
+    <Grid>
+        <NavigationView
+            x:Name="NavView"
+            IsBackButtonVisible="Collapsed"
+            PaneDisplayMode="Left"
+            SelectionChanged="NavView_SelectionChanged"
+            IsSettingsVisible="False"
+            OpenPaneLength="260">
+
+            <NavigationView.PaneHeader>
+                <StackPanel Margin="20,28,20,12" Spacing="2">
+                    <TextBlock Text="XUMARI MODZ" FontSize="20" FontWeight="Bold"
+                               Foreground="{StaticResource XumariPrimaryBrush}" />
+                    <TextBlock Text="Launcher" FontSize="11" CharacterSpacing="80"
+                               Foreground="{StaticResource XumariTextSecondaryBrush}" />
+                </StackPanel>
+            </NavigationView.PaneHeader>
+
+            <NavigationView.MenuItems>
+                <NavigationViewItem Content="Dashboard" Tag="home">
+                    <NavigationViewItem.Icon><SymbolIcon Symbol="Home" /></NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="Bibliothek" Tag="library">
+                    <NavigationViewItem.Icon><SymbolIcon Symbol="Library" /></NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="Spiele" Tag="games">
+                    <NavigationViewItem.Icon><SymbolIcon Symbol="Play" /></NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="Downloads" Tag="downloads">
+                    <NavigationViewItem.Icon><SymbolIcon Symbol="Download" /></NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="Security" Tag="security">
+                    <NavigationViewItem.Icon><SymbolIcon Symbol="Shield" /></NavigationViewItem.Icon>
+                </NavigationViewItem>
+            </NavigationView.MenuItems>
+
+            <NavigationView.FooterMenuItems>
+                <NavigationViewItem Content="Profil" Tag="profile">
+                    <NavigationViewItem.Icon><SymbolIcon Symbol="Contact" /></NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="Einstellungen" Tag="settings">
+                    <NavigationViewItem.Icon><SymbolIcon Symbol="Setting" /></NavigationViewItem.Icon>
+                </NavigationViewItem>
+            </NavigationView.FooterMenuItems>
+
+            <Grid>
+                <Frame x:Name="ContentFrame" />
+                <controls:InstallOverlayControl x:Name="InstallOverlay" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+            </Grid>
+        </NavigationView>
+    </Grid>
+</Window>

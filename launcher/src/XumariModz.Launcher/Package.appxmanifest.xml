@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Package
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
+  IgnorableNamespaces="uap rescap desktop">
+
+  <Identity
+    Name="XumariModz.Launcher"
+    Publisher="CN=XUMARI MODZ"
+    Version="1.0.0.0" />
+
+  <Properties>
+    <DisplayName>XUMARI MODZ Launcher</DisplayName>
+    <PublisherDisplayName>XUMARI MODZ</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.png</Logo>
+    <Description>Professional mod platform for Windows — install mods with one click.</Description>
+  </Properties>
+
+  <Resources>
+    <Resource Language="de-de" />
+    <Resource Language="en-us" />
+  </Resources>
+
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.26100.0" />
+  </Dependencies>
+
+  <Applications>
+    <Application Id="App" Executable="XumariModz.Launcher.exe" EntryPoint="Windows.FullTrustApplication">
+      <uap:VisualElements
+        DisplayName="XUMARI MODZ Launcher"
+        Description="Premium mod launcher for Windows"
+        BackgroundColor="#0D0D12"
+        Square150x150Logo="Assets\Square150x150Logo.png"
+        Square44x44Logo="Assets\Square44x44Logo.png">
+        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" ShortName="XUMARI MODZ" />
+        <uap:SplashScreen Image="Assets\SplashScreen.png" />
+      </uap:VisualElements>
+
+      <Extensions>
+        <uap:Extension Category="windows.protocol">
+          <uap:Protocol Name="xumarimodz">
+            <uap:DisplayName>XUMARI MODZ OAuth</uap:DisplayName>
+          </uap:Protocol>
+        </uap:Extension>
+        <desktop:Extension Category="windows.fullTrustProcess" EntryPoint="XumariModz.Launcher.exe" />
+      </Extensions>
+    </Application>
+  </Applications>
+
+  <Capabilities>
+    <Capability Name="internetClient" />
+    <rescap:Capability Name="runFullTrust" />
+  </Capabilities>
+</Package>

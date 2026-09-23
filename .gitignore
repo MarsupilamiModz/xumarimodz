@@ -1,0 +1,24 @@
+# Abhängigkeiten und Build
+node_modules/
+.next/
+out/
+build/
+*.tsbuildinfo
+next-env.d.ts
+
+# Zugangsdaten
+env
+.env
+.env*.local
+!env.example
+
+# Launcher-Build
+launcher/**/bin/
+launcher/**/obj/
+launcher/**/publish/
+
+# Sonstiges
+.omc/
+*.log
+.DS_Store
+Thumbs.db
