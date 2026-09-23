@@ -59,16 +59,16 @@ export function SafeImage({
     return (
       <div
         className={cn(
-          "flex flex-col items-center justify-center gap-1 bg-muted/30 text-muted-foreground",
+          "flex flex-col items-center justify-center gap-1 bg-elevated text-ink-faint",
           fill && "absolute inset-0",
           className
         )}
         style={!fill && width && height ? { width, height } : undefined}
         aria-hidden={!alt}
       >
-        <ImageOff className="h-8 w-8 opacity-40" />
+        <ImageOff className="h-8 w-8" aria-hidden />
         {fallbackLabel && (
-          <span className="text-[10px] opacity-60 px-2 text-center">{fallbackLabel}</span>
+          <span className="px-2 text-center text-xs">{fallbackLabel}</span>
         )}
       </div>
     );

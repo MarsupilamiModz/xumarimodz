@@ -52,5 +52,25 @@
     "backHome": "Ana sayfaya dön",
     "retry": "Tekrar dene",
     "back": "Geri"
+  },
+  "ui": {
+    "close": "Kapat",
+    "dismiss": "Bildirimi kapat",
+    "notifications": "Bildirimler",
+    "status": {
+      "success": "Başarılı",
+      "warning": "Dikkat",
+      "error": "Hata",
+      "info": "Bilgi",
+      "pending": "Beklemede",
+      "active": "Aktif",
+      "inactive": "Pasif"
+    },
+    "empty": {
+      "title": "Henüz bir şey yok",
+      "retry": "Tekrar dene"
+    },
+    "imageMissing": "Görsel yok",
+    "placeholder": "Yer tutucu"
   }
 }

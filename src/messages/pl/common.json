@@ -52,5 +52,25 @@
     "backHome": "Strona główna",
     "retry": "Spróbuj ponownie",
     "back": "Wstecz"
+  },
+  "ui": {
+    "close": "Zamknij",
+    "dismiss": "Zamknij powiadomienie",
+    "notifications": "Powiadomienia",
+    "status": {
+      "success": "Sukces",
+      "warning": "Uwaga",
+      "error": "Błąd",
+      "info": "Informacja",
+      "pending": "Oczekuje",
+      "active": "Aktywny",
+      "inactive": "Nieaktywny"
+    },
+    "empty": {
+      "title": "Nic tu jeszcze nie ma",
+      "retry": "Spróbuj ponownie"
+    },
+    "imageMissing": "Brak obrazu",
+    "placeholder": "Symbol zastępczy"
   }
 }

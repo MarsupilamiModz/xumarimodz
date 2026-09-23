@@ -6,7 +6,11 @@ import { cn } from "@/lib/utils";
 const TabsContext = React.createContext<{
   value: string;
   onValueChange: (v: string) => void;
+  baseId: string;
 } | null>(null);
+
+const tabId = (baseId: string, value: string) => `${baseId}-tab-${value}`;
+const panelId = (baseId: string, value: string) => `${baseId}-panel-${value}`;
 
 export function Tabs({
   defaultValue,
@@ -24,17 +28,44 @@ export function Tabs({
   const [internal, setInternal] = React.useState(defaultValue ?? "");
   const value = controlledValue ?? internal;
   const setValue = onValueChange ?? setInternal;
+  const baseId = React.useId();
 
   return (
-    <TabsContext.Provider value={{ value, onValueChange: setValue }}>
+    <TabsContext.Provider value={{ value, onValueChange: setValue, baseId }}>
       <div className={className}>{children}</div>
     </TabsContext.Provider>
   );
 }
 
+/** Pfeiltasten, Pos1 und Ende wechseln zwischen den Tabs (WAI-ARIA Tabs-Muster). */
+function handleTabListKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
+  const keys = ["ArrowLeft", "ArrowRight", "Home", "End"];
+  if (!keys.includes(event.key)) return;
+  const tabs = Array.from(
+    event.currentTarget.querySelectorAll<HTMLButtonElement>('[role="tab"]:not([disabled])')
+  );
+  const current = tabs.indexOf(document.activeElement as HTMLButtonElement);
+  if (current === -1) return;
+  event.preventDefault();
+  let next = current;
+  if (event.key === "ArrowRight") next = (current + 1) % tabs.length;
+  if (event.key === "ArrowLeft") next = (current - 1 + tabs.length) % tabs.length;
+  if (event.key === "Home") next = 0;
+  if (event.key === "End") next = tabs.length - 1;
+  tabs[next]?.focus();
+  tabs[next]?.click();
+}
+
 export function TabsList({ className, children }: { className?: string; children: React.ReactNode }) {
   return (
-    <div className={cn("inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground", className)}>
+    <div
+      role="tablist"
+      onKeyDown={handleTabListKeyDown}
+      className={cn(
+        "flex items-center gap-6 overflow-x-auto border-b border-line text-ink-muted",
+        className
+      )}
+    >
       {children}
     </div>
   );
@@ -56,10 +87,13 @@ export function TabsTrigger({
     <button
       type="button"
       role="tab"
+      id={tabId(ctx.baseId, value)}
       aria-selected={active}
+      aria-controls={panelId(ctx.baseId, value)}
+      tabIndex={active ? 0 : -1}
       className={cn(
-        "inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-        active && "bg-background text-foreground shadow-sm",
+        "-mb-px inline-flex items-center gap-2 whitespace-nowrap border-b-2 border-transparent py-3 text-sm font-semibold transition-colors duration-fast hover:text-ink",
+        active && "border-violet-bright text-ink",
         className
       )}
       onClick={() => ctx.onValueChange(value)}
@@ -82,7 +116,13 @@ export function TabsContent({
   if (!ctx) throw new Error("TabsContent must be used within Tabs");
   if (ctx.value !== value) return null;
   return (
-    <div role="tabpanel" className={cn("mt-2 ring-offset-background focus-visible:outline-none", className)}>
+    <div
+      role="tabpanel"
+      id={panelId(ctx.baseId, value)}
+      aria-labelledby={tabId(ctx.baseId, value)}
+      tabIndex={0}
+      className={cn("mt-6", className)}
+    >
       {children}
     </div>
   );

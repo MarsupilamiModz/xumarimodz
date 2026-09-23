@@ -71,5 +71,25 @@
       "referenceLabel": "Reference",
       "categoryLabel": "Category"
     }
+  },
+  "ui": {
+    "close": "Close",
+    "dismiss": "Dismiss notification",
+    "notifications": "Notifications",
+    "status": {
+      "success": "Success",
+      "warning": "Warning",
+      "error": "Error",
+      "info": "Info",
+      "pending": "Pending",
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "empty": {
+      "title": "Nothing here yet",
+      "retry": "Try again"
+    },
+    "imageMissing": "No image available",
+    "placeholder": "Placeholder"
   }
 }

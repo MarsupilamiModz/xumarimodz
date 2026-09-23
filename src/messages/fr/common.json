@@ -52,5 +52,25 @@
     "backHome": "Retour à l'accueil",
     "retry": "Réessayer",
     "back": "Retour"
+  },
+  "ui": {
+    "close": "Fermer",
+    "dismiss": "Fermer la notification",
+    "notifications": "Notifications",
+    "status": {
+      "success": "Réussi",
+      "warning": "Attention",
+      "error": "Erreur",
+      "info": "Info",
+      "pending": "En attente",
+      "active": "Actif",
+      "inactive": "Inactif"
+    },
+    "empty": {
+      "title": "Rien pour l’instant",
+      "retry": "Réessayer"
+    },
+    "imageMissing": "Aucune image disponible",
+    "placeholder": "Espace réservé"
   }
 }

@@ -46,7 +46,7 @@ export function UserAvatar({ src, name, className, fallbackClassName }: UserAvat
       <AvatarFallback
         delayMs={hasImage ? 600 : 0}
         className={cn(
-          "bg-neon-purple/20 text-neon-purple text-xs font-semibold",
+          "bg-hover text-ink text-xs font-semibold",
           fallbackClassName
         )}
       >

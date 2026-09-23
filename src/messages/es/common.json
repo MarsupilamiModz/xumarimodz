@@ -52,5 +52,25 @@
     "backHome": "Volver al inicio",
     "retry": "Reintentar",
     "back": "Volver"
+  },
+  "ui": {
+    "close": "Cerrar",
+    "dismiss": "Cerrar aviso",
+    "notifications": "Notificaciones",
+    "status": {
+      "success": "Correcto",
+      "warning": "Atención",
+      "error": "Error",
+      "info": "Aviso",
+      "pending": "Pendiente",
+      "active": "Activo",
+      "inactive": "Inactivo"
+    },
+    "empty": {
+      "title": "Aún no hay nada",
+      "retry": "Reintentar"
+    },
+    "imageMissing": "No hay imagen",
+    "placeholder": "Marcador de posición"
   }
 }

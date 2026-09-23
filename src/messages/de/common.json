@@ -70,5 +70,25 @@
       "referenceLabel": "Referenz",
       "categoryLabel": "Kategorie"
     }
+  },
+  "ui": {
+    "close": "Schließen",
+    "dismiss": "Hinweis schließen",
+    "notifications": "Benachrichtigungen",
+    "status": {
+      "success": "Erfolgreich",
+      "warning": "Achtung",
+      "error": "Fehler",
+      "info": "Hinweis",
+      "pending": "Ausstehend",
+      "active": "Aktiv",
+      "inactive": "Inaktiv"
+    },
+    "empty": {
+      "title": "Noch nichts hier",
+      "retry": "Erneut versuchen"
+    },
+    "imageMissing": "Kein Bild vorhanden",
+    "placeholder": "Platzhalter"
   }
 }
