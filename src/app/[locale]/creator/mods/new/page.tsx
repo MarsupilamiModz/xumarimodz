@@ -7,7 +7,7 @@ export default async function NewModPage({ params: { locale } }: { params: { loc
   setRequestLocale(locale);
   const t = await getTranslations("creator");
   const catalog = await getGamesAndCategories().catch(() => []);
-  const games = catalog.map(({ id, name }) => ({ id, name }));
+  const games = catalog.map(({ id, name, modes }) => ({ id, name, modes }));
   const categories = catalog.flatMap((g) => g.categories);
 
   return (

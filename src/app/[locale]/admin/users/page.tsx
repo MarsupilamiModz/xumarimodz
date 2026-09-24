@@ -24,7 +24,7 @@ export default async function AdminUsersPage({
 
   const data = result.success
     ? result.data
-    : { users: [], total: 0, pages: 0, page: 1 };
+    : { users: [], total: 0, pages: 0, page: 1, limit: 25 };
 
   return (
     <div>
@@ -37,6 +37,7 @@ export default async function AdminUsersPage({
           initialTotal={data.total}
           initialPages={data.pages}
           initialPage={data.page}
+          initialLimit={data.limit}
         />
       </div>
     </div>

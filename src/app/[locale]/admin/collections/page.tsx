@@ -12,7 +12,7 @@ export default async function AdminCollectionsPage({
   params: { locale: Locale };
 }) {
   setRequestLocale(locale);
-  await requirePagePermission("settings.write");
+  const admin = await requirePagePermission("settings.write");
 
   const result = await listCollectionsAdmin();
   const collections = result.success ? result.data.items : [];
@@ -25,7 +25,7 @@ export default async function AdminCollectionsPage({
           Moderate, feature, and manage platform collections
         </p>
       </div>
-      <CollectionsAdminPanel collections={collections} locale={locale} />
+      <CollectionsAdminPanel collections={collections} locale={locale} adminUserId={admin.id} />
     </div>
   );
 }

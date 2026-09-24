@@ -10,7 +10,13 @@ export default async function AdminApiKeysPage({ params: { locale } }: { params:
   const t = await getTranslations("admin.apiKeys");
 
   const result = await listApiKeysAdmin();
-  const keys = result.success ? result.data : [];
+  const data = result.success
+    ? result.data
+    : {
+        keys: [],
+        totals: { _sum: { requestCount: null, errorCount: null, uploadCount: null, uploadBytes: null }, _count: 0 },
+        recentLogs: [],
+      };
 
   return (
     <div className="space-y-6">
@@ -18,7 +24,7 @@ export default async function AdminApiKeysPage({ params: { locale } }: { params:
         <h1 className="text-2xl font-bold">{t("title")}</h1>
         <p className="text-muted-foreground text-sm mt-1">{t("subtitle")}</p>
       </div>
-      <ApiKeysPanel keys={keys} />
+      <ApiKeysPanel keys={data.keys} totals={data.totals} recentLogs={data.recentLogs} />
     </div>
   );
 }

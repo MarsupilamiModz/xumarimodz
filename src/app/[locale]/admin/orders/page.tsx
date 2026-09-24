@@ -6,7 +6,7 @@ import type { Locale } from "@/i18n/config";
 
 export default async function AdminOrdersPage({ params: { locale } }: { params: { locale: Locale } }) {
   const result = await getAdminOrders();
-  const orders = result.success ? result.data : [];
+  const orders = result.success ? result.data.orders : [];
 
   return (
     <div>

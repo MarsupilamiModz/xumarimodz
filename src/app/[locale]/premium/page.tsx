@@ -19,7 +19,10 @@ export default async function PremiumPage({ params: { locale } }: { params: { lo
   return (
     <PremiumPlansClient
       locale={locale}
-      plans={plans.map((p) => localizedPlan(p, locale))}
+      plans={plans.map((p) => {
+        const plan = localizedPlan(p, locale);
+        return { ...plan, saleEndsAt: plan.saleEndsAt ? new Date(plan.saleEndsAt).toISOString() : null };
+      })}
       pageSettings={pageSettings}
       isLoggedIn={!!user}
       currentPlanSlug={currentPlanSlug}

@@ -3,8 +3,18 @@ import { requirePagePermission } from "@/lib/auth";
 import { getAdminEmailSettings, listAdminEmailLogs } from "@/actions/admin/email";
 import { EmailSettingsPanel } from "@/components/admin/email-settings-panel";
 import type { Locale } from "@/i18n/config";
+import type { EmailSettingsPublic } from "@/lib/email/settings";
 
-const EMPTY_SETTINGS = {
+const EMPTY_FALLBACK = {
+  enabled: false,
+  smtpHost: "",
+  smtpPort: 587,
+  smtpUser: "",
+  encryption: "STARTTLS" as const,
+  passwordSet: false,
+};
+
+const EMPTY_SETTINGS: EmailSettingsPublic = {
   enabled: false,
   authMode: "smtp" as const,
   smtpHost: "",
@@ -16,6 +26,7 @@ const EMPTY_SETTINGS = {
   microsoftSecretSet: false,
   senderEmail: "",
   senderName: "XumariModz",
+  replyToEmail: "",
   encryption: "STARTTLS" as const,
   supportEmail: "",
   ticketNotificationEmail: "",
@@ -24,6 +35,8 @@ const EMPTY_SETTINGS = {
   adminNotificationEmail: "",
   contactFormEmail: "",
   configured: false,
+  fallbackSes: EMPTY_FALLBACK,
+  fallbackBrevo: EMPTY_FALLBACK,
 };
 
 export default async function AdminEmailPage({ params: { locale } }: { params: { locale: Locale } }) {

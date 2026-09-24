@@ -4,6 +4,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { createMembershipCheckout } from "@/lib/stripe";
 import { rateLimit } from "@/lib/rate-limit";
 import { prisma } from "@/lib/db";
+import { mapPlan } from "@/lib/membership-pricing";
 
 export async function POST(req: Request) {
   const user = await getCurrentUser();
@@ -14,7 +15,11 @@ export async function POST(req: Request) {
   if (!limit.success) return NextResponse.json({ error: "Rate limited" }, { status: 429 });
 
   const body = await req.json();
-  const { planSlug, locale: bodyLocale } = body as { planSlug?: string; locale?: string };
+  const { planSlug, locale: bodyLocale, clientOrigin } = body as {
+    planSlug?: string;
+    locale?: string;
+    clientOrigin?: string;
+  };
   const locale = bodyLocale ?? user.locale ?? "en";
 
   if (!planSlug) {
@@ -34,15 +39,9 @@ export async function POST(req: Request) {
   const cookieStore = await cookies();
   const refCode = cookieStore.get("mm_ref")?.value;
 
-  const session = await createMembershipCheckout(
-    user.id,
-    user.email,
-    plan.stripePriceId,
-    plan.id,
-    plan.slug,
-    locale,
-    refCode
-  );
+  const session = await createMembershipCheckout(user.id, user.email, mapPlan(plan), locale, refCode, {
+    clientOrigin,
+  });
 
   if (refCode) {
     await prisma.affiliateEvent
