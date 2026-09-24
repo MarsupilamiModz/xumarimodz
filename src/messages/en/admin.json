@@ -255,6 +255,14 @@
       "system": "System status",
       "security": "Security",
       "apiKeys": "API keys"
-    }
+    },
+    "menuSearch": "Search menu",
+    "menuSearchHint": "Ctrl+K",
+    "menuNoResults": "No matching entry",
+    "backToSite": "Back to website",
+    "openTickets": "{count, plural, =0 {No open tickets} one {# open ticket} other {# open tickets}}",
+    "openMenu": "Open ACP menu",
+    "closeMenu": "Close ACP menu",
+    "sectionEntries": "{count, plural, one {# entry} other {# entries}}"
   }
 }

@@ -131,6 +131,10 @@
       "system": "Sistem durumu",
       "security": "Güvenlik",
       "apiKeys": "API anahtarları"
-    }
+    },
+    "menuSearch": "Menüde ara",
+    "menuSearchHint": "Ctrl+K",
+    "menuNoResults": "Eşleşme yok",
+    "backToSite": "Siteye dön"
   }
 }

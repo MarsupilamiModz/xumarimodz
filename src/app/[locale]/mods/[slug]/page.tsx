@@ -126,13 +126,13 @@ export default async function ModDetailPage({ params: { locale, slug } }: { para
           <li>
             <Link href={`/${locale}/mods`} className="hover:text-ink">{t("title")}</Link>
           </li>
-          <ChevronRight className="h-3.5 w-3.5" aria-hidden />
+          <li aria-hidden className="flex"><ChevronRight className="h-3.5 w-3.5" /></li>
           <li>
             <Link href={catalogGameHref} className="hover:text-ink">{mod.game.name}</Link>
           </li>
           {mod.category && (
             <>
-              <ChevronRight className="h-3.5 w-3.5" aria-hidden />
+              <li aria-hidden className="flex"><ChevronRight className="h-3.5 w-3.5" /></li>
               <li>
                 <Link href={`${catalogGameHref}&category=${mod.category.slug}`} className="hover:text-ink">
                   {mod.category.name}
@@ -140,7 +140,7 @@ export default async function ModDetailPage({ params: { locale, slug } }: { para
               </li>
             </>
           )}
-          <ChevronRight className="h-3.5 w-3.5" aria-hidden />
+          <li aria-hidden className="flex"><ChevronRight className="h-3.5 w-3.5" /></li>
           <li aria-current="page" className="max-w-[240px] truncate text-ink">{localized.title}</li>
         </ol>
       </nav>

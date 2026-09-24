@@ -134,6 +134,10 @@
       "system": "Stan systemu",
       "security": "Bezpieczeństwo",
       "apiKeys": "Klucze API"
-    }
+    },
+    "menuSearch": "Szukaj w menu",
+    "menuSearchHint": "Ctrl+K",
+    "menuNoResults": "Brak wyników",
+    "backToSite": "Wróć do strony"
   }
 }

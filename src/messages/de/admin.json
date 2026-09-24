@@ -244,6 +244,14 @@
     "reassignGame": "Spiel",
     "reassignMode": "Bereich",
     "reassignCategory": "Kategorie",
-    "reassignApplied": "Mods neu zugeordnet"
+    "reassignApplied": "Mods neu zugeordnet",
+    "menuSearch": "Menü durchsuchen",
+    "menuSearchHint": "Strg+K",
+    "menuNoResults": "Kein Eintrag gefunden",
+    "backToSite": "Zur Webseite",
+    "openTickets": "{count, plural, =0 {Keine offenen Tickets} one {# offenes Ticket} other {# offene Tickets}}",
+    "openMenu": "ACP-Menü öffnen",
+    "closeMenu": "ACP-Menü schließen",
+    "sectionEntries": "{count, plural, one {# Eintrag} other {# Einträge}}"
   }
 }

@@ -3,7 +3,9 @@ import { requireStaff } from "@/lib/auth";
 import { userHasPermission } from "@/lib/permission-store";
 import { formatDisplayName } from "@/lib/display-name";
 import type { PermissionKey } from "@/lib/permissions";
-import { AcpNav, type AcpNavGroup } from "@/components/admin/acp-nav";
+import { AcpNav, type AcpNavGroup, type AcpNavLink } from "@/components/admin/acp-nav";
+import { getAdminNavCounts, type AdminNavCounts } from "@/lib/admin-nav-counts";
+import { formatRoleLabel } from "@/lib/role-display";
 
 type LinkDef = { href: string; key: string; permission: PermissionKey };
 
@@ -82,13 +84,38 @@ export default async function AdminLayout({
       userHasPermission(user, l.permission).catch(() => false)
     )
   );
+  const counts: AdminNavCounts = await getAdminNavCounts().catch(() => ({
+    mods: 0,
+    users: 0,
+    openApplications: 0,
+    openTickets: 0,
+    openReports: 0,
+  }));
+  // Zähler rechts im Menü; offene Vorgänge gelb.
+  const countFor = (href: string): Pick<AcpNavLink, "count" | "countTone"> => {
+    switch (href) {
+      case "/mods":
+        return { count: counts.mods };
+      case "/users":
+        return { count: counts.users };
+      case "/applications":
+        return { count: counts.openApplications, countTone: "warning" };
+      case "/tickets":
+        return { count: counts.openTickets, countTone: "warning" };
+      case "/reports":
+        return { count: counts.openReports, countTone: "warning" };
+      default:
+        return {};
+    }
+  };
+
   let i = 0;
   const groups: AcpNavGroup[] = NAV.map((g) => ({
     id: g.id,
     title: t(`navGroup.${g.id}`),
     links: g.links
       .filter(() => allowed[i++])
-      .map((l) => ({ href: l.href, label: t(`nav.${l.key}`) })),
+      .map((l) => ({ href: l.href, label: t(`nav.${l.key}`), ...countFor(l.href) })),
   })).filter((g) => g.links.length > 0);
 
   return (
@@ -96,10 +123,11 @@ export default async function AdminLayout({
       <AcpNav
         groups={groups}
         base={`/${locale}/admin`}
-        title={t("acpTitle")}
-        subtitle={t("acpSubtitle")}
+        locale={locale}
         userName={formatDisplayName(user)}
-        menuLabel={t("acpMenu")}
+        userRole={formatRoleLabel(user.role)}
+        // Ticketzahl nur für Rollen mit Zugriff auf Tickets anzeigen.
+        openTickets={groups.some((g) => g.links.some((l) => l.href === "/tickets")) ? counts.openTickets : 0}
       />
       <div className="min-w-0 flex-1 px-4 py-8 md:px-8 xl:px-10">{children}</div>
     </div>
