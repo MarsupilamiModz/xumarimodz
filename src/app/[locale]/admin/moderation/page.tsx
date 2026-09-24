@@ -1,0 +1,45 @@
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import { AdminPageHeader, AdminLoadError } from "@/components/admin/admin-page-header";
+import type { Locale } from "@/i18n/config";
+import { requirePagePermission } from "@/lib/auth";
+import { getModerationOverview } from "@/actions/admin/moderation";
+import { UserModerationPanel } from "@/components/admin/user-moderation-panel";
+import { Pagination } from "@/components/ui/pagination";
+
+export default async function AdminModerationPage({
+  params: { locale },
+  searchParams,
+}: {
+  params: { locale: Locale };
+  searchParams: { q?: string; page?: string };
+}) {
+  setRequestLocale(locale);
+  await requirePagePermission("users.read");
+  const t = await getTranslations("admin");
+  const page = Math.max(1, Number(searchParams.page) || 1);
+  const result = await getModerationOverview({ search: searchParams.q, page });
+  return (
+    <div>
+      <AdminPageHeader title={t("nav.users")} />
+      {result.success ? (
+        <>
+          <UserModerationPanel locale={locale} users={result.data.users} recentLogs={result.data.recentLogs} flagged={result.data.flagged} />
+          <Pagination
+            className="mt-8"
+            page={result.data.page}
+            pages={result.data.pages}
+            hrefFor={(p) => {
+              const params = new URLSearchParams();
+              if (searchParams.q) params.set("q", searchParams.q);
+              if (p > 1) params.set("page", String(p));
+              const qs = params.toString();
+              return `/${locale}/admin/moderation${qs ? `?${qs}` : ""}`;
+            }}
+          />
+        </>
+      ) : (
+        <AdminLoadError message={result.error} />
+      )}
+    </div>
+  );
+}
