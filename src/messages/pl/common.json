@@ -105,7 +105,10 @@
     "nextPage": "Następna strona",
     "pageN": "Strona {page}",
     "previous": "Wstecz",
-    "next": "Dalej"
+    "next": "Dalej",
+    "syncErrorTitle": "Nie udało się dokończyć logowania",
+    "syncErrorText": "Zalogowano, ale nie udało się zsynchronizować konta. Spróbuj ponownie.",
+    "signInAgain": "Zaloguj się ponownie"
   },
   "ui": {
     "close": "Zamknij",

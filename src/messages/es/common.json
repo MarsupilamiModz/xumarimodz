@@ -105,7 +105,10 @@
     "nextPage": "Página siguiente",
     "pageN": "Página {page}",
     "previous": "Anterior",
-    "next": "Siguiente"
+    "next": "Siguiente",
+    "syncErrorTitle": "No se pudo completar el inicio de sesión",
+    "syncErrorText": "Iniciaste sesión, pero tu cuenta no se pudo sincronizar. Inténtalo de nuevo.",
+    "signInAgain": "Iniciar sesión de nuevo"
   },
   "ui": {
     "close": "Cerrar",

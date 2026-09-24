@@ -23,7 +23,11 @@
     "statCreators": "Creadores",
     "modsCountShort": "{count} mods",
     "downloadsCount": "{count} descargas",
-    "creatorsCountShort": "{count} creadores"
+    "creatorsCountShort": "{count} creadores",
+    "modeBack": "Todas las áreas de {game}",
+    "modeSubtitle": "Mods para {mode} en {game}",
+    "modeEmpty": "Aún no hay mods para esta área.",
+    "allModsOfGame": "Todos los mods de {game}"
   },
   "mods": {
     "title": "Catálogo de mods",

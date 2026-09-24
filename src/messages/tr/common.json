@@ -105,7 +105,10 @@
     "nextPage": "Sonraki sayfa",
     "pageN": "Sayfa {page}",
     "previous": "Önceki",
-    "next": "Sonraki"
+    "next": "Sonraki",
+    "syncErrorTitle": "Giriş tamamlanamadı",
+    "syncErrorText": "Giriş yapıldı ancak hesabın platformla eşitlenemedi. Tekrar dene.",
+    "signInAgain": "Tekrar giriş yap"
   },
   "ui": {
     "close": "Kapat",

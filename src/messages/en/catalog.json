@@ -35,7 +35,11 @@
     "modesAvailable": "{count, plural, one {# area available} other {# areas available}}",
     "statMods": "Mods",
     "statDownloads": "Downloads",
-    "statCreators": "Creators"
+    "statCreators": "Creators",
+    "modeBack": "All areas of {game}",
+    "modeSubtitle": "Mods for {mode} in {game}",
+    "modeEmpty": "There are no mods for this area yet.",
+    "allModsOfGame": "All mods for {game}"
   },
   "mods": {
     "title": "Mod catalog",

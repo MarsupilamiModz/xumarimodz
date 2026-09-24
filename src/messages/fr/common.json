@@ -105,7 +105,10 @@
     "nextPage": "Page suivante",
     "pageN": "Page {page}",
     "previous": "Précédent",
-    "next": "Suivant"
+    "next": "Suivant",
+    "syncErrorTitle": "La connexion n’a pas pu aboutir",
+    "syncErrorText": "Tu es connecté, mais ton compte n’a pas pu être synchronisé. Réessaie.",
+    "signInAgain": "Se reconnecter"
   },
   "ui": {
     "close": "Fermer",

@@ -23,7 +23,11 @@
     "statCreators": "Üretici",
     "modsCountShort": "{count} mod",
     "downloadsCount": "{count} indirme",
-    "creatorsCountShort": "{count} üretici"
+    "creatorsCountShort": "{count} üretici",
+    "modeBack": "{game} tüm alanları",
+    "modeSubtitle": "{game} içinde {mode} modları",
+    "modeEmpty": "Bu alan için henüz mod yok.",
+    "allModsOfGame": "{game} için tüm modlar"
   },
   "mods": {
     "title": "Mod kataloğu",
