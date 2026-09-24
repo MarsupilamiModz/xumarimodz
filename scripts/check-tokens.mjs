@@ -23,7 +23,7 @@ const checks = [
   // Stil-Regeln: keine Verläufe, Glows, Glas-Effekte, alten Neon-Klassen
   { name: "Verlauf", re: /\bbg-gradient-to-[a-z]+\b|linear-gradient\(|radial-gradient\(/g },
   { name: "Alte Klasse", re: /(?<![\w-])(?:neon-(?:purple|blue|cyan)|glass|text-gradient|bg-hero-glow|shadow-neon)(?![\w-])/g },
-  { name: "Blur/Glow", re: /(?<![\w-])backdrop-blur(?:-[a-z0-9]+)?(?![\w-])/g },
+  { name: "Blur/Glow", re: /(?<![\w-])backdrop-blur(?:-(?:[a-z0-9]+|\[[^\]]+\]))?(?![\w-])/g },
 ];
 
 // Emojis nur in der Zuordnungstabelle für Daten-Symbole erlaubt

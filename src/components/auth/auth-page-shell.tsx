@@ -24,7 +24,7 @@ export function AuthPageShell({
       }
     >
       {branding.backgroundUrl && (
-        <div className="absolute inset-0 bg-background/85 backdrop-blur-[2px]" aria-hidden />
+        <div className="absolute inset-0 bg-canvas/90" aria-hidden />
       )}
       <div className="relative">{children}</div>
     </div>

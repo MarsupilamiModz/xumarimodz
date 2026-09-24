@@ -3,7 +3,7 @@ import { LoginForm } from "./login-form";
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="mx-auto max-w-md px-4 py-16 h-96 animate-pulse rounded-xl bg-muted/20" />}>
+    <Suspense fallback={<div className="page-container flex justify-center py-20"><div className="h-[420px] w-full max-w-[420px] animate-pulse rounded-xl bg-raised" /></div>}>
       <LoginForm />
     </Suspense>
   );

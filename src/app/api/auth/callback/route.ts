@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { safeRedirectPath } from "@/lib/safe-redirect";
 import { createClient } from "@/lib/supabase/server";
 import { ensurePrismaUser } from "@/lib/user-sync";
 import { logPlatformError } from "@/lib/platform-log";
@@ -13,9 +14,7 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 function safeNextPath(next: string | null, locale: string): string {
-  const fallback = `/${locale}/dashboard`;
-  if (!next || !next.startsWith("/") || next.startsWith("//")) return fallback;
-  return next;
+  return safeRedirectPath(next, `/${locale}/dashboard`);
 }
 
 export async function GET(req: Request) {

@@ -1,14 +1,15 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
-import { Logo } from "@/components/brand/logo";
-import { useState } from "react";
+import { AuthCard, AuthError, authLabelClass, useAuthErrorMessage } from "@/components/auth/auth-card";
+import { safeRedirectPath } from "@/lib/safe-redirect";
 
 export function LoginForm() {
   const t = useTranslations("auth");
@@ -16,19 +17,23 @@ export function LoginForm() {
   const locale = params.locale as string;
   const router = useRouter();
   const searchParams = useSearchParams();
+  const toMessage = useAuthErrorMessage();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // Nur interne Ziele (Schutz vor Open Redirect).
+  const target = safeRedirectPath(searchParams.get("redirect"), `/${locale}/dashboard`);
+
   const authError = searchParams.get("error");
   const authErrorMessage =
     authError === "db_sync"
-      ? "Account sync failed. Please try again or contact support."
+      ? t("errors.dbSync")
       : authError === "auth_exchange"
-        ? "Discord sign-in failed. Please try again."
+        ? t("errors.authExchange")
         : authError
-          ? "Sign-in failed. Please try again."
+          ? t("errors.generic")
           : "";
 
   async function handleLogin(e: React.FormEvent) {
@@ -37,12 +42,12 @@ export function LoginForm() {
     setError("");
     const supabase = createClient();
     const { error: err } = await supabase.auth.signInWithPassword({ email, password });
-    setLoading(false);
     if (err) {
-      setError(err.message);
+      setLoading(false);
+      setError(toMessage(err.message));
       return;
     }
-    router.push(searchParams.get("redirect") ?? `/${locale}/dashboard`);
+    router.push(target);
     router.refresh();
   }
 
@@ -51,53 +56,65 @@ export function LoginForm() {
     setError("");
     const supabase = createClient();
     const callbackUrl = new URL("/api/auth/callback", window.location.origin);
-    callbackUrl.searchParams.set("next", searchParams.get("redirect") ?? `/${locale}/dashboard`);
+    callbackUrl.searchParams.set("next", target);
     callbackUrl.searchParams.set("locale", locale);
 
     const { error: err } = await supabase.auth.signInWithOAuth({
       provider: "discord",
-      options: {
-        redirectTo: callbackUrl.toString(),
-      },
+      options: { redirectTo: callbackUrl.toString() },
     });
     if (err) {
-      setError(err.message);
+      setError(toMessage(err.message));
       setLoading(false);
     }
   }
 
   return (
-    <div className="mx-auto max-w-md px-4 py-16">
-      <div className="mb-8 flex justify-center"><Logo /></div>
-      <Card className="p-8">
-        <h1 className="h1-display">{t("login")}</h1>
-        <form onSubmit={handleLogin} className="mt-6 space-y-4">
-          <div>
-            <label className="text-sm">{t("email")}</label>
-            <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="mt-1" />
+    <AuthCard locale={locale} mode="login" title={t("login")} subtitle={t("loginSubtitle")}>
+      <form onSubmit={handleLogin} className="space-y-4">
+        <div>
+          <label htmlFor="login-email" className={authLabelClass}>{t("email")}</label>
+          <Input
+            id="login-email"
+            type="email"
+            autoComplete="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <div className="mb-1.5 flex items-baseline justify-between gap-3">
+            <label htmlFor="login-password" className="text-sm font-semibold text-ink">{t("password")}</label>
+            <Link href={`/${locale}/forgot-password`} className="link text-[13px]">
+              {t("forgot")}
+            </Link>
           </div>
-          <div>
-            <div className="flex justify-between">
-              <label className="text-sm">{t("password")}</label>
-              <Link href={`/${locale}/forgot-password`} className="text-xs text-violet-bright hover:underline">
-                {t("forgot")}
-              </Link>
-            </div>
-            <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="mt-1" />
-          </div>
-          {error && <p className="text-sm text-destructive">{error}</p>}
-          {!error && authErrorMessage && <p className="text-sm text-destructive">{authErrorMessage}</p>}
-          <Button className="w-full" type="submit" disabled={loading}>
-            {t("login")}
-          </Button>
-        </form>
-        <Button variant="outline" className="w-full mt-4" onClick={loginWithDiscord} disabled={loading}>
-          {t("discord")}
+          <Input
+            id="login-password"
+            type="password"
+            autoComplete="current-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+        <AuthError message={error || authErrorMessage} />
+        <Button className="w-full" size="lg" type="submit" disabled={loading} aria-busy={loading}>
+          {loading && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}
+          {loading ? t("loggingIn") : t("login")}
         </Button>
-        <p className="mt-4 text-center text-sm text-muted-foreground">
-          <Link href={`/${locale}/register`} className="text-violet-bright hover:underline">Create account</Link>
-        </p>
-      </Card>
-    </div>
+      </form>
+
+      <div className="my-5 flex items-center gap-3 text-xs text-ink-faint" aria-hidden>
+        <span className="h-px flex-1 bg-line" />
+        {t("or")}
+        <span className="h-px flex-1 bg-line" />
+      </div>
+
+      <Button variant="outline" className="w-full" onClick={loginWithDiscord} disabled={loading}>
+        {t("discord")}
+      </Button>
+    </AuthCard>
   );
 }

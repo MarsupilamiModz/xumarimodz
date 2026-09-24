@@ -45,7 +45,7 @@ export const GameModeSelectionCard = memo(function GameModeSelectionCard({
       <Card
         className={cn(
           "relative overflow-hidden rounded-lg border-line bg-raised",
-          "transition-[transform,box-shadow,border-color] duration-150",
+          "transition-colors duration-fast",
           "hover:border-line-control"
         )}
         style={

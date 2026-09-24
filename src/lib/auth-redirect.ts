@@ -1,6 +1,7 @@
 import { UserRole } from "@prisma/client";
 import { defaultLocale } from "@/i18n/config";
 import { isStaff } from "@/lib/permissions";
+import { isSafeInternalPath } from "@/lib/safe-redirect";
 
 type RoleHomeUser = {
   role: UserRole;
@@ -64,7 +65,8 @@ export function sanitizeAuthReturnPath(
     return fallback;
   }
 
-  return normalized.startsWith("/") ? normalized : fallback;
+  // Nur interne Pfade: "//host" und "/\host" wären fremde Domains (Open Redirect).
+  return isSafeInternalPath(normalized) ? normalized : fallback;
 }
 
 export function resolveLoginRedirect(
