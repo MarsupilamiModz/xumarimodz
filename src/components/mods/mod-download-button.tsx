@@ -7,7 +7,15 @@ import { toast } from "@/hooks/use-toast";
 
 type MissingDep = { id: string; slug: string; title: string };
 
-export function ModDownloadButton({ modId, label }: { modId: string; label: string }) {
+export function ModDownloadButton({
+  modId,
+  label,
+  variant = "default",
+}: {
+  modId: string;
+  label: string;
+  variant?: "default" | "outline";
+}) {
   const [pending, startTransition] = useTransition();
   const [missing, setMissing] = useState<MissingDep[] | null>(null);
 
@@ -38,8 +46,8 @@ export function ModDownloadButton({ modId, label }: { modId: string; label: stri
 
   return (
     <div className="flex-1 space-y-2">
-      <Button className="w-full" disabled={pending} onClick={() => download()}>
-        <Download className="h-4 w-4 mr-2" />
+      <Button className="w-full" variant={variant} disabled={pending} onClick={() => download()}>
+        <Download className="h-4 w-4" aria-hidden />
         {label}
       </Button>
       {missing && missing.length > 0 && (
