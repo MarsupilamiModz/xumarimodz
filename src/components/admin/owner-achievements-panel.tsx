@@ -13,7 +13,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useAppToast } from "@/hooks/use-app-toast";
-import { UserRole } from "@prisma/client";
+import type { UserRole } from "@prisma/client";
 import type { getOwnerSoundAnalytics } from "@/actions/sounds";
 
 type Analytics = Extract<

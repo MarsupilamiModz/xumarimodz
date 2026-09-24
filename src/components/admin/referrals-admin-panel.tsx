@@ -16,7 +16,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useAppToast } from "@/hooks/use-app-toast";
 import { formatDateTime } from "@/lib/format-locale";
-import { MembershipTier } from "@prisma/client";
+import type { MembershipTier } from "@prisma/client";
 
 type ReferralData = Extract<
   Awaited<ReturnType<typeof getAdminReferrals>>,

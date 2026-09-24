@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { safeToLocaleDateString } from "@/lib/i18n/safe-locale";
-import { UserRole } from "@prisma/client";
+import type { UserRole } from "@prisma/client";
 import {
   banUser,
   restoreUser,

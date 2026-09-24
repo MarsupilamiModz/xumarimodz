@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { UserRole, type MembershipTier } from "@prisma/client";
+import type { UserRole, MembershipTier } from "@prisma/client";
 import {
   ownerAssignMembership,
   ownerEnterpriseBan,

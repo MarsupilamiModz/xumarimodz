@@ -6,10 +6,10 @@
     "partners": "Partner",
     "shop": "Shop",
     "leaderboards": "Bestenliste",
-    "designers": "Design Studio",
+    "designers": "Design-Studio",
     "premium": "Premium",
     "customOrders": "Aufträge",
-    "blog": "News",
+    "blog": "Neuigkeiten",
     "login": "Anmelden",
     "getStarted": "Konto erstellen",
     "dashboard": "Dashboard",
@@ -32,7 +32,8 @@
     "designStudio": "Design-Studio",
     "adminPanel": "Admin Control Panel",
     "logout": "Abmelden",
-    "userMenu": "Konto-Menü"
+    "userMenu": "Konto-Menü",
+    "allGames": "Alle Spiele"
   },
   "footer": {
     "tagline": "Kostenlose, 100 % legale Mods für Rage MP, Tutorials und Fixes für GTA. Ab sofort täglich neue Mods.",
@@ -59,7 +60,7 @@
     "becomeCreator": "Creator werden",
     "partners": "Partner",
     "tutorials": "Tutorials",
-    "news": "News",
+    "news": "Neuigkeiten",
     "team": "Team",
     "developers": "Entwickler",
     "dmca": "DMCA",
@@ -206,5 +207,40 @@
     "changelogEmpty": "Noch keine Einträge.",
     "unavailableTitle": "Download bald verfügbar",
     "unavailableText": "Der Installer wird gerade vorbereitet. Bis dahin kannst du Mods direkt auf der Webseite herunterladen."
+  },
+  "report": {
+    "title": "Inhalt melden",
+    "category": "Grund",
+    "description": "Beschreibung",
+    "descriptionPlaceholder": "Beschreib das Problem möglichst genau (mindestens 10 Zeichen).",
+    "submit": "Meldung senden",
+    "sent": "Meldung gesendet",
+    "sentText": "Unser Team sieht sie sich bald an.",
+    "error": "Die Meldung konnte nicht gesendet werden.",
+    "cat": {
+      "MALWARE": "Schadsoftware",
+      "BROKEN_FILE": "Defekte Datei",
+      "BROKEN_DOWNLOAD": "Download funktioniert nicht",
+      "COPYRIGHT": "Urheberrecht",
+      "SPAM": "Spam",
+      "SCAM": "Betrug",
+      "OFFENSIVE_CONTENT": "Anstößiger Inhalt",
+      "ABUSIVE": "Beleidigend",
+      "DUPLICATE_CONTENT": "Doppelter Inhalt",
+      "STOLEN": "Gestohlener Inhalt",
+      "FAKE_CREATOR": "Falscher Creator",
+      "TOS": "Verstoß gegen die AGB",
+      "OTHER": "Sonstiges"
+    }
+  },
+  "review": {
+    "title": "Bewertung schreiben",
+    "ratingLabel": "Deine Bewertung",
+    "star": "{count, plural, one {# Stern} other {# Sterne}}",
+    "headline": "Überschrift (optional)",
+    "text": "Deine Meinung",
+    "submit": "Bewertung senden",
+    "sent": "Danke für deine Bewertung",
+    "error": "Die Bewertung konnte nicht gespeichert werden."
   }
 }

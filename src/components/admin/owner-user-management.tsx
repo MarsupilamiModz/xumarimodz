@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useState, useTransition } from "react";
 import Link from "next/link";
 import { Search } from "lucide-react";
-import { UserRole } from "@prisma/client";
+import type { UserRole } from "@prisma/client";
 import { getOwnerUserManagementOverview, ownerCreateUser } from "@/actions/admin/owner-users";
 import { UserAvatar } from "@/components/ui/user-avatar";
 import { Badge } from "@/components/ui/badge";

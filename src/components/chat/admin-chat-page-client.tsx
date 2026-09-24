@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
-import { ChatChannelType } from "@prisma/client";
+import type { ChatChannelType } from "@prisma/client";
 import {
   getChatMessages,
   getOrCreateDmChannel,

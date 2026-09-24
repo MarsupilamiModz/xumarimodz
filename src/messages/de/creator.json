@@ -10,6 +10,10 @@
     "uploadVideo": "Video hinzufügen",
     "createMod": "Mod veröffentlichen",
     "pendingReview": "In Prüfung",
-    "published": "Live"
+    "published": "Veröffentlicht",
+    "newProduct": "Neues Produkt",
+    "category": "Kategorie",
+    "subcategory": "Unterkategorie",
+    "gameMode": "Bereich"
   }
 }

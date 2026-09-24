@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { TicketCategory } from "@prisma/client";
+import type { TicketCategory } from "@prisma/client";
 import { createTicket } from "@/actions/tickets";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

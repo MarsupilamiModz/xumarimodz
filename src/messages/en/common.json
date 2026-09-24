@@ -207,5 +207,40 @@
     "changelogEmpty": "No entries yet.",
     "unavailableTitle": "Download coming soon",
     "unavailableText": "The installer is being prepared. Until then you can download mods directly on the website."
+  },
+  "report": {
+    "title": "Report content",
+    "category": "Reason",
+    "description": "Description",
+    "descriptionPlaceholder": "Describe the problem in detail (at least 10 characters).",
+    "submit": "Send report",
+    "sent": "Report sent",
+    "sentText": "Our team will review it shortly.",
+    "error": "The report could not be sent.",
+    "cat": {
+      "MALWARE": "Malware",
+      "BROKEN_FILE": "Broken file",
+      "BROKEN_DOWNLOAD": "Broken download",
+      "COPYRIGHT": "Copyright",
+      "SPAM": "Spam",
+      "SCAM": "Scam",
+      "OFFENSIVE_CONTENT": "Offensive content",
+      "ABUSIVE": "Abusive content",
+      "DUPLICATE_CONTENT": "Duplicate content",
+      "STOLEN": "Stolen content",
+      "FAKE_CREATOR": "Fake creator",
+      "TOS": "Terms of service",
+      "OTHER": "Other"
+    }
+  },
+  "review": {
+    "title": "Write a review",
+    "ratingLabel": "Your rating",
+    "star": "{count, plural, one {# star} other {# stars}}",
+    "headline": "Title (optional)",
+    "text": "Your review",
+    "submit": "Submit review",
+    "sent": "Thanks for your review",
+    "error": "The review could not be saved."
   }
 }

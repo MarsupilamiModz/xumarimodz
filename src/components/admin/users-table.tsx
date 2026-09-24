@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { safeToLocaleDateString } from "@/lib/i18n/safe-locale";
 import { useCallback, useState, useTransition } from "react";
 import Link from "next/link";
-import { UserRole } from "@prisma/client";
+import type { UserRole } from "@prisma/client";
 import { MoreHorizontal, Search } from "lucide-react";
 import {
   banUser,

@@ -2,7 +2,7 @@
 
 import { memo, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { UserRole } from "@prisma/client";
+import type { UserRole } from "@prisma/client";
 import { updateAdminRolePermissions } from "@/actions/admin/permissions";
 import { PERMISSIONS, ROLE_HIERARCHY, type PermissionKey } from "@/lib/permissions";
 import { ASSIGNABLE_ROLES } from "@/lib/permission-types";

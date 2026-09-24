@@ -14,7 +14,7 @@
       "subtitle": "Custom Services, Produkttypen, Kategorien, Formulare und Preise verwalten."
     },
     "orders": {
-      "adminTitle": "Order Center",
+      "adminTitle": "Auftragszentrale",
       "adminSubtitle": "Custom Orders, Zuweisungen, Lieferungen und Team-Workflow verwalten.",
       "status": {
         "PENDING": "Ausstehend",
@@ -24,7 +24,13 @@
         "IN_PROGRESS": "In Bearbeitung",
         "COMPLETED": "Abgeschlossen",
         "DELIVERED": "Geliefert",
-        "CANCELED": "Storniert"
+        "CANCELED": "Storniert",
+        "QUOTED": "Angebot erstellt",
+        "ACCEPTED": "Angenommen",
+        "WAITING_FOR_CUSTOMER": "Wartet auf dich",
+        "REVISION_REQUESTED": "Änderung gewünscht",
+        "REVIEW": "In Prüfung",
+        "REFUNDED": "Erstattet"
       }
     },
     "categoriesLabel": "Kategorien",

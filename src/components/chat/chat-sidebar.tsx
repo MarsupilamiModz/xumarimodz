@@ -1,6 +1,6 @@
 "use client";
 
-import { ChatChannelType } from "@prisma/client";
+import type { ChatChannelType } from "@prisma/client";
 import { Hash, MessageCircle, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Badge } from "@/components/ui/badge";

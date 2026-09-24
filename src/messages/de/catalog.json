@@ -6,7 +6,7 @@
     "modsCount": "{count} Mods",
     "creatorsCount": "{count} Creators",
     "featured": "Empfohlen",
-    "trending": "Trending",
+    "trending": "Im Trend",
     "premiumSection": "Premium-Auswahl",
     "allCategories": "Alle",
     "allTypes": "Alle Typen",
@@ -30,7 +30,16 @@
     "modeBack": "Alle Bereiche von {game}",
     "modeSubtitle": "Mods für {mode} in {game}",
     "modeEmpty": "Für diesen Bereich gibt es noch keine Mods.",
-    "allModsOfGame": "Alle Mods für {game}"
+    "allModsOfGame": "Alle Mods für {game}",
+    "lastUpdated": "Aktualisiert {date}",
+    "categories": "Kategorien",
+    "noFilterResults": "Keine Mods passen zu deinen Filtern.",
+    "verifiedOnly": "Nur verifiziert",
+    "sortDownloads": "Meiste Downloads",
+    "sortLikes": "Meiste Favoriten",
+    "sortDate": "Zuletzt aktualisiert",
+    "loadMore": "Weitere Mods laden",
+    "choosePlatform": "Wähl deine Plattform"
   },
   "mods": {
     "title": "Mod-Katalog",

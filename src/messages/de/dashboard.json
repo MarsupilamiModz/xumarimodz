@@ -1,6 +1,6 @@
 {
   "dashboard": {
-    "title": "Dashboard",
+    "title": "Mein Konto",
     "overview": "Übersicht",
     "achievements": "Erfolge",
     "support": "Hilfe-Center",
@@ -19,7 +19,7 @@
     "orders": "Aufträge",
     "welcome": "Willkommen zurück, {name}",
     "premium": "Premium",
-    "credits": "Credits",
+    "credits": "Guthaben",
     "level": "Level",
     "active": "Aktiv",
     "free": "Kostenlos",
