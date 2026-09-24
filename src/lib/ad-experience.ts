@@ -1,9 +1,14 @@
+import { cache } from "react";
 import { getAdSettings } from "@/lib/ads";
 import { getUserMembershipTier } from "@/lib/membership";
 
 export type AdExperienceLevel = "full" | "reduced" | "none";
 
-export async function getUserAdExperience(
+/**
+ * Pro Anfrage nur einmal berechnen (React cache) – vorher lief die Mitgliedschaftsabfrage
+ * für jede Werbefläche auf der Seite erneut.
+ */
+export const getUserAdExperience = cache(async function getUserAdExperience(
   userId: string | null,
   role: string | null
 ): Promise<AdExperienceLevel> {
@@ -26,7 +31,7 @@ export async function getUserAdExperience(
   }
 
   return "full";
-}
+});
 
 export function shouldRenderAds(level: AdExperienceLevel): boolean {
   return level !== "none";

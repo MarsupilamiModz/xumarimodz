@@ -1,6 +1,7 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
+import { SITE_BANNERS_CACHE_TAG } from "@/lib/site-banners";
 import { z } from "zod";
 import { SiteBannerFrequency, SiteBannerType } from "@prisma/client";
 import { prisma } from "@/lib/db";
@@ -57,6 +58,7 @@ export async function createSiteBanner(input: z.infer<typeof bannerSchema>) {
       },
     });
     revalidatePath("/admin/banners");
+    revalidateTag(SITE_BANNERS_CACHE_TAG);
   }, "banners:create");
 }
 
@@ -75,6 +77,7 @@ export async function updateSiteBanner(id: string, input: Partial<z.infer<typeof
     }
     await prisma.siteBanner.update({ where: { id }, data });
     revalidatePath("/admin/banners");
+    revalidateTag(SITE_BANNERS_CACHE_TAG);
   }, "banners:update");
 }
 
@@ -85,6 +88,7 @@ export async function deleteSiteBanner(id: string) {
   return actionTry(async () => {
     await prisma.siteBanner.delete({ where: { id } });
     revalidatePath("/admin/banners");
+    revalidateTag(SITE_BANNERS_CACHE_TAG);
   }, "banners:delete");
 }
 
@@ -95,5 +99,6 @@ export async function toggleSiteBanner(id: string, isActive: boolean) {
   return actionTry(async () => {
     await prisma.siteBanner.update({ where: { id }, data: { isActive } });
     revalidatePath("/admin/banners");
+    revalidateTag(SITE_BANNERS_CACHE_TAG);
   }, "banners:toggle");
 }

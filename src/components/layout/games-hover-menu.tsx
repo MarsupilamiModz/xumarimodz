@@ -70,7 +70,6 @@ export const GamesHoverMenu = memo(function GamesHoverMenu({
     >
       <Link
         href={`/${locale}/games`}
-        prefetch
         className="flex h-full items-center text-sm font-medium text-ink-muted transition-colors duration-fast hover:text-ink"
         aria-haspopup="true"
         aria-expanded={open}
@@ -91,7 +90,6 @@ export const GamesHoverMenu = memo(function GamesHoverMenu({
             <p className="text-sm font-semibold">{label}</p>
             <Link
               href={`/${locale}/games`}
-              prefetch
               className="text-xs font-medium text-violet-bright hover:underline"
               onClick={() => setOpen(false)}
             >
@@ -103,7 +101,6 @@ export const GamesHoverMenu = memo(function GamesHoverMenu({
               <Link
                 key={game.id}
                 href={resolveHref(game)}
-                prefetch
                 className="games-hover-item group flex flex-col overflow-hidden rounded-lg border border-line bg-elevated transition-colors duration-fast hover:bg-hover"
                 onClick={() => setOpen(false)}
               >

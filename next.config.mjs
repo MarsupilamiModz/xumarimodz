@@ -4,6 +4,7 @@ const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  poweredByHeader: false,
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "**.supabase.co" },
@@ -36,6 +37,8 @@ const nextConfig = {
       "@radix-ui/react-dropdown-menu",
       "@radix-ui/react-select",
       "@radix-ui/react-tabs",
+      "@radix-ui/react-switch",
+      "@radix-ui/react-avatar",
     ],
   },
   async headers() {
@@ -49,6 +52,11 @@ const nextConfig = {
       {
         source: "/favicon.ico",
         headers: [{ key: "Cache-Control", value: "public, max-age=86400" }],
+      },
+      {
+        // Schriften, Icons und Bilder aus /public lange cachen.
+        source: "/:all*(svg|png|jpg|jpeg|webp|avif|woff2|ico)",
+        headers: [{ key: "Cache-Control", value: "public, max-age=604800, stale-while-revalidate=86400" }],
       },
     ];
   },

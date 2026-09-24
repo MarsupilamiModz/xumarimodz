@@ -1,4 +1,4 @@
-import { UserRole } from "@prisma/client";
+import type { UserRole } from "@prisma/client";
 import type { PermissionKey } from "@/lib/permissions";
 import { PERMISSIONS, DEFAULT_ROLE_PERMISSIONS, ROLE_HIERARCHY } from "@/lib/permissions";
 export { DEFAULT_ROLE_PERMISSIONS, ROLE_HIERARCHY };

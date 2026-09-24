@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { DMCAStatus, ReportAssignmentRole, ReportPriority, ReportStatus } from "@prisma/client";
+import type { DMCAStatus, ReportAssignmentRole, ReportPriority, ReportStatus } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { createAuditLog } from "@/lib/audit";
 import { fail, ok, requireActionPermission } from "@/lib/action-utils";

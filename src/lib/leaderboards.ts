@@ -3,6 +3,9 @@ import { prisma } from "@/lib/db";
 import { getSiteSetting, setSiteSetting } from "@/lib/site-settings";
 import type { CreatorRankTier, LeaderboardMetric, LeaderboardPeriod, PublisherLevel } from "@prisma/client";
 import { computeCreatorRankScore, scoreToRankTier } from "@/lib/creator-ranking";
+import { METRIC_LABELS, PERIOD_LABELS, PUBLIC_LEADERBOARD_METRICS, type LeaderboardEntry } from "@/lib/leaderboard-labels";
+
+export { METRIC_LABELS, PERIOD_LABELS, PUBLIC_LEADERBOARD_METRICS, type LeaderboardEntry };
 
 export type LeaderboardWeights = {
   downloads: number;
@@ -33,23 +36,6 @@ export type LeaderboardFilters = {
   limit?: number;
 };
 
-export type LeaderboardEntry = {
-  rank: number;
-  creatorId: string;
-  slug: string;
-  name: string;
-  avatarUrl: string | null;
-  rankTier: CreatorRankTier;
-  level: PublisherLevel;
-  score: number;
-  totalDownloads: number;
-  totalRevenueCents: number;
-  followerCount: number;
-  isPinned: boolean;
-  isFeatured: boolean;
-  tagline: string | null;
-  change?: number;
-};
 
 function periodStart(period: LeaderboardPeriod): Date | null {
   const now = Date.now();
@@ -264,30 +250,5 @@ export async function syncCreatorRanks() {
   }
 }
 
-export const PUBLIC_LEADERBOARD_METRICS: LeaderboardMetric[] = [
-  "DOWNLOADS",
-  "LIKES",
-  "GROWTH",
-  "ACTIVE",
-  "REVIEWED",
-  "TRENDING",
-  "RATED",
-];
 
-export const METRIC_LABELS: Record<LeaderboardMetric, string> = {
-  DOWNLOADS: "Top Downloads",
-  REVENUE: "Highest Revenue",
-  LIKES: "Most Likes",
-  GROWTH: "Fastest Growth",
-  ACTIVE: "Most Active",
-  REVIEWED: "Most Reviewed",
-  TRENDING: "Trending Creators",
-  RATED: "Highest Rated",
-};
 
-export const PERIOD_LABELS: Record<LeaderboardPeriod, string> = {
-  DAILY: "Daily",
-  WEEKLY: "Weekly",
-  MONTHLY: "Monthly",
-  ALL_TIME: "All Time",
-};

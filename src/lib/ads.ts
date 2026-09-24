@@ -115,40 +115,56 @@ export async function getAdProviders() {
   return prisma.adProviderConfig.findMany({ orderBy: { type: "asc" } });
 }
 
-export async function getAdsForLocation(location: AdLocation) {
+export const ADS_CACHE_TAG = "ad-placements";
+
+/**
+ * Alle aktiven Werbeplätze – 60 s gecacht statt einer Datenbankabfrage pro Werbefläche und Aufruf.
+ * Admin-Änderungen invalidieren den Tag sofort (siehe actions/admin/ads.ts).
+ */
+const getCachedEnabledPlacements = unstable_cache(
+  async () =>
+    prisma.adPlacement.findMany({
+      where: { isEnabled: true },
+      orderBy: { sortOrder: "asc" },
+    }),
+  ["enabled-ad-placements"],
+  { revalidate: 60, tags: [ADS_CACHE_TAG] }
+);
+
+type Placement = Awaited<ReturnType<typeof getCachedEnabledPlacements>>[number];
+
+/** unstable_cache liefert Datumswerte als Text – zurück in Date wandeln. */
+function revivePlacement(p: Placement): Placement {
+  const toDate = (v: Date | string | null) => (v == null ? null : new Date(v));
+  return {
+    ...p,
+    scheduleStart: toDate(p.scheduleStart),
+    scheduleEnd: toDate(p.scheduleEnd),
+    createdAt: new Date(p.createdAt),
+    updatedAt: new Date(p.updatedAt),
+  };
+}
+
+function isScheduledNow(p: Placement, now: Date) {
+  if (p.scheduleStart && p.scheduleStart > now) return false;
+  if (p.scheduleEnd && p.scheduleEnd < now) return false;
+  return true;
+}
+
+async function getActivePlacements() {
   const now = new Date();
-  return prisma.adPlacement.findMany({
-    where: {
-      location,
-      isEnabled: true,
-      format: { not: "POPUP" },
-      OR: [
-        { scheduleStart: null, scheduleEnd: null },
-        { scheduleStart: { lte: now }, scheduleEnd: null },
-        { scheduleStart: null, scheduleEnd: { gte: now } },
-        { scheduleStart: { lte: now }, scheduleEnd: { gte: now } },
-      ],
-    },
-    orderBy: { sortOrder: "asc" },
-  });
+  const rows = await getCachedEnabledPlacements();
+  return rows.map(revivePlacement).filter((p) => isScheduledNow(p, now));
+}
+
+export async function getAdsForLocation(location: AdLocation) {
+  const rows = await getActivePlacements();
+  return rows.filter((p) => p.location === location && p.format !== "POPUP");
 }
 
 export async function getPopupAds() {
-  const now = new Date();
-  return prisma.adPlacement.findMany({
-    where: {
-      format: "POPUP",
-      isEnabled: true,
-      OR: [
-        { scheduleStart: null, scheduleEnd: null },
-        { scheduleStart: { lte: now }, scheduleEnd: null },
-        { scheduleStart: null, scheduleEnd: { gte: now } },
-        { scheduleStart: { lte: now }, scheduleEnd: { gte: now } },
-      ],
-    },
-    orderBy: { sortOrder: "asc" },
-    take: 1,
-  });
+  const rows = await getActivePlacements();
+  return rows.filter((p) => p.format === "POPUP").slice(0, 1);
 }
 
 export async function trackAdImpression(adId: string) {

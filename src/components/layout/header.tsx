@@ -118,7 +118,6 @@ export function Header({
               <Link
                 key={l.href}
                 href={l.href}
-                prefetch
                 aria-current={l.active ? "page" : undefined}
                 className={cn(
                   "relative flex items-center text-sm font-medium transition-colors duration-fast",

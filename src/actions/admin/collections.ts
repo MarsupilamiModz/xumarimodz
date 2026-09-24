@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath, revalidateTag } from "next/cache";
-import { CollectionModerationStatus, CollectionVisibility } from "@prisma/client";
+import type { CollectionModerationStatus, CollectionVisibility } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { fail, ok, requireActionPermission } from "@/lib/action-utils";
 import { CACHE_TAGS } from "@/lib/cache";

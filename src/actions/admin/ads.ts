@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { prisma } from "@/lib/db";
 import { fail, ok, requireActionPermission } from "@/lib/action-utils";
 import {
@@ -11,7 +11,7 @@ import {
   type AdProviderSettings,
 } from "@/lib/ads";
 import type { AdFormat, AdProviderType, Prisma } from "@prisma/client";
-import { getAdSettings } from "@/lib/ads";
+import { ADS_CACHE_TAG, getAdSettings } from "@/lib/ads";
 import { getAdSenseReadinessReport } from "@/lib/ads-readiness";
 import {
   getSiteVerificationSettings,
@@ -180,10 +180,12 @@ export async function saveAdPlacement(input: {
 
   if (input.id) {
     await prisma.adPlacement.update({ where: { id: input.id }, data });
+  revalidateTag(ADS_CACHE_TAG);
   } else {
     const exists = await prisma.adPlacement.findUnique({ where: { slug: input.slug } });
     if (exists) return fail("Slug already exists");
     await prisma.adPlacement.create({ data });
+  revalidateTag(ADS_CACHE_TAG);
   }
 
   revalidatePath("/admin/ads");
@@ -194,6 +196,7 @@ export async function deleteAdPlacement(id: string) {
   const { error } = await requireActionPermission("settings.write");
   if (error) return error;
   await prisma.adPlacement.delete({ where: { id } });
+  revalidateTag(ADS_CACHE_TAG);
   revalidatePath("/admin/ads");
   return ok(undefined);
 }
@@ -202,6 +205,7 @@ export async function toggleAdPlacement(id: string, isEnabled: boolean) {
   const { error } = await requireActionPermission("settings.write");
   if (error) return error;
   await prisma.adPlacement.update({ where: { id }, data: { isEnabled } });
+  revalidateTag(ADS_CACHE_TAG);
   revalidatePath("/admin/ads");
   return ok(undefined);
 }

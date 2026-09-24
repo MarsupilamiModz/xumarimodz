@@ -3,7 +3,7 @@ import {
   extractStoragePathFromUrl,
   isLikelyStorageKey,
   normalizeStoragePath,
-} from "@/lib/media-files";
+} from "@/lib/storage-path";
 
 function encodeAssetPath(key: string): string {
   return key

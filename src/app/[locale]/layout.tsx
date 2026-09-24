@@ -8,7 +8,7 @@ import { IntlProvider } from "@/components/i18n/intl-provider";
 import { AsyncHeader } from "@/components/layout/async-header";
 import { AsyncFooter } from "@/components/layout/async-footer";
 import { Toaster } from "@/components/ui/toaster";
-import { AuthSync } from "@/components/auth/auth-sync";
+import { AuthSyncLazy } from "@/components/auth/auth-sync-lazy";
 import { LocaleHtmlLang } from "@/components/layout/locale-html-lang";
 import { ScrollRestoration } from "@/components/layout/scroll-restoration";
 import { AdProviderScripts } from "@/components/ads/ad-provider-scripts";
@@ -86,7 +86,7 @@ export default async function LocaleLayout({
       <PlatformVisitTracker />
       <AdProviderScripts />
       <AdPopupSlot />
-      <AuthSync />
+      <AuthSyncLazy />
       <GlobalSearchShell locale={locale}>
         <div className="flex min-h-screen flex-col">
           <AsyncHeader locale={locale} />

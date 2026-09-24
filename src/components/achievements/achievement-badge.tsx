@@ -3,7 +3,7 @@
 import { EntityIcon } from "@/components/ui/entity-icon";
 import { cn } from "@/lib/utils";
 import { safeToLocaleDateString } from "@/lib/i18n/safe-locale";
-import { RARITY_STYLES } from "@/lib/achievements";
+import { RARITY_STYLES } from "@/lib/achievement-constants";
 import type { AchievementRarity } from "@prisma/client";
 
 type AchievementBadgeProps = {

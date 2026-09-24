@@ -1,6 +1,7 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag, unstable_cache } from "next/cache";
+import { CACHE_TAGS } from "@/lib/cache";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { fail, ok, requireActionPermission } from "@/lib/action-utils";
@@ -50,19 +51,33 @@ async function buildViewerContext() {
   };
 }
 
+/** Aktive Ankündigungen – 60 s gecacht; Zeitraum und Zielgruppe werden pro Anfrage geprüft. */
+const getCachedActiveAnnouncements = unstable_cache(
+  async () =>
+    prisma.announcement.findMany({
+      where: { isActive: true },
+      orderBy: { createdAt: "desc" },
+      take: 25,
+    }),
+  ["active-announcements"],
+  { revalidate: 60, tags: [CACHE_TAGS.announcements] }
+);
+
 export async function getActiveAnnouncements() {
   const now = new Date();
   const viewer = await buildViewerContext();
 
-  const items = await prisma.announcement.findMany({
-    where: {
-      isActive: true,
-      startsAt: { lte: now },
-      OR: [{ endsAt: null }, { endsAt: { gt: now } }],
-    },
-    orderBy: { createdAt: "desc" },
-    take: 10,
-  });
+  // Datumswerte kommen aus dem Cache als Text zurück.
+  const items = (await getCachedActiveAnnouncements())
+    .map((item) => ({
+      ...item,
+      startsAt: new Date(item.startsAt),
+      endsAt: item.endsAt ? new Date(item.endsAt) : null,
+      createdAt: new Date(item.createdAt),
+      updatedAt: new Date(item.updatedAt),
+    }))
+    .filter((item) => item.startsAt <= now && (!item.endsAt || item.endsAt > now))
+    .slice(0, 10);
 
   return items.filter((item) =>
     announcementVisibleTo(item.visibilityTargets, viewer)
@@ -96,6 +111,7 @@ export async function createAnnouncement(input: z.infer<typeof schema>) {
       visibilityTargets: targets,
     },
   });
+  revalidateTag(CACHE_TAGS.announcements);
   revalidatePath("/");
 
   void import("@/lib/translation-worker").then(({ scheduleEntityTranslation }) =>
@@ -129,6 +145,7 @@ export async function updateAnnouncement(
       ...(input.visibilityTargets && { visibilityTargets: input.visibilityTargets }),
     },
   });
+  revalidateTag(CACHE_TAGS.announcements);
   revalidatePath("/");
   return ok(undefined);
 }
@@ -137,6 +154,7 @@ export async function toggleAnnouncement(id: string, isActive: boolean) {
   const { error } = await requireActionPermission("settings.write");
   if (error) return error;
   await prisma.announcement.update({ where: { id }, data: { isActive } });
+  revalidateTag(CACHE_TAGS.announcements);
   revalidatePath("/");
   return ok(undefined);
 }
@@ -145,6 +163,7 @@ export async function deleteAnnouncement(id: string) {
   const { error } = await requireActionPermission("settings.write");
   if (error) return error;
   await prisma.announcement.delete({ where: { id } });
+  revalidateTag(CACHE_TAGS.announcements);
   revalidatePath("/");
   return ok(undefined);
 }

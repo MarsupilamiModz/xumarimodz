@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatCreditsFromCents } from "@/lib/credits";
-import { formatPaymentReference } from "@/lib/invoices";
+import { formatPaymentReference } from "@/lib/invoice-format";
 import { startOrderStripePayment, payOrderWithCredits } from "@/actions/orders";
 import { useAppToast } from "@/hooks/use-app-toast";
 

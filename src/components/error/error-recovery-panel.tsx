@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { buildErrorReport, type ErrorDiagnostics, type RecoveryAction } from "@/lib/error-diagnostics";
 import { cn } from "@/lib/utils";
-import { redirectToLogin } from "@/lib/session-recovery";
 
 export type ErrorRecoveryLabels = {
   titleNetwork: string;
@@ -119,7 +118,8 @@ export function ErrorRecoveryPanelContent({
             key="signIn"
             variant="outline"
             size={compact ? "sm" : "default"}
-            onClick={() => redirectToLogin()}
+            // Supabase erst beim Klick laden (nicht in jedes Fehler-Bundle).
+            onClick={() => void import("@/lib/session-recovery").then((m) => m.redirectToLogin())}
           >
             <LogIn className="h-4 w-4" aria-hidden />
             {labels.signIn}

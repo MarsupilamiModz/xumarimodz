@@ -1,5 +1,5 @@
 import { createHmac, timingSafeEqual } from "crypto";
-import { ModPricing, UserRole } from "@prisma/client";
+import type { ModPricing, UserRole } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { getSignedDownloadUrl } from "@/lib/r2";
 import { userHasModLicense } from "@/lib/secure-download";

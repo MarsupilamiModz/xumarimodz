@@ -5,9 +5,23 @@ const globalForPrisma = globalThis as unknown as {
   prismaConnecting: Promise<void> | undefined;
 };
 
+/**
+ * Beim `next build` rendert jeder Worker parallel vor und bekäme sonst einen eigenen Pool
+ * (Standard: CPU-Kerne × 2 + 1). Das sprengt das Verbindungslimit der Datenbank (EMAXCONN).
+ * Während des Builds deshalb höchstens 2 Verbindungen pro Worker.
+ */
+function buildTimeDatasourceUrl(): string | undefined {
+  const url = process.env.DATABASE_URL;
+  if (!url || process.env.NEXT_PHASE !== "phase-production-build") return undefined;
+  if (/[?&]connection_limit=/.test(url)) return undefined;
+  return `${url}${url.includes("?") ? "&" : "?"}connection_limit=2`;
+}
+
 function createPrismaClient() {
+  const datasourceUrl = buildTimeDatasourceUrl();
   return new PrismaClient({
     log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
+    ...(datasourceUrl ? { datasourceUrl } : {}),
   });
 }
 

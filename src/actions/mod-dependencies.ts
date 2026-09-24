@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { ModDependencyRelation } from "@prisma/client";
+import type { ModDependencyRelation } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { UserRole } from "@prisma/client";
 import { fail, ok, requireActionUser } from "@/lib/action-utils";

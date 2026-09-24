@@ -1,19 +1,8 @@
 import { z } from "zod";
-import { safeTrim } from "@/lib/safe-string";
+import { safeTrim } from "@/lib/text";
 
-/** Normalize text into a URL-safe slug. Never throws. */
-export function slugify(text: string | null | undefined): string {
-  const value = safeTrim(text);
-  if (!value) return "";
-  return value
-    .toLowerCase()
-    .normalize("NFKD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9\s-]/g, "")
-    .replace(/[\s_]+/g, "-")
-    .replace(/-+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
+export { slugify } from "@/lib/text";
+import { slugify } from "@/lib/text";
 
 export type SlugResolveResult = {
   slug: string;

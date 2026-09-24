@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { UserRole, type MembershipTier } from "@prisma/client";
+import type { UserRole, MembershipTier } from "@prisma/client";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { createAuditLog } from "@/lib/audit";

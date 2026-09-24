@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { CollectionVisibility } from "@prisma/client";
+import type { CollectionVisibility } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { fail, ok, requireActionUser, requireActionPermission } from "@/lib/action-utils";
 import { isAdmin } from "@/lib/permissions";

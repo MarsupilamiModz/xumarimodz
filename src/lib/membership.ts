@@ -1,3 +1,4 @@
+import { revalidateTag, unstable_cache } from "next/cache";
 import { prisma, withDbRetry } from "@/lib/db";
 import { getSiteSetting } from "@/lib/site-settings";
 import {
@@ -38,16 +39,32 @@ export {
   localizedPlan,
 } from "@/lib/membership-pricing";
 
-export async function getActiveMembershipPlans() {
-  try {
-    const plans = await withDbRetry(
+export const MEMBERSHIP_PLANS_CACHE_TAG = "membership-plans";
+
+/** Aktive Pläne – 60 s gecacht (Premium-Seite ist wegen der Anmeldung dynamisch). */
+const getCachedActivePlans = unstable_cache(
+  async () =>
+    withDbRetry(
       () =>
         prisma.membershipPlan.findMany({
           where: { isActive: true },
           orderBy: { sortOrder: "asc" },
         }),
       { label: "membership:plans" }
-    );
+    ),
+  ["active-membership-plans"],
+  { revalidate: 60, tags: [MEMBERSHIP_PLANS_CACHE_TAG] }
+);
+
+export async function getActiveMembershipPlans() {
+  try {
+    // Datumswerte kommen aus dem Cache als Text zurück.
+    const plans = (await getCachedActivePlans()).map((p) => ({
+      ...p,
+      saleEndsAt: p.saleEndsAt ? new Date(p.saleEndsAt) : null,
+      createdAt: new Date(p.createdAt),
+      updatedAt: new Date(p.updatedAt),
+    }));
     // Preise kommen nur aus der Datenbank: kein automatisches Anlegen von Plänen
     // beim Seitenaufruf und keine fest eingetragenen Ersatzpreise.
     return plans.map(mapPlan);
@@ -169,6 +186,15 @@ export async function grantMembershipPurchase(params: {
 
     return { purchase: created, plan };
   });
+
+  // Restmenge auf der Premium-Seite sofort aktualisieren.
+  if (purchase.plan.stockLimit != null) {
+    try {
+      revalidateTag(MEMBERSHIP_PLANS_CACHE_TAG);
+    } catch {
+      /* außerhalb eines Request-Kontexts (z. B. Skript) ohne Wirkung */
+    }
+  }
 
   const isLifetime =
     purchase.plan.billingType === "ONE_TIME" || purchase.plan.planKind === "LIFETIME";

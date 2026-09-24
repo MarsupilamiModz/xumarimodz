@@ -114,7 +114,6 @@ export const ModCard = memo(function ModCard({ locale, mod, pricingLabel, isFavo
         <h3 className="text-[15px] font-semibold leading-snug text-ink">
           <Link
             href={`/${locale}/mods/${mod.slug}`}
-            prefetch
             className="line-clamp-1 outline-none after:absolute after:inset-0 after:content-[''] focus-visible:after:rounded-lg focus-visible:after:outline focus-visible:after:outline-2 focus-visible:after:outline-offset-2 focus-visible:after:outline-violet-bright"
           >
             {mod.title}

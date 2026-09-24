@@ -5,7 +5,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-import { slugify as slugifyText } from "@/lib/slug";
+import { slugify as slugifyText } from "@/lib/text";
 import { safeIntlNumberFormat } from "@/lib/i18n/safe-locale";
 
 export function slugify(text: string | null | undefined) {

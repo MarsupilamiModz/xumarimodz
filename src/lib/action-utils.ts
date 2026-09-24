@@ -1,5 +1,5 @@
 import type { ZodError } from "zod";
-import { UserRole } from "@prisma/client";
+import type { UserRole } from "@prisma/client";
 import { getCurrentUser } from "@/lib/auth";
 import { isAdmin, isStaff, type PermissionKey } from "@/lib/permissions";
 import { userHasPermission } from "@/lib/permission-store";

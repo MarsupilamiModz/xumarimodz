@@ -1,17 +1,6 @@
-import { createHash, randomBytes } from "crypto";
+// Browser-tauglich: nur Konstanten und Formatierer. Serverfunktionen mit crypto
+// liegen in lib/affiliate-server.ts (sonst landet crypto-browserify, ~100 KB, im Client).
 import type { SocialPlatform } from "@prisma/client";
-
-export function generateAffiliateCode(prefix = "MM") {
-  const suffix = randomBytes(3).toString("hex").toUpperCase();
-  return `${prefix}${suffix}`;
-}
-
-export function visitorHash(ip: string, userAgent?: string) {
-  return createHash("sha256")
-    .update(`${ip}:${userAgent ?? "unknown"}`)
-    .digest("hex")
-    .slice(0, 24);
-}
 
 export const SOCIAL_PLATFORMS: SocialPlatform[] = [
   "YOUTUBE",

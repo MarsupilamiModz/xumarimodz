@@ -4,7 +4,7 @@ import { prisma, runCachedQuery } from "@/lib/db";
 import { CACHE_TAGS, REVALIDATE } from "@/lib/cache";
 import { collectDescendantIds, type FlatCategory } from "@/lib/categories";
 
-import { ensureModMediaSynced } from "@/lib/mod-media";
+import { ensureModMediaSynced } from "@/lib/mod-media-sync";
 import { serializeModDetailForClient } from "@/lib/media-serialize";
 
 const modListSelect = {
@@ -554,10 +554,11 @@ export async function getGamePageData(slug: string, modeId?: string) {
     getFeaturedMods(8, game.id, modeId),
     getTrendingMods(12, game.id, modeId),
     getPremiumMods(8, game.id, modeId),
-    prisma.mod.groupBy({
-      by: ["authorId"],
-      where: modFilter,
-    }).then((rows) => rows.length),
+    unstable_cache(
+      async () => prisma.mod.groupBy({ by: ["authorId"], where: modFilter }).then((rows) => rows.length),
+      ["game-creator-count", game.id, modeId ?? "all"],
+      { revalidate: REVALIDATE.catalog, tags: [CACHE_TAGS.mods] }
+    )(),
   ]);
 
   return { game, featured, trending, premium, creatorCount };

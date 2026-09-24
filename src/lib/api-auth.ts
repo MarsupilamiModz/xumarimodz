@@ -4,38 +4,9 @@ import { rateLimit } from "@/lib/rate-limit";
 import { isAdmin, type PermissionKey } from "@/lib/permissions";
 import { userHasPermission } from "@/lib/permission-store";
 
-export type ApiScope =
-  | "mods:read"
-  | "games:read"
-  | "creators:read"
-  | "collections:read"
-  | "downloads:meta"
-  | "upload:write"
-  | "files:read";
+import { API_KEY_PRESETS, API_SCOPES, type ApiScope } from "@/lib/api-scopes";
 
-export const API_SCOPES: ApiScope[] = [
-  "mods:read",
-  "games:read",
-  "creators:read",
-  "collections:read",
-  "downloads:meta",
-  "upload:write",
-  "files:read",
-];
-
-export const API_KEY_PRESETS: Record<
-  string,
-  { label: string; scopes: ApiScope[]; rateLimit: number }
-> = {
-  upload: { label: "Upload API", scopes: ["upload:write"], rateLimit: 1000 },
-  download: { label: "Download API", scopes: ["downloads:meta", "mods:read", "files:read"], rateLimit: 5000 },
-  readonly: {
-    label: "Read only",
-    scopes: ["mods:read", "games:read", "creators:read", "collections:read", "downloads:meta"],
-    rateLimit: 10000,
-  },
-  full: { label: "Full access", scopes: [], rateLimit: 10000 },
-};
+export { API_KEY_PRESETS, API_SCOPES, type ApiScope };
 
 export function resolvePresetScopes(preset: keyof typeof API_KEY_PRESETS): string[] {
   if (preset === "full") return ["*"];

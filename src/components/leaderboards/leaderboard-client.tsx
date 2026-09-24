@@ -10,7 +10,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CreatorRankBadge } from "@/components/leaderboards/creator-rank-badge";
 import { CreatorLevelBadge } from "@/components/creator/creator-level-badge";
-import { METRIC_LABELS, PERIOD_LABELS, PUBLIC_LEADERBOARD_METRICS, type LeaderboardEntry } from "@/lib/leaderboards";
+import { METRIC_LABELS, PERIOD_LABELS, PUBLIC_LEADERBOARD_METRICS, type LeaderboardEntry } from "@/lib/leaderboard-labels";
 import { formatNumber } from "@/lib/format-locale";
 import type { LeaderboardMetric, LeaderboardPeriod } from "@prisma/client";
 

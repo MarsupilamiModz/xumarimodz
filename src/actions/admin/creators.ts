@@ -5,7 +5,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { createAuditLog } from "@/lib/audit";
 import { fail, ok, requireActionPermission } from "@/lib/action-utils";
-import { generateAffiliateCode } from "@/lib/affiliate";
+import { generateAffiliateCode } from "@/lib/affiliate-server";
 import { resolveSlug, ensureUniqueSlug, zSlugInput } from "@/lib/slug";
 import { CREATOR_LEVELS } from "@/lib/creator-levels";
 import { applyLevelRevenueShare, syncCreatorStats } from "@/lib/creators";

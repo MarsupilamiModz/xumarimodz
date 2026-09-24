@@ -1,4 +1,4 @@
-import { UserRole } from "@prisma/client";
+import type { UserRole } from "@prisma/client";
 import { defaultLocale } from "@/i18n/config";
 import { isStaff } from "@/lib/permissions";
 import { isSafeInternalPath } from "@/lib/safe-redirect";

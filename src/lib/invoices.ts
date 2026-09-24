@@ -16,6 +16,4 @@ export async function generateInvoiceNumber(): Promise<string> {
   return fallback;
 }
 
-export function formatPaymentReference(invoiceNumber: string): string {
-  return `Invoice ${invoiceNumber}`;
-}
+export { formatPaymentReference } from "@/lib/invoice-format";

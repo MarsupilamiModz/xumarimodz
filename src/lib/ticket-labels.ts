@@ -1,4 +1,4 @@
-import { TicketCategory, TicketDepartment, TicketPriority, TicketStatus } from "@prisma/client";
+import type { TicketCategory, TicketDepartment, TicketPriority, TicketStatus } from "@prisma/client";
 
 export const TICKET_CATEGORY_LABELS: Record<TicketCategory, string> = {
   GENERAL_SUPPORT: "General Support",

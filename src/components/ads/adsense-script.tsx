@@ -14,7 +14,7 @@ export function AdSenseScript({ clientId }: Props) {
       async
       src={adsenseScriptUrl(clientId)}
       crossOrigin="anonymous"
-      strategy="afterInteractive"
+      strategy="lazyOnload"
     />
   );
 }

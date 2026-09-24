@@ -1,4 +1,4 @@
-import { NotificationType } from "@prisma/client";
+import type { NotificationType } from "@prisma/client";
 import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/db";
 

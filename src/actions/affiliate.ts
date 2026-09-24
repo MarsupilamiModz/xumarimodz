@@ -5,7 +5,7 @@ import { headers } from "next/headers";
 import { createHash } from "crypto";
 import { prisma } from "@/lib/db";
 import { fail, ok } from "@/lib/action-utils";
-import { visitorHash } from "@/lib/affiliate";
+import { visitorHash } from "@/lib/affiliate-server";
 import { recordCommission } from "@/lib/analytics/ecosystem";
 
 function ipHash() {

@@ -1,4 +1,4 @@
-import { UserRole } from "@prisma/client";
+import type { UserRole } from "@prisma/client";
 
 export const PERMISSIONS = {
   "users.read": "View users",

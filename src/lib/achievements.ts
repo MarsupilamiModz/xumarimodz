@@ -1,9 +1,10 @@
-import { colors } from "@/styles/tokens";
 import { prisma } from "@/lib/db";
 import { unstable_cache } from "next/cache";
 import type { AchievementCategory, AchievementRarity, Prisma } from "@prisma/client";
 import { CACHE_TAGS } from "@/lib/cache";
-import { SHOWCASE_MAX } from "@/lib/achievement-constants";
+import { SHOWCASE_MAX, RARITY_STYLES } from "@/lib/achievement-constants";
+
+export { RARITY_STYLES };
 
 export { SHOWCASE_MAX } from "@/lib/achievement-constants";
 
@@ -33,16 +34,6 @@ export type AchievementTranslation = Record<
   { name?: string; description?: string; title?: string }
 >;
 
-export const RARITY_STYLES: Record<
-  AchievementRarity,
-  { color: string; glow: string; label: string }
-> = {
-  COMMON: { color: colors.inkMuted, glow: "", label: "Common" },
-  UNCOMMON: { color: colors.success, glow: "", label: "Uncommon" },
-  RARE: { color: colors.violetBright, glow: "", label: "Rare" },
-  EPIC: { color: colors.violetBright, glow: "", label: "Epic" },
-  LEGENDARY: { color: colors.warning, glow: "", label: "Legendary" },
-};
 
 export const DEFAULT_ACHIEVEMENTS: {
   slug: string;

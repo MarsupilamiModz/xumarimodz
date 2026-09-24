@@ -15,7 +15,7 @@ import { SoundProfileEditor } from "@/components/creator/sound-profile-editor";
 import { ModMediaUploader } from "@/components/mods/mod-media-uploader";
 import { mapModMedia } from "@/lib/mod-media";
 import type { MediaSettings } from "@/lib/media-settings";
-import { parseTags, safeFormOptional, safeFormString } from "@/lib/safe-string";
+import { parseTags, safeFormOptional, safeFormString } from "@/lib/text";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";

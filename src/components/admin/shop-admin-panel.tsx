@@ -11,7 +11,7 @@ import { createShopProduct, updateShopProduct, deleteShopProduct } from "@/actio
 import { useAppToast } from "@/hooks/use-app-toast";
 import { CREDITS_PER_EUR } from "@/lib/credits";
 import { formatEuro, formatNumber } from "@/lib/format-locale";
-import { safeFormOptional, safeFormString, safeStripePriceId } from "@/lib/safe-string";
+import { safeFormOptional, safeFormString, safeStripePriceId } from "@/lib/text";
 
 type Product = {
   id: string;

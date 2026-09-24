@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { ApplicationStatus } from "@prisma/client";
+import type { ApplicationStatus } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { fail, ok, requireActionPermission } from "@/lib/action-utils";
 import { sendCreatorApprovalEmail, sendPartnerApprovalEmail } from "@/lib/email/send";

@@ -24,7 +24,7 @@ import { createHash } from "crypto";
 import { slugify } from "@/lib/utils";
 import { parseUploadFileName } from "@/lib/archive-meta";
 import { CACHE_TAGS } from "@/lib/cache";
-import { ensureModMediaSynced } from "@/lib/mod-media";
+import { ensureModMediaSynced } from "@/lib/mod-media-sync";
 import { fileSizeBigInt, fileSizeNumber } from "@/lib/file-size";
 import { isWithinUploadLimit, uploadLimitLabel } from "@/lib/upload-limits";
 import { z } from "zod";

@@ -1,6 +1,7 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
+import { MEMBERSHIP_PLANS_CACHE_TAG } from "@/lib/membership";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { fail, formatZodError, ok, requireActionPermission } from "@/lib/action-utils";
@@ -148,6 +149,7 @@ export async function saveMembershipPlan(input: {
 
   revalidatePath("/premium");
   revalidatePath("/admin/memberships");
+  revalidateTag(MEMBERSHIP_PLANS_CACHE_TAG);
   return ok(undefined);
 }
 
@@ -156,6 +158,7 @@ export async function deleteMembershipPlan(id: string) {
   if (error) return error;
   await prisma.membershipPlan.delete({ where: { id } });
   revalidatePath("/admin/memberships");
+  revalidateTag(MEMBERSHIP_PLANS_CACHE_TAG);
   return ok(undefined);
 }
 
@@ -181,6 +184,7 @@ export async function reorderMembershipPlans(orderedIds: string[]) {
     orderedIds.map((id, i) => prisma.membershipPlan.update({ where: { id }, data: { sortOrder: i } }))
   );
   revalidatePath("/premium");
+  revalidateTag(MEMBERSHIP_PLANS_CACHE_TAG);
   return ok(undefined);
 }
 

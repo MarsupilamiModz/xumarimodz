@@ -11,7 +11,7 @@ import {
   type HostingPartnerSettings,
 } from "@/lib/hosting/settings";
 import { getHostingAnalyticsSummary } from "@/lib/hosting/resolve";
-import { HostingBannerSize } from "@prisma/client";
+import type { HostingBannerSize } from "@prisma/client";
 import { z } from "zod";
 
 async function requireHostingAdmin() {
