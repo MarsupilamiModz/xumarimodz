@@ -995,7 +995,7 @@ export async function getAdminMods(params: {
   pricing?: "FREE" | "PREMIUM" | "ALL";
   featured?: boolean;
   scheduled?: boolean;
-  sort?: "newest" | "oldest" | "downloads" | "rating" | "alpha";
+  sort?: "newest" | "oldest" | "downloads" | "rating" | "alpha" | "updatedAsc";
 }) {
   const { error } = await requireActionPermission("mods.read");
   if (error) return error;
@@ -1013,7 +1013,9 @@ export async function getAdminMods(params: {
           ? { averageRating: "desc" as const }
           : params.sort === "alpha"
             ? { title: "asc" as const }
-            : { updatedAt: "desc" as const };
+            : params.sort === "updatedAsc"
+              ? { updatedAt: "asc" as const }
+              : { updatedAt: "desc" as const };
 
   const where = {
     ...(params.status && { status: params.status }),
@@ -1046,8 +1048,15 @@ export async function getAdminMods(params: {
         game: { select: { name: true } },
         mode: { select: { name: true } },
         category: { select: { name: true } },
-        author: { select: { username: true } },
+        author: { select: { username: true, displayName: true } },
         soundProfile: { select: { audioCategory: true, artist: true } },
+        screenshots: { take: 1, orderBy: { sortOrder: "asc" as const }, select: { url: true } },
+        media: {
+          where: { mediaType: "IMAGE" as const },
+          orderBy: [{ isFeatured: "desc" as const }, { orderIndex: "asc" as const }],
+          take: 1,
+          select: { imageUrl: true },
+        },
         _count: { select: { versions: true, screenshots: true } },
       },
     }),

@@ -296,6 +296,31 @@
       "byGame": "Nach Spiel",
       "empty": "Im gewählten Zeitraum gibt es noch keine Downloads.",
       "loadError": "Die Analytics-Daten konnten nicht geladen werden."
+    },
+    "mp": {
+      "title": "Mods",
+      "count": "{count, plural, one {# Mod im Katalog} other {# Mods im Katalog}}",
+      "upload": "Mod hochladen",
+      "uploadSound": "Sound hochladen",
+      "search": "Mods suchen",
+      "games": "Spiel",
+      "allGames": "Alle Spiele",
+      "status": "Status",
+      "allStatus": "Alle",
+      "colMod": "Mod",
+      "colGame": "Spiel",
+      "colStatus": "Status",
+      "colPrice": "Preis",
+      "colDownloads": "Downloads",
+      "colUpdated": "Aktualisiert",
+      "edit": "Bearbeiten",
+      "free": "Kostenlos",
+      "premium": "Premium",
+      "paid": "Kauf",
+      "by": "von {name}",
+      "emptyTitle": "Keine Mods gefunden",
+      "emptyText": "Passe Suche oder Filter an – oder lade den ersten Mod hoch.",
+      "loadError": "Die Mods konnten nicht geladen werden."
     }
   }
 }

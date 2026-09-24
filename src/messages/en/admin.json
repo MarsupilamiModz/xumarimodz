@@ -307,6 +307,31 @@
       "byGame": "By game",
       "empty": "No downloads in the selected period yet.",
       "loadError": "Analytics data could not be loaded."
+    },
+    "mp": {
+      "title": "Mods",
+      "count": "{count, plural, one {# mod in the catalog} other {# mods in the catalog}}",
+      "upload": "Upload mod",
+      "uploadSound": "Upload sound",
+      "search": "Search mods",
+      "games": "Game",
+      "allGames": "All games",
+      "status": "Status",
+      "allStatus": "All",
+      "colMod": "Mod",
+      "colGame": "Game",
+      "colStatus": "Status",
+      "colPrice": "Price",
+      "colDownloads": "Downloads",
+      "colUpdated": "Updated",
+      "edit": "Edit",
+      "free": "Free",
+      "premium": "Premium",
+      "paid": "Paid",
+      "by": "by {name}",
+      "emptyTitle": "No mods found",
+      "emptyText": "Adjust search or filters – or upload the first mod.",
+      "loadError": "Mods could not be loaded."
     }
   }
 }
