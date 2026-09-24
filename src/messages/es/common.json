@@ -84,7 +84,21 @@
     "notFoundHint": "La página que buscas no existe o fue movida.",
     "backHome": "Volver al inicio",
     "retry": "Reintentar",
-    "back": "Volver"
+    "back": "Volver",
+    "errorCode": "Error {code}",
+    "browseMods": "Explorar mods",
+    "forbiddenTitle": "Sin acceso",
+    "forbiddenHint": "Tu cuenta no tiene permiso para esta página. Si crees que es un error, contacta con soporte.",
+    "toAccount": "Ir a mi cuenta",
+    "contactSupport": "Contactar con soporte",
+    "maintenanceTitle": "Volvemos enseguida",
+    "maintenanceHint": "Xumari Modz está en mantenimiento. Tus datos y compras están a salvo. Vuelve a intentarlo en unos minutos.",
+    "maintenanceLabel": "Mantenimiento",
+    "adminErrorTitle": "No se pudo cargar esta sección del panel",
+    "adminErrorHint": "Las demás secciones siguen funcionando. Inténtalo de nuevo o revisa el registro del sistema.",
+    "backToOverview": "Volver al resumen",
+    "systemLog": "Registro del sistema",
+    "reference": "Referencia"
   },
   "ui": {
     "close": "Cerrar",

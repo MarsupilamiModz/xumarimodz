@@ -154,7 +154,7 @@ export async function requireAuth(returnPath?: string) {
 export async function requireRole(...roles: UserRole[]) {
   const locale = await resolveAuthLocale();
   const user = await requireAuth();
-  if (!roles.includes(user.role)) redirect(`/${locale}/dashboard`);
+  if (!roles.includes(user.role)) redirect(`/${locale}/forbidden`);
   return user;
 }
 
@@ -171,7 +171,7 @@ export async function redirectIfMfaRequired(user: { role: UserRole; mfaEnabled: 
 export async function requireStaff() {
   const locale = await resolveAuthLocale();
   const user = await requireAuth();
-  if (!isStaff(user.role)) redirect(`/${locale}/dashboard`);
+  if (!isStaff(user.role)) redirect(`/${locale}/forbidden`);
   await redirectIfMfaRequired(user);
   return user;
 }
@@ -179,7 +179,7 @@ export async function requireStaff() {
 export async function requireOwner() {
   const locale = await resolveAuthLocale();
   const user = await requireAuth();
-  if (user.role !== "OWNER") redirect(`/${locale}/dashboard`);
+  if (user.role !== "OWNER") redirect(`/${locale}/forbidden`);
   await redirectIfMfaRequired(user);
   return user;
 }
@@ -187,7 +187,7 @@ export async function requireOwner() {
 export async function requireAdmin() {
   const locale = await resolveAuthLocale();
   const user = await requireAuth();
-  if (!isAdmin(user.role)) redirect(`/${locale}/dashboard`);
+  if (!isAdmin(user.role)) redirect(`/${locale}/forbidden`);
   await redirectIfMfaRequired(user);
   return user;
 }
@@ -196,7 +196,7 @@ export async function requireDesigner() {
   const locale = await resolveAuthLocale();
   const user = await requireAuth();
   if (!isDesigner(user.role) && !user.designerProfile) {
-    redirect(`/${locale}/dashboard`);
+    redirect(`/${locale}/forbidden`);
   }
   return user;
 }
@@ -209,7 +209,7 @@ export async function requirePagePermission(permission: PermissionKey) {
     { id: user.id, role: user.role, permissionGroupId: user.permissionGroupId },
     permission
   );
-  if (!allowed) redirect(`/${locale}/dashboard`);
+  if (!allowed) redirect(`/${locale}/forbidden`);
   return user;
 }
 
@@ -217,7 +217,8 @@ export async function requireStudio() {
   const locale = await resolveAuthLocale();
   const user = await requireAuth();
   if (!canAccessStudio(user.role) && !user.creatorProfile && !user.designerProfile) {
-    redirect(`/${locale}/dashboard`);
+    // Noch kein Creator: zur Bewerbung statt zu einer Fehlerseite.
+    redirect(`/${locale}/become-creator`);
   }
   await redirectIfMfaRequired(user);
   return user;

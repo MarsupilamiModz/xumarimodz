@@ -84,7 +84,21 @@
     "notFoundHint": "Szukana strona nie istnieje lub została przeniesiona.",
     "backHome": "Strona główna",
     "retry": "Spróbuj ponownie",
-    "back": "Wstecz"
+    "back": "Wstecz",
+    "errorCode": "Błąd {code}",
+    "browseMods": "Przeglądaj mody",
+    "forbiddenTitle": "Brak dostępu",
+    "forbiddenHint": "Twoje konto nie ma uprawnień do tej strony. Jeśli uważasz, że to błąd, skontaktuj się z pomocą.",
+    "toAccount": "Przejdź do konta",
+    "contactSupport": "Skontaktuj się z pomocą",
+    "maintenanceTitle": "Zaraz wracamy",
+    "maintenanceHint": "Xumari Modz jest w trakcie konserwacji. Twoje dane i zakupy są bezpieczne. Spróbuj ponownie za kilka minut.",
+    "maintenanceLabel": "Konserwacja",
+    "adminErrorTitle": "Nie udało się załadować tej sekcji panelu",
+    "adminErrorHint": "Pozostałe sekcje działają. Spróbuj ponownie lub sprawdź dziennik systemu.",
+    "backToOverview": "Wróć do przeglądu",
+    "systemLog": "Dziennik systemu",
+    "reference": "Identyfikator"
   },
   "ui": {
     "close": "Zamknij",

@@ -84,7 +84,21 @@
     "notFoundHint": "Aradığınız sayfa mevcut değil veya taşınmış.",
     "backHome": "Ana sayfaya dön",
     "retry": "Tekrar dene",
-    "back": "Geri"
+    "back": "Geri",
+    "errorCode": "Hata {code}",
+    "browseMods": "Modlara göz at",
+    "forbiddenTitle": "Erişim yok",
+    "forbiddenHint": "Hesabının bu sayfa için yetkisi yok. Bunun bir hata olduğunu düşünüyorsan destekle iletişime geç.",
+    "toAccount": "Hesabıma git",
+    "contactSupport": "Destekle iletişime geç",
+    "maintenanceTitle": "Birazdan döneceğiz",
+    "maintenanceHint": "Xumari Modz bakımda. Verilerin ve satın alımların güvende. Birkaç dakika sonra tekrar dene.",
+    "maintenanceLabel": "Bakım",
+    "adminErrorTitle": "Bu yönetim bölümü yüklenemedi",
+    "adminErrorHint": "Diğer bölümler çalışmaya devam ediyor. Tekrar dene veya sistem günlüğüne bak.",
+    "backToOverview": "Genel bakışa dön",
+    "systemLog": "Sistem günlüğü",
+    "reference": "Referans"
   },
   "ui": {
     "close": "Kapat",

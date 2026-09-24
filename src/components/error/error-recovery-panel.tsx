@@ -96,8 +96,8 @@ export function ErrorRecoveryPanelContent({
     switch (action) {
       case "retry":
         return onRetry ? (
-          <Button key="retry" variant="neon" size={compact ? "sm" : "default"} onClick={onRetry}>
-            <RefreshCw className="mr-2 h-4 w-4" />
+          <Button key="retry" size={compact ? "sm" : "default"} onClick={onRetry}>
+            <RefreshCw className="h-4 w-4" aria-hidden />
             {labels.retry}
           </Button>
         ) : null;
@@ -109,7 +109,7 @@ export function ErrorRecoveryPanelContent({
             size={compact ? "sm" : "default"}
             onClick={() => window.location.reload()}
           >
-            <RefreshCw className="mr-2 h-4 w-4" />
+            <RefreshCw className="h-4 w-4" aria-hidden />
             {labels.reload}
           </Button>
         );
@@ -121,7 +121,7 @@ export function ErrorRecoveryPanelContent({
             size={compact ? "sm" : "default"}
             onClick={() => redirectToLogin()}
           >
-            <LogIn className="mr-2 h-4 w-4" />
+            <LogIn className="h-4 w-4" aria-hidden />
             {labels.signIn}
           </Button>
         );
@@ -129,7 +129,7 @@ export function ErrorRecoveryPanelContent({
         return (
           <Button key="home" variant="outline" size={compact ? "sm" : "default"} asChild>
             <Link href="/">
-              <Home className="mr-2 h-4 w-4" />
+              <Home className="h-4 w-4" aria-hidden />
               {labels.home}
             </Link>
           </Button>
@@ -137,7 +137,7 @@ export function ErrorRecoveryPanelContent({
       case "copy":
         return (
           <Button key="copy" variant="ghost" size={compact ? "sm" : "default"} onClick={() => void copyDetails()}>
-            <Copy className="mr-2 h-4 w-4" />
+            <Copy className="h-4 w-4" aria-hidden />
             {copied ? labels.copied : labels.copyDetails}
           </Button>
         );
@@ -147,43 +147,42 @@ export function ErrorRecoveryPanelContent({
   }
 
   return (
-    <Card
-      className={cn(
-        "glass border border-destructive/30",
-        compact ? "p-4" : "mx-auto max-w-lg p-8",
-        className
-      )}
-    >
-      <div className={cn("flex flex-col", compact ? "gap-3" : "items-center gap-4 text-center")}>
-        <AlertTriangle className={cn("text-destructive", compact ? "h-8 w-8" : "h-12 w-12")} />
+    <Card className={cn(compact ? "p-4" : "w-full max-w-xl p-8", className)} role="alert">
+      <div className={cn("flex flex-col", compact ? "gap-3" : "gap-5")}>
+        <span
+          className={cn(
+            "flex items-center justify-center rounded-lg bg-danger-soft text-danger",
+            compact ? "h-9 w-9" : "h-12 w-12"
+          )}
+        >
+          <AlertTriangle className={compact ? "h-5 w-5" : "h-6 w-6"} aria-hidden />
+        </span>
         <div className="space-y-2">
-          <h2 className={cn("font-bold", compact ? "text-lg" : "text-2xl")}>{title}</h2>
-          <p className="text-sm text-muted-foreground">{diagnostics.hint}</p>
+          <h2 className={cn("font-bold text-ink", compact ? "text-lg" : "text-[28px] leading-tight")}>{title}</h2>
+          <p className="text-sm text-ink-muted">{diagnostics.hint}</p>
         </div>
 
-        <div className="w-full rounded-lg border border-border/40 bg-background/40 p-3 text-left">
-          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-            {labels.detailsLabel}
-          </p>
-          <p className="mt-2 break-words text-sm">{diagnostics.message}</p>
-          <div className="mt-2 flex flex-wrap gap-2 text-xs text-muted-foreground">
+        <details className="w-full rounded-md border border-line bg-elevated p-3 text-left">
+          <summary className="cursor-pointer text-[13px] font-semibold text-ink-muted">{labels.detailsLabel}</summary>
+          <p className="mt-2 break-words text-sm text-ink">{diagnostics.message}</p>
+          <div className="mt-2 flex flex-wrap gap-2 text-xs text-ink-muted">
             {diagnostics.code && (
-              <span className="rounded bg-muted px-2 py-0.5 font-mono">
+              <span className="rounded-sm bg-hover px-2 py-0.5 font-mono">
                 {labels.codeLabel}: {diagnostics.code}
               </span>
             )}
             {diagnostics.digest && (
-              <span className="rounded bg-muted px-2 py-0.5 font-mono">
+              <span className="rounded-sm bg-hover px-2 py-0.5 font-mono">
                 {labels.referenceLabel}: {diagnostics.digest}
               </span>
             )}
-            <span className="rounded bg-muted px-2 py-0.5">
+            <span className="rounded-sm bg-hover px-2 py-0.5">
               {labels.categoryLabel}: {diagnostics.category}
             </span>
           </div>
-        </div>
+        </details>
 
-        <div className={cn("flex flex-wrap gap-2", compact ? "" : "justify-center")}>
+        <div className="flex flex-wrap gap-2">
           {diagnostics.recoveryActions.map((action) => renderAction(action))}
         </div>
       </div>

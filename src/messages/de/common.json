@@ -102,7 +102,21 @@
       "codeLabel": "Code",
       "referenceLabel": "Referenz",
       "categoryLabel": "Kategorie"
-    }
+    },
+    "errorCode": "Fehler {code}",
+    "browseMods": "Mods durchsuchen",
+    "forbiddenTitle": "Kein Zugriff",
+    "forbiddenHint": "Dein Konto hat keine Berechtigung für diese Seite. Wenn du glaubst, dass das ein Fehler ist, melde dich beim Support.",
+    "toAccount": "Zu meinem Konto",
+    "contactSupport": "Support kontaktieren",
+    "maintenanceTitle": "Wir sind gleich zurück",
+    "maintenanceHint": "Xumari Modz wird gerade gewartet. Deine Daten und Käufe sind sicher. Versuch es in ein paar Minuten noch einmal.",
+    "maintenanceLabel": "Wartung",
+    "adminErrorTitle": "Dieser ACP-Bereich konnte nicht geladen werden",
+    "adminErrorHint": "Die anderen Bereiche funktionieren weiter. Versuch es erneut oder sieh im System-Log nach.",
+    "backToOverview": "Zur Übersicht",
+    "systemLog": "System-Log",
+    "reference": "Referenz"
   },
   "ui": {
     "close": "Schließen",

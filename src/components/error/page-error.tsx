@@ -23,7 +23,7 @@ export function PageError({
   }, [error]);
 
   return (
-    <div className="mx-auto flex min-h-[50vh] max-w-3xl flex-col items-center justify-center px-4 py-16">
+    <div className="page-container flex min-h-[60vh] items-center py-14 md:py-20">
       <ErrorRecoveryPanel diagnostics={diagnostics} onRetry={() => reset()} />
     </div>
   );

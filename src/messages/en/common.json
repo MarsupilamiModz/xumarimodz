@@ -103,7 +103,21 @@
       "codeLabel": "Code",
       "referenceLabel": "Reference",
       "categoryLabel": "Category"
-    }
+    },
+    "errorCode": "Error {code}",
+    "browseMods": "Browse mods",
+    "forbiddenTitle": "No access",
+    "forbiddenHint": "Your account doesn't have permission for this page. If you think this is a mistake, contact support.",
+    "toAccount": "Go to my account",
+    "contactSupport": "Contact support",
+    "maintenanceTitle": "We'll be right back",
+    "maintenanceHint": "Xumari Modz is under maintenance. Your data and purchases are safe. Please try again in a few minutes.",
+    "maintenanceLabel": "Maintenance",
+    "adminErrorTitle": "This admin section failed to load",
+    "adminErrorHint": "Other sections still work. Try again or check the system log.",
+    "backToOverview": "Back to overview",
+    "systemLog": "System log",
+    "reference": "Reference"
   },
   "ui": {
     "close": "Close",

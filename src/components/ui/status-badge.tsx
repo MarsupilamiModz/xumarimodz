@@ -7,7 +7,8 @@ const toneStyles: Record<StatusTone, { className: string; icon: LucideIcon }> = 
   success: { className: "bg-success-soft text-success", icon: CheckCircle2 },
   warning: { className: "bg-warning-soft text-warning", icon: AlertTriangle },
   danger: { className: "bg-danger-soft text-danger", icon: XCircle },
-  info: { className: "bg-violet-soft text-violet-bright", icon: Info },
+  // Violett ist für Interaktion reserviert – Info bleibt neutral.
+  info: { className: "bg-elevated text-ink-muted", icon: Info },
   pending: { className: "bg-elevated text-ink-muted", icon: Clock },
   neutral: { className: "bg-elevated text-ink-muted", icon: Circle },
 };

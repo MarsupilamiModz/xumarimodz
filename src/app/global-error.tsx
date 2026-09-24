@@ -23,7 +23,7 @@ export default function GlobalError({
   return (
     <html lang="en" className="dark">
       <body className="min-h-screen bg-canvas p-6 font-sans text-ink">
-        <div className="mx-auto flex min-h-screen max-w-3xl items-center justify-center">
+        <div className="mx-auto flex min-h-screen max-w-3xl items-center">
           <ErrorRecoveryPanelContent
             diagnostics={diagnostics}
             labels={ERROR_RECOVERY_LABELS_EN}

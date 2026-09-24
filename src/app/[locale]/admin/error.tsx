@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -15,33 +16,32 @@ export default function AdminError({
 }) {
   const params = useParams();
   const locale = (params?.locale as string) ?? "en";
+  const t = useTranslations("common");
 
   useEffect(() => {
     console.error("[admin-error]", error);
   }, [error]);
 
   return (
-    <div className="mx-auto flex min-h-[40vh] max-w-lg flex-col items-center justify-center px-4 py-12 text-center">
-      <AlertTriangle className="mb-4 h-12 w-12 text-destructive" />
-      <h1 className="text-xl font-bold">Admin page error</h1>
-      <p className="mt-2 text-sm text-muted-foreground">
-        This admin section failed to load. Your other admin tools should still work.
-      </p>
-      {error.message && (
-        <p className="mt-3 text-xs text-muted-foreground/80 max-w-md break-words">{error.message}</p>
-      )}
+    <div className="max-w-xl py-6" role="alert">
+      <span className="flex h-12 w-12 items-center justify-center rounded-lg bg-danger-soft text-danger">
+        <AlertTriangle className="h-6 w-6" aria-hidden />
+      </span>
+      <h1 className="h1-acp mt-5">{t("adminErrorTitle")}</h1>
+      <p className="mt-2 text-sm text-ink-muted">{t("adminErrorHint")}</p>
+      {error.message && <p className="mt-4 break-words text-[13px] text-ink-muted">{error.message}</p>}
       {error.digest && (
-        <p className="mt-2 text-xs font-mono text-muted-foreground/60">Ref: {error.digest}</p>
+        <p className="mt-1 font-mono text-xs text-ink-faint">
+          {t("reference")}: {error.digest}
+        </p>
       )}
-      <div className="mt-6 flex flex-wrap justify-center gap-2">
-        <Button variant="neon" onClick={() => reset()}>
-          Try again
-        </Button>
+      <div className="mt-6 flex flex-wrap gap-2">
+        <Button onClick={() => reset()}>{t("retry")}</Button>
         <Button variant="outline" asChild>
-          <Link href={`/${locale}/admin`}>Back to overview</Link>
+          <Link href={`/${locale}/admin`}>{t("backToOverview")}</Link>
         </Button>
         <Button variant="ghost" asChild>
-          <Link href={`/${locale}/admin/system`}>System logs</Link>
+          <Link href={`/${locale}/admin/system`}>{t("systemLog")}</Link>
         </Button>
       </div>
     </div>
