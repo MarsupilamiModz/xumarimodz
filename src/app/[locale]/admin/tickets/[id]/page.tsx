@@ -1,12 +1,12 @@
-import { notFound } from "next/navigation";
 import Link from "next/link";
+import { notFound } from "next/navigation";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ArrowLeft } from "lucide-react";
-import { getTicketDetail } from "@/actions/tickets";
-import { TicketThread } from "@/components/tickets/ticket-thread";
-import { TicketAdminPanel } from "@/components/admin/ticket-admin-panel";
-import { prisma } from "@/lib/db";
-import { requireStaff } from "@/lib/auth";
-import { formatDisplayName } from "@/lib/display-name";
+import { requirePagePermission } from "@/lib/auth";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
+import { AdminTicketView, TicketBadges, loadAdminTicket } from "@/components/admin/tickets/admin-ticket-view";
+import { TicketHeaderActions } from "@/components/admin/tickets/ticket-header-actions";
+import { Button } from "@/components/ui/button";
 import type { Locale } from "@/i18n/config";
 
 export default async function AdminTicketDetailPage({
@@ -14,47 +14,39 @@ export default async function AdminTicketDetailPage({
 }: {
   params: { locale: Locale; id: string };
 }) {
-  await requireStaff();
-  const result = await getTicketDetail(id);
-  if (!result.success) notFound();
-
-  const { ticket } = result.data;
-  const staffUsers = await prisma.user.findMany({
-    where: { role: { in: ["OWNER", "ADMIN", "MODERATOR", "SUPPORT"] }, deletedAt: null },
-    select: { id: true, username: true, displayName: true },
-  });
+  setRequestLocale(locale);
+  const user = await requirePagePermission("tickets.read");
+  const [data, t] = await Promise.all([loadAdminTicket(id), getTranslations("admin.tk")]);
+  if (!data) notFound();
+  const { ticket } = data;
+  const open = ticket.status !== "CLOSED" && ticket.status !== "RESOLVED";
 
   return (
     <div>
-      <Link
-        href={`/${locale}/admin/tickets`}
-        className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6"
-      >
-        <ArrowLeft className="h-4 w-4" /> Back to tickets
-      </Link>
-      <div className="grid gap-8 lg:grid-cols-3">
-        <div className="lg:col-span-2">
-          <TicketThread ticket={ticket} isStaff={true} canReply={true} />
-        </div>
-        <div className="space-y-4">
-          <TicketAdminPanel
-            ticketId={ticket.id}
-            status={ticket.status}
-            priority={ticket.priority}
-            assigneeId={ticket.assignee?.id ?? null}
-            department={ticket.department}
-            staffUsers={staffUsers}
-            slaResponseDueAt={ticket.slaResponseDueAt}
-            slaResolveDueAt={ticket.slaResolveDueAt}
-            firstResponseAt={ticket.firstResponseAt}
-          />
-          <div className="rounded-xl p-4 text-sm">
-            <p className="text-muted-foreground">Submitted by</p>
-            <p className="font-medium">{formatDisplayName(ticket.user)}</p>
-            <p className="text-muted-foreground mt-2">{ticket.user.email}</p>
-          </div>
-        </div>
+      <AdminPageHeader
+        title={ticket.subject}
+        section={ticket.ticketNumber}
+        parent={{ label: t("title"), href: `/${locale}/admin/tickets` }}
+        actions={
+          <>
+            <Button size="sm" variant="ghost" asChild>
+              <Link href={`/${locale}/admin/tickets`}>
+                <ArrowLeft className="h-4 w-4" aria-hidden />
+                {t("allTickets")}
+              </Link>
+            </Button>
+            <TicketHeaderActions
+              ticketId={ticket.id}
+              canClaim={open && ticket.assignee?.id !== user.id}
+              canEscalate={open && ticket.status !== "ESCALATED"}
+            />
+          </>
+        }
+      />
+      <div className="-mt-4 mb-6">
+        <TicketBadges ticket={ticket} />
       </div>
+      <AdminTicketView data={data} locale={locale} />
     </div>
   );
 }

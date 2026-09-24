@@ -292,6 +292,34 @@
       "DESIGNER": "Designer",
       "PREMIUM": "Premium",
       "USER": "Nutzer"
+    },
+    "priority": {
+      "LOW": "Niedrig",
+      "NORMAL": "Normal",
+      "HIGH": "Hoch",
+      "URGENT": "Dringend",
+      "CRITICAL": "Kritisch"
+    },
+    "department": {
+      "SUPPORT": "Support",
+      "MODERATION": "Moderation",
+      "CREATOR_MANAGEMENT": "Creator-Betreuung",
+      "PARTNER_MANAGEMENT": "Partner-Betreuung",
+      "BILLING": "Abrechnung",
+      "TECHNICAL_SUPPORT": "Technik",
+      "ADMINISTRATION": "Verwaltung"
+    },
+    "category": {
+      "GENERAL_SUPPORT": "Allgemein",
+      "TECHNICAL_SUPPORT": "Technik",
+      "BILLING": "Abrechnung",
+      "PREMIUM_ACCESS": "Premium-Zugang",
+      "CREATOR_SUPPORT": "Creator",
+      "PARTNER_SUPPORT": "Partner",
+      "BUG_REPORT": "Fehlermeldung",
+      "CUSTOM_ORDERS": "Auftragsarbeiten",
+      "MOD_ISSUES": "Mod-Probleme",
+      "ACCOUNT_SUPPORT": "Konto"
     }
   }
 }

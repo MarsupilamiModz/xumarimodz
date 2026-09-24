@@ -338,6 +338,14 @@ export async function updateTicketPriority(
     },
   });
 
+  await createAuditLog({
+    actorId: user.id,
+    action: "ticket.priority_change",
+    entityType: "SupportTicket",
+    entityId: ticketId,
+    metadata: { to: priority },
+  });
+
   void notifyWatchers(ticketId, ticket.ticketNumber, ticket.subject, `Priority set to ${priority}`, user.id);
 
   revalidatePath(`/admin/tickets/${ticketId}`);
@@ -359,6 +367,14 @@ export async function closeTicket(ticketId: string, asUser = false): Promise<Act
     data: { status: "CLOSED", closedAt: new Date() },
   });
 
+  await createAuditLog({
+    actorId: user.id,
+    action: "ticket.status_change",
+    entityType: "SupportTicket",
+    entityId: ticketId,
+    metadata: { from: ticket.status, to: "CLOSED" },
+  });
+
   revalidatePath(`/dashboard/support/${ticketId}`);
   revalidatePath(`/admin/tickets/${ticketId}`);
   return ok(undefined);
@@ -378,6 +394,14 @@ export async function reopenTicket(ticketId: string): Promise<ActionResult> {
   await prisma.supportTicket.update({
     where: { id: ticketId },
     data: { status: "OPEN", closedAt: null },
+  });
+
+  await createAuditLog({
+    actorId: user.id,
+    action: "ticket.status_change",
+    entityType: "SupportTicket",
+    entityId: ticketId,
+    metadata: { from: ticket.status, to: "OPEN" },
   });
 
   revalidatePath(`/dashboard/support/${ticketId}`);
@@ -502,7 +526,7 @@ export async function getTicketsAdmin(params: {
       skip,
       take: limit,
       include: {
-        user: { select: { id: true, username: true, avatarUrl: true } },
+        user: { select: { id: true, username: true, displayName: true, avatarUrl: true } },
         assignee: { select: { id: true, username: true } },
         _count: { select: { messages: true } },
       },
@@ -520,7 +544,7 @@ export async function getTicketDetail(ticketId: string) {
   const ticket = await prisma.supportTicket.findUnique({
     where: { id: ticketId },
     include: {
-      user: { select: { id: true, username: true, email: true, avatarUrl: true } },
+      user: { select: { id: true, username: true, displayName: true, email: true, avatarUrl: true } },
       assignee: { select: { id: true, username: true, avatarUrl: true } },
       watchers: { select: { userId: true, user: { select: { username: true } } } },
       messages: {
@@ -702,7 +726,7 @@ export async function transferTicketDepartment(
 }
 
 export async function addTicketWatcher(ticketId: string, userId: string): Promise<ActionResult> {
-  const { error } = await requireActionPermission("tickets.write");
+  const { user, error } = await requireActionPermission("tickets.write");
   if (error) return error;
 
   await prisma.ticketWatcher.upsert({
@@ -710,16 +734,30 @@ export async function addTicketWatcher(ticketId: string, userId: string): Promis
     create: { ticketId, userId },
     update: {},
   });
+  await createAuditLog({
+    actorId: user.id,
+    action: "ticket.watcher_add",
+    entityType: "SupportTicket",
+    entityId: ticketId,
+    metadata: { userId },
+  });
 
   revalidatePath(`/admin/tickets/${ticketId}`);
   return ok(undefined);
 }
 
 export async function removeTicketWatcher(ticketId: string, userId: string): Promise<ActionResult> {
-  const { error } = await requireActionPermission("tickets.write");
+  const { user, error } = await requireActionPermission("tickets.write");
   if (error) return error;
 
   await prisma.ticketWatcher.deleteMany({ where: { ticketId, userId } });
+  await createAuditLog({
+    actorId: user.id,
+    action: "ticket.watcher_remove",
+    entityType: "SupportTicket",
+    entityId: ticketId,
+    metadata: { userId },
+  });
   revalidatePath(`/admin/tickets/${ticketId}`);
   return ok(undefined);
 }

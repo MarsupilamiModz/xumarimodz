@@ -2,6 +2,7 @@ import type { Prisma, TicketStatus } from "@prisma/client";
 
 export type TicketQueue =
   | "all"
+  | "active"
   | "open"
   | "pending"
   | "escalated"
@@ -23,6 +24,7 @@ export const OPEN_STATUSES: TicketStatus[] = [
 
 export const TICKET_QUEUE_LABELS: Record<TicketQueue, string> = {
   all: "All",
+  active: "Active",
   open: "Open",
   pending: "Pending",
   escalated: "Escalated",
@@ -38,6 +40,8 @@ export function queueWhere(
   currentUserId?: string
 ): Prisma.SupportTicketWhereInput {
   switch (queue) {
+    case "active":
+      return { status: { in: OPEN_STATUSES } };
     case "open":
       return { status: { in: ["NEW", "OPEN", "IN_PROGRESS"] } };
     case "pending":
