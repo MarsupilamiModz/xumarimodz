@@ -127,7 +127,12 @@
     "next": "Weiter",
     "syncErrorTitle": "Anmeldung konnte nicht abgeschlossen werden",
     "syncErrorText": "Dein Konto wurde angemeldet, konnte aber nicht mit der Plattform abgeglichen werden. Versuch es gleich noch einmal.",
-    "signInAgain": "Erneut anmelden"
+    "signInAgain": "Erneut anmelden",
+    "confirm": "Bestätigen",
+    "unsavedChanges": "Ungespeicherte Änderungen",
+    "discard": "Verwerfen",
+    "saving": "Wird gespeichert…",
+    "saved": "Gespeichert"
   },
   "ui": {
     "close": "Schließen",

@@ -88,7 +88,7 @@ export default async function DownloadPage({ params: { locale } }: { params: { l
       <section className="page-section border-t border-line">
         <div className="grid gap-12 lg:grid-cols-2">
           <div>
-            <h2 className="text-[28px] font-bold leading-tight text-ink">{t("stepsTitle")}</h2>
+            <h2 className="text-lg font-semibold text-ink">{t("stepsTitle")}</h2>
             <ol className="mt-8 space-y-6">
               {steps.map((step) => (
                 <li key={step.n} className="flex gap-4">
@@ -104,7 +104,7 @@ export default async function DownloadPage({ params: { locale } }: { params: { l
             </ol>
           </div>
           <div>
-            <h2 className="text-[28px] font-bold leading-tight text-ink">{t("requirementsTitle")}</h2>
+            <h2 className="text-lg font-semibold text-ink">{t("requirementsTitle")}</h2>
             <ul className="mt-8 space-y-3">
               {requirements.map((req) => (
                 <li key={req} className="flex gap-3 text-ink-muted">
@@ -119,7 +119,7 @@ export default async function DownloadPage({ params: { locale } }: { params: { l
 
       <section className="page-section border-t border-line">
         <div className="max-w-3xl">
-          <h2 className="text-[28px] font-bold leading-tight text-ink">{t("changelogTitle")}</h2>
+          <h2 className="text-lg font-semibold text-ink">{t("changelogTitle")}</h2>
           {release && release.changelog.length > 0 ? (
             <ol className="mt-8 space-y-8">
               {release.changelog.map((entry) => (

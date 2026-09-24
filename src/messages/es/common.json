@@ -108,7 +108,12 @@
     "next": "Siguiente",
     "syncErrorTitle": "No se pudo completar el inicio de sesión",
     "syncErrorText": "Iniciaste sesión, pero tu cuenta no se pudo sincronizar. Inténtalo de nuevo.",
-    "signInAgain": "Iniciar sesión de nuevo"
+    "signInAgain": "Iniciar sesión de nuevo",
+    "confirm": "Confirmar",
+    "unsavedChanges": "Cambios sin guardar",
+    "discard": "Descartar",
+    "saving": "Guardando…",
+    "saved": "Guardado"
   },
   "ui": {
     "close": "Cerrar",

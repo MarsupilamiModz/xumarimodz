@@ -149,7 +149,7 @@ export default async function ModDetailPage({ params: { locale, slug } }: { para
         <div className="flex flex-wrap items-center gap-2">
           {mod.pricing !== "FREE" && <Badge variant="premium">{pricingLabel}</Badge>}
         </div>
-        <h1 className="mt-2 text-[32px] font-extrabold leading-tight tracking-display text-ink md:text-[40px]">
+        <h1 className="h1-display mt-2">
           {localized.title}
         </h1>
         <p className="meta mt-2">
@@ -360,7 +360,7 @@ export default async function ModDetailPage({ params: { locale, slug } }: { para
 
       {relatedMods.length > 0 && (
         <section className="mt-16">
-          <h2 className="text-[28px] font-bold leading-tight text-ink">{t("relatedTitle")}</h2>
+          <h2 className="text-lg font-semibold text-ink">{t("relatedTitle")}</h2>
           <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
             {relatedMods.map((m) => (
               <ModCard key={m.id} locale={locale} mod={m} />

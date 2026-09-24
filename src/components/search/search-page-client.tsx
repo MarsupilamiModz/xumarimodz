@@ -191,7 +191,7 @@ export function SearchPageClient({
 
       {trendingMods.length > 0 && mods.length === 0 && !pending && (
         <section className="mt-16">
-          <h2 className="text-[28px] font-bold leading-tight text-ink">{t("trendingTitle")}</h2>
+          <h2 className="text-lg font-semibold text-ink">{t("trendingTitle")}</h2>
           <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 lg:gap-6">
             {trendingMods.map((m) => (
               <ModCard key={m.id ?? m.slug} locale={locale} mod={m} pricingLabel={pricingLabels[m.pricing]} />

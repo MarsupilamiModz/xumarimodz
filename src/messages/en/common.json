@@ -127,7 +127,12 @@
     "next": "Next",
     "syncErrorTitle": "Sign-in could not be completed",
     "syncErrorText": "You were signed in, but your account could not be synced with the platform. Please try again.",
-    "signInAgain": "Sign in again"
+    "signInAgain": "Sign in again",
+    "confirm": "Confirm",
+    "unsavedChanges": "Unsaved changes",
+    "discard": "Discard",
+    "saving": "Saving…",
+    "saved": "Saved"
   },
   "ui": {
     "close": "Close",

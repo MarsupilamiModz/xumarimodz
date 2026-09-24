@@ -17,7 +17,7 @@ const SelectTrigger = React.forwardRef<
     ref={ref}
     className={cn(
       controlClassName,
-      "flex h-10 items-center justify-between gap-2 py-2 text-left data-[placeholder]:text-ink-faint [&>span]:truncate",
+      "flex h-9 items-center justify-between gap-2 py-1.5 text-left data-[placeholder]:text-ink-faint [&>span]:truncate",
       className
     )}
     {...props}

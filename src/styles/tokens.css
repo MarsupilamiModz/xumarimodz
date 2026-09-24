@@ -11,6 +11,7 @@
   --bg-raised: 24 24 24; /* #181818 – Karten, Panels */
   --bg-elevated: 30 30 30; /* #1e1e1e – Eingaben */
   --bg-hover: 38 38 43; /* #26262b */
+  --bg-row-hover: 28 28 31; /* #1c1c1f – Tabellenzeilen */
   --bg-footer: 15 15 17; /* #0f0f11 */
   --bg-sidebar: 21 21 23; /* #151517 – ACP-Sidebar */
 

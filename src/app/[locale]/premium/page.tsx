@@ -77,7 +77,7 @@ export default async function PremiumPage({ params: { locale } }: { params: { lo
       {faqs.length > 0 && (
         <section className="page-section">
           <div className="max-w-3xl">
-            <h2 className="text-[28px] font-bold leading-tight text-ink">{t("faqTitle")}</h2>
+            <h2 className="text-lg font-semibold text-ink">{t("faqTitle")}</h2>
             <div className="mt-6">
               <FaqList entries={faqs} />
             </div>

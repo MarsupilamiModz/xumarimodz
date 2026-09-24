@@ -108,7 +108,12 @@
     "next": "Suivant",
     "syncErrorTitle": "La connexion n’a pas pu aboutir",
     "syncErrorText": "Tu es connecté, mais ton compte n’a pas pu être synchronisé. Réessaie.",
-    "signInAgain": "Se reconnecter"
+    "signInAgain": "Se reconnecter",
+    "confirm": "Confirmer",
+    "unsavedChanges": "Modifications non enregistrées",
+    "discard": "Annuler les modifications",
+    "saving": "Enregistrement…",
+    "saved": "Enregistré"
   },
   "ui": {
     "close": "Fermer",

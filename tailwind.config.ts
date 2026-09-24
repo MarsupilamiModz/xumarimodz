@@ -24,6 +24,7 @@ const config: Config = {
       raised: token("bg-raised"),
       elevated: token("bg-elevated"),
       hover: token("bg-hover"),
+      "row-hover": token("bg-row-hover"),
       footer: token("bg-footer"),
       sidebar: token("bg-sidebar"),
       line: { DEFAULT: token("line"), control: token("line-control") },
@@ -84,7 +85,7 @@ const config: Config = {
         base: "var(--duration-base)",
         slow: "var(--duration-slow)",
       },
-      letterSpacing: { display: "-0.025em" },
+      letterSpacing: { display: "-0.02em" },
       keyframes: {
         shimmer: { "0%": { backgroundPosition: "-200% 0" }, "100%": { backgroundPosition: "200% 0" } },
       },

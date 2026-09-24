@@ -326,7 +326,7 @@ export function PremiumPlansClient({
 
       {showComparison && rows.length > 0 && (
         <section className="page-section">
-          <h2 className="text-[28px] font-bold leading-tight text-ink">{t("compareTitle")}</h2>
+          <h2 className="text-lg font-semibold text-ink">{t("compareTitle")}</h2>
           <div className="mt-6 overflow-x-auto rounded-xl border border-line">
             <table className="w-full min-w-[560px] text-sm">
               <thead className="bg-raised">

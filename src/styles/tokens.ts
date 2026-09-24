@@ -8,6 +8,7 @@ export const colors = {
   bgRaised: "#181818",
   bgElevated: "#1e1e1e",
   bgHover: "#26262b",
+  bgRowHover: "#1c1c1f",
   bgFooter: "#0f0f11",
   bgSidebar: "#151517",
 

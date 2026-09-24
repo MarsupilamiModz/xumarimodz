@@ -62,7 +62,7 @@ export function AuthCard({
               </Link>
             </nav>
           )}
-          <h1 className="text-[28px] font-extrabold leading-tight tracking-display text-ink">{title}</h1>
+          <h1 className="h1-display">{title}</h1>
           {subtitle && <p className="mt-2 text-sm text-ink-muted">{subtitle}</p>}
           <div className="mt-6">{children}</div>
         </div>

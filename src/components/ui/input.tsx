@@ -11,7 +11,7 @@ const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLI
       type={type}
       className={cn(
         controlClassName,
-        "flex h-10 py-2 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-ink",
+        "flex h-9 py-1.5 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-ink",
         className
       )}
       ref={ref}

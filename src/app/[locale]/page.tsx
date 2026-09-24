@@ -36,7 +36,7 @@ const FEATURE_ICONS: LucideIcon[] = [Download, ShieldCheck, Layers, History, Use
 function SectionHeader({ title, href, linkLabel }: { title: string; href?: string; linkLabel?: string }) {
   return (
     <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
-      <h2 className="text-[28px] font-bold leading-tight tracking-tight text-ink">{title}</h2>
+      <h2 className="text-lg font-semibold text-ink">{title}</h2>
       {href && linkLabel && (
         <Link href={href} className="link inline-flex items-center gap-1 text-sm font-semibold">
           {linkLabel}
@@ -191,7 +191,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
       <section className="page-container">
         <div className="flex flex-col gap-6 rounded-xl border border-line bg-raised p-8 md:flex-row md:items-center md:justify-between md:p-10">
           <div className="max-w-xl">
-            <h2 className="text-[28px] font-bold leading-tight text-ink">{txt("premiumBanner", t("premiumBanner"))}</h2>
+            <h2 className="text-lg font-semibold text-ink">{txt("premiumBanner", t("premiumBanner"))}</h2>
             <p className="mt-2 text-ink-muted">{txt("premiumBannerDesc", t("premiumBannerDesc"))}</p>
           </div>
           <Button size="lg" asChild>

@@ -108,7 +108,12 @@
     "next": "Sonraki",
     "syncErrorTitle": "Giriş tamamlanamadı",
     "syncErrorText": "Giriş yapıldı ancak hesabın platformla eşitlenemedi. Tekrar dene.",
-    "signInAgain": "Tekrar giriş yap"
+    "signInAgain": "Tekrar giriş yap",
+    "confirm": "Onayla",
+    "unsavedChanges": "Kaydedilmemiş değişiklikler",
+    "discard": "Vazgeç",
+    "saving": "Kaydediliyor…",
+    "saved": "Kaydedildi"
   },
   "ui": {
     "close": "Kapat",

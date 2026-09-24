@@ -14,7 +14,7 @@
   }
 
   body {
-    @apply bg-canvas font-sans text-[15px] leading-relaxed text-ink antialiased;
+    @apply bg-canvas font-sans text-sm leading-relaxed text-ink antialiased;
     font-feature-settings: "cv11", "ss01";
   }
 
@@ -22,9 +22,10 @@
     @apply transition-colors duration-fast;
   }
 
+  /* Fokus-Ring laut Design: 0 0 0 2px violet-bright */
   :focus-visible {
-    outline: 2px solid rgb(var(--violet-bright));
-    outline-offset: 2px;
+    outline: none;
+    box-shadow: 0 0 0 2px rgb(var(--violet-bright));
   }
 
   ::selection {
@@ -87,16 +88,28 @@
     @apply page-container py-14 md:py-20;
   }
 
-  .h1-display {
-    @apply text-[36px] font-extrabold leading-[1.1] tracking-display text-ink md:text-[50px];
+  /* H1 laut Design: 28/36, 700, -0.02em – Webseite und ACP gleich */
+  .h1-display,
+  .h1-acp {
+    @apply text-[28px] font-bold leading-9 tracking-display text-ink;
   }
 
-  .h1-acp {
-    @apply text-[28px] font-bold leading-tight tracking-tight text-ink;
+  /* Abschnittstitel 15/600, Labels 12/500, Metadaten 12 */
+  .section-title {
+    @apply text-[15px] font-semibold text-ink;
+  }
+
+  .label-text {
+    @apply text-xs font-medium text-ink-muted;
   }
 
   .meta {
-    @apply text-[13px] text-ink-muted;
+    @apply text-xs text-ink-muted;
+  }
+
+  /* IDs und Schlüssel */
+  .mono-id {
+    @apply font-mono text-xs text-ink-muted;
   }
 
   .link {

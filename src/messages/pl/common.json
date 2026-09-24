@@ -108,7 +108,12 @@
     "next": "Dalej",
     "syncErrorTitle": "Nie udało się dokończyć logowania",
     "syncErrorText": "Zalogowano, ale nie udało się zsynchronizować konta. Spróbuj ponownie.",
-    "signInAgain": "Zaloguj się ponownie"
+    "signInAgain": "Zaloguj się ponownie",
+    "confirm": "Potwierdź",
+    "unsavedChanges": "Niezapisane zmiany",
+    "discard": "Odrzuć",
+    "saving": "Zapisywanie…",
+    "saved": "Zapisano"
   },
   "ui": {
     "close": "Zamknij",
