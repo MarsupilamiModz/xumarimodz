@@ -48,23 +48,12 @@ export async function getActiveMembershipPlans() {
         }),
       { label: "membership:plans" }
     );
-    if (plans.length === 0) {
-      await seedDefaultPlans();
-      const seeded = await prisma.membershipPlan.findMany({
-        where: { isActive: true },
-        orderBy: { sortOrder: "asc" },
-      });
-      return seeded.map(mapPlan);
-    }
+    // Preise kommen nur aus der Datenbank: kein automatisches Anlegen von Plänen
+    // beim Seitenaufruf und keine fest eingetragenen Ersatzpreise.
     return plans.map(mapPlan);
   } catch (err) {
     console.error("[membership] getActiveMembershipPlans failed", err);
-    return DEFAULT_MEMBERSHIP_PLANS.map((plan, index) =>
-      mapPlan({
-        id: `fallback-${plan.slug}-${index}`,
-        ...plan,
-      })
-    );
+    return [];
   }
 }
 
