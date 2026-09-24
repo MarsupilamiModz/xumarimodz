@@ -499,6 +499,32 @@
       "submittedBy": "Eingereicht von",
       "created": "Erstellt {date}",
       "category": "Kategorie"
+    },
+    "au": {
+      "title": "Audit-Log",
+      "count": "{count, plural, one {# Eintrag} other {# Einträge}}",
+      "category": "Kategorie",
+      "all": "Alle",
+      "cat": {
+        "users": "Nutzer",
+        "content": "Inhalte",
+        "shop": "Shop",
+        "tickets": "Tickets",
+        "partners": "Partner & Creator",
+        "system": "System",
+        "other": "Sonstiges"
+      },
+      "search": "Aktion, Ziel-ID oder Person suchen",
+      "export": "CSV exportieren",
+      "colTime": "Zeit",
+      "colActor": "Person",
+      "colAction": "Aktion",
+      "colTarget": "Ziel",
+      "colIp": "IP (maskiert)",
+      "system": "System",
+      "emptyTitle": "Keine Einträge",
+      "emptyText": "Für diese Filter gibt es keine Einträge im Audit-Log.",
+      "loadError": "Das Audit-Log konnte nicht geladen werden."
     }
   }
 }

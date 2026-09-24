@@ -1,6 +1,7 @@
 import { createHash } from "crypto";
 import { prisma } from "@/lib/db";
 import type { Prisma } from "@prisma/client";
+import { maskIp } from "@/lib/audit-categories";
 
 async function getRequestAuditContext() {
   try {
@@ -33,8 +34,10 @@ export async function createAuditLog(params: {
       const ctx = await getRequestAuditContext();
       if (ctx) {
         ipHash = ipHash ?? ctx.ipHash;
+        const ipMasked = maskIp(ctx.ip);
         metadata = {
           ...metadata,
+          ...(ipMasked ? { ipMasked } : {}),
           ...(params.userAgent ? {} : { userAgent: ctx.userAgent }),
           ...(params.userAgent ? { userAgent: params.userAgent } : {}),
         };

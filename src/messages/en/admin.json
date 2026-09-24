@@ -510,6 +510,32 @@
       "submittedBy": "Submitted by",
       "created": "Created {date}",
       "category": "Category"
+    },
+    "au": {
+      "title": "Audit log",
+      "count": "{count, plural, one {# entry} other {# entries}}",
+      "category": "Category",
+      "all": "All",
+      "cat": {
+        "users": "Users",
+        "content": "Content",
+        "shop": "Shop",
+        "tickets": "Tickets",
+        "partners": "Partners & creators",
+        "system": "System",
+        "other": "Other"
+      },
+      "search": "Search action, target ID or person",
+      "export": "Export CSV",
+      "colTime": "Time",
+      "colActor": "Person",
+      "colAction": "Action",
+      "colTarget": "Target",
+      "colIp": "IP (masked)",
+      "system": "System",
+      "emptyTitle": "No entries",
+      "emptyText": "There are no audit log entries for these filters.",
+      "loadError": "The audit log could not be loaded."
     }
   }
 }
