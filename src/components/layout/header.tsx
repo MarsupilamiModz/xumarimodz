@@ -138,7 +138,10 @@ export function Header({
           <HeaderSearch locale={locale} />
           <LanguageSwitcher locale={locale} languages={languages} />
           <AuthButtons locale={locale} user={user} />
-          {/* TODO(design): Warenkorb mit Zähler und "App herunterladen" folgen mit Kasse und Download-Seite. */}
+          {/* TODO(backend): Warenkorb mit Zähler folgt mit der Kasse – bisher gibt es keinen Warenkorb. */}
+          <Button size="sm" className="hidden lg:inline-flex" asChild>
+            <Link href={`/${locale}/download`}>{t("downloadApp")}</Link>
+          </Button>
           <Button
             variant="ghost"
             size="icon"
@@ -184,6 +187,11 @@ export function Header({
               </Link>
             </li>
           )}
+          <li className="px-3 pt-3">
+            <Button className="w-full" asChild>
+              <Link href={`/${locale}/download`}>{t("downloadApp")}</Link>
+            </Button>
+          </li>
         </ul>
       </nav>
     </header>

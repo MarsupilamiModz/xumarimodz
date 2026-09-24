@@ -170,5 +170,33 @@
       "successText": "We will review your notice and reply by email.",
       "error": "The notice could not be sent. Check your input and try again."
     }
+  },
+  "download": {
+    "title": "Xumari Modz for Windows",
+    "subtitle": "Find, install and update mods – with your Xumari Modz account.",
+    "button": "Download installer",
+    "version": "Version",
+    "size": "Size",
+    "released": "Released",
+    "checksum": "SHA-256 checksum",
+    "checksumHint": "Compare the checksum after downloading, e.g. with “Get-FileHash” in PowerShell.",
+    "copy": "Copy",
+    "copied": "Copied",
+    "requirementsTitle": "System requirements",
+    "reqOs": "Windows 10 (version 1809 or later) or Windows 11",
+    "reqArch": "64-bit system (x64)",
+    "reqAccount": "Free Xumari Modz account",
+    "reqInternet": "Internet connection for downloads and updates",
+    "stepsTitle": "Install in 3 steps",
+    "step1Title": "Get the installer",
+    "step1Text": "Download the setup file and optionally verify the checksum.",
+    "step2Title": "Run the setup",
+    "step2Text": "Open the file and follow the prompts. It takes about a minute.",
+    "step3Title": "Sign in",
+    "step3Text": "Sign in with your account. Your library and purchases are there right away.",
+    "changelogTitle": "Changelog",
+    "changelogEmpty": "No entries yet.",
+    "unavailableTitle": "Download coming soon",
+    "unavailableText": "The installer is being prepared. Until then you can download mods directly on the website."
   }
 }

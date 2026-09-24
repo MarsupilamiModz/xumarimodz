@@ -151,5 +151,33 @@
       "successText": "Bildirimini inceleyip e-postayla yanıt vereceğiz.",
       "error": "Bildirim gönderilemedi. Bilgilerini kontrol edip tekrar dene."
     }
+  },
+  "download": {
+    "title": "Windows için Xumari Modz",
+    "subtitle": "Xumari Modz hesabınla mod bul, kur ve güncel tut.",
+    "button": "Yükleyiciyi indir",
+    "version": "Sürüm",
+    "size": "Boyut",
+    "released": "Yayınlandı",
+    "checksum": "SHA-256 sağlama toplamı",
+    "checksumHint": "İndirdikten sonra sağlama toplamını karşılaştır, örn. PowerShell’de “Get-FileHash” ile.",
+    "copy": "Kopyala",
+    "copied": "Kopyalandı",
+    "requirementsTitle": "Sistem gereksinimleri",
+    "reqOs": "Windows 10 (1809 veya üstü) ya da Windows 11",
+    "reqArch": "64 bit sistem (x64)",
+    "reqAccount": "Ücretsiz Xumari Modz hesabı",
+    "reqInternet": "İndirme ve güncellemeler için internet bağlantısı",
+    "stepsTitle": "3 adımda kurulum",
+    "step1Title": "Yükleyiciyi indir",
+    "step1Text": "Kurulum dosyasını indir, istersen sağlama toplamını kontrol et.",
+    "step2Title": "Kurulumu çalıştır",
+    "step2Text": "Dosyayı aç ve yönergeleri izle. Yaklaşık bir dakika sürer.",
+    "step3Title": "Giriş yap",
+    "step3Text": "Hesabınla giriş yap. Kütüphanen ve satın alımların hemen orada.",
+    "changelogTitle": "Değişiklik günlüğü",
+    "changelogEmpty": "Henüz kayıt yok.",
+    "unavailableTitle": "İndirme yakında",
+    "unavailableText": "Yükleyici hazırlanıyor. O zamana kadar modları doğrudan web sitesinden indirebilirsin."
   }
 }

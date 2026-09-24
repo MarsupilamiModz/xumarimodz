@@ -169,5 +169,33 @@
       "successText": "Wir prüfen deine Meldung und antworten per E-Mail.",
       "error": "Die Meldung konnte nicht gesendet werden. Prüf deine Eingaben und versuch es erneut."
     }
+  },
+  "download": {
+    "title": "Xumari Modz für Windows",
+    "subtitle": "Mods finden, installieren und aktuell halten – mit deinem Xumari-Modz-Konto.",
+    "button": "Installer herunterladen",
+    "version": "Version",
+    "size": "Größe",
+    "released": "Veröffentlicht",
+    "checksum": "SHA-256-Prüfsumme",
+    "checksumHint": "Vergleich die Prüfsumme nach dem Download, z. B. mit „Get-FileHash“ in PowerShell.",
+    "copy": "Kopieren",
+    "copied": "Kopiert",
+    "requirementsTitle": "Systemanforderungen",
+    "reqOs": "Windows 10 (Version 1809 oder neuer) oder Windows 11",
+    "reqArch": "64-Bit-System (x64)",
+    "reqAccount": "Kostenloses Xumari-Modz-Konto",
+    "reqInternet": "Internetverbindung für Downloads und Updates",
+    "stepsTitle": "Installation in 3 Schritten",
+    "step1Title": "Installer laden",
+    "step1Text": "Lade die Setup-Datei herunter und prüf optional die Prüfsumme.",
+    "step2Title": "Setup ausführen",
+    "step2Text": "Starte die Datei und folge den Hinweisen. Das dauert etwa eine Minute.",
+    "step3Title": "Anmelden",
+    "step3Text": "Melde dich mit deinem Konto an. Bibliothek und Käufe sind sofort da.",
+    "changelogTitle": "Changelog",
+    "changelogEmpty": "Noch keine Einträge.",
+    "unavailableTitle": "Download bald verfügbar",
+    "unavailableText": "Der Installer wird gerade vorbereitet. Bis dahin kannst du Mods direkt auf der Webseite herunterladen."
   }
 }

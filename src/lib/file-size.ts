@@ -1,3 +1,4 @@
+import { safeIntlNumberFormat } from "@/lib/i18n/safe-locale";
 export function fileSizeNumber(size: bigint | number | null | undefined): number {
   if (size == null) return 0;
   return typeof size === "bigint" ? Number(size) : size;
@@ -14,11 +15,14 @@ export function serializeModVersions<T extends { fileSize: bigint | number }>(
   return versions.map((v) => ({ ...v, fileSize: fileSizeNumber(v.fileSize) }));
 }
 
-export function formatBytes(bytes: bigint | number): string {
+/** Ohne `locale` wie bisher („1.5 MB“), mit `locale` landesüblich („1,5 MB“). */
+export function formatBytes(bytes: bigint | number, locale?: string | null): string {
   const n = fileSizeNumber(bytes);
   if (n === 0) return "0 B";
   const k = 1024;
   const sizes = ["B", "KB", "MB", "GB", "TB"];
   const i = Math.min(Math.floor(Math.log(n) / Math.log(k)), sizes.length - 1);
-  return `${parseFloat((n / k ** i).toFixed(i > 1 ? 1 : 0))} ${sizes[i]}`;
+  const value = parseFloat((n / k ** i).toFixed(i > 1 ? 1 : 0));
+  const formatted = locale ? safeIntlNumberFormat(locale, { maximumFractionDigits: 1 }).format(value) : String(value);
+  return `${formatted} ${sizes[i]}`;
 }
