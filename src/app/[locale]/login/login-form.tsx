@@ -69,8 +69,8 @@ export function LoginForm() {
   return (
     <div className="mx-auto max-w-md px-4 py-16">
       <div className="mb-8 flex justify-center"><Logo /></div>
-      <Card className="glass p-8">
-        <h1 className="text-2xl font-bold text-gradient">{t("login")}</h1>
+      <Card className="p-8">
+        <h1 className="text-2xl font-bold text-ink">{t("login")}</h1>
         <form onSubmit={handleLogin} className="mt-6 space-y-4">
           <div>
             <label className="text-sm">{t("email")}</label>
@@ -79,7 +79,7 @@ export function LoginForm() {
           <div>
             <div className="flex justify-between">
               <label className="text-sm">{t("password")}</label>
-              <Link href={`/${locale}/forgot-password`} className="text-xs text-neon-purple hover:underline">
+              <Link href={`/${locale}/forgot-password`} className="text-xs text-violet-bright hover:underline">
                 {t("forgot")}
               </Link>
             </div>
@@ -87,7 +87,7 @@ export function LoginForm() {
           </div>
           {error && <p className="text-sm text-destructive">{error}</p>}
           {!error && authErrorMessage && <p className="text-sm text-destructive">{authErrorMessage}</p>}
-          <Button variant="neon" className="w-full" type="submit" disabled={loading}>
+          <Button className="w-full" type="submit" disabled={loading}>
             {t("login")}
           </Button>
         </form>
@@ -95,7 +95,7 @@ export function LoginForm() {
           {t("discord")}
         </Button>
         <p className="mt-4 text-center text-sm text-muted-foreground">
-          <Link href={`/${locale}/register`} className="text-neon-purple hover:underline">Create account</Link>
+          <Link href={`/${locale}/register`} className="text-violet-bright hover:underline">Create account</Link>
         </p>
       </Card>
     </div>

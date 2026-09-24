@@ -130,7 +130,7 @@ export function GameModeEditor({
 
   return (
     <div className="space-y-6">
-      <Card className="glass p-6 space-y-4">
+      <Card className="p-6 space-y-4">
         <div>
           <h3 className="font-medium">{t("modePickerSettings")}</h3>
           <p className="text-xs text-muted-foreground mt-1">{t("modePickerSettingsHint")}</p>
@@ -194,11 +194,12 @@ export function GameModeEditor({
               onChange={(e) => savePickerSettings({ modePickerGlowEnabled: e.target.checked })}
             />
             {t("modePickerGlow")}
+            <span className="text-xs text-ink-muted">(Im neuen Design ohne Wirkung – Wert bleibt gespeichert.)</span>
           </label>
         </div>
       </Card>
 
-      <Card className="glass p-6 space-y-4">
+      <Card className="p-6 space-y-4">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="font-medium">{t("gameModes")}</h3>
@@ -410,7 +411,7 @@ export function GameModeEditor({
             placeholder={t("newGameModePlaceholder")}
             className="flex-1 min-w-[160px]"
           />
-          <Button type="submit" variant="neon" size="sm" disabled={pending || !newName.trim()}>
+          <Button type="submit" size="sm" disabled={pending || !newName.trim()}>
             <Plus className="h-4 w-4 mr-1" />
             {tc("save")}
           </Button>

@@ -34,7 +34,7 @@ export function FeatureFlagsPanel({ initial }: { initial: FeatureFlags }) {
   };
 
   return (
-    <Card className="glass p-6 space-y-4">
+    <Card className="p-6 space-y-4">
       <div>
         <h3 className="font-semibold">Feature flags</h3>
         <p className="text-sm text-muted-foreground mt-1">
@@ -52,7 +52,7 @@ export function FeatureFlagsPanel({ initial }: { initial: FeatureFlags }) {
           </label>
         ))}
       </div>
-      <Button variant="neon" disabled={pending} onClick={save}>
+      <Button disabled={pending} onClick={save}>
         Save feature flags
       </Button>
     </Card>

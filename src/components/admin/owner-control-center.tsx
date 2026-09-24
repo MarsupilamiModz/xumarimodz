@@ -21,7 +21,7 @@ type OwnerData = Extract<
 
 function StatCard({ label, value, sub }: { label: string; value: string; sub?: string }) {
   return (
-    <Card className="glass p-4">
+    <Card className="p-4">
       <p className="text-xs uppercase tracking-wider text-muted-foreground">{label}</p>
       <p className="mt-1 text-2xl font-bold tabular-nums">{value}</p>
       {sub && <p className="text-xs text-muted-foreground mt-1">{sub}</p>}
@@ -63,7 +63,7 @@ export function OwnerControlCenter({ data }: { data: OwnerData }) {
   return (
     <div className="space-y-8">
       <div>
-        <Badge className="mb-2 bg-neon-purple/20 text-neon-purple border-neon-purple/40">Owner only</Badge>
+        <Badge className="mb-2 bg-violet-soft text-violet-bright border-violet-bright/40">Owner only</Badge>
         <h1 className="text-2xl font-bold">Owner Control Center</h1>
         <p className="text-sm text-muted-foreground mt-1">
           Platform analytics, auth diagnostics, and lifetime membership campaigns.
@@ -146,7 +146,7 @@ export function OwnerControlCenter({ data }: { data: OwnerData }) {
           <StatCard label="Mod dependencies" value={formatNumber(data.trust.dependencyLinks)} />
         </div>
         {data.trust.topSearchQueries.length > 0 && (
-          <Card className="glass p-4">
+          <Card className="p-4">
             <h3 className="font-medium mb-2 text-sm">Top search queries</h3>
             <ul className="space-y-1 text-sm">
               {data.trust.topSearchQueries.map((q) => (
@@ -161,7 +161,7 @@ export function OwnerControlCenter({ data }: { data: OwnerData }) {
       </section>
 
       <section className="grid gap-4 lg:grid-cols-2">
-        <Card className="glass p-4">
+        <Card className="p-4">
           <h2 className="text-lg font-semibold mb-3">Operations</h2>
           <div className="grid gap-3 sm:grid-cols-2">
             <StatCard label="Open tickets" value={formatNumber(data.tickets.open)} />
@@ -171,7 +171,7 @@ export function OwnerControlCenter({ data }: { data: OwnerData }) {
           </div>
         </Card>
 
-        <Card className="glass p-4">
+        <Card className="p-4">
           <h2 className="text-lg font-semibold mb-3">Auth diagnostics</h2>
           <div className="max-h-48 overflow-y-auto space-y-2 text-xs font-mono">
             {data.auth.recent.length === 0 && (
@@ -180,7 +180,7 @@ export function OwnerControlCenter({ data }: { data: OwnerData }) {
             {data.auth.recent.map((log) => (
               <div key={log.id} className="border-b border-border/30 pb-1">
                 <span className="text-muted-foreground">{log.createdAt.toISOString()}</span>{" "}
-                <span className="text-neon-purple">{log.action}</span>
+                <span className="text-violet-bright">{log.action}</span>
               </div>
             ))}
           </div>
@@ -191,7 +191,7 @@ export function OwnerControlCenter({ data }: { data: OwnerData }) {
         <h2 className="text-lg font-semibold mb-3">Lifetime membership campaigns</h2>
         <div className="grid gap-3 mb-6">
           {data.campaigns.map((c) => (
-            <Card key={c.id} className="glass p-4 flex flex-wrap items-center justify-between gap-3">
+            <Card key={c.id} className="p-4 flex flex-wrap items-center justify-between gap-3">
               <div>
                 <p className="font-medium">{c.title}</p>
                 <p className="text-sm text-muted-foreground">
@@ -205,7 +205,7 @@ export function OwnerControlCenter({ data }: { data: OwnerData }) {
           ))}
         </div>
 
-        <Card className="glass p-4">
+        <Card className="p-4">
           <h3 className="font-medium mb-3">New campaign</h3>
           <form onSubmit={createCampaign} className="grid gap-3 sm:grid-cols-2">
             <Input placeholder="Slug" value={campaignForm.slug} onChange={(e) => setCampaignForm({ ...campaignForm, slug: e.target.value })} required />

@@ -49,7 +49,7 @@ export function ModVersionsPanel({ modId, versions }: Props) {
   if (versions.length === 0) return null;
 
   return (
-    <Card className="glass">
+    <Card>
       <CardHeader>
         <CardTitle>Versions</CardTitle>
       </CardHeader>

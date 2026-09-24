@@ -42,7 +42,7 @@ export function EmailSettingsCard({
 
   return (
     <div className="space-y-6">
-      <Card className="glass">
+      <Card>
         <CardHeader>
           <CardTitle>{t("title")}</CardTitle>
         </CardHeader>
@@ -121,7 +121,7 @@ export function EmailSettingsCard({
       </Card>
 
       {showHistory ? (
-      <Card className="glass">
+      <Card>
         <CardHeader>
           <CardTitle>{t("historyTitle")}</CardTitle>
         </CardHeader>

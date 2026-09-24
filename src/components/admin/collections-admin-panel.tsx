@@ -53,7 +53,7 @@ function CollectionsAdminPanelInner({
 
   return (
     <div className="space-y-4">
-      <Card className="glass">
+      <Card>
         <CardHeader className="flex flex-row items-center justify-between gap-2">
           <CardTitle>Create collection / modpack</CardTitle>
           <Button size="sm" variant="outline" onClick={() => setShowCreate((v) => !v)}>
@@ -95,7 +95,7 @@ function CollectionsAdminPanelInner({
               <Input name="coverUrl" placeholder="Thumbnail URL" className="sm:col-span-2" />
               <Input name="bannerUrl" placeholder="Banner URL" className="sm:col-span-2" />
               <Textarea name="description" placeholder="Description" rows={3} className="sm:col-span-2" />
-              <Button type="submit" variant="neon" disabled={pending} className="sm:col-span-2 w-fit">
+              <Button type="submit" disabled={pending} className="sm:col-span-2 w-fit">
                 Create
               </Button>
             </form>
@@ -103,7 +103,7 @@ function CollectionsAdminPanelInner({
         )}
       </Card>
 
-      <Card className="glass">
+      <Card>
         <CardHeader>
           <CardTitle>Collections ({collections.length})</CardTitle>
         </CardHeader>
@@ -115,7 +115,7 @@ function CollectionsAdminPanelInner({
               <div key={c.id} className="flex flex-wrap items-start justify-between gap-2 border-b border-border/30 pb-3 text-sm">
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <Link href={`/${locale}/collections/${c.slug}`} className="font-medium hover:text-neon-purple">
+                    <Link href={`/${locale}/collections/${c.slug}`} className="font-medium hover:text-violet-bright">
                       {c.title}
                     </Link>
                     {c.isFeatured && <Badge>Featured</Badge>}
@@ -158,7 +158,7 @@ function CollectionsAdminPanelInner({
                       </select>
                       <Textarea name="description" defaultValue={c.description ?? ""} rows={2} className="sm:col-span-2" />
                       <div className="flex gap-1 sm:col-span-2">
-                        <Button type="submit" size="sm" variant="neon" disabled={pending}>Save</Button>
+                        <Button type="submit" size="sm" disabled={pending}>Save</Button>
                         <Button type="button" size="sm" variant="outline" onClick={() => setEditingId(null)}>Cancel</Button>
                       </div>
                     </form>

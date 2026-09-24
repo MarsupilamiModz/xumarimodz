@@ -28,7 +28,7 @@ export default async function DevelopersPage({
         Public REST and GraphQL APIs for the Xumari Modz desktop client and third-party integrations.
       </p>
 
-      <Card className="glass mb-6">
+      <Card className="mb-6">
         <CardHeader><CardTitle>Authentication</CardTitle></CardHeader>
         <CardContent className="space-y-2 text-sm">
           <p>Include your API key in the Authorization header:</p>
@@ -41,7 +41,7 @@ export default async function DevelopersPage({
         </CardContent>
       </Card>
 
-      <Card className="glass mb-6">
+      <Card className="mb-6">
         <CardHeader><CardTitle>Desktop Client Foundation</CardTitle></CardHeader>
         <CardContent className="text-sm space-y-2 text-muted-foreground">
           <p>
@@ -54,7 +54,7 @@ export default async function DevelopersPage({
         </CardContent>
       </Card>
 
-      <Card className="glass">
+      <Card>
         <CardHeader><CardTitle>REST Endpoints</CardTitle></CardHeader>
         <CardContent className="space-y-3">
           {endpoints.map((e) => (
@@ -67,7 +67,7 @@ export default async function DevelopersPage({
         </CardContent>
       </Card>
 
-      <Card className="glass mt-6">
+      <Card className="mt-6">
         <CardHeader><CardTitle>GraphQL</CardTitle></CardHeader>
         <CardContent className="text-sm space-y-2">
           <p>POST <code>/api/graphql</code> with JSON body:</p>

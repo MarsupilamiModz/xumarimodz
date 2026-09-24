@@ -34,7 +34,7 @@ export function GameCoverPanel({ gameId, gameName, currentBanner, coverOverride 
   };
 
   return (
-    <Card className="glass p-6 space-y-4">
+    <Card className="p-6 space-y-4">
       <div>
         <h3 className="font-semibold">Game cover & branding</h3>
         <p className="text-sm text-muted-foreground">Hero banner, accent colors, and page styling for {gameName}.</p>
@@ -63,14 +63,15 @@ export function GameCoverPanel({ gameId, gameName, currentBanner, coverOverride 
         </div>
         <div>
           <label className="text-sm font-medium">Background gradient (CSS)</label>
+          <p className="text-xs text-ink-muted">Im neuen Design ohne Wirkung – Wert bleibt gespeichert.</p>
           <Input
             name="backgroundGradient"
             defaultValue={coverOverride?.backgroundGradient ?? ""}
-            placeholder="linear-gradient(…)"
+            placeholder="CSS"
             className="mt-1 font-mono text-xs"
           />
         </div>
-        <Button type="submit" variant="neon" disabled={pending}>Save cover settings</Button>
+        <Button type="submit" disabled={pending}>Save cover settings</Button>
       </form>
     </Card>
   );

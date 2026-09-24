@@ -189,8 +189,8 @@ export function ModsCatalogClient({
                 type="button"
                 onClick={() => pushFilters({ page: p })}
                 className={`rounded px-3 py-1 text-sm border ${
-                  p === initialPage ? "border-neon-purple bg-neon-purple/10" : "border-border hover:bg-accent/20"
-                }`}
+ p === initialPage ? "border-violet-bright bg-violet-soft" : "border-border hover:bg-accent/20"
+ }`}
               >
                 {p}
               </button>

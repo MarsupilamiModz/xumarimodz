@@ -21,7 +21,7 @@ async function DashboardStats({
   return (
     <>
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="glass">
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">{t("downloads")}</CardTitle>
             <Download className="h-4 w-4 text-muted-foreground" />
@@ -30,7 +30,7 @@ async function DashboardStats({
             <p className="text-2xl font-bold">{stats.downloads}</p>
           </CardContent>
         </Card>
-        <Card className="glass">
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">{t("favorites")}</CardTitle>
             <Heart className="h-4 w-4 text-muted-foreground" />
@@ -39,19 +39,19 @@ async function DashboardStats({
             <p className="text-2xl font-bold">{stats.favorites}</p>
           </CardContent>
         </Card>
-        <Card className="glass">
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">{t("premium")}</CardTitle>
-            <Crown className="h-4 w-4 text-neon-purple" />
+            <Crown className="h-4 w-4 text-violet-bright" />
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">{isPremium ? t("active") : t("free")}</p>
           </CardContent>
         </Card>
-        <Card className="glass">
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">{t("level")}</CardTitle>
-            <Trophy className="h-4 w-4 text-neon-blue" />
+            <Trophy className="h-4 w-4 text-ink-muted" />
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">Lv.{stats.progress?.level ?? 1}</p>
@@ -61,7 +61,7 @@ async function DashboardStats({
       </div>
 
       {stats.unreadNotifications > 0 && (
-        <Card className="glass mt-6 border-neon-blue/30">
+        <Card className="mt-6 border-line-control">
           <CardContent className="py-4 text-sm">
             You have <strong>{stats.unreadNotifications}</strong> {t("notifications").toLowerCase()}.
           </CardContent>
@@ -75,7 +75,7 @@ function StatsSkeleton() {
   return (
     <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {Array.from({ length: 4 }).map((_, i) => (
-        <Card key={i} className="glass h-24 animate-pulse" />
+        <Card key={i} className="h-24 animate-pulse" />
       ))}
     </div>
   );

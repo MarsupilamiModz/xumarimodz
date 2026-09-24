@@ -44,7 +44,7 @@ export function AuthBrandingPanel({ initial }: { initial: AuthBrandingSettings }
 
   return (
     <div className="grid gap-6 lg:grid-cols-2">
-      <Card className="glass p-6 space-y-4">
+      <Card className="p-6 space-y-4">
         <h3 className="font-semibold">Authentication branding</h3>
         <p className="text-xs text-muted-foreground">
           Customize login and register pages. Changes preview live on the right.
@@ -105,12 +105,12 @@ export function AuthBrandingPanel({ initial }: { initial: AuthBrandingSettings }
           onChange={(e) => setSettings({ ...settings, microsoftButtonText: e.target.value })}
           placeholder="Microsoft button text"
         />
-        <Button variant="neon" disabled={pending} onClick={save}>
+        <Button disabled={pending} onClick={save}>
           Save auth branding
         </Button>
       </Card>
 
-      <Card className="glass p-6 space-y-4">
+      <Card className="p-6 space-y-4">
         <h3 className="font-semibold">Live preview</h3>
         <div
           className="relative rounded-xl border border-border/40 overflow-hidden min-h-[420px] p-6"
@@ -124,14 +124,14 @@ export function AuthBrandingPanel({ initial }: { initial: AuthBrandingSettings }
               : undefined
           }
         >
-          <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
+          <div className="absolute inset-0 bg-background/80" />
           <div className="relative mx-auto max-w-sm rounded-xl border border-border/40 bg-background/90 p-6 space-y-4">
             {settings.loginLogoUrl ? (
               <div className="relative mx-auto h-12 w-40">
                 <SafeImage src={settings.loginLogoUrl} alt="" fill className="object-contain" />
               </div>
             ) : (
-              <div className="h-12 flex items-center justify-center text-sm font-bold text-gradient">Xumari Modz</div>
+              <div className="h-12 flex items-center justify-center text-sm font-bold text-ink">Xumari Modz</div>
             )}
             <div>
               <h4 className="text-xl font-bold">{settings.loginTitle}</h4>
@@ -140,7 +140,7 @@ export function AuthBrandingPanel({ initial }: { initial: AuthBrandingSettings }
             <div className="space-y-2">
               <div className="h-9 rounded-md border border-input bg-muted/20" />
               <div className="h-9 rounded-md border border-input bg-muted/20" />
-              <Button variant="neon" className="w-full" type="button">
+              <Button className="w-full" type="button">
                 Sign in
               </Button>
               <Button variant="outline" className="w-full" type="button">

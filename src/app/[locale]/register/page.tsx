@@ -42,8 +42,8 @@ export default function RegisterPage() {
 
   return (
     <div className="mx-auto max-w-md px-4 py-16">
-      <Card className="glass p-8">
-        <h1 className="text-2xl font-bold text-gradient">{t("register")}</h1>
+      <Card className="p-8">
+        <h1 className="text-2xl font-bold text-ink">{t("register")}</h1>
         <form onSubmit={handleRegister} className="mt-6 space-y-4">
           <div>
             <label className="text-sm">{t("email")}</label>
@@ -54,7 +54,7 @@ export default function RegisterPage() {
             <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={8} className="mt-1" />
           </div>
           {error && <p className="text-sm text-destructive">{error}</p>}
-          <Button variant="neon" className="w-full" type="submit" disabled={loading}>
+          <Button className="w-full" type="submit" disabled={loading}>
             {t("register")}
           </Button>
         </form>

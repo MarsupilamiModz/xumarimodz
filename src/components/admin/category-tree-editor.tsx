@@ -97,7 +97,7 @@ export function CategoryTreeEditor({
   }
 
   return (
-    <Card className="glass p-6 space-y-4">
+    <Card className="p-6 space-y-4">
       <div className="flex items-center justify-between">
         <div>
           <h3 className="font-medium">{t("categoryTree")}</h3>
@@ -312,7 +312,7 @@ export function CategoryTreeEditor({
           placeholder={t("newCategoryPlaceholder")}
           className="flex-1 min-w-[160px]"
         />
-        <Button type="submit" variant="neon" size="sm" disabled={pending || !newName.trim()}>
+        <Button type="submit" size="sm" disabled={pending || !newName.trim()}>
           {tc("save")}
         </Button>
       </form>

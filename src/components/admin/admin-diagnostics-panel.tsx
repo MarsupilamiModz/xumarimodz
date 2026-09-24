@@ -98,7 +98,7 @@ function Row({ label, value, highlight }: { label: string; value: string | null;
   return (
     <div className="flex justify-between gap-4">
       <span className="text-muted-foreground">{label}</span>
-      <span className={highlight ? "font-semibold text-neon-purple" : "font-mono text-xs truncate max-w-[60%] text-right"}>
+      <span className={highlight ? "font-semibold text-violet-bright" : "font-mono text-xs truncate max-w-[60%] text-right"}>
         {value ?? "—"}
       </span>
     </div>

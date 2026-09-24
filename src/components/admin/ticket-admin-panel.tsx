@@ -81,7 +81,7 @@ export function TicketAdminPanel({
   }
 
   return (
-    <Card className="glass">
+    <Card>
       <CardHeader>
         <CardTitle className="text-sm">Admin Controls</CardTitle>
       </CardHeader>

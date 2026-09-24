@@ -20,17 +20,17 @@ export default async function AdminCreatorsPage({ params: { locale } }: { params
           <Button variant="outline" size="sm" asChild>
             <Link href={`/${locale}/admin/creators/visibility`}>{t("visibleCreators")}</Link>
           </Button>
-          <Button variant="neon" size="sm" asChild>
+          <Button size="sm" asChild>
             <Link href={`/${locale}/admin/creators/new`}>{t("createCreator")}</Link>
           </Button>
         </div>
       </div>
       <div className="space-y-2">
         {creators.length === 0 ? (
-          <Card className="glass p-8 text-center text-muted-foreground">{t("noCreators")}</Card>
+          <Card className="p-8 text-center text-muted-foreground">{t("noCreators")}</Card>
         ) : (
           creators.map((c) => (
-            <Card key={c.id} className="glass p-4 flex flex-wrap justify-between items-center gap-3 hover:border-neon-purple/30 transition-colors">
+            <Card key={c.id} className="p-4 flex flex-wrap justify-between items-center gap-3 hover:border-line-control transition-colors">
               <div className="flex items-center gap-3 min-w-0">
                 <CreatorLevelBadge level={c.level} size="xs" />
                 <div>

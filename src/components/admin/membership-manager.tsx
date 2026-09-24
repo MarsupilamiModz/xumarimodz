@@ -64,7 +64,7 @@ export function MembershipManager({
     state.status === "ACTIVE" ? "default" : state.status === "CANCELED" ? "destructive" : "secondary";
 
   return (
-    <Card className="glass lg:col-span-2">
+    <Card className="lg:col-span-2">
       <CardHeader>
         <CardTitle>Membership Manager</CardTitle>
       </CardHeader>

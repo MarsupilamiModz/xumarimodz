@@ -39,11 +39,11 @@ export function FollowButton({
     <Button
       type="button"
       size={size}
-      variant={following ? "outline" : "neon"}
+      variant={following ? "outline" : "default"}
       disabled={pending || !loaded}
       className={cn(
-        "transition-all duration-300",
-        following && "border-neon-purple/40 bg-neon-purple/10",
+        "transition-all duration-base",
+        following && "border-violet-bright/40 bg-violet-soft",
         className
       )}
       onClick={() =>

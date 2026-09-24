@@ -1,4 +1,4 @@
-import { ShieldCheck, ShieldAlert } from "lucide-react";
+import { ShieldCheck, ShieldAlert, Check, CheckCircle2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { SoundApprovalStatus, FileScanStatus } from "@prisma/client";
 
@@ -15,7 +15,7 @@ export function SoundApprovalPanel({ approvalStatus, previewScanStatus, approved
   const isPending = !isApproved && !isRejected;
 
   return (
-    <Card className={`glass ${isApproved ? "border-success/20" : isRejected ? "border-destructive/30" : "border-warning/20"}`}>
+    <Card className={`${isApproved ? "border-success/20" : isRejected ? "border-destructive/30" : "border-warning/20"}`}>
       <CardHeader className="pb-3">
         <CardTitle className="text-base flex items-center gap-2">
           {isApproved ? (
@@ -29,15 +29,15 @@ export function SoundApprovalPanel({ approvalStatus, previewScanStatus, approved
       <CardContent className="space-y-2 text-sm">
         {isApproved && (
           <div className="space-y-1">
-            <p className="font-medium text-success">✔ Approved</p>
+            <p className="flex items-center gap-1.5 font-medium text-success"><CheckCircle2 className="h-4 w-4" aria-hidden /> Approved</p>
             {approvalStatus === "MANUALLY_APPROVED" && (
-              <p className="text-success/90">✔ Manually approved by moderation team</p>
+              <p className="flex items-center gap-1.5 text-success"><Check className="h-4 w-4" aria-hidden /> Manually approved by moderation team</p>
             )}
             {approvalStatus === "VIRUS_TOTAL_VERIFIED" && (
-              <p className="text-success/90">✔ VirusTotal verified</p>
+              <p className="flex items-center gap-1.5 text-success"><Check className="h-4 w-4" aria-hidden /> VirusTotal verified</p>
             )}
             {(previewScanStatus === "CLEAN" || previewScanStatus === "APPROVED") && (
-              <p className="text-success/90">✔ Scan passed</p>
+              <p className="flex items-center gap-1.5 text-success"><Check className="h-4 w-4" aria-hidden /> Scan passed</p>
             )}
           </div>
         )}

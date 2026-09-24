@@ -38,7 +38,7 @@ export default async function AdminAnalyticsPage() {
             { label: "Open tickets", value: data.openTickets },
             { label: "Revenue (30d)", value: `$${data.revenue30d.toFixed(0)}` },
           ].map((s) => (
-            <Card key={s.label} className="glass">
+            <Card key={s.label}>
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm text-muted-foreground">{s.label}</CardTitle>
               </CardHeader>
@@ -51,7 +51,7 @@ export default async function AdminAnalyticsPage() {
       )}
 
       <div className="mt-10 grid gap-6 lg:grid-cols-2">
-        <Card className="glass">
+        <Card>
           <CardHeader>
             <CardTitle className="text-base">Top games by mod count</CardTitle>
           </CardHeader>
@@ -65,7 +65,7 @@ export default async function AdminAnalyticsPage() {
           </CardContent>
         </Card>
 
-        <Card className="glass">
+        <Card>
           <CardHeader>
             <CardTitle className="text-base">Top mods by downloads</CardTitle>
           </CardHeader>

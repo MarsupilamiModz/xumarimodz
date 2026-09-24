@@ -37,7 +37,7 @@ export function LeaderboardsAdminPanel({
 
   return (
     <div className="space-y-8">
-      <Card className="glass p-6 space-y-4">
+      <Card className="p-6 space-y-4">
         <h3 className="font-semibold">Ranking formula weights</h3>
         <div className="grid gap-3 sm:grid-cols-3">
           {(Object.keys(weights) as (keyof LeaderboardWeights)[]).map((key) => (
@@ -54,7 +54,7 @@ export function LeaderboardsAdminPanel({
           ))}
         </div>
         <div className="flex gap-2">
-          <Button variant="neon" disabled={pending} onClick={() => startTransition(async () => {
+          <Button disabled={pending} onClick={() => startTransition(async () => {
             const r = await saveAdminLeaderboardWeights(weights);
             if (r.success) appToast.saved();
           })}>Save weights</Button>
@@ -65,7 +65,7 @@ export function LeaderboardsAdminPanel({
         </div>
       </Card>
 
-      <Card className="glass p-6 space-y-4">
+      <Card className="p-6 space-y-4">
         <h3 className="font-semibold">Pin creators</h3>
         <div className="flex gap-2">
           <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search creator" />

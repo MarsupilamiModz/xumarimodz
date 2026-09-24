@@ -28,7 +28,7 @@ export function SubscriptionActions({
   return (
     <div className="flex flex-wrap gap-2">
       {hasSubscription && (
-        <Button variant="neon" onClick={openPortal} disabled={loading}>
+        <Button onClick={openPortal} disabled={loading}>
           {loading ? "Loading..." : "Manage billing & invoices"}
         </Button>
       )}

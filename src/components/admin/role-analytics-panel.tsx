@@ -36,26 +36,26 @@ export function RoleAnalyticsPanel({ data }: Props) {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="glass p-4">
+        <Card className="p-4">
           <p className="text-xs text-muted-foreground">Total users</p>
           <p className="text-2xl font-bold">{safeToLocaleString(totalUsers)}</p>
         </Card>
-        <Card className="glass p-4">
+        <Card className="p-4">
           <p className="text-xs text-muted-foreground">Active memberships</p>
           <p className="text-2xl font-bold">{safeToLocaleString(data.activePurchases)}</p>
         </Card>
-        <Card className="glass p-4">
+        <Card className="p-4">
           <p className="text-xs text-muted-foreground">Custom roles</p>
           <p className="text-2xl font-bold">{data.customGroups.length}</p>
         </Card>
-        <Card className="glass p-4">
+        <Card className="p-4">
           <p className="text-xs text-muted-foreground">Permission keys</p>
           <p className="text-2xl font-bold">{data.totalPermissions}</p>
         </Card>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <Card className="glass p-5 space-y-3">
+        <Card className="p-5 space-y-3">
           <h3 className="font-medium">Users by built-in role</h3>
           <div className="space-y-2">
             {data.usersByRole
@@ -69,7 +69,7 @@ export function RoleAnalyticsPanel({ data }: Props) {
           </div>
         </Card>
 
-        <Card className="glass p-5 space-y-3">
+        <Card className="p-5 space-y-3">
           <h3 className="font-medium">Membership purchases by plan</h3>
           <div className="space-y-2">
             {data.purchasesByPlan.length === 0 ? (
@@ -85,7 +85,7 @@ export function RoleAnalyticsPanel({ data }: Props) {
           </div>
         </Card>
 
-        <Card className="glass p-5 space-y-3">
+        <Card className="p-5 space-y-3">
           <h3 className="font-medium">Custom role assignments</h3>
           <div className="space-y-2">
             {data.customGroups.map((g) => (
@@ -101,7 +101,7 @@ export function RoleAnalyticsPanel({ data }: Props) {
           </div>
         </Card>
 
-        <Card className="glass p-5 space-y-3">
+        <Card className="p-5 space-y-3">
           <h3 className="font-medium">Effective permissions per role</h3>
           <div className="space-y-2">
             {data.rolePermissions.map((row) => (

@@ -206,14 +206,14 @@ export function UsersTable({
             <SelectItem value="1">Include deleted</SelectItem>
           </SelectContent>
         </Select>
-        <Button variant="neon" onClick={applyFilters} disabled={pending}>
+        <Button onClick={applyFilters} disabled={pending}>
           Filter
         </Button>
       </div>
 
       <p className="text-sm text-muted-foreground">{total} users</p>
 
-      <div className="glass rounded-xl border border-border/50 overflow-hidden">
+      <div className="rounded-xl border border-border/50 overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow>
@@ -252,7 +252,7 @@ export function UsersTable({
                   <TableCell>
                     <Link
                       href={`/${locale}/admin/users/${u.id}`}
-                      className="font-medium hover:text-neon-purple"
+                      className="font-medium hover:text-violet-bright"
                     >
                       @{u.username}
                     </Link>
@@ -286,7 +286,7 @@ export function UsersTable({
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="glass">
+                      <DropdownMenuContent align="end">
                         <DropdownMenuItem asChild>
                           <Link href={`/${locale}/admin/users/${u.id}`}>View profile</Link>
                         </DropdownMenuItem>

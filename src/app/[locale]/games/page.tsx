@@ -21,11 +21,11 @@ export default async function GamesPage({ params: { locale } }: { params: { loca
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
-      <h1 className="text-3xl font-bold text-gradient">{t("title")}</h1>
+      <h1 className="text-3xl font-bold text-ink">{t("title")}</h1>
       <p className="mt-2 text-muted-foreground">{t("subtitle")}</p>
       <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {games.length === 0 ? (
-          <Card className="glass col-span-full p-12 text-center text-muted-foreground">
+          <Card className="col-span-full p-12 text-center text-muted-foreground">
             {t("empty")}
           </Card>
         ) : (

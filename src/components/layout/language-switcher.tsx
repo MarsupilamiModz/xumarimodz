@@ -62,8 +62,8 @@ export function LanguageSwitcher({
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" aria-label={tNav("language")} disabled={switching}>
-          <span className="text-base leading-none" aria-hidden>
-            {current?.flagIcon ?? "🌐"}
+          <span className="text-xs font-semibold uppercase" aria-hidden>
+            {current?.code ?? locale}
           </span>
         </Button>
       </DropdownMenuTrigger>

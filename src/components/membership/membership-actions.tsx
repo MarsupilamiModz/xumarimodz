@@ -38,7 +38,7 @@ export function MembershipActions({
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap gap-2">
-        <Button variant="neon" asChild>
+        <Button asChild>
           <Link href={`/${locale}/premium`}>Upgrade membership</Link>
         </Button>
       </div>

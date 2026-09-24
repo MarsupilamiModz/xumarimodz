@@ -31,7 +31,7 @@ export function ConfirmDialog({
 }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="glass">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
@@ -41,7 +41,7 @@ export function ConfirmDialog({
             Cancel
           </Button>
           <Button
-            variant={variant === "destructive" ? "destructive" : "neon"}
+            variant={variant === "destructive" ? "destructive" : "default"}
             onClick={onConfirm}
             disabled={loading}
           >

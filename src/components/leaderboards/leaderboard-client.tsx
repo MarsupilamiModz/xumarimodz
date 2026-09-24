@@ -54,8 +54,8 @@ export function LeaderboardClient({
   return (
     <div className="space-y-8">
       <div className="text-center">
-        <Trophy className="mx-auto h-12 w-12 text-neon-purple mb-4" />
-        <h1 className="text-3xl font-bold text-gradient">Creator Leaderboards</h1>
+        <Trophy className="mx-auto h-12 w-12 text-violet-bright mb-4" />
+        <h1 className="text-3xl font-bold text-ink">Creator Leaderboards</h1>
         <p className="text-muted-foreground mt-2">Compete across downloads, likes, growth, and engagement.</p>
       </div>
 
@@ -66,8 +66,8 @@ export function LeaderboardClient({
             type="button"
             onClick={() => push({ metric: m })}
             className={`rounded-full px-3 py-1.5 text-xs border transition-colors ${
-              initialMetric === m ? "border-neon-purple bg-neon-purple/15 text-neon-purple" : "border-border hover:bg-accent/20"
-            }`}
+ initialMetric === m ? "border-violet-bright bg-violet-soft text-violet-bright" : "border-border hover:bg-accent/20"
+ }`}
           >
             {METRIC_LABELS[m]}
           </button>
@@ -80,7 +80,7 @@ export function LeaderboardClient({
             key={p}
             type="button"
             onClick={() => push({ period: p })}
-            className={`text-sm px-3 py-1 rounded-md ${initialPeriod === p ? "bg-neon-blue/20 text-neon-blue" : "text-muted-foreground hover:text-foreground"}`}
+            className={`text-sm px-3 py-1 rounded-md ${initialPeriod === p ? "bg-elevated text-ink-muted" : "text-muted-foreground hover:text-foreground"}`}
           >
             {PERIOD_LABELS[p]}
           </button>
@@ -109,19 +109,19 @@ export function LeaderboardClient({
       </div>
 
       {entries.length > 0 && entries[0] && (
-        <Card className="glass p-6 border-neon-purple/30 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-neon-purple/10 to-neon-blue/10 pointer-events-none" />
+        <Card className="p-6 border-violet-bright/30 relative overflow-hidden">
+          <div className="absolute inset-0 pointer-events-none" />
           <div className="relative flex items-center gap-4">
-            <span className="text-4xl font-bold text-neon-purple">#1</span>
+            <span className="text-4xl font-bold text-violet-bright">#1</span>
             {entries[0].avatarUrl ? (
-              <div className="relative h-16 w-16 rounded-full overflow-hidden border-2 border-neon-purple/50">
+              <div className="relative h-16 w-16 rounded-full overflow-hidden border-2 border-violet-bright/50">
                 <SafeImage src={entries[0].avatarUrl} alt="" fill className="object-cover" sizes="64px" />
               </div>
             ) : (
-              <div className="h-16 w-16 rounded-full bg-neon-purple/20 flex items-center justify-center text-xl font-bold">{entries[0].name[0]}</div>
+              <div className="h-16 w-16 rounded-full bg-violet-soft flex items-center justify-center text-xl font-bold">{entries[0].name[0]}</div>
             )}
             <div className="flex-1">
-              <Link href={`/${locale}/creators/${entries[0].slug}`} className="text-xl font-bold hover:text-neon-purple">
+              <Link href={`/${locale}/creators/${entries[0].slug}`} className="text-xl font-bold hover:text-violet-bright">
                 {entries[0].name}
               </Link>
               {entries[0].tagline && <p className="text-sm text-muted-foreground">{entries[0].tagline}</p>}
@@ -131,7 +131,7 @@ export function LeaderboardClient({
               </div>
             </div>
             <div className="text-right">
-              <p className="text-2xl font-bold text-neon-blue">{formatNumber(entries[0].score, locale)}</p>
+              <p className="text-2xl font-bold text-ink-muted">{formatNumber(entries[0].score, locale)}</p>
               <p className="text-xs text-muted-foreground">score</p>
             </div>
           </div>
@@ -142,9 +142,9 @@ export function LeaderboardClient({
         {entries.map((e) => (
           <Card
             key={e.creatorId}
-            className={`glass p-4 flex items-center gap-4 transition-all hover:border-neon-purple/30 ${e.isPinned ? "border-neon-purple/40" : ""}`}
+            className={`p-4 flex items-center gap-4 transition-all hover:border-line-control ${e.isPinned ? "border-violet-bright/40" : ""}`}
           >
-            <span className={`w-8 text-center font-bold ${e.rank <= 3 ? "text-neon-purple" : "text-muted-foreground"}`}>
+            <span className={`w-8 text-center font-bold ${e.rank <= 3 ? "text-violet-bright" : "text-muted-foreground"}`}>
               {e.rank}
             </span>
             {e.avatarUrl ? (
@@ -155,7 +155,7 @@ export function LeaderboardClient({
               <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center text-sm font-bold">{e.name[0]}</div>
             )}
             <div className="flex-1 min-w-0">
-              <Link href={`/${locale}/creators/${e.slug}`} className="font-medium hover:text-neon-purple truncate block">
+              <Link href={`/${locale}/creators/${e.slug}`} className="font-medium hover:text-violet-bright truncate block">
                 {e.name}
               </Link>
               <div className="flex flex-wrap gap-1.5 mt-1">
@@ -165,7 +165,7 @@ export function LeaderboardClient({
               </div>
             </div>
             <div className="text-right text-sm shrink-0 hidden sm:block">
-              <p className="font-semibold text-neon-blue">{formatNumber(e.score, locale)}</p>
+              <p className="font-semibold text-ink-muted">{formatNumber(e.score, locale)}</p>
               <p className="text-xs text-muted-foreground">{formatNumber(e.totalDownloads, locale)} downloads · {formatNumber(e.followerCount, locale)} followers</p>
             </div>
           </Card>

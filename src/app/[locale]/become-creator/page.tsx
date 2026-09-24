@@ -18,7 +18,7 @@ export default async function BecomeCreatorPage({
   if (existing && existing.status !== "REJECTED") {
     return (
       <div className="mx-auto max-w-2xl px-4 py-12">
-        <Card className="glass p-6">
+        <Card className="p-6">
           <Badge className="mb-3">{existing.status.replace("_", " ")}</Badge>
           <h1 className="text-2xl font-bold">Creator application</h1>
           <p className="text-muted-foreground mt-2">

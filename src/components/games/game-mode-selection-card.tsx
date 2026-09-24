@@ -44,15 +44,13 @@ export const GameModeSelectionCard = memo(function GameModeSelectionCard({
     >
       <Card
         className={cn(
-          "relative overflow-hidden rounded-2xl border-line bg-background/35 backdrop-blur-md",
+          "relative overflow-hidden rounded-lg border-line bg-raised",
           "transition-[transform,box-shadow,border-color] duration-150",
-          "hover:-translate-y-0.5 hover:border-line-control will-change-transform",
-          glowEnabled && "hover:shadow-[0_0_24px_var(--mode-glow)]"
+          "hover:border-line-control"
         )}
         style={
           {
             borderColor: `${accent}44`,
-            "--mode-glow": `${accent}55`,
           } as React.CSSProperties
         }
       >
@@ -62,16 +60,16 @@ export const GameModeSelectionCard = memo(function GameModeSelectionCard({
               src={banner}
               alt={mode.name}
               fill
-              className="object-cover transition-transform duration-150 group-hover:scale-[1.03]"
+              className="object-cover transition-transform duration-150"
               sizes="(max-width: 640px) 100vw, 400px"
             />
           ) : (
             <div
-              className="absolute inset-0 bg-gradient-to-br from-neon-purple/25 to-neon-blue/15"
-              style={{ background: `linear-gradient(135deg, ${accent}44, transparent)` }}
+              className="absolute inset-0"
+              style={{ backgroundColor: `${accent}33` }}
             />
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+          <div className="absolute inset-0" />
           {(mode.logoUrl || mode.iconUrl) && (
             <div className="absolute left-3 top-3 flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl border border-line-control bg-background/80 p-1">
               <SafeImage
@@ -85,7 +83,7 @@ export const GameModeSelectionCard = memo(function GameModeSelectionCard({
           )}
         </div>
         <div className="p-4">
-          <h3 className="text-lg font-bold transition-colors group-hover:text-neon-purple">
+          <h3 className="text-lg font-bold transition-colors group-hover:text-violet-bright">
             {mode.name}
           </h3>
           {mode.description && (
@@ -102,7 +100,7 @@ export const GameModeSelectionCard = memo(function GameModeSelectionCard({
 
 export const GameModeSelectionCardSkeleton = memo(function GameModeSelectionCardSkeleton() {
   return (
-    <Card className="overflow-hidden rounded-2xl border-border/40 animate-pulse bg-background/30">
+    <Card className="overflow-hidden rounded-lg border-border/40 animate-pulse bg-background/30">
       <div className="aspect-[16/9] bg-muted/40" />
       <div className="space-y-2 p-4">
         <div className="h-5 w-2/3 rounded bg-muted/50" />

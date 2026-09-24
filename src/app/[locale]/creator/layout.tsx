@@ -45,12 +45,12 @@ export default async function CreatorLayout({
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gradient">{t("creatorStudio")}</h1>
+          <h1 className="text-2xl font-bold text-ink">{t("creatorStudio")}</h1>
           <p className="text-sm text-muted-foreground mt-1">{t("creatorSubtitle")}</p>
         </div>
         <Link
           href={`/${locale}/creator/mods/new`}
-          className="inline-flex items-center gap-1.5 text-sm text-neon-purple hover:underline"
+          className="inline-flex items-center gap-1.5 text-sm text-violet-bright hover:underline"
         >
           <Plus className="h-4 w-4" /> {t("newMod")}
         </Link>

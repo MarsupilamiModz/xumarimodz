@@ -127,7 +127,7 @@ export function TutorialsAdminPanel({ data }: { data: AdminData }) {
               </SelectContent>
             </Select>
             <Button
-              variant="neon"
+             
               disabled={pending || !form.title}
               onClick={() =>
                 startTransition(async () => {
@@ -158,7 +158,7 @@ export function TutorialsAdminPanel({ data }: { data: AdminData }) {
       <TabsContent value="categories" className="space-y-4">
         <Card className="card-surface p-4 flex flex-wrap gap-2">
           <Input placeholder="Kategorie Name" value={catName} onChange={(e) => setCatName(e.target.value)} />
-          <Button variant="neon" size="sm" disabled={!catName} onClick={() => startTransition(async () => { await saveTutorialCategory({ name: catName }); setCatName(""); router.refresh(); })}>Hinzufügen</Button>
+          <Button size="sm" disabled={!catName} onClick={() => startTransition(async () => { await saveTutorialCategory({ name: catName }); setCatName(""); router.refresh(); })}>Hinzufügen</Button>
           <Button variant="outline" size="sm" onClick={() => startTransition(async () => { await seedDefaultTutorialCategories(); router.refresh(); })}>Standard-Kategorien</Button>
         </Card>
         {data.categories.map((c) => (

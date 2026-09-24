@@ -133,7 +133,7 @@ export function AdminModsTable({ locale, mods, games, emptyMessage, editLabel }:
   return (
     <div className="space-y-4">
       {selected.size > 0 && (
-        <div className="space-y-3 rounded-lg border border-neon-purple/30 bg-neon-purple/5 p-3">
+        <div className="space-y-3 rounded-lg border border-violet-bright/30 bg-violet-soft p-3">
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-sm font-medium">{selected.size} selected</span>
             <Button size="sm" variant="outline" disabled={pending} onClick={() => runBulk("approve")}>
@@ -153,7 +153,7 @@ export function AdminModsTable({ locale, mods, games, emptyMessage, editLabel }:
             </Button>
           </div>
 
-          <div className="flex flex-wrap items-end gap-2 border-t border-neon-purple/20 pt-3">
+          <div className="flex flex-wrap items-end gap-2 border-t border-violet-bright/20 pt-3">
             <span className="text-xs font-medium text-muted-foreground w-full sm:w-auto">
               {t("bulkReassignMods")}
             </span>
@@ -212,7 +212,7 @@ export function AdminModsTable({ locale, mods, games, emptyMessage, editLabel }:
             </Select>
             <Button
               size="sm"
-              variant="neon"
+             
               disabled={pending || (!reassignGameId && !reassignModeId && !reassignCategoryId)}
               onClick={runReassign}
             >
@@ -268,7 +268,7 @@ export function AdminModsTable({ locale, mods, games, emptyMessage, editLabel }:
                   <Badge variant="outline">{m.productType ?? "MOD"}</Badge>
                 </TableCell>
                 <TableCell>
-                  <Link href={`/${locale}/mods/${m.slug}`} className="font-medium hover:text-neon-purple">
+                  <Link href={`/${locale}/mods/${m.slug}`} className="font-medium hover:text-violet-bright">
                     {m.title}
                   </Link>
                 </TableCell>

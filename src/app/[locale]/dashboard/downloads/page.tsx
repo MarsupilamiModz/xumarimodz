@@ -22,12 +22,12 @@ export default async function DownloadsPage({ params: { locale } }: { params: { 
       <h1 className="text-2xl font-bold">Downloads</h1>
       <div className="mt-8 space-y-2">
         {downloads.length === 0 ? (
-          <Card className="glass p-8 text-center text-muted-foreground">No downloads yet</Card>
+          <Card className="p-8 text-center text-muted-foreground">No downloads yet</Card>
         ) : (
           downloads.map((d) => (
-            <Card key={d.id} className="glass p-4 flex justify-between items-center">
+            <Card key={d.id} className="p-4 flex justify-between items-center">
               <div>
-                <Link href={`/${locale}/mods/${d.mod.slug}`} className="font-medium hover:text-neon-purple">
+                <Link href={`/${locale}/mods/${d.mod.slug}`} className="font-medium hover:text-violet-bright">
                   {d.mod.title}
                 </Link>
                 <p className="text-xs text-muted-foreground">v{d.version.version}</p>

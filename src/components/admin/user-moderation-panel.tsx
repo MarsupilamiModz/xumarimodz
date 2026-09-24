@@ -144,7 +144,7 @@ export function UserModerationPanel({
                   <p className="font-medium">{formatDisplayName(selected)}</p>
                   <Link
                     href={`/${locale}/admin/users/${selected.id}`}
-                    className="text-xs text-neon-purple hover:underline"
+                    className="text-xs text-violet-bright hover:underline"
                   >
                     View full profile
                   </Link>

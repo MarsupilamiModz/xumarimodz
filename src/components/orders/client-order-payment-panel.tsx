@@ -27,7 +27,7 @@ export function ClientOrderPaymentPanel({ order, locale }: { order: ClientOrder;
   if (order.paymentStatus === "UNPAID" && !order.finalAmountCents) return null;
 
   return (
-    <Card className="glass p-5 space-y-4 mt-6 border-neon-purple/20">
+    <Card className="p-5 space-y-4 mt-6 border-violet-bright/20">
       <div className="flex flex-wrap items-center gap-2">
         <h3 className="font-semibold">Payment</h3>
         {order.invoiceNumber && <Badge variant="outline">{order.invoiceNumber}</Badge>}
@@ -42,12 +42,12 @@ export function ClientOrderPaymentPanel({ order, locale }: { order: ClientOrder;
 
       {order.finalAmountCents != null && order.paymentStatus !== "PAID" && (
         <>
-          <p className="text-2xl font-bold text-gradient">
+          <p className="text-2xl font-bold text-ink">
             {formatCreditsFromCents(order.finalAmountCents, locale)}
           </p>
           <div className="flex flex-wrap gap-2">
             <Button
-              variant="neon"
+             
               disabled={pending}
               onClick={() =>
                 startTransition(async () => {
@@ -90,7 +90,7 @@ export function ClientOrderPaymentPanel({ order, locale }: { order: ClientOrder;
       )}
 
       {order.paymentStatus === "PAID" && order.deliveryFileName && order.deliveryFileKey && (
-        <Button variant="neon" asChild>
+        <Button asChild>
           <a href={`/api/assets/${encodeURIComponent(order.deliveryFileKey)}`} download={order.deliveryFileName}>
             Download {order.deliveryFileName}
           </a>

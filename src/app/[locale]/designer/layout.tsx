@@ -28,9 +28,9 @@ export default async function DesignerLayout({
   return (
     <div className="mx-auto flex max-w-7xl gap-8 px-4 py-8 sm:px-6">
       <aside className="hidden w-56 shrink-0 lg:block">
-        <div className="glass rounded-xl p-4 sticky top-24">
+        <div className="rounded-xl p-4 sticky top-24">
           <div className="flex items-center gap-2 mb-1">
-            <Palette className="h-4 w-4 text-neon-purple" />
+            <Palette className="h-4 w-4 text-violet-bright" />
             <p className="font-semibold">{t("title")}</p>
           </div>
           <p className="text-xs text-muted-foreground mb-4 truncate">{formatDisplayName(user)}</p>

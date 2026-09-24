@@ -24,7 +24,7 @@ export function DesignerOrderActions({
   return (
     <div className="flex flex-wrap gap-2 mt-3">
       <Button
-        variant="neon"
+       
         size="sm"
         disabled={pending}
         onClick={() =>

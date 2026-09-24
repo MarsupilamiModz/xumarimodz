@@ -42,7 +42,7 @@ export function CreateTicketForm({ locale }: { locale: string }) {
   }
 
   return (
-    <Card className="glass p-6">
+    <Card className="p-6">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="text-sm font-medium">Category</label>
@@ -74,7 +74,7 @@ export function CreateTicketForm({ locale }: { locale: string }) {
             placeholder="Describe your issue in detail..."
           />
         </div>
-        <Button type="submit" variant="neon" disabled={pending} className="w-full">
+        <Button type="submit" disabled={pending} className="w-full">
           {pending ? "Creating..." : "Submit Ticket"}
         </Button>
       </form>

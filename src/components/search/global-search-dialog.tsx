@@ -118,7 +118,7 @@ export const GlobalSearchDialog = memo(function GlobalSearchDialog({ locale }: {
 
   return (
     <Dialog open={open} onOpenChange={(v) => (v ? setOpen(true) : close())}>
-      <DialogContent hideClose className="max-w-2xl gap-0 overflow-hidden p-0 sm:rounded-2xl">
+      <DialogContent hideClose className="max-w-2xl gap-0 overflow-hidden p-0 sm:rounded-lg">
         <DialogTitle className="sr-only">{t("title")}</DialogTitle>
         <div className="flex items-center gap-2 border-b border-border/50 px-4 py-3">
           <Input
@@ -126,7 +126,7 @@ export const GlobalSearchDialog = memo(function GlobalSearchDialog({ locale }: {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={t("placeholder")}
-            className="border-0 bg-transparent shadow-none focus-visible:ring-0"
+            className="border-0 bg-transparent focus-visible:ring-0"
           />
           {pending && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground shrink-0" />}
           <button type="button" onClick={close} className="rounded-md p-1 hover:bg-hover shrink-0" aria-label={t("close")}>
@@ -161,7 +161,7 @@ export const GlobalSearchDialog = memo(function GlobalSearchDialog({ locale }: {
 
         <div className="flex items-center justify-between border-t border-border/50 px-4 py-2 text-[11px] text-muted-foreground">
           <span>{t("shortcutHint")}</span>
-          <Link href={`/${locale}/search?q=${encodeURIComponent(query)}`} onClick={close} className="hover:text-neon-purple">
+          <Link href={`/${locale}/search?q=${encodeURIComponent(query)}`} onClick={close} className="hover:text-violet-bright">
             {t("viewAll")}
           </Link>
         </div>

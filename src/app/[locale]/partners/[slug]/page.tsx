@@ -47,11 +47,11 @@ export default async function PartnerProfilePage({
             <SafeImage src={profile.bannerUrl} alt="" fill className="object-cover" priority sizes="100vw" />
           </div>
         )}
-        <div className="absolute inset-0 bg-gradient-to-b from-neon-blue/10 to-background" />
+        <div className="absolute inset-0" />
         <div className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6">
           <div className="flex flex-wrap items-start gap-5">
             {profile.user.avatarUrl && (
-              <div className="relative h-24 w-24 rounded-2xl overflow-hidden border-2 border-neon-blue/40">
+              <div className="relative h-24 w-24 rounded-lg overflow-hidden border-2 border-line-control">
                 <SafeImage src={profile.user.avatarUrl} alt="" fill className="object-cover" sizes="96px" />
               </div>
             )}
@@ -64,11 +64,11 @@ export default async function PartnerProfilePage({
               <h1 className="text-3xl font-bold">{formatDisplayName(profile.user)}</h1>
               {profile.tagline && <p className="text-muted-foreground mt-1">{profile.tagline}</p>}
               {profile.affiliateCode && (
-                <p className="text-sm mt-2 font-mono text-neon-blue">{t("affiliateCode")}: {profile.affiliateCode}</p>
+                <p className="text-sm mt-2 font-mono text-ink-muted">{t("affiliateCode")}: {profile.affiliateCode}</p>
               )}
               {referralLink && (
                 <p className="text-xs mt-2 text-muted-foreground break-all">
-                  {t("referralLink")}: <span className="text-neon-blue">{referralLink}</span>
+                  {t("referralLink")}: <span className="text-ink-muted">{referralLink}</span>
                 </p>
               )}
               <div className="mt-3">
@@ -76,7 +76,7 @@ export default async function PartnerProfilePage({
               </div>
               <SocialLinks links={profile.socialLinks} className="mt-4" />
             </div>
-            <Card className="glass p-4 text-center min-w-[160px]">
+            <Card className="p-4 text-center min-w-[160px]">
               <p className="text-2xl font-bold">{profile.followerCount.toLocaleString()}</p>
               <p className="text-xs text-muted-foreground">{t("followers")}</p>
               <p className="text-2xl font-bold mt-3">{profile.totalConversions}</p>
@@ -89,7 +89,7 @@ export default async function PartnerProfilePage({
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 space-y-6">
           {showcased.length > 0 && <ProfileShowcase achievements={showcased} />}
           {profile.description && (
-          <Card className="glass p-6">
+          <Card className="p-6">
             <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">{profile.description}</p>
           </Card>
           )}

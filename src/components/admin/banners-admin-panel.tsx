@@ -36,7 +36,7 @@ export function BannersAdminPanel({ banners }: { banners: BannerRow[] }) {
 
   return (
     <div className="space-y-6">
-      <Card className="glass p-6 space-y-4">
+      <Card className="p-6 space-y-4">
         <h3 className="font-semibold">Create banner</h3>
         <form
           className="grid gap-3 sm:grid-cols-2"
@@ -82,13 +82,13 @@ export function BannersAdminPanel({ banners }: { banners: BannerRow[] }) {
           <Input name="priority" type="number" defaultValue={0} placeholder="Priority" />
           <Input name="gameId" placeholder="Game ID (GAME type)" />
           <Input name="gameCategoryId" placeholder="Category ID (CATEGORY type)" />
-          <Button type="submit" variant="neon" disabled={pending} className="sm:col-span-2">
+          <Button type="submit" disabled={pending} className="sm:col-span-2">
             Create banner
           </Button>
         </form>
       </Card>
 
-      <Card className="glass p-6">
+      <Card className="p-6">
         <h3 className="font-semibold mb-4">Active banners</h3>
         <div className="space-y-3">
           {banners.map((banner) => (

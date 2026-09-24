@@ -152,14 +152,14 @@ export function BrandingCenterPanel({ initial }: Props) {
     <div className="space-y-6">
       <div className="flex flex-wrap gap-2">
         {TABS.map((t) => (
-          <Button key={t.id} size="sm" variant={tab === t.id ? "neon" : "outline"} onClick={() => setTab(t.id)}>
+          <Button key={t.id} size="sm" variant={tab === t.id ? "default" : "outline"} onClick={() => setTab(t.id)}>
             {t.label}
           </Button>
         ))}
       </div>
 
       {tab === "identity" && (
-        <Card className="glass p-6 space-y-4 max-w-2xl">
+        <Card className="p-6 space-y-4 max-w-2xl">
           <h3 className="font-semibold">Site identity</h3>
           <label className="text-sm">Website name</label>
           <Input value={branding.siteTitle} onChange={(e) => setBranding((b) => ({ ...b, siteTitle: e.target.value }))} />
@@ -180,7 +180,7 @@ export function BrandingCenterPanel({ initial }: Props) {
             </div>
           </div>
           <Button
-            variant="neon"
+           
             disabled={pending}
             onClick={() =>
               startTransition(async () => {
@@ -197,7 +197,7 @@ export function BrandingCenterPanel({ initial }: Props) {
 
       {tab === "assets" && (
         <div className="grid gap-6 lg:grid-cols-2">
-          <Card className="glass p-6 space-y-4">
+          <Card className="p-6 space-y-4">
             <h3 className="font-semibold">Logo manager</h3>
             <AssetRow label="Main logo" url={branding.logoUrl} onUpload={(f) => upload("logo", f)} onRemove={() => removeAsset("logoUrl")} />
             <AssetRow label="Dark logo" url={branding.logoDarkUrl} onUpload={(f) => upload("logo-dark", f)} onRemove={() => removeAsset("logoDarkUrl")} />
@@ -214,7 +214,7 @@ export function BrandingCenterPanel({ initial }: Props) {
             <p className="text-xs text-muted-foreground">PNG, SVG, WEBP supported. Images are served optimized via CDN.</p>
           </Card>
 
-          <Card className="glass p-6 space-y-4">
+          <Card className="p-6 space-y-4">
             <h3 className="font-semibold">Favicon & PWA icons</h3>
             <AssetRow label="Favicon" url={branding.faviconUrl} onUpload={(f) => upload("favicon", f)} onRemove={() => removeAsset("faviconUrl")} />
             <p className="text-xs text-muted-foreground">
@@ -227,7 +227,7 @@ export function BrandingCenterPanel({ initial }: Props) {
             </div>
           </Card>
 
-          <Card className="glass p-6 space-y-4 lg:col-span-2">
+          <Card className="p-6 space-y-4 lg:col-span-2">
             <h3 className="font-semibold">Site symbol (replaces default X icon)</h3>
             <div className="flex flex-wrap gap-4 items-center">
               <Logo branding={branding} />
@@ -267,7 +267,7 @@ export function BrandingCenterPanel({ initial }: Props) {
               <AssetRow label="Symbol image" url={branding.siteSymbolUrl} onUpload={(f) => upload("symbol", f)} onRemove={() => removeAsset("siteSymbolUrl")} />
             )}
             <Button
-              variant="neon"
+             
               disabled={pending}
               onClick={() =>
                 startTransition(async () => {
@@ -284,7 +284,7 @@ export function BrandingCenterPanel({ initial }: Props) {
       )}
 
       {tab === "header" && (
-        <Card className="glass p-6 space-y-4 max-w-3xl">
+        <Card className="p-6 space-y-4 max-w-3xl">
           <h3 className="font-semibold">Header builder</h3>
           <div className="grid sm:grid-cols-2 gap-3">
             <label className="flex items-center gap-2 text-sm">
@@ -351,7 +351,7 @@ export function BrandingCenterPanel({ initial }: Props) {
             </Button>
           </div>
           <Button
-            variant="neon"
+           
             disabled={pending}
             onClick={() =>
               startTransition(async () => {
@@ -367,7 +367,7 @@ export function BrandingCenterPanel({ initial }: Props) {
       )}
 
       {tab === "footer" && (
-        <Card className="glass p-6 space-y-4 max-w-3xl">
+        <Card className="p-6 space-y-4 max-w-3xl">
           <h3 className="font-semibold">Footer builder</h3>
           <Textarea value={footer.tagline} onChange={(e) => setFooter((f) => ({ ...f, tagline: e.target.value }))} placeholder="Tagline" rows={2} />
           <Input value={footer.copyright} onChange={(e) => setFooter((f) => ({ ...f, copyright: e.target.value }))} placeholder="Copyright suffix" />
@@ -410,7 +410,7 @@ export function BrandingCenterPanel({ initial }: Props) {
             </div>
           ))}
           <Button
-            variant="neon"
+           
             disabled={pending}
             onClick={() =>
               startTransition(async () => {
@@ -426,18 +426,18 @@ export function BrandingCenterPanel({ initial }: Props) {
       )}
 
       {tab === "content" && (
-        <Card className="glass p-6 space-y-4">
+        <Card className="p-6 space-y-4">
           <h3 className="font-semibold">Multilingual content</h3>
           <div className="flex flex-wrap gap-2">
             {(Object.keys(PAGE_CONTENT_FIELDS) as PageId[]).map((page) => (
-              <Button key={page} size="sm" variant={contentPage === page ? "neon" : "outline"} onClick={() => setContentPage(page)}>
+              <Button key={page} size="sm" variant={contentPage === page ? "default" : "outline"} onClick={() => setContentPage(page)}>
                 {page}
               </Button>
             ))}
           </div>
           <div className="flex flex-wrap gap-2">
             {SUPPORTED_LOCALES.map((loc) => (
-              <Button key={loc} size="sm" variant={contentLocale === loc ? "neon" : "outline"} onClick={() => setContentLocale(loc)}>
+              <Button key={loc} size="sm" variant={contentLocale === loc ? "default" : "outline"} onClick={() => setContentLocale(loc)}>
                 {localeLabels[loc]}
               </Button>
             ))}
@@ -456,7 +456,7 @@ export function BrandingCenterPanel({ initial }: Props) {
             ))}
           </div>
           <Button
-            variant="neon"
+           
             disabled={pending}
             onClick={() =>
               startTransition(async () => {
@@ -472,12 +472,12 @@ export function BrandingCenterPanel({ initial }: Props) {
       )}
 
       {tab === "seo" && (
-        <Card className="glass p-6 space-y-4 max-w-2xl">
+        <Card className="p-6 space-y-4 max-w-2xl">
           <h3 className="font-semibold">SEO manager</h3>
           <div className="flex flex-wrap gap-2">
-            <Button size="sm" variant={seoLocale === "global" ? "neon" : "outline"} onClick={() => setSeoLocale("global")}>Global</Button>
+            <Button size="sm" variant={seoLocale === "global" ? "default" : "outline"} onClick={() => setSeoLocale("global")}>Global</Button>
             {SUPPORTED_LOCALES.map((loc) => (
-              <Button key={loc} size="sm" variant={seoLocale === loc ? "neon" : "outline"} onClick={() => setSeoLocale(loc)}>
+              <Button key={loc} size="sm" variant={seoLocale === loc ? "default" : "outline"} onClick={() => setSeoLocale(loc)}>
                 {localeLabels[loc]}
               </Button>
             ))}
@@ -577,7 +577,7 @@ export function BrandingCenterPanel({ initial }: Props) {
             }}
           />
           <Button
-            variant="neon"
+           
             disabled={pending}
             onClick={() =>
               startTransition(async () => {
@@ -593,7 +593,7 @@ export function BrandingCenterPanel({ initial }: Props) {
       )}
 
       {tab === "headScripts" && (
-        <Card className="glass p-6 space-y-4 max-w-2xl">
+        <Card className="p-6 space-y-4 max-w-2xl">
           <h3 className="font-semibold">Head & body scripts</h3>
           <p className="text-xs text-muted-foreground">
             Meta tags render in &lt;head&gt;. Scripts use next/script (async, no hydration issues). AdSense loads globally from root layout — do not add a second AdSense loader here.
@@ -659,7 +659,7 @@ export function BrandingCenterPanel({ initial }: Props) {
             />
           </div>
           <Button
-            variant="neon"
+           
             disabled={pending}
             onClick={() =>
               startTransition(async () => {
@@ -676,11 +676,11 @@ export function BrandingCenterPanel({ initial }: Props) {
 
       {tab === "preview" && (
         <div className="grid gap-6 lg:grid-cols-2">
-          <Card className="glass p-6 space-y-4">
+          <Card className="p-6 space-y-4">
             <h3 className="font-semibold">Header preview</h3>
             <div className="rounded-lg border border-border/40 overflow-hidden">
               <div
-                className={`flex items-center justify-between px-4 ${previewBundle.header.blur ? "backdrop-blur-xl bg-background/80" : "bg-background"}`}
+                className={`flex items-center justify-between px-4 ${previewBundle.header.blur ? " bg-background/80" : "bg-background"}`}
                 style={{ height: previewBundle.header.height }}
               >
                 <Logo size="sm" branding={previewBundle.branding} />
@@ -688,7 +688,7 @@ export function BrandingCenterPanel({ initial }: Props) {
               </div>
             </div>
           </Card>
-          <Card className="glass p-6 space-y-4">
+          <Card className="p-6 space-y-4">
             <h3 className="font-semibold">Footer preview</h3>
             <div className="rounded-lg border border-border/40 p-4 text-sm space-y-2">
               <Logo branding={previewBundle.branding} />
@@ -696,9 +696,9 @@ export function BrandingCenterPanel({ initial }: Props) {
               <p className="text-xs text-muted-foreground">© {previewBundle.branding.siteTitle}. {previewBundle.footer.copyright}</p>
             </div>
           </Card>
-          <Card className="glass p-6 space-y-2 lg:col-span-2">
+          <Card className="p-6 space-y-2 lg:col-span-2">
             <h3 className="font-semibold">Homepage hero preview</h3>
-            <p className="text-xs text-neon-purple">{pageContent.homepage?.[contentLocale]?.heroBadge ?? "Badge"}</p>
+            <p className="text-xs text-violet-bright">{pageContent.homepage?.[contentLocale]?.heroBadge ?? "Badge"}</p>
             <h4 className="text-2xl font-bold">{pageContent.homepage?.[contentLocale]?.heroTitle ?? previewBundle.branding.siteTitle}</h4>
             <p className="text-muted-foreground">{pageContent.homepage?.[contentLocale]?.heroSubtitle ?? previewBundle.branding.siteTagline}</p>
           </Card>

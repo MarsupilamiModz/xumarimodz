@@ -17,7 +17,7 @@ export default function CreatorLicensesPage() {
   return (
     <div className="max-w-lg space-y-6">
       <h2 className="text-lg font-semibold">{t("licenses")}</h2>
-      <Card className="glass p-6 space-y-4">
+      <Card className="p-6 space-y-4">
         <p className="text-sm text-muted-foreground">{t("createLicenseHint")}</p>
         <form
           className="space-y-3"
@@ -43,7 +43,7 @@ export default function CreatorLicensesPage() {
           <Input name="label" placeholder={t("labelPlaceholder")} />
           <Input name="maxActivations" type="number" defaultValue={1} min={1} max={100} />
           <Input name="expiresAt" type="datetime-local" />
-          <Button type="submit" variant="neon" disabled={pending}>{t("generateKey")}</Button>
+          <Button type="submit" disabled={pending}>{t("generateKey")}</Button>
         </form>
         {generatedKey && (
           <div className="p-3 rounded-lg bg-muted/30 font-mono text-sm break-all">{generatedKey}</div>

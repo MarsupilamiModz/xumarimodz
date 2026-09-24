@@ -49,7 +49,7 @@ export default async function CreatorAnalyticsPage({ params: { locale } }: { par
       </div>
 
       {versionStats.length > 0 && (
-        <Card className="glass p-4">
+        <Card className="p-4">
           <h3 className="font-medium mb-3">Version downloads</h3>
           <div className="space-y-2">
             {versionStats.map((v) => (
@@ -66,7 +66,7 @@ export default async function CreatorAnalyticsPage({ params: { locale } }: { par
       )}
 
       {analytics?.mods && analytics.mods.length > 0 && (
-        <Card className="glass p-4">
+        <Card className="p-4">
           <h3 className="font-medium mb-3">{t("topProducts")}</h3>
           <div className="space-y-2">
             {analytics.mods.map((m) => (

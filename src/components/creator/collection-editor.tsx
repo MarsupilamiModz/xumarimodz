@@ -41,7 +41,7 @@ export function CollectionCreateForm({ locale }: { locale: Locale }) {
   const [pending, startTransition] = useTransition();
 
   return (
-    <Card className="glass max-w-xl">
+    <Card className="max-w-xl">
       <CardHeader><CardTitle>Create collection</CardTitle></CardHeader>
       <CardContent>
         <form
@@ -70,7 +70,7 @@ export function CollectionCreateForm({ locale }: { locale: Locale }) {
             <option value="PUBLIC">Public</option>
             <option value="PRIVATE">Private</option>
           </select>
-          <Button type="submit" variant="neon" disabled={pending}>Create</Button>
+          <Button type="submit" disabled={pending}>Create</Button>
         </form>
       </CardContent>
     </Card>
@@ -88,7 +88,7 @@ export function CollectionEditForm({ locale, collection }: { locale: Locale; col
 
   return (
     <div className="space-y-6 max-w-2xl">
-      <Card className="glass">
+      <Card>
         <CardHeader><CardTitle>{collection.title}</CardTitle></CardHeader>
         <CardContent className="space-y-3">
           <form
@@ -118,7 +118,7 @@ export function CollectionEditForm({ locale, collection }: { locale: Locale; col
               <option value="PRIVATE">Private</option>
             </select>
             <div className="flex gap-2">
-              <Button type="submit" variant="neon" disabled={pending}>Save</Button>
+              <Button type="submit" disabled={pending}>Save</Button>
               <Button type="button" variant="outline" asChild>
                 <Link href={`/${locale}/collections/${collection.slug}`}>View public</Link>
               </Button>
@@ -141,7 +141,7 @@ export function CollectionEditForm({ locale, collection }: { locale: Locale; col
         </CardContent>
       </Card>
 
-      <Card className="glass">
+      <Card>
         <CardHeader><CardTitle>Mods in collection</CardTitle></CardHeader>
         <CardContent className="space-y-3">
           {collection.items.length === 0 ? (

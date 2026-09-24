@@ -90,7 +90,7 @@ export function AvatarCropUpload({
       </label>
 
       <Dialog open={open} onOpenChange={(v) => !saving && setOpen(v)}>
-        <DialogContent className="glass max-w-md border-neon-purple/30">
+        <DialogContent className="max-w-md border-violet-bright/30">
           <DialogHeader>
             <DialogTitle>Crop profile image</DialogTitle>
           </DialogHeader>
@@ -147,7 +147,7 @@ export function AvatarCropUpload({
             <Button variant="ghost" onClick={() => setOpen(false)} disabled={saving}>
               Cancel
             </Button>
-            <Button variant="neon" onClick={() => void save()} disabled={saving || !croppedArea}>
+            <Button onClick={() => void save()} disabled={saving || !croppedArea}>
               {saving ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : null}
               Save avatar
             </Button>

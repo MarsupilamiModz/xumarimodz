@@ -94,7 +94,7 @@ export function ReportsAdminPanel({ reports }: { reports: Report[] }) {
         <p className="text-sm text-muted-foreground">No reports.</p>
       ) : (
         rows.map((report) => (
-          <Card key={report.id} className="glass">
+          <Card key={report.id}>
             <CardHeader className="pb-2">
               <div className="flex flex-wrap items-center gap-2">
                 <CardTitle className="text-sm">{report.category.replace(/_/g, " ")}</CardTitle>

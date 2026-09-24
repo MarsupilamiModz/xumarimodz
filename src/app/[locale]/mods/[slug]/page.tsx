@@ -121,11 +121,11 @@ export default async function ModDetailPage({
             excludeVideoId={heroIsVideo ? heroVideoId : null}
           />
 
-          <div className="glass rounded-xl border border-border/50 p-6">
+          <div className="rounded-xl border border-border/50 p-6">
             <div className="flex flex-wrap gap-2 mb-3">
               <Badge variant={mod.pricing === "FREE" ? "free" : "premium"}>{mod.pricing}</Badge>
               {mod.category && <Badge variant="outline">{mod.category.name}</Badge>}
-              <span className="text-sm text-neon-blue">{mod.game.name}</span>
+              <span className="text-sm text-ink-muted">{mod.game.name}</span>
             </div>
             <h1 className="text-3xl font-bold tracking-tight">{localized.title}</h1>
             {localized.shortDescription && (
@@ -145,7 +145,7 @@ export default async function ModDetailPage({
             missing={depCheck.missing}
           />
 
-          <Card className="glass">
+          <Card>
             <CardHeader><CardTitle>{t("reviews")}</CardTitle></CardHeader>
             <CardContent className="space-y-4">
               {user && <ReviewForm modId={mod.id} />}
@@ -155,7 +155,7 @@ export default async function ModDetailPage({
                 mod.reviews.map((r) => (
                   <div key={r.id} className="border-b border-border/30 pb-4 last:border-0">
                     <div className="flex items-center gap-2">
-                      <Star className="h-4 w-4 fill-neon-purple text-neon-purple" />
+                      <Star className="h-4 w-4 fill-violet-bright text-violet-bright" />
                       <span className="font-medium">{r.rating}/5</span>
                       <UserIdentity
                         username={r.user.username}
@@ -174,10 +174,10 @@ export default async function ModDetailPage({
 
         <div className="lg:col-span-2 space-y-4 lg:sticky lg:top-24 lg:h-fit">
           <AdLocationSlot location="sidebar" />
-          <Card className="glass border-neon-purple/20 p-6">
+          <Card className="border-violet-bright/20 p-6">
             <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
               <span className="flex items-center gap-1">
-                <Star className="h-4 w-4 fill-neon-purple text-neon-purple" />
+                <Star className="h-4 w-4 fill-violet-bright text-violet-bright" />
                 {mod.averageRating.toFixed(1)}
               </span>
               <span className="flex items-center gap-1">
@@ -197,13 +197,13 @@ export default async function ModDetailPage({
               />
             )}
             {mod.pricing === "PAID" && mod.priceCents && mod.priceCents > 0 && !user && (
-              <p className="text-sm text-center mt-2 text-neon-purple font-medium">
+              <p className="text-sm text-center mt-2 text-violet-bright font-medium">
                 {formatCreditsFromCents(mod.priceCents, locale)}
               </p>
             )}
             {!user && mod.pricing !== "FREE" && (
               <p className="mt-3 text-xs text-muted-foreground text-center">
-                <Link href={`/${locale}/login`} className="text-neon-purple hover:underline">
+                <Link href={`/${locale}/login`} className="text-violet-bright hover:underline">
                   Sign in
                 </Link>{" "}
                 for premium mods

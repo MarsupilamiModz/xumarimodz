@@ -55,7 +55,7 @@ export function GameAdminTabs({
 
   return (
     <Tabs defaultValue="general" className="space-y-6">
-      <TabsList className="glass flex h-auto flex-wrap gap-1 p-1">
+      <TabsList className="flex h-auto flex-wrap gap-1 p-1">
         <TabsTrigger value="general">{t("tabGeneral")}</TabsTrigger>
         <TabsTrigger value="modes">{t("gameModes")}</TabsTrigger>
         <TabsTrigger value="categories">{t("tabCategories")}</TabsTrigger>
@@ -104,7 +104,7 @@ export function GameAdminTabs({
       </TabsContent>
 
       <TabsContent value="seo">
-        <Card className="glass p-6 text-sm text-muted-foreground">
+        <Card className="p-6 text-sm text-muted-foreground">
           <p>{t("seoTabHint")}</p>
           <dl className="mt-4 space-y-2">
             <div>
@@ -120,7 +120,7 @@ export function GameAdminTabs({
       </TabsContent>
 
       <TabsContent value="stats">
-        <Card className="glass p-6">
+        <Card className="p-6">
           <div className="flex flex-wrap gap-3">
             <Badge variant="outline">{game._count?.mods ?? 0} mods</Badge>
             <Badge variant="outline">{modes.length} modes</Badge>

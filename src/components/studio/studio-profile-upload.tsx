@@ -66,7 +66,7 @@ export function StudioProfileUpload({
   }
 
   return (
-    <Card className="glass space-y-4 p-6">
+    <Card className="space-y-4 p-6">
       <h3 className="font-medium">{t("profileMedia")}</h3>
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
@@ -84,7 +84,7 @@ export function StudioProfileUpload({
         {showBanner && bannerPurpose && (
           <div className="space-y-2">
             <p className="text-sm text-muted-foreground">{t("banner")}</p>
-            <div className="relative aspect-[3/1] overflow-hidden rounded-lg border border-border/50 bg-gradient-to-r from-neon-purple/10 to-neon-blue/10">
+            <div className="relative aspect-[3/1] overflow-hidden rounded-lg border border-border/50">
               <SafeImage src={banner} alt="" fill className="object-cover" sizes="300px" fallbackLabel="" />
             </div>
             <input
@@ -139,7 +139,7 @@ export function StudioProfileUpload({
       {uploading && (
         <div className="space-y-1">
           <div className="h-1.5 overflow-hidden rounded-full bg-muted">
-            <div className={cn("h-full bg-neon-purple transition-all duration-200")} style={{ width: `${progress}%` }} />
+            <div className={cn("h-full bg-violet transition-all duration-200")} style={{ width: `${progress}%` }} />
           </div>
         </div>
       )}

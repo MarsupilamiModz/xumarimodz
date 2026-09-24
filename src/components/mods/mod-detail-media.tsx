@@ -31,7 +31,7 @@ export function ModDetailMedia({
 
   return (
     <div className="space-y-8">
-      <div className="relative aspect-video overflow-hidden rounded-xl border border-border/50 bg-gradient-to-br from-neon-purple/20 via-background to-neon-blue/10">
+      <div className="relative aspect-video overflow-hidden rounded-xl border border-border/50">
         {featuredIsVideo && featuredVideoId ? (
           <YouTubeEmbed videoId={featuredVideoId} title={title} priority />
         ) : featuredUrl ? (

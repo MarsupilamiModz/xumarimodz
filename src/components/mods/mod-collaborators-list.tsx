@@ -25,7 +25,7 @@ export async function ModCollaboratorsList({ modId }: { modId: string }) {
   if (collaborators.length === 0) return null;
 
   return (
-    <Card className="glass">
+    <Card>
       <CardHeader>
         <CardTitle className="text-lg">Co-Creators</CardTitle>
       </CardHeader>

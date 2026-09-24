@@ -82,7 +82,7 @@ export function PartnerAdsAdminPanel({
           <Input placeholder="Normaler Link (Website)" value={form.websiteUrl} onChange={(e) => setForm((f) => ({ ...f, websiteUrl: e.target.value }))} />
           <Input placeholder="Banner URL oder Logo URL" value={form.bannerUrl} onChange={(e) => setForm((f) => ({ ...f, bannerUrl: e.target.value }))} />
           <Textarea placeholder="Beschreibung" className="sm:col-span-2" value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} />
-          <Button variant="neon" disabled={pending || !form.name || !form.affiliateUrl} onClick={save}>
+          <Button disabled={pending || !form.name || !form.affiliateUrl} onClick={save}>
             Speichern
           </Button>
         </CardContent>

@@ -44,12 +44,12 @@ export function ShopClient({
 
   return (
     <div className="space-y-8">
-      <Card className="glass border-neon-purple/30 p-6 flex flex-wrap items-center justify-between gap-4">
+      <Card className="border-violet-bright/30 p-6 flex flex-wrap items-center justify-between gap-4">
         <div>
           <p className="text-sm text-muted-foreground">Your balance</p>
-          <p className="text-3xl font-bold text-gradient">{formatCredits(walletBalance, locale)}</p>
+          <p className="text-3xl font-bold text-ink">{formatCredits(walletBalance, locale)}</p>
         </div>
-        <Coins className="h-10 w-10 text-neon-purple opacity-80" />
+        <Coins className="h-10 w-10 text-violet-bright opacity-80" />
       </Card>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -60,14 +60,14 @@ export function ShopClient({
           return (
             <Card
               key={p.id}
-              className="glass overflow-hidden hover:border-neon-purple/40 transition-all duration-300 hover:-translate-y-0.5"
+              className="overflow-hidden hover:border-line-control transition-all duration-base"
             >
-              <div className="relative aspect-[16/9] bg-gradient-to-br from-neon-purple/20 to-neon-blue/10">
+              <div className="relative aspect-[16/9]">
                 {p.thumbnailUrl ? (
                   <SafeImage src={p.thumbnailUrl} alt="" fill className="object-cover" sizes="400px" />
                 ) : (
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <Coins className="h-12 w-12 text-neon-purple" />
+                    <Coins className="h-12 w-12 text-violet-bright" />
                   </div>
                 )}
                 {p.isFeatured && (
@@ -83,17 +83,17 @@ export function ShopClient({
                   <p className="text-sm text-muted-foreground line-clamp-2">{p.description}</p>
                 )}
                 {isCreditPack && p.creditsAmount && (
-                  <p className="text-2xl font-bold text-neon-blue">
+                  <p className="text-2xl font-bold text-ink-muted">
                     {formatCredits(p.creditsAmount, locale)}
                   </p>
                 )}
                 {!isCreditPack && creditCost > 0 && (
-                  <p className="text-xl font-bold text-gradient">{formatCredits(creditCost, locale)}</p>
+                  <p className="text-xl font-bold text-ink">{formatCredits(creditCost, locale)}</p>
                 )}
                 <div className="flex flex-wrap gap-2 pt-2">
                   {isCreditPack && (
                     <Button
-                      variant="neon"
+                     
                       size="sm"
                       disabled={pending}
                       onClick={() =>
@@ -118,7 +118,7 @@ export function ShopClient({
                   )}
                   {!isCreditPack && creditCost > 0 && (
                     <Button
-                      variant="neon"
+                     
                       size="sm"
                       disabled={pending}
                       onClick={() =>

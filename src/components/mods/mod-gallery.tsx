@@ -62,33 +62,33 @@ export function ModGallery({ images, title, className }: ModGalleryProps) {
             }}
             className={cn(
               "group relative aspect-video overflow-hidden rounded-lg border border-border/50",
-              "transition-all duration-300 hover:border-neon-purple/50",
-              i === activeIndex && "ring-2 ring-neon-purple/60"
+              "transition-all duration-base hover:border-line-control",
+              i === activeIndex && "ring-2 ring-violet-bright/60"
             )}
           >
             <SafeImage
               src={img.url}
               alt={`${title} screenshot ${i + 1}`}
               fill
-              className="object-cover transition-transform duration-500 group-hover:scale-105"
+              className="object-cover transition-transform duration-base"
               sizes="(max-width: 640px) 50vw, 25vw"
               loading="lazy"
             />
             <div className="absolute inset-0 flex items-center justify-center bg-background/40 opacity-0 transition-opacity group-hover:opacity-100">
-              <ZoomIn className="h-5 w-5 text-ink drop-shadow" />
+              <ZoomIn className="h-5 w-5 text-ink" />
             </div>
           </button>
         ))}
       </div>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-5xl border-border/50 bg-background/95 p-0 backdrop-blur-xl">
+        <DialogContent className="max-w-5xl border-border/50 bg-background/95 p-0">
           <div className="relative">
             <div className="absolute right-3 top-3 z-20 flex gap-2">
               <Button
                 size="icon"
                 variant="ghost"
-                className="h-9 w-9 bg-background/60 backdrop-blur"
+                className="h-9 w-9 bg-background/60"
                 onClick={() => setZoomed((z) => !z)}
               >
                 <Expand className="h-4 w-4" />
@@ -96,7 +96,7 @@ export function ModGallery({ images, title, className }: ModGalleryProps) {
               <Button
                 size="icon"
                 variant="ghost"
-                className="h-9 w-9 bg-background/60 backdrop-blur"
+                className="h-9 w-9 bg-background/60"
                 onClick={() => setOpen(false)}
               >
                 <X className="h-4 w-4" />
@@ -116,7 +116,7 @@ export function ModGallery({ images, title, className }: ModGalleryProps) {
               <Button
                 size="icon"
                 variant="ghost"
-                className="absolute left-2 z-10 h-10 w-10 bg-background/50 backdrop-blur"
+                className="absolute left-2 z-10 h-10 w-10 bg-background/50"
                 onClick={() => go(-1)}
               >
                 <ChevronLeft className="h-5 w-5" />
@@ -124,7 +124,7 @@ export function ModGallery({ images, title, className }: ModGalleryProps) {
 
               <div
                 className={cn(
-                  "relative max-h-[75vh] w-full max-w-4xl transition-transform duration-300",
+                  "relative max-h-[75vh] w-full max-w-4xl transition-transform duration-base",
                   zoomed ? "scale-125 cursor-zoom-out" : "cursor-zoom-in"
                 )}
                 onClick={() => setZoomed((z) => !z)}
@@ -144,7 +144,7 @@ export function ModGallery({ images, title, className }: ModGalleryProps) {
               <Button
                 size="icon"
                 variant="ghost"
-                className="absolute right-2 z-10 h-10 w-10 bg-background/50 backdrop-blur"
+                className="absolute right-2 z-10 h-10 w-10 bg-background/50"
                 onClick={() => go(1)}
               >
                 <ChevronRight className="h-5 w-5" />
@@ -163,7 +163,7 @@ export function ModGallery({ images, title, className }: ModGalleryProps) {
                   className={cn(
                     "relative h-14 w-20 shrink-0 overflow-hidden rounded-md border transition-all",
                     i === activeIndex
-                      ? "border-neon-purple ring-1 ring-neon-purple/50"
+                      ? "border-violet-bright ring-1 ring-violet-bright/50"
                       : "border-border/40 opacity-70 hover:opacity-100"
                   )}
                 >

@@ -27,12 +27,12 @@ export function ProfileShowcase({
   if (achievements.length === 0 && !rankTier && !supporterLabel) return null;
 
   return (
-    <div className="glass rounded-xl p-4 space-y-3">
+    <div className="rounded-xl p-4 space-y-3">
       <div className="flex flex-wrap items-center gap-2">
         <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Showcase</h3>
         {rankTier && <CreatorRankBadge tier={rankTier} size="sm" />}
         {supporterLabel && (
-          <span className="text-xs rounded-full border border-neon-purple/40 bg-neon-purple/10 px-2 py-0.5 text-neon-purple">
+          <span className="text-xs rounded-full border border-violet-bright/40 bg-violet-soft px-2 py-0.5 text-violet-bright">
             {supporterLabel}
           </span>
         )}

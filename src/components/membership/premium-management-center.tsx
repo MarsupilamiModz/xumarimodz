@@ -109,7 +109,7 @@ export function PremiumManagementCenter({
       <div className="card-surface rounded-xl p-5">
         <div className="flex flex-wrap gap-2">
         {hasStripeSubscription || membership.stripeSubscriptionId ? (
-          <Button variant="neon" onClick={openPortal} disabled={portalLoading}>
+          <Button onClick={openPortal} disabled={portalLoading}>
             <CreditCard className="h-4 w-4 mr-2" />
             {portalLoading ? "Loading..." : "Manage billing & payment"}
           </Button>
@@ -124,7 +124,7 @@ export function PremiumManagementCenter({
 
       {nextBilling && !membership.isLifetime && (
         <div className="card-surface flex items-center gap-2 text-sm text-muted-foreground rounded-xl p-3">
-          <Calendar className="h-4 w-4 text-neon-purple shrink-0" />
+          <Calendar className="h-4 w-4 text-violet-bright shrink-0" />
           <span>
             {subscription?.cancelAtPeriodEnd || membership.cancelDate
               ? `Access until ${new Date(nextBilling).toLocaleDateString(getIntlLocale(locale))}`

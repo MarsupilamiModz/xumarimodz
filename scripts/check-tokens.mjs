@@ -20,7 +20,15 @@ const checks = [
     // "violet" ohne Stufe ist ein Token (violet, violet-bright, …) und daher erlaubt.
     re: new RegExp(`\\b(?:${UTILITIES})-(?:(?:${PALETTE})-\\d{2,3}|white|black)(?:\\/\\d+)?\\b`, "g"),
   },
+  // Stil-Regeln: keine Verläufe, Glows, Glas-Effekte, alten Neon-Klassen
+  { name: "Verlauf", re: /\bbg-gradient-to-[a-z]+\b|linear-gradient\(|radial-gradient\(/g },
+  { name: "Alte Klasse", re: /(?<![\w-])(?:neon-(?:purple|blue|cyan)|glass|text-gradient|bg-hero-glow|shadow-neon)(?![\w-])/g },
+  { name: "Blur/Glow", re: /(?<![\w-])backdrop-blur(?:-[a-z0-9]+)?(?![\w-])/g },
 ];
+
+// Emojis nur in der Zuordnungstabelle für Daten-Symbole erlaubt
+const EMOJI_RE = /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B50}]/gu;
+const EMOJI_ALLOWED = new Set(["src/components/ui/entity-icon.tsx", "src/lib/achievements.ts", "src/lib/creator-levels.ts", "src/actions/admin/branding.ts", "src/lib/order-workflow.ts"]);
 
 function walk(dir, exts, out = []) {
   for (const entry of readdirSync(dir)) {
@@ -46,9 +54,16 @@ for (const file of files) {
   lines.forEach((line, i) => {
     // Bewusste Ausnahme, z. B. Vergleich mit alten Werten aus der Datenbank.
     if (line.includes("check-tokens: ignore")) return;
+    const relPosix = rel.split(sep).join("/");
     for (const { name, re } of checks) {
       for (const match of line.matchAll(re)) {
-        problems.push(`${rel.split(sep).join("/")}:${i + 1}  ${name}: ${match[0]}`);
+        problems.push(`${relPosix}:${i + 1}  ${name}: ${match[0]}`);
+      }
+    }
+    // Seed-Daten und Discord-Nachrichten dürfen Emojis enthalten (werden als Icon dargestellt bzw. sind extern).
+    if (!EMOJI_ALLOWED.has(relPosix) && !relPosix.startsWith("src/messages/")) {
+      for (const match of line.matchAll(EMOJI_RE)) {
+        problems.push(`${relPosix}:${i + 1}  Emoji: ${match[0]}`);
       }
     }
   });

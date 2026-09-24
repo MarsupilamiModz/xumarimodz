@@ -214,7 +214,7 @@ export function SoundWaveformPlayer({
             setVolume(v);
             global?.setVolume(v);
           }}
-          className="flex-1 accent-neon-purple"
+          className="flex-1 accent-violet"
         />
       </div>
     </div>

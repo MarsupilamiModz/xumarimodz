@@ -6,6 +6,6 @@ export function parseMentionUsernames(content: string): string[] {
 export function highlightMentions(content: string): string {
   return content.replace(
     /@([a-zA-Z0-9_]{2,32})/g,
-    '<span class="text-neon-purple font-medium">@$1</span>'
+    '<span class="text-violet-bright font-medium">@$1</span>'
   );
 }

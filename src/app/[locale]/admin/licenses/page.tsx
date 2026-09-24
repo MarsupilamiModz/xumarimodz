@@ -13,7 +13,7 @@ export default function AdminLicensesPage() {
   return (
     <div>
       <h1 className="text-2xl font-bold">License Keys</h1>
-      <Card className="glass p-6 mt-8 max-w-lg">
+      <Card className="p-6 mt-8 max-w-lg">
         <h3 className="font-medium mb-4">Bulk generate</h3>
         <form
           onSubmit={(e) => {
@@ -41,7 +41,7 @@ export default function AdminLicensesPage() {
         >
           <Input name="count" type="number" defaultValue={10} min={1} max={100} required />
           <Input name="productType" defaultValue="premium" required />
-          <Button type="submit" variant="neon" disabled={pending}>Generate</Button>
+          <Button type="submit" disabled={pending}>Generate</Button>
         </form>
         {keys.length > 0 && (
           <div className="mt-6 max-h-64 overflow-y-auto space-y-1 font-mono text-xs">

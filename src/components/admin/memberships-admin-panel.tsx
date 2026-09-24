@@ -97,7 +97,7 @@ export function MembershipsAdminPanel({ plans: initial, pageSettings: initialPag
 
   return (
     <div className="space-y-8">
-      <Card className="glass p-6 space-y-4">
+      <Card className="p-6 space-y-4">
         <h3 className="font-semibold">Premium Page Content</h3>
         <Input value={pageSettings.heroTitle} onChange={(e) => setPageSettings((p) => ({ ...p, heroTitle: e.target.value }))} />
         <Textarea value={pageSettings.heroSubtitle} onChange={(e) => setPageSettings((p) => ({ ...p, heroSubtitle: e.target.value }))} rows={2} />
@@ -106,7 +106,7 @@ export function MembershipsAdminPanel({ plans: initial, pageSettings: initialPag
           <Switch checked={pageSettings.showComparison} onCheckedChange={(v) => setPageSettings((p) => ({ ...p, showComparison: v }))} />
           Show plan comparison on premium page
         </label>
-        <Button variant="neon" disabled={pending} onClick={() => startTransition(async () => {
+        <Button disabled={pending} onClick={() => startTransition(async () => {
           const r = await savePremiumPageSettings(pageSettings);
           if (r.success) appToast.saved();
           else appToast.error(r.error);
@@ -120,7 +120,7 @@ export function MembershipsAdminPanel({ plans: initial, pageSettings: initialPag
 
       {(creating || editing) && (
         <div className="grid gap-6 lg:grid-cols-2">
-          <Card className="glass p-6">
+          <Card className="p-6">
             <h3 className="font-semibold mb-4">{creating ? "Create plan" : `Edit ${editing?.name}`}</h3>
             <PlanForm
               plan={editing ?? undefined}
@@ -161,7 +161,7 @@ export function MembershipsAdminPanel({ plans: initial, pageSettings: initialPag
             onDragStart={() => setDragIndex(index)}
             onDragOver={(e) => e.preventDefault()}
             onDrop={() => handleDrop(index)}
-            className={`glass p-5 space-y-3 cursor-grab active:cursor-grabbing ${dragIndex === index ? "opacity-50" : ""}`}
+            className={`p-5 space-y-3 cursor-grab active:cursor-grabbing ${dragIndex === index ? "opacity-50" : ""}`}
             style={{ borderColor: plan.perks.accentColor ? `${plan.perks.accentColor}40` : undefined }}
           >
             <div className="flex items-start justify-between">
@@ -351,9 +351,9 @@ function PlanForm({
       </div>
       <div className="grid gap-3 sm:grid-cols-2 rounded-lg border border-border/40 p-4">
         <p className="sm:col-span-2 text-sm font-medium">Card styling</p>
-        <Input name="iconKey" placeholder="Icon emoji" defaultValue={plan?.iconKey ?? "👑"} />
+        <Input name="iconKey" placeholder="Icon, z. B. crown, gem, zap" defaultValue={plan?.iconKey ?? "crown"} />
         <Input name="ctaText" placeholder="CTA button text" defaultValue={plan?.cardStyle?.ctaText ?? ""} />
-        <label className="flex gap-2 text-sm sm:col-span-2"><input type="checkbox" name="borderGlow" defaultChecked={plan?.cardStyle?.borderGlow ?? true} /> Neon border glow</label>
+        <label className="flex gap-2 text-sm sm:col-span-2"><input type="checkbox" name="borderGlow" defaultChecked={plan?.cardStyle?.borderGlow ?? true} /> Neon border glow <span className="text-xs text-ink-muted">(Im neuen Design ohne Wirkung – Wert bleibt gespeichert.)</span></label>
       </div>
       <div>
         <label className="text-sm font-medium">Stripe one-time Price ID</label>
@@ -400,7 +400,7 @@ function PlanForm({
       </div>
 
       <div className="flex gap-2">
-        <Button type="submit" variant="neon" disabled={pending}>{isNew ? "Create plan" : "Save plan"}</Button>
+        <Button type="submit" disabled={pending}>{isNew ? "Create plan" : "Save plan"}</Button>
         <Button type="button" variant="ghost" onClick={onClose}>Cancel</Button>
       </div>
     </form>

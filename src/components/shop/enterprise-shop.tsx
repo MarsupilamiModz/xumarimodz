@@ -60,7 +60,7 @@ export function ShopProductOrderPage({ product, locale }: { product: Product; lo
   return (
     <div className="space-y-8">
       {hero && (
-        <div className="relative aspect-[21/9] rounded-xl overflow-hidden glass">
+        <div className="relative aspect-[21/9] rounded-xl overflow-hidden">
           <SafeImage src={hero} alt="" fill className="object-cover" sizes="1200px" priority />
         </div>
       )}
@@ -78,14 +78,14 @@ export function ShopProductOrderPage({ product, locale }: { product: Product; lo
             )}
           </div>
           {product.description && (
-            <Card className="glass p-6 prose prose-invert max-w-none text-sm whitespace-pre-wrap">
+            <Card className="p-6 prose prose-invert max-w-none text-sm whitespace-pre-wrap">
               {product.description}
             </Card>
           )}
           {gallery.length > 0 && (
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {gallery.map((m, i) => (
-                <div key={i} className="relative aspect-video rounded-lg overflow-hidden glass">
+                <div key={i} className="relative aspect-video rounded-lg overflow-hidden">
                   <SafeImage src={m.url} alt={m.alt ?? ""} fill className="object-cover" sizes="300px" />
                 </div>
               ))}
@@ -93,8 +93,8 @@ export function ShopProductOrderPage({ product, locale }: { product: Product; lo
           )}
         </div>
 
-        <Card className="glass p-6 space-y-4 h-fit sticky top-24">
-          <p className="text-2xl font-bold text-gradient">
+        <Card className="p-6 space-y-4 h-fit sticky top-24">
+          <p className="text-2xl font-bold text-ink">
             {formatShopPrice(product.priceCents, product.pricingMode, locale)}
           </p>
 
@@ -185,7 +185,7 @@ export function ShopProductOrderPage({ product, locale }: { product: Product; lo
             <div
               onDragOver={(e) => e.preventDefault()}
               onDrop={onDrop}
-              className="rounded-lg border border-dashed border-neon-purple/40 p-4 text-center text-sm text-muted-foreground"
+              className="rounded-lg border border-dashed border-violet-bright/40 p-4 text-center text-sm text-muted-foreground"
             >
               <p>Drag & drop reference files (PNG, JPG, WEBP, ZIP, RAR, PSD, PDF)</p>
               <Input
@@ -213,7 +213,7 @@ export function ShopProductOrderPage({ product, locale }: { product: Product; lo
 
             <Input name="discord" placeholder="Discord username (optional)" />
 
-            <Button type="submit" variant="neon" className="w-full" disabled={pending}>
+            <Button type="submit" className="w-full" disabled={pending}>
               {isQuoteProduct ? "Request quote" : "Proceed to checkout"}
             </Button>
           </form>
@@ -247,8 +247,8 @@ export function ShopCatalog({
         const image = p.coverImageUrl ?? p.thumbnailUrl;
         return (
           <Link key={p.id} href={`/${locale}/shop/${p.slug}`}>
-            <Card className="glass overflow-hidden h-full hover:border-neon-purple/40 transition-all hover:-translate-y-0.5">
-              <div className="relative aspect-[16/10] bg-gradient-to-br from-neon-purple/20 to-neon-blue/10">
+            <Card className="overflow-hidden h-full hover:border-line-control transition-all">
+              <div className="relative aspect-[16/10]">
                 {image ? (
                   <SafeImage src={image} alt="" fill className="object-cover" sizes="400px" />
                 ) : (
@@ -263,7 +263,7 @@ export function ShopCatalog({
                 {p.shortDescription && (
                   <p className="text-sm text-muted-foreground line-clamp-2">{p.shortDescription}</p>
                 )}
-                <p className="font-bold text-gradient">
+                <p className="font-bold text-ink">
                   {formatShopPrice(p.priceCents, p.pricingMode, locale)}
                 </p>
               </div>

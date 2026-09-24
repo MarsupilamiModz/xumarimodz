@@ -68,12 +68,12 @@ export function AchievementsAdminPanel({ achievements }: { achievements: Achieve
       </div>
 
       {editing && (
-        <Card className="glass p-6">
+        <Card className="p-6">
           <form onSubmit={save} className="grid gap-3 sm:grid-cols-2">
             <Input name="slug" defaultValue={editing.slug} placeholder="slug" required disabled={!!editing.id} />
             <Input name="name" defaultValue={editing.name} placeholder="Name" required />
             <Input name="title" defaultValue={editing.title ?? ""} placeholder="Title reward" />
-            <Input name="icon" defaultValue={editing.icon ?? "🏅"} placeholder="Icon emoji" />
+            <Input name="icon" defaultValue={editing.icon ?? "medal"} placeholder="Icon, z. B. medal, trophy, crown" />
             <select name="category" defaultValue={editing.category ?? "USER"} className="h-10 rounded-md border border-input bg-background/50 px-3 text-sm">
               {(["USER", "CREATOR", "PARTNER", "SEASONAL", "HIDDEN"] as const).map((c) => (
                 <option key={c} value={c}>{c}</option>
@@ -92,7 +92,7 @@ export function AchievementsAdminPanel({ achievements }: { achievements: Achieve
             <label className="flex gap-2 text-sm"><input type="checkbox" name="glowEffect" defaultChecked={editing.glowEffect ?? true} /> Glow</label>
             <label className="flex gap-2 text-sm"><input type="checkbox" name="isActive" defaultChecked={editing.isActive ?? true} /> Active</label>
             <div className="sm:col-span-2 flex gap-2">
-              <Button type="submit" variant="neon" disabled={pending}>Save</Button>
+              <Button type="submit" disabled={pending}>Save</Button>
               <Button type="button" variant="ghost" onClick={() => setEditing(null)}>Cancel</Button>
             </div>
           </form>
@@ -101,7 +101,7 @@ export function AchievementsAdminPanel({ achievements }: { achievements: Achieve
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {achievements.map((a) => (
-          <Card key={a.id} className="glass p-4 flex gap-3">
+          <Card key={a.id} className="p-4 flex gap-3">
             <AchievementBadge name={a.name} icon={a.icon} rarity={a.rarity} animated={a.animated} glowEffect={a.glowEffect} />
             <div className="flex-1 min-w-0">
               <p className="font-medium truncate">{a.name}</p>

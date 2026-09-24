@@ -47,7 +47,7 @@ export default async function CollectionDetailPage({
           )}
           <p className="text-sm text-muted-foreground mt-3">
             by{" "}
-            <Link href={`/${locale}/creators/${collection.creator?.slug ?? collection.owner.username}`} className="text-neon-purple hover:underline">
+            <Link href={`/${locale}/creators/${collection.creator?.slug ?? collection.owner.username}`} className="text-violet-bright hover:underline">
               {collection.creator?.user.displayName ?? collection.creator?.user.username ?? collection.owner.displayName ?? collection.owner.username}
             </Link>
             {" · "}
@@ -67,7 +67,7 @@ export default async function CollectionDetailPage({
           <div key={mod.id} className="space-y-2">
             <ModCard locale={locale} mod={mod} />
             {note && (
-              <Card className="glass">
+              <Card>
                 <CardContent className="py-2 text-xs text-muted-foreground">{note}</CardContent>
               </Card>
             )}

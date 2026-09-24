@@ -201,7 +201,7 @@ export function TicketThread({
               msg.isInternal
                 ? "border-warning/40 bg-warning/5"
                 : msg.isStaff
-                  ? "border-neon-blue/30 bg-neon-blue/5 ml-0 mr-8"
+                  ? "border-line-control bg-elevated ml-0 mr-8"
                   : "border-border/50 bg-card/40 mr-0 ml-8"
             )}
           >
@@ -231,7 +231,7 @@ export function TicketThread({
       </div>
 
       {canReply && ticket.status !== "CLOSED" && (
-        <div className="glass rounded-xl p-4 space-y-3">
+        <div className="rounded-xl p-4 space-y-3">
           <Textarea
             placeholder="Write your reply..."
             value={content}
@@ -257,7 +257,7 @@ export function TicketThread({
           )}
           <div className="flex flex-wrap gap-2">
             <Button
-              variant="neon"
+             
               onClick={sendReply}
               disabled={pending || (!content.trim() && files.length === 0)}
             >

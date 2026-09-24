@@ -73,7 +73,7 @@ export function PartnerAdminPanel({ locale, partner }: { locale: string; partner
 
   return (
     <div className="space-y-6">
-      <Card className="glass p-6 space-y-4">
+      <Card className="p-6 space-y-4">
         <div className="flex flex-wrap gap-2">
           {partner.isVerified && <Badge variant="premium">Verified</Badge>}
           {partner.isFeatured && <Badge variant="outline">Featured</Badge>}
@@ -94,11 +94,11 @@ export function PartnerAdminPanel({ locale, partner }: { locale: string; partner
           <label className="flex items-center gap-2 text-sm"><input type="checkbox" name="isVerified" defaultChecked={partner.isVerified} /> Verified</label>
           <label className="flex items-center gap-2 text-sm"><input type="checkbox" name="isFeatured" defaultChecked={partner.isFeatured} /> Featured</label>
           <label className="flex items-center gap-2 text-sm"><input type="checkbox" name="isSuspended" defaultChecked={partner.isSuspended} /> Suspended</label>
-          <Button type="submit" variant="neon" disabled={pending}>Save partner</Button>
+          <Button type="submit" disabled={pending}>Save partner</Button>
         </form>
       </Card>
 
-      <Card className="glass p-6 space-y-4">
+      <Card className="p-6 space-y-4">
         <h3 className="font-semibold">Discord community</h3>
         <p className="text-xs text-muted-foreground">
           Invite link, server ID, and widget are validated on save. Enable the widget in Discord Server Settings → Widget.
@@ -122,7 +122,7 @@ export function PartnerAdminPanel({ locale, partner }: { locale: string; partner
         </form>
       </Card>
 
-      <Card className="glass p-6 space-y-4">
+      <Card className="p-6 space-y-4">
         <h3 className="font-semibold">Level & codes</h3>
         <Select
           defaultValue={partner.level}

@@ -27,20 +27,20 @@ export default async function CreatorCollectionsPage({
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold">My collections</h2>
-        <Button variant="neon" asChild>
+        <Button asChild>
           <Link href={`/${locale}/creator/collections/new`}>New collection</Link>
         </Button>
       </div>
 
       {collections.length === 0 ? (
-        <Card className="glass p-6 text-sm text-muted-foreground">
+        <Card className="p-6 text-sm text-muted-foreground">
           No collections yet. Create a modpack or curated list for your audience.
         </Card>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
           {collections.map((c) => (
             <Link key={c.id} href={`/${locale}/creator/collections/${c.id}`}>
-              <Card className="glass h-full hover:border-neon-purple/30 transition-colors">
+              <Card className="h-full hover:border-line-control transition-colors">
                 <CardHeader>
                   <div className="flex items-center gap-2">
                     <CardTitle className="text-base">{c.title}</CardTitle>

@@ -48,7 +48,7 @@ export default async function AdminTicketDetailPage({
             slaResolveDueAt={ticket.slaResolveDueAt}
             firstResponseAt={ticket.firstResponseAt}
           />
-          <div className="glass rounded-xl p-4 text-sm">
+          <div className="rounded-xl p-4 text-sm">
             <p className="text-muted-foreground">Submitted by</p>
             <p className="font-medium">{formatDisplayName(ticket.user)}</p>
             <p className="text-muted-foreground mt-2">{ticket.user.email}</p>

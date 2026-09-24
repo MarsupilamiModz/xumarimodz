@@ -129,26 +129,26 @@ export function ApiKeysPanel({
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="glass p-4">
+        <Card className="p-4">
           <p className="text-xs uppercase text-muted-foreground">Total requests</p>
           <p className="text-2xl font-bold tabular-nums">{formatNumber(totals._sum.requestCount ?? 0)}</p>
         </Card>
-        <Card className="glass p-4">
+        <Card className="p-4">
           <p className="text-xs uppercase text-muted-foreground">Errors</p>
           <p className="text-2xl font-bold tabular-nums">{formatNumber(totals._sum.errorCount ?? 0)}</p>
         </Card>
-        <Card className="glass p-4">
+        <Card className="p-4">
           <p className="text-xs uppercase text-muted-foreground">API uploads</p>
           <p className="text-2xl font-bold tabular-nums">{formatNumber(totals._sum.uploadCount ?? 0)}</p>
         </Card>
-        <Card className="glass p-4">
+        <Card className="p-4">
           <p className="text-xs uppercase text-muted-foreground">Bandwidth</p>
           <p className="text-2xl font-bold tabular-nums">{(uploadBytes / (1024 * 1024)).toFixed(1)} MB</p>
         </Card>
       </div>
 
       {revealed && (
-        <Card className="glass border-neon-purple/30">
+        <Card className="border-violet-bright/30">
           <CardContent className="pt-6">
             <p className="text-sm font-medium mb-2">New API key (shown once)</p>
             <code className="block p-3 rounded bg-muted text-xs break-all">{revealed}</code>
@@ -159,7 +159,7 @@ export function ApiKeysPanel({
         </Card>
       )}
 
-      <Card className="glass">
+      <Card>
         <CardHeader><CardTitle>Create API key</CardTitle></CardHeader>
         <CardContent className="space-y-4 max-w-2xl">
           <div className="grid gap-3 sm:grid-cols-2">
@@ -169,8 +169,8 @@ export function ApiKeysPanel({
                 type="button"
                 onClick={() => setForm((f) => ({ ...f, preset: id as keyof typeof API_KEY_PRESETS, rateLimit: preset.rateLimit }))}
                 className={`rounded-lg border p-3 text-left text-sm transition-colors ${
-                  form.preset === id ? "border-neon-purple bg-neon-purple/10" : "border-border/50"
-                }`}
+ form.preset === id ? "border-violet-bright bg-violet-soft" : "border-border/50"
+ }`}
               >
                 <p className="font-medium">{preset.label}</p>
                 <p className="text-xs text-muted-foreground mt-1">{preset.rateLimit} req/min</p>
@@ -201,7 +201,7 @@ export function ApiKeysPanel({
                   key={p.value}
                   type="button"
                   size="sm"
-                  variant={form.rateLimit === p.value ? "neon" : "outline"}
+                  variant={form.rateLimit === p.value ? "default" : "outline"}
                   onClick={() => setForm((f) => ({ ...f, rateLimit: p.value }))}
                 >
                   {p.label}
@@ -231,7 +231,7 @@ export function ApiKeysPanel({
         </CardContent>
       </Card>
 
-      <Card className="glass">
+      <Card>
         <CardHeader><CardTitle>API keys</CardTitle></CardHeader>
         <CardContent className="space-y-4">
           {keys.length === 0 ? (
@@ -280,7 +280,7 @@ export function ApiKeysPanel({
         </CardContent>
       </Card>
 
-      <Card className="glass">
+      <Card>
         <CardHeader><CardTitle>Recent API audit log</CardTitle></CardHeader>
         <CardContent>
           {recentLogs.length === 0 ? (
@@ -305,7 +305,7 @@ export function ApiKeysPanel({
         </CardContent>
       </Card>
 
-      <Card className="glass">
+      <Card>
         <CardHeader><CardTitle>Upload API</CardTitle></CardHeader>
         <CardContent className="text-sm space-y-2 text-muted-foreground">
           <p>

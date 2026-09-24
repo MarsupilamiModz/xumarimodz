@@ -45,7 +45,7 @@ export function ShopAdminPanel({ products, locale }: { products: Product[]; loca
 
   return (
     <div className="space-y-6">
-      <Card className="glass p-6 space-y-4">
+      <Card className="p-6 space-y-4">
         <h3 className="font-semibold">{editing ? "Produkt bearbeiten" : "Produkt erstellen"}</h3>
         <p className="text-xs text-muted-foreground">
           Kurs: 10 € = 1.000 Credits · z. B. 500 Credits = 5,00 €
@@ -107,7 +107,7 @@ export function ShopAdminPanel({ products, locale }: { products: Product[]; loca
           />
           <Input name="creditPrice" type="number" defaultValue={editing?.creditPrice ?? 0} placeholder="Preis in Credits (In-App-Kauf)" />
           {creditsPreview > 0 && (
-            <p className="text-xs text-neon-blue sm:col-span-2">{creditsToEuroHint(creditsPreview, locale)}</p>
+            <p className="text-xs text-ink-muted sm:col-span-2">{creditsToEuroHint(creditsPreview, locale)}</p>
           )}
           <select name="category" defaultValue={editing?.category ?? "CREDITS"} className="h-10 rounded-md border border-input bg-background/50 px-3 text-sm">
             {["CREDITS", "MEMBERSHIP", "MODS", "EXCLUSIVE", "BUNDLES", "ACCESS"].map((c) => (
@@ -125,7 +125,7 @@ export function ShopAdminPanel({ products, locale }: { products: Product[]; loca
           <label className="flex items-center gap-2 text-sm"><input type="checkbox" name="isFeatured" defaultChecked={editing?.isFeatured} /> Featured</label>
           <label className="flex items-center gap-2 text-sm"><input type="checkbox" name="isActive" defaultChecked={editing?.isActive ?? true} /> Aktiv</label>
           <div className="sm:col-span-2 flex gap-2">
-            <Button type="submit" variant="neon" disabled={pending}>{editing ? "Speichern" : "Erstellen"}</Button>
+            <Button type="submit" disabled={pending}>{editing ? "Speichern" : "Erstellen"}</Button>
             {editing && <Button type="button" variant="outline" onClick={() => setEditing(null)}>Abbrechen</Button>}
           </div>
         </form>
@@ -133,7 +133,7 @@ export function ShopAdminPanel({ products, locale }: { products: Product[]; loca
 
       <div className="space-y-2">
         {products.map((p) => (
-          <Card key={p.id} className="glass p-4 flex flex-wrap items-center justify-between gap-3">
+          <Card key={p.id} className="p-4 flex flex-wrap items-center justify-between gap-3">
             <div>
               <div className="flex flex-wrap items-center gap-2">
                 <p className="font-medium">{p.name}</p>
@@ -146,7 +146,7 @@ export function ShopAdminPanel({ products, locale }: { products: Product[]; loca
               <p className="text-sm mt-1">
                 {p.creditsAmount ? (
                   <>
-                    <span className="text-neon-blue">{formatNumber(p.creditsAmount, locale)} Credits</span>
+                    <span className="text-ink-muted">{formatNumber(p.creditsAmount, locale)} Credits</span>
                     {" · "}
                     <span>{formatEuro(p.priceCents, locale)}</span>
                     {p.creditPrice > 0 && (

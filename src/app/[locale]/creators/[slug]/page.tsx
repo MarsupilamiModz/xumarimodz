@@ -77,11 +77,11 @@ export default async function CreatorProfilePage({
             <SafeImage src={profile.bannerUrl} alt="" fill className="object-cover" priority sizes="100vw" />
           </div>
         )}
-        <div className="absolute inset-0 bg-gradient-to-b from-neon-purple/10 to-background" />
+        <div className="absolute inset-0" />
         <div className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6">
           <div className="flex flex-wrap items-start gap-5">
             {profile.user.avatarUrl ? (
-              <div className="relative h-24 w-24 rounded-2xl overflow-hidden border-2 border-neon-purple/40 shadow-neon">
+              <div className="relative h-24 w-24 rounded-lg overflow-hidden border-2 border-violet-bright/40">
                 <SafeImage src={profile.user.avatarUrl} alt="" fill className="object-cover" sizes="96px" />
               </div>
             ) : null}
@@ -97,7 +97,7 @@ export default async function CreatorProfilePage({
               </div>
               {profile.tagline && <p className="text-muted-foreground mt-1">{profile.tagline}</p>}
               {profile.creatorCode && (
-                <p className="text-sm mt-2 font-mono text-neon-purple">{t("creatorCode")}: {profile.creatorCode}</p>
+                <p className="text-sm mt-2 font-mono text-violet-bright">{t("creatorCode")}: {profile.creatorCode}</p>
               )}
               <SocialLinks links={profile.socialLinks} className="mt-4" />
               <div className="mt-4 max-w-md">
@@ -108,7 +108,7 @@ export default async function CreatorProfilePage({
                 />
               </div>
             </div>
-            <Card className="glass p-4 min-w-[140px] text-center">
+            <Card className="p-4 min-w-[140px] text-center">
               <p className="text-2xl font-bold">{profile.totalDownloads.toLocaleString()}</p>
               <p className="text-xs text-muted-foreground">{t("downloads")}</p>
               <p className="text-lg font-semibold mt-2">{profile.followerCount}</p>
@@ -120,7 +120,7 @@ export default async function CreatorProfilePage({
 
       {profile.description && (
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-          <Card className="glass p-6">
+          <Card className="p-6">
             <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">{profile.description}</p>
           </Card>
         </div>

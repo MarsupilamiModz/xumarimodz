@@ -91,19 +91,19 @@ export function ScreenshotDiagnosticsPanel({ locale, initial }: Props) {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="glass p-4">
+        <Card className="p-4">
           <p className="text-xs text-muted-foreground">Scanned</p>
           <p className="text-2xl font-bold">{summary.total}</p>
         </Card>
-        <Card className="glass p-4">
+        <Card className="p-4">
           <p className="text-xs text-muted-foreground">Reachable</p>
           <p className="text-2xl font-bold text-success">{summary.ok}</p>
         </Card>
-        <Card className="glass p-4">
+        <Card className="p-4">
           <p className="text-xs text-muted-foreground">Broken / missing URL</p>
           <p className="text-2xl font-bold text-destructive">{summary.broken + summary.missingUrl}</p>
         </Card>
-        <Card className="glass p-4">
+        <Card className="p-4">
           <p className="text-xs text-muted-foreground">Storage</p>
           <p className="text-sm font-medium">{summary.storageProvider}</p>
           <p className="text-xs text-muted-foreground truncate">
@@ -116,7 +116,7 @@ export function ScreenshotDiagnosticsPanel({ locale, initial }: Props) {
         <Button variant="outline" size="sm" disabled={pending} onClick={refresh}>
           <RefreshCw className="h-4 w-4 mr-1" /> Refresh scan
         </Button>
-        <Button variant="neon" size="sm" disabled={pending} onClick={repair}>
+        <Button size="sm" disabled={pending} onClick={repair}>
           <Wrench className="h-4 w-4 mr-1" /> Repair missing screenshot links
         </Button>
         <Button variant="ghost" size="sm" asChild>
@@ -124,7 +124,7 @@ export function ScreenshotDiagnosticsPanel({ locale, initial }: Props) {
         </Button>
       </div>
 
-      <Card className="glass overflow-hidden">
+      <Card className="overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow>
@@ -148,7 +148,7 @@ export function ScreenshotDiagnosticsPanel({ locale, initial }: Props) {
                   <TableCell>
                     <Link
                       href={`/${locale}/mods/${row.modSlug}`}
-                      className="font-medium hover:text-neon-purple line-clamp-1"
+                      className="font-medium hover:text-violet-bright line-clamp-1"
                     >
                       {row.modTitle}
                     </Link>

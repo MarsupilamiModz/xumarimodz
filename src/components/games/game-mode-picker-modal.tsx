@@ -120,7 +120,7 @@ export const GameModePickerModal = memo(function GameModePickerModal({
           onTouchEnd={onTouchEnd}
           className={cn(
             "game-mode-picker-panel pointer-events-auto relative flex max-h-[92vh] w-full max-w-3xl flex-col overflow-hidden",
-            "rounded-t-2xl border border-line sm:rounded-2xl",
+            "rounded-t-2xl border border-line sm:rounded-lg",
             "transition-[transform,opacity] duration-150 ease-out",
             open
               ? "opacity-100"

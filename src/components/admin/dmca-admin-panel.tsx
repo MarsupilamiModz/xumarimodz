@@ -48,7 +48,7 @@ export function DMCAAdminPanel({ claims }: { claims: Claim[] }) {
   return (
     <div className="space-y-4">
       {claims.map((c) => (
-        <Card key={c.id} className="glass">
+        <Card key={c.id}>
           <CardHeader className="pb-2">
             <div className="flex flex-wrap gap-2 items-center">
               <CardTitle className="text-sm">{c.companyName}</CardTitle>

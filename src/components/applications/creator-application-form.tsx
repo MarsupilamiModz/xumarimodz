@@ -27,7 +27,7 @@ export function CreatorApplicationForm({ userEmail }: { userEmail: string }) {
   }
 
   return (
-    <Card className="glass max-w-2xl">
+    <Card className="max-w-2xl">
       <CardHeader>
         <CardTitle>Become a Creator</CardTitle>
       </CardHeader>
@@ -88,7 +88,7 @@ export function CreatorApplicationForm({ userEmail }: { userEmail: string }) {
               <p className="text-xs text-muted-foreground mt-1">{portfolioImages.length} file(s) attached</p>
             )}
           </div>
-          <Button type="submit" variant="neon" disabled={pending || uploading}>
+          <Button type="submit" disabled={pending || uploading}>
             Submit application
           </Button>
         </form>

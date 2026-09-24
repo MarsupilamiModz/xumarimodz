@@ -28,7 +28,7 @@ export function PartnerApplicationStatus({
   const history = (application.statusHistory as StatusEvent[] | null) ?? [];
 
   return (
-    <Card className="glass max-w-2xl">
+    <Card className="max-w-2xl">
       <CardHeader>
         <div className="flex items-center gap-2">
           <Badge variant={statusVariant(application.status)}>{statusLabel(application.status)}</Badge>
@@ -64,7 +64,7 @@ export function PartnerApplicationStatus({
             <p className="font-medium mb-2">Status history</p>
             <ul className="space-y-2">
               {[...history].reverse().map((event, i) => (
-                <li key={`${event.at}-${i}`} className="border-l-2 border-neon-purple/40 pl-3">
+                <li key={`${event.at}-${i}`} className="border-l-2 border-violet-bright/40 pl-3">
                   <span className="font-medium">{statusLabel(event.status)}</span>
                   <span className="text-muted-foreground"> · {new Date(event.at).toLocaleString()}</span>
                   {event.note && <p className="text-muted-foreground mt-0.5">{event.note}</p>}

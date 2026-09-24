@@ -15,17 +15,17 @@ export default async function PartnerPayoutsPage({ params: { locale } }: { param
   return (
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2">
-        <Card className="glass p-4">
+        <Card className="p-4">
           <p className="text-xs text-muted-foreground">{t("pendingPayout")}</p>
           <p className="text-2xl font-bold">{formatCents(summary.pendingCents, locale)}</p>
         </Card>
-        <Card className="glass p-4">
+        <Card className="p-4">
           <p className="text-xs text-muted-foreground">{t("commission")}</p>
           <p className="text-2xl font-bold">{formatCents(summary.paidCents, locale)}</p>
         </Card>
       </div>
       {summary.payouts.map((p) => (
-        <Card key={p.id} className="glass p-4 flex justify-between">
+        <Card key={p.id} className="p-4 flex justify-between">
           <span>{formatCents(p.amountCents, locale)}</span>
           <Badge variant="outline">{p.status}</Badge>
         </Card>

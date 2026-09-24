@@ -211,7 +211,7 @@ export function EnterpriseShopAdmin({
 
   return (
     <Tabs defaultValue="products" className="space-y-6">
-      <TabsList className="glass flex-wrap h-auto gap-1">
+      <TabsList className="flex-wrap h-auto gap-1">
         <TabsTrigger value="products">Products</TabsTrigger>
         <TabsTrigger value="categories">Categories</TabsTrigger>
         <TabsTrigger value="types">Product types</TabsTrigger>
@@ -230,19 +230,19 @@ export function EnterpriseShopAdmin({
               { label: "Completion rate", value: `${analytics.completionRate}%` },
               { label: "Avg delivery", value: `${analytics.avgDeliveryHours}h` },
             ].map((w) => (
-              <Card key={w.label} className="glass p-4">
+              <Card key={w.label} className="p-4">
                 <p className="text-xs text-muted-foreground">{w.label}</p>
                 <p className="text-2xl font-bold mt-1">{w.value}</p>
               </Card>
             ))}
           </div>
         ) : (
-          <Card className="glass p-6 text-muted-foreground">Analytics unavailable</Card>
+          <Card className="p-6 text-muted-foreground">Analytics unavailable</Card>
         )}
       </TabsContent>
 
       <TabsContent value="types" className="space-y-4">
-        <Card className="glass p-6 space-y-3">
+        <Card className="p-6 space-y-3">
           <h3 className="font-semibold">Create product type</h3>
           <form
             className="grid gap-3 sm:grid-cols-2"
@@ -266,12 +266,12 @@ export function EnterpriseShopAdmin({
             <Input name="name" placeholder="Type name" required />
             <Input name="slug" placeholder="slug" />
             <Textarea name="description" placeholder="Description" className="sm:col-span-2" rows={2} />
-            <Button type="submit" variant="neon" disabled={pending}>Create type</Button>
+            <Button type="submit" disabled={pending}>Create type</Button>
           </form>
         </Card>
         <div className="space-y-2">
           {productTypes.map((t) => (
-            <Card key={t.id} className="glass p-4 flex flex-wrap items-center justify-between gap-2">
+            <Card key={t.id} className="p-4 flex flex-wrap items-center justify-between gap-2">
               <div>
                 <p className="font-medium">{t.name}</p>
                 <p className="text-xs text-muted-foreground">{t.slug} · {t._count?.products ?? 0} products</p>
@@ -313,7 +313,7 @@ export function EnterpriseShopAdmin({
       </TabsContent>
 
       <TabsContent value="categories" className="space-y-4">
-        <Card className="glass p-6 space-y-3">
+        <Card className="p-6 space-y-3">
           <h3 className="font-semibold">Create category</h3>
           <form
             className="grid gap-3 sm:grid-cols-2"
@@ -344,12 +344,12 @@ export function EnterpriseShopAdmin({
               ))}
             </select>
             <Textarea name="description" placeholder="Description" className="sm:col-span-2" rows={2} />
-            <Button type="submit" variant="neon" disabled={pending}>Create category</Button>
+            <Button type="submit" disabled={pending}>Create category</Button>
           </form>
         </Card>
         <div className="space-y-2">
           {categories.map((c) => (
-            <Card key={c.id} className="glass p-4 flex flex-wrap items-center justify-between gap-2">
+            <Card key={c.id} className="p-4 flex flex-wrap items-center justify-between gap-2">
               <div>
                 <p className="font-medium">{c.parent ? `${c.parent.name} / ` : ""}{c.name}</p>
                 <p className="text-xs text-muted-foreground">{c.slug} · {c._count?.products ?? 0} products</p>
@@ -374,7 +374,7 @@ export function EnterpriseShopAdmin({
       </TabsContent>
 
       <TabsContent value="products" className="space-y-6">
-        <Card className="glass p-6 space-y-4">
+        <Card className="p-6 space-y-4">
           <div className="flex items-center justify-between gap-2">
             <h3 className="font-semibold">{editing ? "Edit product" : "Create product"}</h3>
             {editing && (
@@ -497,7 +497,7 @@ export function EnterpriseShopAdmin({
               <Input placeholder="Add gallery image URL" value={galleryUrl} onChange={(e) => setGalleryUrl(e.target.value)} />
             </div>
 
-            <Button type="submit" variant="neon" disabled={pending} className="sm:col-span-2">
+            <Button type="submit" disabled={pending} className="sm:col-span-2">
               {editing ? "Save product" : "Create product"}
             </Button>
           </form>
@@ -505,7 +505,7 @@ export function EnterpriseShopAdmin({
 
         <div className="space-y-2">
           {products.map((p) => (
-            <Card key={p.id} className="glass p-4">
+            <Card key={p.id} className="p-4">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <div className="flex flex-wrap items-center gap-2">

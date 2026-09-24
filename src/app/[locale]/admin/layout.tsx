@@ -68,8 +68,8 @@ export default async function AdminLayout({
   return (
     <div className="mx-auto flex max-w-7xl gap-6 px-4 py-8 sm:px-6">
       <aside className="w-52 shrink-0 hidden md:block">
-        <div className="glass rounded-xl p-4 sticky top-24 dark-reader-lock">
-          <p className="font-bold text-neon-purple mb-1">{t("panelTitle")}</p>
+        <div className="rounded-xl p-4 sticky top-24 dark-reader-lock">
+          <p className="font-bold text-violet-bright mb-1">{t("panelTitle")}</p>
           <p className="text-xs text-muted-foreground mb-4 truncate">{formatDisplayName(user)}</p>
           <nav className="space-y-1 text-sm">
             {links.map((l) => (

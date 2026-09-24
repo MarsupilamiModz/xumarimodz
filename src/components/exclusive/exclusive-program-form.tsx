@@ -59,14 +59,14 @@ export function ExclusiveProgramForm({
 
   if (mods.length === 0) {
     return (
-      <Card className="glass p-8 text-center text-muted-foreground">
+      <Card className="p-8 text-center text-muted-foreground">
         Upload a mod first before launching an exclusive access program.
       </Card>
     );
   }
 
   return (
-    <Card className="glass p-6 space-y-5 max-w-xl">
+    <Card className="p-6 space-y-5 max-w-xl">
       <div>
         <label className="text-sm font-medium">Mod</label>
         <select
@@ -117,7 +117,7 @@ export function ExclusiveProgramForm({
           Discord required
         </label>
       </div>
-      <Button variant="neon" disabled={pending} onClick={submit}>
+      <Button disabled={pending} onClick={submit}>
         Launch program
       </Button>
     </Card>

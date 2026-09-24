@@ -19,8 +19,8 @@ export default function ResetPasswordPage() {
   return (
     <div className="mx-auto max-w-md px-4 py-16">
       <div className="mb-8 flex justify-center"><Logo /></div>
-      <Card className="glass p-8">
-        <h1 className="text-2xl font-bold text-gradient">Set new password</h1>
+      <Card className="p-8">
+        <h1 className="text-2xl font-bold text-ink">Set new password</h1>
         <form
           className="mt-6 space-y-4"
           onSubmit={(e) => {
@@ -45,7 +45,7 @@ export default function ResetPasswordPage() {
             minLength={8}
             required
           />
-          <Button variant="neon" type="submit" className="w-full" disabled={pending}>
+          <Button type="submit" className="w-full" disabled={pending}>
             Update password
           </Button>
         </form>

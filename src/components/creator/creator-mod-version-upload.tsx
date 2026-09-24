@@ -29,7 +29,7 @@ export function CreatorModVersionUpload({ modId }: { modId: string }) {
   const busy = pending || uploading;
 
   return (
-    <Card className="glass space-y-4 p-6">
+    <Card className="space-y-4 p-6">
       <h3 className="font-medium">Upload version</h3>
       <p className="text-xs text-muted-foreground">
         Direct-to-storage multipart upload — up to {uploadLimitLabel()}. Files never pass through the app server.
@@ -122,7 +122,7 @@ export function CreatorModVersionUpload({ modId }: { modId: string }) {
           <div className="space-y-1">
             <div className="h-2 rounded-full bg-muted overflow-hidden">
               <div
-                className="h-full bg-neon-purple transition-all"
+                className="h-full bg-violet transition-all"
                 style={{ width: `${progress}%` }}
               />
             </div>
@@ -166,7 +166,7 @@ export function CreatorModVersionUpload({ modId }: { modId: string }) {
           </pre>
         )}
         <div className="flex flex-wrap gap-2">
-          <Button type="submit" variant="neon" disabled={busy}>
+          <Button type="submit" disabled={busy}>
             {uploading ? (paused ? "Paused…" : "Uploading…") : pending ? "Processing…" : "Upload version"}
           </Button>
           {uploading && !paused && (

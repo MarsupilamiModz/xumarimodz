@@ -21,9 +21,9 @@ export function StatGrid({ stats }: { stats: { label: string; value: string; hin
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {stats.map((s) => (
-        <Card key={s.label} className="glass p-4 hover:border-neon-purple/30 transition-colors">
+        <Card key={s.label} className="p-4 hover:border-line-control transition-colors">
           <p className="text-xs text-muted-foreground uppercase tracking-wide">{s.label}</p>
-          <p className="text-2xl font-bold mt-1 text-gradient">{s.value}</p>
+          <p className="text-2xl font-bold mt-1 text-ink">{s.value}</p>
           {s.hint && <p className="text-xs text-muted-foreground mt-1">{s.hint}</p>}
         </Card>
       ))}

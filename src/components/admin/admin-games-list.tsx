@@ -49,7 +49,7 @@ export function AdminGamesList({ locale, games: initial }: { locale: string; gam
   return (
     <div className="mt-8 space-y-3">
       {games.map((g, index) => (
-        <Card key={g.id} className="glass p-4 flex flex-wrap items-center justify-between gap-4">
+        <Card key={g.id} className="p-4 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-4 min-w-0">
             <div className="relative h-12 w-12 shrink-0 rounded-lg overflow-hidden border border-border/50 bg-muted/20">
               <SafeImage

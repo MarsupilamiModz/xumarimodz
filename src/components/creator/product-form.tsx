@@ -78,7 +78,7 @@ export function ProductForm({
   }
 
   return (
-    <Card className="glass p-6 max-w-2xl">
+    <Card className="p-6 max-w-2xl">
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -316,7 +316,7 @@ export function ProductForm({
           <Input name="tags" placeholder="ui, hud, realism" className="mt-1" />
         </div>
 
-        <Button type="submit" variant="neon" disabled={pending}>
+        <Button type="submit" disabled={pending}>
           {pending ? tc("loading") : productType === "SOUND" ? ts("createSound") : t("createMod")}
         </Button>
       </form>

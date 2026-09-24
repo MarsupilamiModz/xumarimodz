@@ -42,7 +42,7 @@ export default function AdminAnnouncementsPage() {
       <h1 className="text-2xl font-bold">Announcements</h1>
       <p className="mt-1 text-sm text-muted-foreground">Site-wide banners on the homepage</p>
 
-      <Card className="glass mt-8 p-6 max-w-xl">
+      <Card className="mt-8 p-6 max-w-xl">
         <h3 className="font-medium mb-4">Create announcement</h3>
         <form
           onSubmit={(e) => {
@@ -67,7 +67,7 @@ export default function AdminAnnouncementsPage() {
           <Input name="title" placeholder="Title" required />
           <Textarea name="content" placeholder="Message" required rows={2} />
           <Input name="link" placeholder="Optional link URL" type="url" />
-          <Button type="submit" variant="neon" disabled={pending}>
+          <Button type="submit" disabled={pending}>
             Publish
           </Button>
         </form>
@@ -75,7 +75,7 @@ export default function AdminAnnouncementsPage() {
 
       <div className="mt-8 space-y-3">
         {items.map((a) => (
-          <Card key={a.id} className="glass p-4 flex justify-between items-start gap-4">
+          <Card key={a.id} className="p-4 flex justify-between items-start gap-4">
             <div>
               <p className="font-medium">{a.title}</p>
               <p className="text-sm text-muted-foreground mt-1">{a.content}</p>

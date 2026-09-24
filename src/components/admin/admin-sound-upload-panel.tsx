@@ -51,7 +51,7 @@ export function AdminSoundUploadPanel({
 
   if (games.length === 0 || authors.length === 0) {
     return (
-      <Card className="glass p-6 max-w-2xl">
+      <Card className="p-6 max-w-2xl">
         <p className="text-sm text-muted-foreground">
           {games.length === 0
             ? "Add at least one game before uploading sounds."
@@ -62,7 +62,7 @@ export function AdminSoundUploadPanel({
   }
 
   return (
-    <Card className="glass p-6 max-w-2xl">
+    <Card className="p-6 max-w-2xl">
       <p className="text-sm text-muted-foreground mb-4">{t("uploadSoundHint")}</p>
       <form
         onSubmit={(e) => {
@@ -194,7 +194,7 @@ export function AdminSoundUploadPanel({
         )}
         <Input name="tags" placeholder="ambient, menu, cinematic" />
 
-        <Button type="submit" variant="neon" disabled={pending}>
+        <Button type="submit" disabled={pending}>
           {pending ? tc("loading") : t("uploadSound")}
         </Button>
       </form>

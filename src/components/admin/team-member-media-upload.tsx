@@ -107,7 +107,7 @@ export function TeamMemberMediaUpload({
         <div className="space-y-1">
           <div className="h-1.5 overflow-hidden rounded-full bg-muted">
             <div
-              className={cn("h-full bg-neon-purple transition-all duration-200")}
+              className={cn("h-full bg-violet transition-all duration-200")}
               style={{ width: `${progress}%` }}
             />
           </div>

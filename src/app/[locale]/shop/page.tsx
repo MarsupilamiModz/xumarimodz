@@ -23,7 +23,7 @@ export default async function ShopPage({ params: { locale } }: { params: { local
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
-      <h1 className="text-3xl font-bold text-gradient">{t("title")}</h1>
+      <h1 className="text-3xl font-bold text-ink">{t("title")}</h1>
       <p className="mt-2 text-muted-foreground">{t("subtitle")}</p>
       <div className="mt-10">
         <ShopClient products={products} walletBalance={balance} locale={locale} />

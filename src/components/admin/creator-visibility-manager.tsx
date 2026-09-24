@@ -46,7 +46,7 @@ export function CreatorVisibilityManager({ creators: initial }: { creators: Row[
   }
 
   return (
-    <Card className="glass p-4 space-y-2">
+    <Card className="p-4 space-y-2">
       <h3 className="font-medium mb-2">{t("visibleCreators")}</h3>
       <p className="text-xs text-muted-foreground mb-4">{t("visibleCreatorsHint")}</p>
       {rows.map((c, i) => (

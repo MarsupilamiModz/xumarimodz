@@ -1,6 +1,6 @@
 "use client";
 
-import { Pause, Play, SkipBack, SkipForward, Volume2 } from "lucide-react";
+import { Pause, Play, SkipBack, SkipForward, Volume2, Music } from "lucide-react";
 import { SafeImage } from "@/components/ui/safe-image";
 import { useAudioPlayer } from "@/components/audio/audio-player-context";
 import { formatDuration } from "@/lib/sound";
@@ -26,7 +26,7 @@ export function GlobalAudioBar() {
   return (
     <div
       className={cn(
-        "fixed bottom-0 inset-x-0 z-50 border-t border-border/60 bg-background/95 backdrop-blur-md",
+        "fixed bottom-0 inset-x-0 z-50 border-t border-border/60 bg-background/95",
         ""
       )}
     >
@@ -35,7 +35,7 @@ export function GlobalAudioBar() {
           {current.coverUrl ? (
             <SafeImage src={current.coverUrl} alt="" fill className="object-cover" sizes="40px" />
           ) : (
-            <div className="flex h-full w-full items-center justify-center text-xs text-neon-purple">♪</div>
+            <div className="flex h-full w-full items-center justify-center text-ink-muted"><Music className="h-4 w-4" aria-hidden /></div>
           )}
         </div>
 
@@ -76,7 +76,7 @@ export function GlobalAudioBar() {
             step={0.01}
             value={volume}
             onChange={(e) => setVolume(Number(e.target.value))}
-            className="w-20 accent-neon-purple"
+            className="w-20 accent-violet"
           />
         </div>
 

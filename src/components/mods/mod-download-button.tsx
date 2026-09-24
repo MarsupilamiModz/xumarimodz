@@ -38,7 +38,7 @@ export function ModDownloadButton({ modId, label }: { modId: string; label: stri
 
   return (
     <div className="flex-1 space-y-2">
-      <Button variant="neon" className="w-full" disabled={pending} onClick={() => download()}>
+      <Button className="w-full" disabled={pending} onClick={() => download()}>
         <Download className="h-4 w-4 mr-2" />
         {label}
       </Button>

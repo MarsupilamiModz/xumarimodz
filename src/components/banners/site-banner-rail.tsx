@@ -77,7 +77,7 @@ export function SiteBannerRail({ banners }: { banners: SiteBannerData[] }) {
       {visible.map((banner) => (
         <div
           key={banner.id}
-          className="relative border-b border-neon-purple/20 bg-gradient-to-r from-neon-purple/10 to-transparent"
+          className="relative border-b border-violet-bright/20"
         >
           <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3 sm:px-6">
             {banner.imageUrl && (

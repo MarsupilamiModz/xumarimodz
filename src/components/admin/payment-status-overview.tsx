@@ -37,7 +37,7 @@ export function PaymentStatusOverview({
 
   return (
     <div className={compact ? "space-y-4" : "space-y-6"}>
-      <Card className="glass p-6 space-y-4">
+      <Card className="p-6 space-y-4">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <h3 className="font-semibold">Payment status</h3>
@@ -77,7 +77,7 @@ export function PaymentStatusOverview({
       </Card>
 
       {!compact && (
-        <Card className="glass p-6">
+        <Card className="p-6">
           <h3 className="font-semibold mb-4">Recent checkouts</h3>
           {transactions.length === 0 ? (
             <p className="text-sm text-muted-foreground">No recent Stripe sessions.</p>

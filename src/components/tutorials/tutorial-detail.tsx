@@ -100,7 +100,7 @@ export function TutorialDetail({ tutorial }: { locale: string; tutorial: Tutoria
           onChange={(e) => setComment(e.target.value)}
         />
         <Button
-          variant="neon"
+         
           size="sm"
           disabled={pending || comment.trim().length < 2}
           onClick={() =>

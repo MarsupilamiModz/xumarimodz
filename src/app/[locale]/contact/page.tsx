@@ -14,10 +14,10 @@ export default function ContactPage() {
 
   return (
     <div className="mx-auto max-w-lg px-4 py-16 sm:px-6">
-      <h1 className="text-3xl font-bold text-gradient">Contact {SITE.name}</h1>
-      <Card className="glass mt-8 p-6">
+      <h1 className="text-3xl font-bold text-ink">Contact {SITE.name}</h1>
+      <Card className="mt-8 p-6">
         {sent ? (
-          <p className="text-sm text-neon-blue">Message sent. We&apos;ll respond within 48 hours.</p>
+          <p className="text-sm text-ink-muted">Message sent. We&apos;ll respond within 48 hours.</p>
         ) : (
           <form
             onSubmit={(e) => {
@@ -46,7 +46,7 @@ export default function ContactPage() {
               disabled={pending}
             />
             {error && <p className="text-sm text-destructive">{error}</p>}
-            <Button variant="neon" type="submit" className="w-full" disabled={pending}>
+            <Button type="submit" className="w-full" disabled={pending}>
               {pending ? "Sending..." : "Send Message"}
             </Button>
           </form>

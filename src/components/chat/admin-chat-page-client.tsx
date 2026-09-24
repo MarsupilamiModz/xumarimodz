@@ -202,7 +202,7 @@ export function AdminChatPageClient({
         pending={pending}
         onlineUserIds={onlineUserIds}
       />
-      <div className="flex-1 min-w-0 glass rounded-xl flex flex-col overflow-hidden">
+      <div className="flex-1 min-w-0 rounded-xl flex flex-col overflow-hidden">
         {activeChannel && (channelMeta || loadingMessages) ? (
           <>
             <div className="border-b border-border/40 px-4 py-3">

@@ -27,16 +27,16 @@ export default function CustomOrdersPage() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6">
-      <h1 className="text-3xl font-bold tracking-tight text-gradient">{t("title")}</h1>
+      <h1 className="text-3xl font-bold tracking-tight text-ink">{t("title")}</h1>
       <p className="mt-3 text-muted-foreground leading-relaxed">{t("subtitle")}</p>
       <p className="mt-3 text-sm text-muted-foreground">
-        <Link href={`/${locale}/login`} className="text-neon-purple hover:underline">
+        <Link href={`/${locale}/login`} className="text-violet-bright hover:underline">
           {t("signInHint")}
         </Link>
       </p>
-      <Card className="glass mt-8 p-6 sm:p-8">
+      <Card className="mt-8 p-6 sm:p-8">
         {submitted ? (
-          <p className="text-neon-blue">
+          <p className="text-ink-muted">
             {t("submitted")}{" "}
             <Link href={`/${locale}/dashboard/orders`} className="underline">
               →
@@ -95,7 +95,7 @@ export default function CustomOrdersPage() {
               />
               <p className="text-xs text-muted-foreground">Upload mockups, inspiration, or existing assets (15MB each).</p>
             </div>
-            <Button variant="neon" type="submit" className="w-full" disabled={pending}>
+            <Button type="submit" className="w-full" disabled={pending}>
               {t("submit")}
             </Button>
           </form>

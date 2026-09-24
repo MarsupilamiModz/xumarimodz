@@ -27,7 +27,7 @@ export function CreatorDiscoveryCard({ locale, creator }: CreatorCardProps) {
   return (
     <Link href={`/${locale}/creators/${creator.slug}`}>
       <CreatorCardFrame level={creator.level}>
-        <Card className="glass p-5 h-full hover:border-neon-purple/40 transition-all duration-300 hover:-translate-y-0.5">
+        <Card className="p-5 h-full hover:border-line-control transition-all duration-base">
           <div className="flex items-start gap-3">
             {creator.user.avatarUrl ? (
               <div className="relative h-12 w-12 rounded-xl overflow-hidden shrink-0 border border-border/50">
@@ -46,7 +46,7 @@ export function CreatorDiscoveryCard({ locale, creator }: CreatorCardProps) {
           <div className="flex flex-wrap items-center gap-2 mt-3">
             <CreatorLevelBadge level={creator.level} size="xs" />
             {creator.isFeatured && (
-              <span className="text-[10px] uppercase tracking-wide text-neon-purple">Featured</span>
+              <span className="text-[10px] uppercase tracking-wide text-violet-bright">Featured</span>
             )}
           </div>
           <div className="flex gap-4 mt-3 text-xs text-muted-foreground">

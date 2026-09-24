@@ -27,11 +27,11 @@ export function GameModePickerPage({ locale, game, modes, labels }: Props) {
         {hero && (
           <div className="absolute inset-0">
             <SafeImage src={hero} alt="" fill className="object-cover opacity-30" sizes="100vw" priority />
-            <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/80 to-background" />
+            <div className="absolute inset-0" />
           </div>
         )}
         <div className="relative mx-auto max-w-4xl px-4 py-16 text-center sm:px-6 sm:py-20">
-          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl text-gradient">{game.name}</h1>
+          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl text-ink">{game.name}</h1>
           <p className="mx-auto mt-4 max-w-xl text-lg text-muted-foreground">{labels.choosePlatform}</p>
           {game.description && (
             <p className="mx-auto mt-2 max-w-2xl text-sm text-muted-foreground/80">{game.description}</p>

@@ -119,7 +119,7 @@ export function CategoryImageCropUpload({
     () => (
       <div className="rounded-xl border border-border/40 bg-background/30 p-3 space-y-2">
         <p className="text-xs text-muted-foreground uppercase tracking-wide">Card preview</p>
-        <div className="flex flex-col items-center gap-2 rounded-xl border border-border/40 p-3 hover:border-neon-purple/30 transition-colors">
+        <div className="flex flex-col items-center gap-2 rounded-xl border border-border/40 p-3 hover:border-line-control transition-colors">
           <div className="relative h-32 w-32 overflow-hidden rounded-xl border border-border/50 bg-muted/30">
             {previewUrl ? (
               <SafeImage src={previewUrl} alt="" fill className="object-cover" sizes="128px" />
@@ -131,7 +131,7 @@ export function CategoryImageCropUpload({
           </div>
           <div className="text-center">
             <p className="font-medium text-sm">{categoryName}</p>
-            <p className="text-xs text-neon-blue">{modCount} mods</p>
+            <p className="text-xs text-ink-muted">{modCount} mods</p>
           </div>
         </div>
       </div>
@@ -159,7 +159,7 @@ export function CategoryImageCropUpload({
       </label>
 
       <Dialog open={open} onOpenChange={(v) => !saving && setOpen(v)}>
-        <DialogContent className="glass max-w-3xl border-neon-purple/30">
+        <DialogContent className="max-w-3xl border-violet-bright/30">
           <DialogHeader>
             <DialogTitle>Crop category image</DialogTitle>
           </DialogHeader>
@@ -171,7 +171,7 @@ export function CategoryImageCropUpload({
                     key={key}
                     type="button"
                     size="sm"
-                    variant={preset === key ? "neon" : "outline"}
+                    variant={preset === key ? "default" : "outline"}
                     onClick={() => setPreset(key)}
                   >
                     {ASPECT_PRESETS[key].label}
@@ -237,7 +237,7 @@ export function CategoryImageCropUpload({
             <Button variant="ghost" onClick={() => setOpen(false)} disabled={saving}>
               Cancel
             </Button>
-            <Button variant="neon" onClick={() => void save()} disabled={saving || !croppedArea}>
+            <Button onClick={() => void save()} disabled={saving || !croppedArea}>
               {saving ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : null}
               Save image
             </Button>

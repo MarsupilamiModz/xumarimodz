@@ -25,7 +25,7 @@ export default async function MembershipPage({ params: { locale } }: { params: {
       <h1 className="text-2xl font-bold">Membership</h1>
       <p className="text-sm text-muted-foreground">Lifetime access — no recurring billing.</p>
 
-      <Card className="glass">
+      <Card>
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             Current membership
@@ -52,7 +52,7 @@ export default async function MembershipPage({ params: { locale } }: { params: {
         </CardContent>
       </Card>
 
-      <Card className="glass">
+      <Card>
         <CardHeader><CardTitle>Your benefits</CardTitle></CardHeader>
         <CardContent className="text-sm text-muted-foreground space-y-2">
           <p>• Premium mod downloads and exclusive content</p>

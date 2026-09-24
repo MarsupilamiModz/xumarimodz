@@ -60,7 +60,7 @@ export function CommissionsAdminPanel({
 
   return (
     <div className="space-y-8">
-      <Card className="glass p-6 space-y-3">
+      <Card className="p-6 space-y-3">
         <h3 className="font-semibold">Create commission rule</h3>
         <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Rule name" />
         <div className="flex flex-wrap gap-2">
@@ -74,13 +74,13 @@ export function CommissionsAdminPanel({
             <option value="COUPON">Coupon</option>
           </select>
           <Input value={value} onChange={(e) => setValue(e.target.value)} type="number" className="max-w-[120px]" />
-          <Button variant="neon" disabled={pending} onClick={createRule}>Add rule</Button>
+          <Button disabled={pending} onClick={createRule}>Add rule</Button>
         </div>
       </Card>
 
       <section className="space-y-2">
         {initialRules.map((r) => (
-          <Card key={r.id} className="glass p-4 flex justify-between items-center">
+          <Card key={r.id} className="p-4 flex justify-between items-center">
             <div>
               <p className="font-medium">{r.name}</p>
               <p className="text-xs text-muted-foreground">{r.source} · {r.type}</p>
@@ -101,13 +101,13 @@ export function CommissionsAdminPanel({
       <section className="space-y-2">
         <h3 className="font-semibold">Payouts</h3>
         {initialPayouts.map((p) => (
-          <Card key={p.id} className="glass p-4 flex justify-between items-center">
+          <Card key={p.id} className="p-4 flex justify-between items-center">
             <span>@{p.user.username}</span>
             <div className="flex items-center gap-3">
               <span>{formatCents(p.amountCents, locale)}</span>
               <Badge variant="outline">{p.status}</Badge>
               {p.status === "PROCESSING" && (
-                <Button size="sm" variant="neon" disabled={pending} onClick={() => startTransition(async () => {
+                <Button size="sm" disabled={pending} onClick={() => startTransition(async () => {
                   const r = await markPayoutPaid(p.id);
                   if (r.success) router.refresh();
                 })}>Mark paid</Button>

@@ -159,10 +159,10 @@ export function NotificationCenter({ locale, userId }: { locale: string; userId?
                 onClick={() => setCategory(c.id)}
                 aria-pressed={category === c.id}
                 className={`rounded-sm border px-2 py-0.5 text-xs transition-colors duration-fast ${
-                  category === c.id
-                    ? "border-violet-bright bg-violet-soft text-violet-bright"
-                    : "border-line text-ink-muted hover:text-ink"
-                }`}
+ category === c.id
+ ? "border-violet-bright bg-violet-soft text-violet-bright"
+ : "border-line text-ink-muted hover:text-ink"
+ }`}
               >
                 {td(c.labelKey)}
               </button>

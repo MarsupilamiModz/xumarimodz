@@ -68,20 +68,20 @@ export function CreatorSettingsForm({ locale }: { locale: string }) {
           { l: t("clicks"), v: String(profile.totalClicks) },
           { l: t("conversionRate"), v: `${convRate}%` },
         ].map((s) => (
-          <Card key={s.l} className="glass p-3">
+          <Card key={s.l} className="p-3">
             <p className="text-xs text-muted-foreground">{s.l}</p>
             <p className="font-bold">{s.v}</p>
           </Card>
         ))}
       </div>
 
-      <Card className="glass p-4 space-y-2 text-sm">
-        <p><span className="text-muted-foreground">{t("creatorCode")}:</span> <span className="font-mono text-neon-purple">{profile.creatorCode}</span></p>
+      <Card className="p-4 space-y-2 text-sm">
+        <p><span className="text-muted-foreground">{t("creatorCode")}:</span> <span className="font-mono text-violet-bright">{profile.creatorCode}</span></p>
         <p><span className="text-muted-foreground">{t("couponCode")}:</span> <span className="font-mono">{profile.couponCode ?? "—"}</span></p>
         <p><span className="text-muted-foreground">{t("referralLink")}:</span> /{locale}?ref={profile.referralCode ?? profile.creatorCode}</p>
       </Card>
 
-      <Card className="glass p-6">
+      <Card className="p-6">
         <form
           className="space-y-3"
           onSubmit={(e) => {
@@ -114,7 +114,7 @@ export function CreatorSettingsForm({ locale }: { locale: string }) {
               defaultValue={profile.socialLinks.find((l) => l.platform === p)?.url ?? ""}
             />
           ))}
-          <Button type="submit" variant="neon" disabled={pending}>{t("save")}</Button>
+          <Button type="submit" disabled={pending}>{t("save")}</Button>
         </form>
       </Card>
     </div>

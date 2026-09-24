@@ -27,7 +27,7 @@ export default async function DesignerOverviewPage({ params: { locale } }: { par
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((s) => (
-          <Card key={s.label} className="glass">
+          <Card key={s.label}>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-normal text-muted-foreground">{s.label}</CardTitle>
             </CardHeader>
@@ -39,7 +39,7 @@ export default async function DesignerOverviewPage({ params: { locale } }: { par
       </div>
 
       <div className="mt-10 grid gap-6 lg:grid-cols-2">
-        <Card className="glass">
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-base">{t("uploads")}</CardTitle>
             <Button variant="ghost" size="sm" asChild>
@@ -60,7 +60,7 @@ export default async function DesignerOverviewPage({ params: { locale } }: { par
           </CardContent>
         </Card>
 
-        <Card className="glass">
+        <Card>
           <CardHeader>
             <CardTitle className="text-base">{t("orders")}</CardTitle>
           </CardHeader>
@@ -72,7 +72,7 @@ export default async function DesignerOverviewPage({ params: { locale } }: { par
                 <Link
                   key={o.id}
                   href={`/${locale}/dashboard/orders/${o.id}`}
-                  className="flex justify-between text-sm hover:text-neon-purple"
+                  className="flex justify-between text-sm hover:text-violet-bright"
                 >
                   <span className="line-clamp-1">{o.title}</span>
                   <Badge variant="outline">{o.status}</Badge>

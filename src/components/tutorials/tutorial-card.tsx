@@ -26,7 +26,7 @@ export function TutorialCard({ locale, tutorial }: { locale: string; tutorial: T
 
   return (
     <Link href={`/${locale}/tutorials/${tutorial.slug}`}>
-      <Card className="card-surface h-full overflow-hidden transition-colors hover:border-neon-purple/30">
+      <Card className="card-surface h-full overflow-hidden transition-colors hover:border-line-control">
         {thumb ? (
           <div className="relative aspect-video bg-muted/30">
             {/* eslint-disable-next-line @next/next/no-img-element */}

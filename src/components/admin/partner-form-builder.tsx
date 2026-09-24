@@ -62,7 +62,7 @@ function PartnerFormBuilderInner({ initialFields }: { initialFields: PartnerForm
   }
 
   return (
-    <Card className="glass">
+    <Card>
       <CardHeader>
         <CardTitle>Partner application form builder</CardTitle>
         <p className="text-sm text-muted-foreground">
@@ -113,7 +113,7 @@ function PartnerFormBuilderInner({ initialFields }: { initialFields: PartnerForm
         ))}
         <div className="flex gap-2">
           <Button type="button" variant="outline" onClick={addField}>Add field</Button>
-          <Button type="button" variant="neon" disabled={pending} onClick={save}>Save form</Button>
+          <Button type="button" disabled={pending} onClick={save}>Save form</Button>
         </div>
       </CardContent>
     </Card>

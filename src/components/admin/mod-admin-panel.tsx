@@ -268,7 +268,7 @@ export function ModAdminPanel({
           </div>
         </div>
 
-        <Card className="glass p-6 space-y-4">
+        <Card className="p-6 space-y-4">
           <h3 className="font-medium">{t("editMod")}</h3>
           <form
             onSubmit={(e) => {
@@ -361,7 +361,7 @@ export function ModAdminPanel({
             {pricing === "PAID" && (
               <Input name="priceCents" type="number" defaultValue={mod.priceCents ?? 0} min={0} step={100} placeholder="Price (Credits)" />
             )}
-            <Button type="submit" variant="neon" disabled={pending}>{tc("manageMod")}</Button>
+            <Button type="submit" disabled={pending}>{tc("manageMod")}</Button>
           </form>
         </Card>
 
@@ -387,7 +387,7 @@ export function ModAdminPanel({
         )}
 
         {isAdmin && (
-          <Card className="glass p-6 border-destructive/20 space-y-4">
+          <Card className="p-6 border-destructive/20 space-y-4">
             <h3 className="font-semibold text-destructive">Danger zone</h3>
             <p className="text-sm text-muted-foreground">
               Soft delete archives the mod. Permanent delete removes all data.
@@ -455,7 +455,7 @@ export function ModAdminPanel({
   }
 
   return (
-    <Card className="glass p-6 max-w-2xl">
+    <Card className="p-6 max-w-2xl">
       <h2 className="text-lg font-semibold mb-4">{t("uploadMod")}</h2>
       <form
         onSubmit={(e) => {
@@ -520,7 +520,7 @@ export function ModAdminPanel({
         </Select>
         {pricing === "PAID" && <Input name="priceCents" type="number" min={0} step={0.01} placeholder="Price USD" />}
         <Input name="tags" placeholder="ui, hud, minimap" />
-        <Button type="submit" variant="neon" disabled={pending}>{t("uploadMod")}</Button>
+        <Button type="submit" disabled={pending}>{t("uploadMod")}</Button>
       </form>
     </Card>
   );

@@ -135,21 +135,8 @@
 }
 
 @layer utilities {
-  /* Veraltet – nur noch Aliase, bis alle Komponenten umgestellt sind */
-  .glass {
-    @apply border border-line bg-raised;
-  }
-
   .card-surface {
     @apply rounded-lg border border-line bg-raised;
-  }
-
-  .text-gradient {
-    @apply text-ink;
-  }
-
-  .bg-hero-glow {
-    background: none;
   }
 
   .filter-pill {

@@ -143,13 +143,13 @@ export function OwnerUserDetailPanel({
       </div>
 
       <div className="grid gap-4 sm:grid-cols-4">
-        <Card className="glass"><CardHeader><CardTitle className="text-sm">Downloads</CardTitle></CardHeader><CardContent><p className="text-2xl font-bold">{user._count.downloads}</p></CardContent></Card>
-        <Card className="glass"><CardHeader><CardTitle className="text-sm">Uploads</CardTitle></CardHeader><CardContent><p className="text-2xl font-bold">{user._count.mods}</p></CardContent></Card>
-        <Card className="glass"><CardHeader><CardTitle className="text-sm">Tickets</CardTitle></CardHeader><CardContent><p className="text-2xl font-bold">{user._count.supportTickets}</p></CardContent></Card>
-        <Card className="glass"><CardHeader><CardTitle className="text-sm">Member since</CardTitle></CardHeader><CardContent><p className="text-sm">{safeToLocaleDateString(user.createdAt)}</p></CardContent></Card>
+        <Card><CardHeader><CardTitle className="text-sm">Downloads</CardTitle></CardHeader><CardContent><p className="text-2xl font-bold">{user._count.downloads}</p></CardContent></Card>
+        <Card><CardHeader><CardTitle className="text-sm">Uploads</CardTitle></CardHeader><CardContent><p className="text-2xl font-bold">{user._count.mods}</p></CardContent></Card>
+        <Card><CardHeader><CardTitle className="text-sm">Tickets</CardTitle></CardHeader><CardContent><p className="text-2xl font-bold">{user._count.supportTickets}</p></CardContent></Card>
+        <Card><CardHeader><CardTitle className="text-sm">Member since</CardTitle></CardHeader><CardContent><p className="text-sm">{safeToLocaleDateString(user.createdAt)}</p></CardContent></Card>
       </div>
 
-      <Card className="glass p-4 space-y-3">
+      <Card className="p-4 space-y-3">
         <h3 className="font-semibold">Role management</h3>
         <div className="flex flex-wrap gap-2 items-end">
           <select
@@ -176,7 +176,7 @@ export function OwnerUserDetailPanel({
         </div>
       </Card>
 
-      <Card className="glass p-4 space-y-3">
+      <Card className="p-4 space-y-3">
         <h3 className="font-semibold">Premium management</h3>
         {user.userMembership && (
           <p className="text-sm text-muted-foreground">
@@ -203,7 +203,7 @@ export function OwnerUserDetailPanel({
         </div>
       </Card>
 
-      <Card className="glass p-4 space-y-3">
+      <Card className="p-4 space-y-3">
         <h3 className="font-semibold">Ban management</h3>
         <div className="grid gap-2 sm:grid-cols-2">
           <Input placeholder="Ban reason (required)" value={banReason} onChange={(e) => setBanReason(e.target.value)} />
@@ -256,7 +256,7 @@ export function OwnerUserDetailPanel({
         )}
       </Card>
 
-      <Card className="glass p-4 space-y-3">
+      <Card className="p-4 space-y-3">
         <h3 className="font-semibold">Individual permissions</h3>
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 max-h-72 overflow-y-auto">
           {permissionKeys.map((key) => (
@@ -281,7 +281,7 @@ export function OwnerUserDetailPanel({
       />
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <Card className="glass p-4">
+        <Card className="p-4">
           <h3 className="font-semibold mb-3">Purchases & uploads</h3>
           <ul className="text-sm space-y-1 text-muted-foreground">
             {user.purchases.slice(0, 5).map((p) => (
@@ -292,12 +292,12 @@ export function OwnerUserDetailPanel({
             ))}
             {user.mods.slice(0, 5).map((m) => (
               <li key={m.id}>
-                <Link href={`/${locale}/mods/${m.slug}`} className="text-neon-purple hover:underline">{m.title}</Link> · {m.status}
+                <Link href={`/${locale}/mods/${m.slug}`} className="text-violet-bright hover:underline">{m.title}</Link> · {m.status}
               </li>
             ))}
           </ul>
         </Card>
-        <Card className="glass p-4">
+        <Card className="p-4">
           <h3 className="font-semibold mb-3">Tickets & applications</h3>
           <ul className="text-sm space-y-1 text-muted-foreground">
             {user.supportTickets.map((t) => (
@@ -313,7 +313,7 @@ export function OwnerUserDetailPanel({
         </Card>
       </div>
 
-      <Card className="glass p-4">
+      <Card className="p-4">
         <h3 className="font-semibold mb-3">Role history</h3>
         <ul className="text-sm space-y-1">
           {user.roleHistory.map((h) => (
@@ -324,7 +324,7 @@ export function OwnerUserDetailPanel({
         </ul>
       </Card>
 
-      <Card className="glass p-4">
+      <Card className="p-4">
         <h3 className="font-semibold mb-3">Owner audit log</h3>
         <ul className="text-sm space-y-1 max-h-64 overflow-y-auto">
           {auditLogs.map((log) => (

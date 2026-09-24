@@ -44,7 +44,7 @@ export function PartnerApplicationForm({
   const defaults = { username, email: userEmail };
 
   return (
-    <Card className="glass max-w-2xl">
+    <Card className="max-w-2xl">
       <CardHeader>
         <CardTitle>{applicationId ? "Update your application" : "Become a Partner"}</CardTitle>
         <p className="text-sm text-muted-foreground">
@@ -160,7 +160,7 @@ export function PartnerApplicationForm({
               />
             );
           })}
-          <Button type="submit" variant="neon" disabled={pending}>
+          <Button type="submit" disabled={pending}>
             {applicationId ? "Resubmit application" : "Submit application"}
           </Button>
         </form>

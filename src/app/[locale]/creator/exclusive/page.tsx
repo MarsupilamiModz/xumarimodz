@@ -18,20 +18,20 @@ export default async function CreatorExclusivePage({ params: { locale } }: { par
           <h2 className="text-xl font-semibold">Exclusive Access Hub</h2>
           <p className="text-sm text-muted-foreground">Closed alpha, beta, and invite-only releases.</p>
         </div>
-        <Button variant="neon" asChild>
+        <Button asChild>
           <Link href={`/${locale}/creator/exclusive/new`}>Launch program</Link>
         </Button>
       </div>
 
       {programs.length === 0 ? (
-        <Card className="glass p-8 text-center text-muted-foreground">
+        <Card className="p-8 text-center text-muted-foreground">
           No exclusive programs yet. Create one from a mod to start closed alpha or beta testing.
         </Card>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
           {programs.map((p) => (
             <Link key={p.id} href={`/${locale}/creator/exclusive/${p.id}`}>
-              <Card className="glass p-5 space-y-2 hover:border-neon-purple/40 transition-colors h-full">
+              <Card className="p-5 space-y-2 hover:border-line-control transition-colors h-full">
                 <div className="flex items-center justify-between">
                   <Badge variant="premium">{p.type.replace("_", " ")}</Badge>
                   <Badge variant={p.isActive ? "free" : "outline"}>{p.isActive ? "Active" : "Inactive"}</Badge>

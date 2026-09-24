@@ -22,7 +22,7 @@ export default function NewPartnerForm({ locale }: { locale: string }) {
   const [users, setUsers] = useState<{ id: string; username: string; email: string; displayName: string | null }[]>([]);
 
   return (
-    <Card className="glass p-6 max-w-lg space-y-4">
+    <Card className="p-6 max-w-lg space-y-4">
       <div className="flex gap-2">
         <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder={t("searchUser")} />
         <Button
@@ -79,7 +79,7 @@ export default function NewPartnerForm({ locale }: { locale: string }) {
         <label className="flex items-center gap-2 text-sm"><input type="checkbox" name="isPublic" defaultChecked />{t("public")}</label>
         <label className="flex items-center gap-2 text-sm"><input type="checkbox" name="isVerified" />{t("verified")}</label>
         <label className="flex items-center gap-2 text-sm"><input type="checkbox" name="isFeatured" />{t("featured")}</label>
-        <Button type="submit" variant="neon" disabled={pending || !userId}>Create Partner</Button>
+        <Button type="submit" disabled={pending || !userId}>Create Partner</Button>
       </form>
     </Card>
   );

@@ -1,5 +1,6 @@
 "use client";
 
+import { EntityIcon } from "@/components/ui/entity-icon";
 import { colors } from "@/styles/tokens";
 import { useMemo } from "react";
 import { Crown, Check } from "lucide-react";
@@ -8,9 +9,9 @@ import { Badge } from "@/components/ui/badge";
 import { formatPlanPrice, getEffectivePlanPrice, getSaleTimeRemaining, type MembershipPlanData } from "@/lib/membership-pricing";
 
 const PLAN_ICONS: Record<string, string> = {
-  "premium-lite": "⚡",
-  premium: "👑",
-  "premium-max": "💎",
+  "premium-lite": "zap",
+  premium: "crown",
+  "premium-max": "gem",
 };
 
 export function MembershipPlanPreview({
@@ -24,20 +25,18 @@ export function MembershipPlanPreview({
   const pricing = useMemo(() => getEffectivePlanPrice(fullPlan), [fullPlan]);
   const timeLeft = getSaleTimeRemaining(fullPlan);
   const accent = plan.cardStyle?.accentColor ?? plan.perks?.accentColor ?? colors.violet;
-  const icon = plan.iconKey ?? plan.cardStyle?.iconKey ?? PLAN_ICONS[plan.slug ?? ""] ?? "👑";
+  const icon = plan.iconKey ?? plan.cardStyle?.iconKey ?? PLAN_ICONS[plan.slug ?? ""] ?? "crown";
 
   return (
     <Card
-      className="glass p-5 flex flex-col max-w-xs mx-auto"
+      className="p-5 flex flex-col max-w-xs mx-auto"
       style={{
         borderColor: `${accent}50`,
-        background: plan.cardStyle?.gradient ?? undefined,
-        boxShadow: plan.cardStyle?.borderGlow ? `0 0 30px ${accent}30` : undefined,
       }}
     >
       <div className="flex items-start justify-between mb-3">
         <div>
-          <span className="text-2xl">{icon}</span>
+          <EntityIcon value={icon} fallback={Crown} className="h-6 w-6 text-ink" />
           <h4 className="font-semibold mt-1">{plan.name}</h4>
           <div className="flex items-baseline gap-2 mt-1">
             <p className="text-2xl font-bold" style={{ color: accent }}>
@@ -53,7 +52,7 @@ export function MembershipPlanPreview({
             <Badge variant="premium" className="mt-1">-{pricing.discountPercent}%</Badge>
           )}
         </div>
-        {plan.isFeatured && <Crown className="h-5 w-5 text-neon-purple" />}
+        {plan.isFeatured && <Crown className="h-5 w-5 text-violet-bright" />}
       </div>
       {timeLeft != null && timeLeft > 0 && (
         <p className="text-xs text-warning mb-2">Sale ends in {Math.ceil(timeLeft / 3600000)}h</p>
@@ -61,7 +60,7 @@ export function MembershipPlanPreview({
       <ul className="space-y-1 flex-1">
         {plan.features.slice(0, 4).map((f) => (
           <li key={f} className="flex gap-1.5 text-xs text-muted-foreground">
-            <Check className="h-3 w-3 shrink-0 text-neon-blue" /> {f}
+            <Check className="h-3 w-3 shrink-0 text-ink-muted" /> {f}
           </li>
         ))}
       </ul>

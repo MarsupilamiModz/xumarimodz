@@ -1,5 +1,6 @@
 "use client";
 
+import { Music } from "lucide-react";
 import { useEffect, useState } from "react";
 import { SafeImage } from "@/components/ui/safe-image";
 import { SoundWaveformPlayer } from "@/components/audio/sound-waveform-player";
@@ -84,13 +85,13 @@ export function SoundProductPlayer({ modId, slug, title, sound }: Props) {
   const bitrate = estimateBitrateKbps(sound.previewFileSize ?? null, displayDuration ?? null);
 
   return (
-    <div className="glass rounded-xl border border-border/50 overflow-hidden">
+    <div className="rounded-xl border border-border/50 overflow-hidden">
       <div className="grid md:grid-cols-[220px_1fr] gap-0">
-        <div className="relative aspect-square md:aspect-auto md:min-h-[220px] bg-gradient-to-br from-neon-purple/20 to-neon-blue/10">
+        <div className="relative aspect-square md:aspect-auto md:min-h-[220px]">
           {coverUrl ? (
             <SafeImage src={coverUrl} alt={title} fill className="object-cover" sizes="220px" />
           ) : (
-            <div className="flex h-full min-h-[180px] items-center justify-center text-5xl text-neon-purple/60">♪</div>
+            <div className="flex h-full min-h-[180px] items-center justify-center text-ink-muted"><Music className="h-10 w-10" aria-hidden /></div>
           )}
         </div>
         <div className="p-5 space-y-3">

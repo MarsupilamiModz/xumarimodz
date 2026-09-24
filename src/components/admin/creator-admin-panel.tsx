@@ -100,7 +100,7 @@ export function CreatorAdminPanel({ locale, creator }: { locale: string; creator
           { label: t("totalDiscount"), value: formatCents(creator.totalDiscountCents, locale) },
           { label: t("followers"), value: String(creator.followerCount) },
         ].map((s) => (
-          <Card key={s.label} className="glass p-3">
+          <Card key={s.label} className="p-3">
             <p className="text-xs text-muted-foreground">{s.label}</p>
             <p className="text-lg font-bold">{s.value}</p>
           </Card>
@@ -109,7 +109,7 @@ export function CreatorAdminPanel({ locale, creator }: { locale: string; creator
 
       {creator.analytics && (
         <>
-          <Card className="glass p-6 space-y-4">
+          <Card className="p-6 space-y-4">
             <h3 className="font-semibold">Creator overview</h3>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
               {[
@@ -131,7 +131,7 @@ export function CreatorAdminPanel({ locale, creator }: { locale: string; creator
             </div>
           </Card>
 
-          <Card className="glass p-6 space-y-4">
+          <Card className="p-6 space-y-4">
             <h3 className="font-semibold">Creator revenue</h3>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
               {[
@@ -150,7 +150,7 @@ export function CreatorAdminPanel({ locale, creator }: { locale: string; creator
           </Card>
 
           {creator.analytics.topMods.length > 0 && (
-            <Card className="glass p-6 space-y-4">
+            <Card className="p-6 space-y-4">
               <h3 className="font-semibold">Top mods</h3>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
@@ -181,7 +181,7 @@ export function CreatorAdminPanel({ locale, creator }: { locale: string; creator
         </>
       )}
 
-      <Card className="glass p-6 space-y-4">
+      <Card className="p-6 space-y-4">
         <h3 className="font-medium">{t("editCreator")}</h3>
         <form
           className="space-y-3"
@@ -245,7 +245,7 @@ export function CreatorAdminPanel({ locale, creator }: { locale: string; creator
             </div>
           </div>
           <div className="flex flex-wrap gap-2">
-            <Button type="submit" variant="neon" disabled={pending}>{t("save")}</Button>
+            <Button type="submit" disabled={pending}>{t("save")}</Button>
             <Button
               type="button"
               variant="outline"
@@ -264,9 +264,9 @@ export function CreatorAdminPanel({ locale, creator }: { locale: string; creator
         </form>
       </Card>
 
-      <Card className="glass p-6 space-y-3">
+      <Card className="p-6 space-y-3">
         <h3 className="font-medium">{t("codes")}</h3>
-        <p className="font-mono text-neon-purple">{creator.creatorCode ?? "—"}</p>
+        <p className="font-mono text-violet-bright">{creator.creatorCode ?? "—"}</p>
         <p className="font-mono text-sm">{t("couponCode")}: {creator.couponCode ?? "—"}</p>
         <p className="text-xs text-muted-foreground">{t("referralLink")}: /{locale}?ref={creator.referralCode ?? creator.creatorCode ?? "—"}</p>
         <div className="flex gap-2">
@@ -299,7 +299,7 @@ export function CreatorAdminPanel({ locale, creator }: { locale: string; creator
         </div>
       </Card>
 
-      <Card className="glass p-6 space-y-3">
+      <Card className="p-6 space-y-3">
         <h3 className="font-medium">{t("socialLinks")}</h3>
         <SocialLinks links={creator.socialLinks} />
         <form

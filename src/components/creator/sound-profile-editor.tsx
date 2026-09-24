@@ -66,7 +66,7 @@ export function SoundProfileEditor({ modId, profile }: { modId: string; profile:
   }
 
   return (
-    <Card className="glass">
+    <Card>
       <CardHeader>
         <CardTitle className="text-base">{ts("metadata")}</CardTitle>
       </CardHeader>

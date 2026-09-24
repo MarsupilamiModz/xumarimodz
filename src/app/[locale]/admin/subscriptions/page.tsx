@@ -17,7 +17,7 @@ export default async function AdminMembershipPurchasesPage({ params: { locale } 
       <p className="mt-1 text-sm text-muted-foreground">Lifetime one-time membership payments via Stripe</p>
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2">
-        <Card className="glass">
+        <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm text-muted-foreground">Total purchases</CardTitle>
           </CardHeader>
@@ -25,17 +25,17 @@ export default async function AdminMembershipPurchasesPage({ params: { locale } 
             <p className="text-2xl font-bold">{total}</p>
           </CardContent>
         </Card>
-        <Card className="glass">
+        <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm text-muted-foreground">Total revenue</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold text-neon-purple">{formatCents(totalRevenueCents, locale)}</p>
+            <p className="text-2xl font-bold text-violet-bright">{formatCents(totalRevenueCents, locale)}</p>
           </CardContent>
         </Card>
       </div>
 
-      <Card className="glass mt-8">
+      <Card className="mt-8">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -58,7 +58,7 @@ export default async function AdminMembershipPurchasesPage({ params: { locale } 
                   purchases.map((p) => (
                     <tr key={p.id} className="border-b border-border/30">
                       <td className="p-4">
-                        <Link href={`/${locale}/admin/users/${p.user.id}`} className="text-neon-purple hover:underline">
+                        <Link href={`/${locale}/admin/users/${p.user.id}`} className="text-violet-bright hover:underline">
                           @{p.user.username}
                         </Link>
                         <p className="text-xs text-muted-foreground">{p.user.email}</p>

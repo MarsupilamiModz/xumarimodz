@@ -27,7 +27,7 @@ export function SystemLogsPanel({
 
   return (
     <div className="space-y-6">
-      <Card className="glass p-6">
+      <Card className="p-6">
         <h3 className="font-semibold mb-4">Platform health</h3>
         <div className="grid gap-2 sm:grid-cols-3">
           {health.map((check) => (
@@ -49,7 +49,7 @@ export function SystemLogsPanel({
         </div>
       </Card>
 
-      <Card className="glass p-6">
+      <Card className="p-6">
         <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
           <h3 className="font-semibold">Recent errors</h3>
           <Button

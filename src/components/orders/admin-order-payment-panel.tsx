@@ -46,7 +46,7 @@ export function AdminOrderPaymentPanel({
   const [pending, startTransition] = useTransition();
 
   return (
-    <Card className="glass p-5 space-y-4 mt-6">
+    <Card className="p-5 space-y-4 mt-6">
       <div className="flex flex-wrap items-center gap-2">
         <h3 className="font-semibold">Payment & delivery</h3>
         {order.invoiceNumber && <Badge variant="outline">{order.invoiceNumber}</Badge>}
@@ -71,7 +71,7 @@ export function AdminOrderPaymentPanel({
           />
           <Textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder="Payment note for customer" rows={2} />
           <Button
-            variant="neon"
+           
             disabled={pending || amount <= 0}
             onClick={() =>
               startTransition(async () => {
@@ -144,7 +144,7 @@ export function AdminOrderPaymentPanel({
       </form>
 
       {order.deliveryFileName && (
-        <p className="text-sm text-neon-blue">Delivery ready: {order.deliveryFileName}</p>
+        <p className="text-sm text-ink-muted">Delivery ready: {order.deliveryFileName}</p>
       )}
     </Card>
   );

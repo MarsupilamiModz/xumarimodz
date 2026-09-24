@@ -81,7 +81,7 @@ export function SystemHealthPanel({
         {tabs.map((item) => (
           <Button
             key={item.id}
-            variant={tab === item.id ? "neon" : "outline"}
+            variant={tab === item.id ? "default" : "outline"}
             size="sm"
             onClick={() => setTab(item.id)}
           >
@@ -94,7 +94,7 @@ export function SystemHealthPanel({
       </div>
 
       {tab === "health" && (
-        <Card className="glass p-6 dark-reader-lock">
+        <Card className="p-6 dark-reader-lock">
           <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
             {health.map((check) => (
               <div
@@ -117,7 +117,7 @@ export function SystemHealthPanel({
       )}
 
       {tab === "metrics" && metrics && (
-        <Card className="glass p-6 dark-reader-lock">
+        <Card className="p-6 dark-reader-lock">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <div className="rounded-lg border border-border/40 p-4">
               <p className="text-xs text-muted-foreground">{t("memoryUsage")}</p>
@@ -169,7 +169,7 @@ export function SystemHealthPanel({
       )}
 
       {tab === "errors" && (
-        <Card className="glass p-6">
+        <Card className="p-6">
           <div className="flex flex-wrap items-center gap-3 mb-4">
             <Input
               placeholder={t("searchErrors")}
@@ -242,13 +242,13 @@ export function SystemHealthPanel({
       )}
 
       {tab === "audit" && (
-        <Card className="glass p-6 space-y-4">
+        <Card className="p-6 space-y-4">
           {!auditResult && (
             <p className="text-sm text-muted-foreground">Run a platform audit to check uploads, Stripe, and configuration.</p>
           )}
           <div className="flex flex-wrap items-center gap-3">
             <Button
-              variant="neon"
+             
               size="sm"
               disabled={pending}
               onClick={() =>
@@ -304,7 +304,7 @@ export function SystemHealthPanel({
       )}
 
       {tab === "translations" && (
-        <Card className="glass p-6 space-y-4">
+        <Card className="p-6 space-y-4">
           <p className="text-sm text-muted-foreground">
             {t("translationSummary", {
               locale: translationAudit.referenceLocale,

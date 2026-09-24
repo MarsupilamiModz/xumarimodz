@@ -37,10 +37,10 @@ export function CreditHistoryPanel({
   locale: string;
 }) {
   return (
-    <Card className="glass border-neon-purple/20">
+    <Card className="border-violet-bright/20">
       <CardHeader>
         <CardTitle className="text-lg">Credit wallet</CardTitle>
-        <p className="text-2xl font-bold text-gradient">{formatCredits(balance, locale)}</p>
+        <p className="text-2xl font-bold text-ink">{formatCredits(balance, locale)}</p>
       </CardHeader>
       <CardContent>
         {transactions.length === 0 ? (
@@ -58,7 +58,7 @@ export function CreditHistoryPanel({
                     {formatDateTime(tx.createdAt, locale)}
                   </p>
                 </div>
-                <span className={tx.amount >= 0 ? "text-neon-blue font-semibold shrink-0" : "text-danger font-semibold shrink-0"}>
+                <span className={tx.amount >= 0 ? "text-ink-muted font-semibold shrink-0" : "text-danger font-semibold shrink-0"}>
                   {tx.amount >= 0 ? "+" : ""}
                   {formatCredits(tx.amount, locale)}
                 </span>

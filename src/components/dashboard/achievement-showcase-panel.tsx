@@ -94,7 +94,7 @@ export function AchievementShowcasePanel({
   }
 
   return (
-    <Card className="glass max-w-3xl">
+    <Card className="max-w-3xl">
       <CardHeader className="flex flex-row items-start justify-between gap-4">
         <div>
           <CardTitle>{t("achievementsTitle")}</CardTitle>
@@ -124,7 +124,7 @@ export function AchievementShowcasePanel({
       </CardHeader>
       <CardContent className="space-y-4">
         {showcased.length > 0 && (
-          <div className="rounded-lg border border-neon-purple/30 bg-neon-purple/5 p-3">
+          <div className="rounded-lg border border-violet-bright/30 bg-violet-soft p-3">
             <p className="text-xs font-medium text-muted-foreground mb-2">{t("featuredShowcase")}</p>
             <div className="flex flex-wrap gap-2">
               {showcasedIds.map((id, i) => {
@@ -205,7 +205,7 @@ export function AchievementShowcasePanel({
                   </p>
                 </div>
                 <Button
-                  variant={a.isShowcased ? "neon" : "ghost"}
+                  variant={a.isShowcased ? "default" : "ghost"}
                   size="icon"
                   disabled={pending}
                   title={a.isShowcased ? "Remove from featured" : `Feature (${SHOWCASE_MAX} max)`}

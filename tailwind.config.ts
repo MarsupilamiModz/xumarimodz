@@ -61,8 +61,6 @@ const config: Config = {
       input: token("line-control"),
       ring: token("violet-bright"),
 
-      // Veraltet: alte Neon-Klassen, bis alle Komponenten umgestellt sind
-      neon: { purple: token("violet-bright"), blue: token("ink-muted"), cyan: token("ink-muted") },
     },
     extend: {
       fontFamily: {
@@ -87,9 +85,6 @@ const config: Config = {
         slow: "var(--duration-slow)",
       },
       letterSpacing: { display: "-0.025em" },
-      // Veraltet: Verläufe und Glows sind im neuen Design verboten
-      backgroundImage: { "hero-glow": "none", glass: "none" },
-      boxShadow: { neon: "none", glass: "none" },
       keyframes: {
         shimmer: { "0%": { backgroundPosition: "-200% 0" }, "100%": { backgroundPosition: "200% 0" } },
       },

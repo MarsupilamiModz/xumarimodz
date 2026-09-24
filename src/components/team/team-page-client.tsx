@@ -40,14 +40,14 @@ export function TeamPageClient({ members, contactTicketHref }: Props) {
   return (
     <div className="relative min-h-screen">
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 left-1/4 h-96 w-96 rounded-full bg-neon-purple/20 blur-[120px]" />
-        <div className="absolute top-1/3 right-0 h-80 w-80 rounded-full bg-neon-blue/10 blur-[100px]" />
+        <div className="absolute -top-40 left-1/4 h-96 w-96 rounded-full bg-violet-soft blur-[120px]" />
+        <div className="absolute top-1/3 right-0 h-80 w-80 rounded-full bg-elevated blur-[100px]" />
       </div>
 
       <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6">
         <header className="mb-16 space-y-4 text-center">
-          <p className="text-sm uppercase tracking-[0.3em] text-neon-purple">Xumari Modz</p>
-          <h1 className="bg-gradient-to-r from-ink via-neon-purple to-neon-blue bg-clip-text text-4xl font-bold text-transparent sm:text-5xl">
+          <p className="text-sm uppercase tracking-[0.3em] text-violet-bright">Xumari Modz</p>
+          <h1 className="text-4xl font-bold text-ink sm:text-5xl">
             Our Team
           </h1>
           <p className="mx-auto max-w-3xl text-muted-foreground">
@@ -62,7 +62,7 @@ export function TeamPageClient({ members, contactTicketHref }: Props) {
             {grouped.map((group) => (
               <section key={group.key} className="space-y-6">
                 <div className="space-y-3">
-                  <div className="h-px w-full bg-gradient-to-r from-transparent via-ink/30 to-transparent" />
+                  <div className="h-px w-full" />
                   <div className="flex items-center justify-center gap-4">
                     <span className="h-px flex-1 bg-line" />
                     <h2 className="text-center text-xl font-bold tracking-[0.28em] text-ink sm:text-2xl">
@@ -70,7 +70,7 @@ export function TeamPageClient({ members, contactTicketHref }: Props) {
                     </h2>
                     <span className="h-px flex-1 bg-line" />
                   </div>
-                  <div className="h-px w-full bg-gradient-to-r from-transparent via-ink/30 to-transparent" />
+                  <div className="h-px w-full" />
                 </div>
 
                 <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -79,12 +79,11 @@ export function TeamPageClient({ members, contactTicketHref }: Props) {
                       key={member.id}
                       type="button"
                       onClick={() => setSelected(member)}
-                      className="group overflow-hidden rounded-2xl border border-line bg-background/40 text-left transition-all duration-300 hover:-translate-y-1 hover:border-line-control"
-                      style={{ boxShadow: `0 0 0 1px ${teamRoleColor(member.roleGroup, member.roleColor)}20 inset` }}
+                      className="group overflow-hidden rounded-lg border border-line bg-background/40 text-left transition-all duration-base hover:border-line-control"
                     >
                       <div
                         className="relative h-24"
-                        style={{ background: `linear-gradient(135deg, ${teamRoleColor(member.roleGroup, member.roleColor)}66, transparent)` }}
+                        style={{ backgroundColor: `${teamRoleColor(member.roleGroup, member.roleColor)}33` }}
                       >
                         {member.bannerUrl && (
                           <SafeImage src={member.bannerUrl} alt="" fill className="object-cover opacity-60" sizes="400px" />
@@ -142,12 +141,12 @@ export function TeamPageClient({ members, contactTicketHref }: Props) {
       </div>
 
       <Dialog open={!!selected} onOpenChange={(open) => !open && setSelected(null)}>
-        <DialogContent className="glass max-w-2xl border-neon-purple/30 overflow-hidden p-0">
+        <DialogContent className="max-w-2xl border-violet-bright/30 overflow-hidden p-0">
           {selected && (
             <>
               <div
                 className="relative h-40"
-                style={{ background: `linear-gradient(135deg, ${teamRoleColor(selected.roleGroup, selected.roleColor)}88, transparent)` }}
+                style={{ backgroundColor: `${teamRoleColor(selected.roleGroup, selected.roleColor)}33` }}
               >
                 {selected.bannerUrl && (
                   <SafeImage src={selected.bannerUrl} alt="" fill className="object-cover opacity-60" sizes="800px" />
@@ -206,7 +205,7 @@ export function TeamPageClient({ members, contactTicketHref }: Props) {
                     </Button>
                   )}
                   {contactTicketHref && (
-                    <Button variant="neon" size="sm" asChild>
+                    <Button size="sm" asChild>
                       <a href={contactTicketHref}>Open support ticket</a>
                     </Button>
                   )}
@@ -238,7 +237,7 @@ function SocialLinks({ member }: { member: PublicTeamMember }) {
           target="_blank"
           rel="noopener noreferrer"
           className={cn(
-            "flex h-9 w-9 items-center justify-center rounded-lg border border-border/40 transition-colors hover:border-neon-purple/50 hover:text-neon-purple"
+            "flex h-9 w-9 items-center justify-center rounded-lg border border-border/40 transition-colors hover:border-line-control hover:text-violet-bright"
           )}
           aria-label={label}
         >
@@ -251,7 +250,7 @@ function SocialLinks({ member }: { member: PublicTeamMember }) {
           href={link.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="rounded-lg border border-border/40 px-3 py-1.5 text-xs hover:border-neon-purple/50"
+          className="rounded-lg border border-border/40 px-3 py-1.5 text-xs hover:border-line-control"
         >
           {link.label}
         </a>

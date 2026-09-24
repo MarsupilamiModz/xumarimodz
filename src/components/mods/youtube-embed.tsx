@@ -1,4 +1,5 @@
 "use client";
+import { Play } from "lucide-react";
 
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
@@ -39,7 +40,7 @@ export function YouTubeEmbed({ videoId, title = "YouTube video", className, prio
       ref={containerRef}
       className={cn(
         "relative aspect-video w-full overflow-hidden rounded-xl border border-border/50",
-        "bg-gradient-to-br from-neon-purple/10 via-background to-neon-blue/10",
+        "",
         "",
         className
       )}
@@ -55,8 +56,8 @@ export function YouTubeEmbed({ videoId, title = "YouTube video", className, prio
         />
       ) : (
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="h-14 w-14 rounded-full bg-neon-purple/20 backdrop-blur-sm border border-neon-purple/40 flex items-center justify-center">
-            <div className="ml-1 h-0 w-0 border-y-[10px] border-y-transparent border-l-[16px] border-l-neon-purple" />
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-canvas/80 text-ink">
+            <Play className="ml-0.5 h-6 w-6 fill-current" aria-hidden />
           </div>
         </div>
       )}

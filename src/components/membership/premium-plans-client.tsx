@@ -106,8 +106,8 @@ export function PremiumPlansClient({ locale, plans, pageSettings, isLoggedIn, cu
   return (
     <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
       <div className="text-center">
-        <Crown className="mx-auto h-14 w-14 text-neon-purple mb-6" />
-        <h1 className="text-4xl font-bold tracking-tight text-gradient">{pageSettings.heroTitle}</h1>
+        <Crown className="mx-auto h-14 w-14 text-violet-bright mb-6" />
+        <h1 className="text-4xl font-bold tracking-tight text-ink">{pageSettings.heroTitle}</h1>
         <p className="mt-4 text-muted-foreground max-w-2xl mx-auto leading-relaxed">{pageSettings.heroSubtitle}</p>
         {currentPlan && (
           <Badge variant="premium" className="mt-4">Your plan: {currentPlan.name}</Badge>
@@ -121,7 +121,7 @@ export function PremiumPlansClient({ locale, plans, pageSettings, isLoggedIn, cu
           const accent = plan.cardStyle?.accentColor ?? plan.perks?.accentColor ?? colors.violet;
           const pricing = getEffectivePlanPrice(planForPricing(plan));
           const saleEnds = getSaleTimeRemaining(planForPricing(plan));
-          const icon = plan.iconKey ?? plan.cardStyle?.iconKey ?? "👑";
+          const icon = plan.iconKey ?? plan.cardStyle?.iconKey ?? "crown";
           const remaining = planRemainingStock(plan);
           const soldOut = isPlanSoldOut(plan);
           const isLifetime = plan.billingType === "ONE_TIME" || plan.planKind === "LIFETIME";
@@ -132,8 +132,8 @@ export function PremiumPlansClient({ locale, plans, pageSettings, isLoggedIn, cu
           return (
             <Card
               key={plan.id}
-              className={`card-surface p-6 flex flex-col transition-shadow duration-150 hover:shadow-md ${plan.isFeatured ? "border-neon-purple/40 ring-1 ring-neon-purple/20" : ""}`}
-              style={{ borderColor: `${accent}40`, boxShadow: plan.cardStyle?.borderGlow ? `0 0 24px ${accent}25` : undefined }}
+              className={`card-surface p-6 flex flex-col ${plan.isFeatured ? "border-violet-bright/40 ring-1 ring-violet-bright/20" : ""}`}
+              style={{ borderColor: `${accent}40` }}
             >
               <div className="flex items-start justify-between mb-4">
                 <div>
@@ -175,7 +175,7 @@ export function PremiumPlansClient({ locale, plans, pageSettings, isLoggedIn, cu
               <ul className="space-y-2.5 flex-1 mb-6">
                 {plan.features.map((f) => (
                   <li key={f} className="flex items-start gap-2 text-sm">
-                    <Check className="h-4 w-4 text-neon-blue shrink-0 mt-0.5" />
+                    <Check className="h-4 w-4 text-ink-muted shrink-0 mt-0.5" />
                     {f}
                   </li>
                 ))}
@@ -188,7 +188,7 @@ export function PremiumPlansClient({ locale, plans, pageSettings, isLoggedIn, cu
                 <Button variant="outline" disabled className="w-full">Sold out</Button>
               ) : (
                 <Button
-                  variant={plan.isFeatured ? "neon" : "outline"}
+                  variant={plan.isFeatured ? "default" : "outline"}
                   className="w-full"
                   disabled={pending && loadingSlug === plan.slug}
                   onClick={() => purchase(plan.slug)}
@@ -209,7 +209,7 @@ export function PremiumPlansClient({ locale, plans, pageSettings, isLoggedIn, cu
 
       {!isLoggedIn && (
         <p className="mt-8 text-center text-sm text-muted-foreground">
-          <Link href={`/${locale}/login`} className="text-neon-purple hover:underline">Sign in</Link> to purchase
+          <Link href={`/${locale}/login`} className="text-violet-bright hover:underline">Sign in</Link> to purchase
         </p>
       )}
     </div>

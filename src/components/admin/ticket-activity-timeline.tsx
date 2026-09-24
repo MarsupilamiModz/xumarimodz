@@ -27,7 +27,7 @@ export function TicketActivityTimeline({ activities }: { activities: ActivityRow
   return (
     <ul className="space-y-3 max-h-64 overflow-y-auto">
       {activities.map((a) => (
-        <li key={a.id} className="border-l-2 border-neon-purple/30 pl-3 text-xs">
+        <li key={a.id} className="border-l-2 border-violet-bright/30 pl-3 text-xs">
           <p className="font-medium">{ACTION_LABELS[a.action] ?? a.action}</p>
           <p className="text-muted-foreground">
             {a.actor} · {safeToLocaleDateString(new Date(a.createdAt), undefined, { dateStyle: "short", timeStyle: "short" })}

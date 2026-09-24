@@ -24,7 +24,7 @@ export default function NewCreatorForm({ locale }: { locale: string }) {
   const [level, setLevel] = useState<PublisherLevel>("VERIFIED");
 
   return (
-    <Card className="glass p-6 max-w-lg space-y-4">
+    <Card className="p-6 max-w-lg space-y-4">
       <div className="flex gap-2">
         <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder={t("searchUser")} />
         <Button
@@ -84,7 +84,7 @@ export default function NewCreatorForm({ locale }: { locale: string }) {
         <Textarea name="description" placeholder={t("bio")} rows={3} />
         <label className="flex items-center gap-2 text-sm"><input type="checkbox" name="isPublic" />{t("public")}</label>
         <label className="flex items-center gap-2 text-sm"><input type="checkbox" name="isFeatured" />{t("featured")}</label>
-        <Button type="submit" variant="neon" disabled={pending || !userId}>{t("createCreator")}</Button>
+        <Button type="submit" disabled={pending || !userId}>{t("createCreator")}</Button>
       </form>
     </Card>
   );

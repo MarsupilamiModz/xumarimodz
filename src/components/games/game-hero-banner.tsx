@@ -49,7 +49,7 @@ export function GameHeroBanner({
       className="relative border-b border-border/40 overflow-hidden"
       style={{ minHeight: height, ...gradientStyle }}
     >
-      <div className="absolute inset-0 bg-gradient-to-b from-neon-purple/10 via-background/40 to-background" />
+      <div className="absolute inset-0" />
       {imageSrc && (
         <div className="absolute inset-0 overflow-hidden">
           <SafeImage
@@ -66,7 +66,7 @@ export function GameHeroBanner({
       <div className="relative mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-16">
         <div className="flex flex-wrap items-end gap-4 sm:gap-6">
           {iconUrl ? (
-            <div className="relative h-16 w-16 sm:h-24 sm:w-24 rounded-2xl overflow-hidden border border-neon-purple/30 shadow-neon shrink-0">
+            <div className="relative h-16 w-16 sm:h-24 sm:w-24 rounded-lg overflow-hidden border border-violet-bright/30 shrink-0">
               <SafeImage src={iconUrl} alt={name} fill className="object-cover" sizes="96px" priority />
             </div>
           ) : null}
@@ -76,15 +76,15 @@ export function GameHeroBanner({
                 {featuredLabel}
               </Badge>
             )}
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gradient">{name}</h1>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-ink">{name}</h1>
             {blurb && (
               <p className="mt-2 max-w-2xl text-sm sm:text-base text-muted-foreground leading-relaxed">
                 {blurb}
               </p>
             )}
             <div className="mt-4 flex flex-wrap gap-4 text-sm">
-              <span className="text-neon-blue">{modsLabel}</span>
-              <span className="text-neon-purple">{creatorsLabel}</span>
+              <span className="text-ink-muted">{modsLabel}</span>
+              <span className="text-violet-bright">{creatorsLabel}</span>
             </div>
           </div>
         </div>

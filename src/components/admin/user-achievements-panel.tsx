@@ -54,7 +54,7 @@ export function UserAchievementsPanel({
   const available = allAchievements.filter((a) => !ownedIds.has(a.id));
 
   return (
-    <Card className="glass p-4 space-y-4">
+    <Card className="p-4 space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h3 className="font-semibold">Achievements</h3>
         <Badge variant="outline">{initialAchievements.length} earned</Badge>
@@ -74,7 +74,7 @@ export function UserAchievementsPanel({
           ))}
         </select>
         <Button
-          variant="neon"
+         
           size="sm"
           disabled={pending || !selectedGrant}
           onClick={() =>

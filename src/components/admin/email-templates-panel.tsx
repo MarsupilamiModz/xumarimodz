@@ -22,7 +22,7 @@ export function EmailTemplatesPanel({ templates }: { templates: EmailTemplate[] 
         Variables: {TEMPLATE_VARIABLES.join(", ")}
       </p>
       {templates.map((tpl) => (
-        <Card key={tpl.key} className="glass p-6 space-y-3">
+        <Card key={tpl.key} className="p-6 space-y-3">
           <h3 className="font-semibold">{tpl.name}</h3>
           <form
             className="space-y-3"
@@ -45,7 +45,7 @@ export function EmailTemplatesPanel({ templates }: { templates: EmailTemplate[] 
             <Input name="name" defaultValue={tpl.name} placeholder="Template name" />
             <Input name="subject" defaultValue={tpl.subject} placeholder="Subject" />
             <Textarea name="html" defaultValue={tpl.html} rows={6} placeholder="HTML body" className="font-mono text-xs" />
-            <Button type="submit" variant="neon" size="sm" disabled={pending}>Save template</Button>
+            <Button type="submit" size="sm" disabled={pending}>Save template</Button>
           </form>
         </Card>
       ))}

@@ -106,7 +106,7 @@ export function GameForm({ locale, game }: { locale: string; game?: GameData }) 
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
-      <Card className="glass p-6 space-y-4">
+      <Card className="p-6 space-y-4">
         <div>
           <label className="text-sm font-medium">Name</label>
           <Input name="name" value={name} onChange={(e) => setName(e.target.value)} required className="mt-1" />
@@ -157,7 +157,7 @@ export function GameForm({ locale, game }: { locale: string; game?: GameData }) 
       </Card>
 
       {game?.id && (
-        <Card className="glass p-6 space-y-4">
+        <Card className="p-6 space-y-4">
           <p className="font-medium">Assets</p>
           <p className="text-xs text-muted-foreground">Uploaded to {STORAGE.cdn} · WebP compression applied on upload</p>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -250,7 +250,7 @@ export function GameForm({ locale, game }: { locale: string; game?: GameData }) 
         </Card>
       )}
 
-      <Button type="submit" variant="neon" disabled={pending}>
+      <Button type="submit" disabled={pending}>
         {pending ? "Saving..." : game?.id ? "Update Game" : "Create Game"}
       </Button>
     </form>

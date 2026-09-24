@@ -65,7 +65,7 @@ export function SocialLinks({
             rel="noopener noreferrer"
             title={SOCIAL_LABELS[link.platform]}
             className={cn(
-              "inline-flex items-center justify-center rounded-xl border border-border/50 bg-background/40 backdrop-blur-sm transition-all duration-200 hover:scale-105 hover:shadow-neon",
+              "inline-flex items-center justify-center rounded-xl border border-border/50 bg-background/40 transition-all duration-200",
               sizeClass,
               SOCIAL_COLORS[link.platform]
             )}

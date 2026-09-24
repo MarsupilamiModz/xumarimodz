@@ -66,7 +66,7 @@ export function ChatSidebar({
         onClick={() => onSelect(ch.id)}
         className={cn(
           "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm transition-colors",
-          active ? "bg-neon-purple/20 text-neon-purple" : "text-muted-foreground hover:bg-accent/20 hover:text-foreground"
+          active ? "bg-violet-soft text-violet-bright" : "text-muted-foreground hover:bg-accent/20 hover:text-foreground"
         )}
       >
         <Icon className="h-3.5 w-3.5 shrink-0 opacity-70" />
@@ -81,7 +81,7 @@ export function ChatSidebar({
   }
 
   return (
-    <aside className="w-64 shrink-0 glass rounded-xl p-3 flex flex-col overflow-hidden">
+    <aside className="w-64 shrink-0 rounded-xl p-3 flex flex-col overflow-hidden">
       <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground px-2 mb-2">
         {t("channels")}
       </p>

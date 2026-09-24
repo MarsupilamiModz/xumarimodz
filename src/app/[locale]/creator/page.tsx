@@ -35,29 +35,29 @@ export default async function CreatorPage({ params: { locale } }: { params: { lo
   return (
     <div className="space-y-8">
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="glass p-4">
+        <Card className="p-4">
           <p className="text-xs text-muted-foreground">{tc("myMods")}</p>
           <p className="text-2xl font-bold">{mods.length}</p>
         </Card>
-        <Card className="glass p-4">
+        <Card className="p-4">
           <p className="text-xs text-muted-foreground">{t("downloads")}</p>
           <p className="text-2xl font-bold">{analytics?.totalDownloads ?? 0}</p>
         </Card>
-        <Card className="glass p-4">
+        <Card className="p-4">
           <p className="text-xs text-muted-foreground">{t("revenue")}</p>
           <p className="text-2xl font-bold">{formatCents(analytics?.purchaseRevenue ?? 0, locale)}</p>
         </Card>
-        <Card className="glass p-4">
+        <Card className="p-4">
           <p className="text-xs text-muted-foreground">{t("pendingPayout")}</p>
           <p className="text-2xl font-bold">{formatCents(commission.pendingCents, locale)}</p>
         </Card>
       </div>
 
       {profile?.creatorCode && (
-        <Card className="glass p-4 flex flex-wrap items-center justify-between gap-3">
+        <Card className="p-4 flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="text-xs text-muted-foreground">{t("creatorCode")}</p>
-            <p className="font-mono text-lg text-neon-purple">{profile.creatorCode}</p>
+            <p className="font-mono text-lg text-violet-bright">{profile.creatorCode}</p>
           </div>
           {profile.isVerified && <Badge variant="premium">{t("verified")}</Badge>}
         </Card>
@@ -65,15 +65,15 @@ export default async function CreatorPage({ params: { locale } }: { params: { lo
 
       <div className="space-y-2">
         {mods.length === 0 ? (
-          <Card className="glass p-8 text-center">
+          <Card className="p-8 text-center">
             <p className="text-muted-foreground">{t("noMods")}</p>
-            <Button variant="neon" className="mt-4" asChild>
+            <Button className="mt-4" asChild>
               <Link href={`/${locale}/creator/mods/new`}>{tc("createMod")}</Link>
             </Button>
           </Card>
         ) : (
           mods.map((m) => (
-            <Card key={m.id} className="glass p-4 flex justify-between items-center">
+            <Card key={m.id} className="p-4 flex justify-between items-center">
               <div>
                 <p className="font-medium">{m.title}</p>
                 <p className="text-xs text-muted-foreground">

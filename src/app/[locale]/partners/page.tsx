@@ -59,11 +59,11 @@ export default async function PartnersPage({ params: { locale } }: { params: { l
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
-      <h1 className="text-3xl font-bold text-gradient">{t("partnerHub")}</h1>
+      <h1 className="text-3xl font-bold text-ink">{t("partnerHub")}</h1>
       <p className="mt-2 text-muted-foreground">{t("partnersSubtitle")}</p>
 
       {!hasAny ? (
-        <Card className="glass mt-10 p-12 text-center text-muted-foreground">{t("noPartners")}</Card>
+        <Card className="mt-10 p-12 text-center text-muted-foreground">{t("noPartners")}</Card>
       ) : (
         <div className="mt-10 space-y-12">
           {sections.map(
@@ -83,7 +83,7 @@ export default async function PartnersPage({ params: { locale } }: { params: { l
       )}
 
       <div className="mt-12 text-center">
-        <Link href={`/${locale}/register`} className="text-neon-blue hover:underline text-sm">
+        <Link href={`/${locale}/register`} className="text-ink-muted hover:underline text-sm">
           {t("becomePartner")}
         </Link>
       </div>

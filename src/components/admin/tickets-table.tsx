@@ -188,10 +188,10 @@ export function TicketsTable({
             ))}
           </SelectContent>
         </Select>
-        <Button variant="neon" onClick={() => refresh(1)} disabled={pending}>Filter</Button>
+        <Button onClick={() => refresh(1)} disabled={pending}>Filter</Button>
       </div>
 
-      <div className="glass rounded-xl border border-border/50 overflow-x-auto">
+      <div className="rounded-xl border border-border/50 overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -219,7 +219,7 @@ export function TicketsTable({
                 return (
                   <TableRow key={t.id}>
                     <TableCell>
-                      <Link href={`/${locale}/admin/tickets/${t.id}`} className="hover:text-neon-purple">
+                      <Link href={`/${locale}/admin/tickets/${t.id}`} className="hover:text-violet-bright">
                         <p className="font-medium">{t.ticketNumber}</p>
                         <p className="text-xs text-muted-foreground line-clamp-1">{t.subject}</p>
                         {tags.length > 0 && (
@@ -276,7 +276,7 @@ export function TicketsTable({
       {pages > 1 && (
         <div className="flex justify-center gap-2">
           {Array.from({ length: Math.min(pages, 10) }, (_, i) => i + 1).map((p) => (
-            <Button key={p} variant={p === page ? "neon" : "outline"} size="sm" onClick={() => refresh(p)} disabled={pending}>
+            <Button key={p} variant={p === page ? "default" : "outline"} size="sm" onClick={() => refresh(p)} disabled={pending}>
               {p}
             </Button>
           ))}

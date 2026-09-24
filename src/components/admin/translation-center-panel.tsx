@@ -61,26 +61,26 @@ export function TranslationCenterPanel({ queue, cache, missing, audit }: Props) 
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="glass p-4">
+        <Card className="p-4">
           <p className="text-xs text-muted-foreground">{t("translationQueue")}</p>
           <p className="text-2xl font-bold mt-1">{queue.pending}</p>
           <p className="text-xs text-muted-foreground">{t("translationPending")}</p>
         </Card>
-        <Card className="glass p-4">
+        <Card className="p-4">
           <p className="text-xs text-muted-foreground">{t("translationApproved")}</p>
           <p className="text-2xl font-bold mt-1">{queue.approved}</p>
         </Card>
-        <Card className="glass p-4">
+        <Card className="p-4">
           <p className="text-xs text-muted-foreground">{t("translationCache")}</p>
           <p className="text-2xl font-bold mt-1">{cache.dbEntries}</p>
         </Card>
-        <Card className="glass p-4">
+        <Card className="p-4">
           <p className="text-xs text-muted-foreground">{t("translationMissingUi")}</p>
           <p className="text-2xl font-bold mt-1">{missing.uiMissingKeys}</p>
         </Card>
       </div>
 
-      <Card className="glass p-4 space-y-3">
+      <Card className="p-4 space-y-3">
         <h2 className="font-semibold">{t("translationEngine")}</h2>
         <div className="flex flex-wrap gap-2">
           <Badge variant={queue.engine.openai ? "default" : "outline"}>OpenAI</Badge>
@@ -101,13 +101,13 @@ export function TranslationCenterPanel({ queue, cache, missing, audit }: Props) 
           <Button size="sm" variant="outline" disabled={pending} onClick={() => run(ownerClearTranslationCache)}>
             {t("translationClearCache")}
           </Button>
-          <Button size="sm" variant="neon" disabled={pending} onClick={() => run(ownerSyncMissingUiKeys)}>
+          <Button size="sm" disabled={pending} onClick={() => run(ownerSyncMissingUiKeys)}>
             {t("translationSyncMissingKeys")}
           </Button>
         </div>
       </Card>
 
-      <Card className="glass p-4">
+      <Card className="p-4">
         <h2 className="font-semibold mb-2">{t("translationAudit")}</h2>
         <p className="text-sm text-muted-foreground mb-3">{audit.summary}</p>
         <ul className="text-sm space-y-1">

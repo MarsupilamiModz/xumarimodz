@@ -25,14 +25,14 @@ export function ModPurchaseButton({
 
   if (owned) {
     return (
-      <p className="text-xs text-neon-blue text-center mt-2">You own this mod</p>
+      <p className="text-xs text-ink-muted text-center mt-2">You own this mod</p>
     );
   }
 
   return (
     <Button
       variant="outline"
-      className="w-full mt-2 border-neon-purple/40"
+      className="w-full mt-2 border-violet-bright/40"
       disabled={pending}
       onClick={() =>
         startTransition(async () => {

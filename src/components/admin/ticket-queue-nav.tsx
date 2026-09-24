@@ -35,7 +35,7 @@ export function TicketQueueNav({
           className={cn(
             "rounded-md px-3 py-1.5 text-xs font-medium transition-colors",
             active === q
-              ? "bg-neon-purple/20 text-neon-purple"
+              ? "bg-violet-soft text-violet-bright"
               : "text-muted-foreground hover:bg-accent/20 hover:text-foreground"
           )}
         >

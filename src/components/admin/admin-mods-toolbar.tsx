@@ -78,7 +78,7 @@ export function AdminModsToolbar({ locale, searchParams, games }: Props) {
             className="pl-9"
           />
         </div>
-        <Button type="submit" variant="neon" size="sm">
+        <Button type="submit" size="sm">
           Search
         </Button>
       </form>

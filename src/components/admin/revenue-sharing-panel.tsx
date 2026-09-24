@@ -67,27 +67,27 @@ export function RevenueSharingPanel({ data }: { data: Dashboard }) {
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="glass p-4">
+        <Card className="p-4">
           <p className="text-xs uppercase text-muted-foreground">Revenue today</p>
           <p className="text-2xl font-bold tabular-nums">{formatCents(data.revenueTodayCents)}</p>
         </Card>
-        <Card className="glass p-4">
+        <Card className="p-4">
           <p className="text-xs uppercase text-muted-foreground">Revenue (30 days)</p>
           <p className="text-2xl font-bold tabular-nums">{formatCents(data.revenue30dCents)}</p>
         </Card>
-        <Card className="glass p-4">
+        <Card className="p-4">
           <p className="text-xs uppercase text-muted-foreground">Open commissions</p>
           <p className="text-2xl font-bold tabular-nums">{formatCents(data.openCommissionCents)}</p>
           <p className="text-xs text-muted-foreground">{data.openCommissionCount} entries</p>
         </Card>
-        <Card className="glass p-4">
+        <Card className="p-4">
           <p className="text-xs uppercase text-muted-foreground">Pending payouts</p>
           <p className="text-2xl font-bold tabular-nums">{formatCents(data.pendingPayoutCents)}</p>
           <p className="text-xs text-muted-foreground">{data.pendingPayoutCount} payouts</p>
         </Card>
       </div>
 
-      <Card className="glass p-6 max-w-xl">
+      <Card className="p-6 max-w-xl">
         <h2 className="font-semibold mb-4">Global revenue split</h2>
         <form onSubmit={save} className="space-y-4">
           {(
@@ -119,7 +119,7 @@ export function RevenueSharingPanel({ data }: { data: Dashboard }) {
             {bpsToPercent(data.settings.designerShareBps)}% · Partner {bpsToPercent(data.settings.partnerShareBps)}%
             · Platform {bpsToPercent(data.settings.platformShareBps)}%
           </p>
-          <Button type="submit" variant="neon" disabled={pending}>
+          <Button type="submit" disabled={pending}>
             Save payout settings
           </Button>
         </form>

@@ -181,7 +181,7 @@ export function UserDetailPanel({
         </div>
       </div>
 
-      <Card className="glass p-5 space-y-4">
+      <Card className="p-5 space-y-4">
         <h3 className="font-semibold">Access control</h3>
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
@@ -225,14 +225,14 @@ export function UserDetailPanel({
       </Card>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="glass"><CardHeader><CardTitle className="text-sm">Downloads</CardTitle></CardHeader><CardContent><p className="text-2xl font-bold">{user._count.downloads}</p></CardContent></Card>
-        <Card className="glass"><CardHeader><CardTitle className="text-sm">Favorites</CardTitle></CardHeader><CardContent><p className="text-2xl font-bold">{user._count.favorites}</p></CardContent></Card>
-        <Card className="glass"><CardHeader><CardTitle className="text-sm">Mods</CardTitle></CardHeader><CardContent><p className="text-2xl font-bold">{user._count.mods}</p></CardContent></Card>
-        <Card className="glass"><CardHeader><CardTitle className="text-sm">Member since</CardTitle></CardHeader><CardContent><p className="text-sm">{safeToLocaleDateString(new Date(user.createdAt))}</p></CardContent></Card>
+        <Card><CardHeader><CardTitle className="text-sm">Downloads</CardTitle></CardHeader><CardContent><p className="text-2xl font-bold">{user._count.downloads}</p></CardContent></Card>
+        <Card><CardHeader><CardTitle className="text-sm">Favorites</CardTitle></CardHeader><CardContent><p className="text-2xl font-bold">{user._count.favorites}</p></CardContent></Card>
+        <Card><CardHeader><CardTitle className="text-sm">Mods</CardTitle></CardHeader><CardContent><p className="text-2xl font-bold">{user._count.mods}</p></CardContent></Card>
+        <Card><CardHeader><CardTitle className="text-sm">Member since</CardTitle></CardHeader><CardContent><p className="text-sm">{safeToLocaleDateString(new Date(user.createdAt))}</p></CardContent></Card>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <Card className="glass">
+        <Card>
           <CardHeader><CardTitle>Discord</CardTitle></CardHeader>
           <CardContent className="text-sm text-muted-foreground">
             {user.discordId ? (
@@ -246,7 +246,7 @@ export function UserDetailPanel({
           </CardContent>
         </Card>
 
-        <Card className="glass">
+        <Card>
           <CardHeader><CardTitle>Membership (legacy purchases)</CardTitle></CardHeader>
           <CardContent className="space-y-3">
             {user.membershipPurchases.length === 0 ? (
@@ -274,7 +274,7 @@ export function UserDetailPanel({
           />
         )}
 
-        <Card className="glass">
+        <Card>
           <CardHeader><CardTitle>Legacy subscriptions</CardTitle></CardHeader>
           <CardContent>
             {user.subscriptions.length === 0 ? (
@@ -291,7 +291,7 @@ export function UserDetailPanel({
           </CardContent>
         </Card>
 
-        <Card className="glass lg:col-span-2">
+        <Card className="lg:col-span-2">
           <CardHeader><CardTitle>Recent Tickets</CardTitle></CardHeader>
           <CardContent>
             {user.supportTickets.length === 0 ? (
@@ -300,7 +300,7 @@ export function UserDetailPanel({
               <ul className="space-y-2">
                 {user.supportTickets.map((t) => (
                   <li key={t.id}>
-                    <Link href={`/${locale}/admin/tickets/${t.id}`} className="text-sm hover:text-neon-purple">
+                    <Link href={`/${locale}/admin/tickets/${t.id}`} className="text-sm hover:text-violet-bright">
                       {t.ticketNumber} — {t.subject} ({TICKET_STATUS_LABELS[t.status as keyof typeof TICKET_STATUS_LABELS]})
                     </Link>
                   </li>
@@ -310,7 +310,7 @@ export function UserDetailPanel({
           </CardContent>
         </Card>
 
-        <Card className="glass">
+        <Card>
           <CardHeader><CardTitle>Email</CardTitle></CardHeader>
           <CardContent className="space-y-3 text-sm">
             {user.emailVerifiedAt && (
@@ -373,7 +373,7 @@ export function UserDetailPanel({
           </CardContent>
         </Card>
 
-        <Card className="glass lg:col-span-2">
+        <Card className="lg:col-span-2">
           <CardHeader><CardTitle>Email log</CardTitle></CardHeader>
           <CardContent>
             {!emailLogs?.length ? (
@@ -407,7 +407,7 @@ export function UserDetailPanel({
           />
         )}
 
-        <Card className="glass lg:col-span-2">
+        <Card className="lg:col-span-2">
           <CardHeader><CardTitle>Audit Log</CardTitle></CardHeader>
           <CardContent>
             {auditLogs.length === 0 ? (

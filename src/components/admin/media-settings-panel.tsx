@@ -18,7 +18,7 @@ export function MediaSettingsPanel({ initial }: MediaSettingsPanelProps) {
   const [pending, startTransition] = useTransition();
 
   return (
-    <Card className="glass max-w-2xl">
+    <Card className="max-w-2xl">
       <CardHeader>
         <CardTitle>Media Settings</CardTitle>
       </CardHeader>
@@ -80,7 +80,7 @@ export function MediaSettingsPanel({ initial }: MediaSettingsPanelProps) {
               />
             </div>
           </div>
-          <Button type="submit" variant="neon" disabled={pending}>
+          <Button type="submit" disabled={pending}>
             Save settings
           </Button>
         </form>

@@ -1,5 +1,6 @@
 "use client";
 
+import { EntityIcon } from "@/components/ui/entity-icon";
 import { useTranslations } from "next-intl";
 import type { PublisherLevel } from "@prisma/client";
 import { CREATOR_LEVELS } from "@/lib/creator-levels";
@@ -24,19 +25,19 @@ export function CreatorLevelBadge({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 rounded-full font-semibold uppercase tracking-wide",
-        "bg-background/60 backdrop-blur-sm border",
+        "inline-flex items-center gap-1 rounded-sm font-semibold uppercase tracking-wide",
+        "border bg-elevated",
         config.borderClass,
         config.glowClass,
         sizeClass,
         level === "VERIFIED" && "text-success",
         level === "TRUSTED" && "text-warning",
-        level === "ELITE" && "text-neon-purple",
-        level === "OFFICIAL_PARTNER" && "text-neon-blue",
+        level === "ELITE" && "text-violet-bright",
+        level === "OFFICIAL_PARTNER" && "text-ink-muted",
         className
       )}
     >
-      <span aria-hidden>{config.icon}</span>
+      <EntityIcon value={config.icon} className="h-3.5 w-3.5" />
       {t(config.badgeKey)}
     </span>
   );
@@ -55,7 +56,7 @@ export function CreatorCardFrame({
   return (
     <div
       className={cn(
-        "rounded-xl transition-all duration-300",
+        "rounded-xl transition-all duration-base",
         config?.borderClass,
         config?.cardClass,
         config?.glowClass,

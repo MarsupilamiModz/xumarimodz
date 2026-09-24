@@ -138,13 +138,13 @@ export function ExclusiveProgramManager({ locale, program }: { locale: string; p
         </div>
       </div>
 
-      <Card className="glass p-5 space-y-4">
+      <Card className="p-5 space-y-4">
         <h3 className="font-semibold">Private builds</h3>
         <div className="flex flex-wrap gap-2 items-end">
           <Input placeholder="Version e.g. 0.9.1-beta" value={version} onChange={(e) => setVersion(e.target.value)} className="max-w-[180px]" />
           <Input type="datetime-local" value={expiresAt} onChange={(e) => setExpiresAt(e.target.value)} className="max-w-[220px]" />
           <input ref={fileRef} type="file" className="text-sm" />
-          <Button variant="neon" size="sm" disabled={pending} onClick={uploadBuild}>Upload build</Button>
+          <Button size="sm" disabled={pending} onClick={uploadBuild}>Upload build</Button>
         </div>
         {program.builds.length === 0 ? (
           <p className="text-sm text-muted-foreground">No builds uploaded yet.</p>
@@ -162,7 +162,7 @@ export function ExclusiveProgramManager({ locale, program }: { locale: string; p
         )}
       </Card>
 
-      <Card className="glass p-5 space-y-4">
+      <Card className="p-5 space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="font-semibold">Invite codes</h3>
           <Button size="sm" variant="outline" disabled={pending} onClick={generateInvite}>Generate code</Button>
@@ -170,7 +170,7 @@ export function ExclusiveProgramManager({ locale, program }: { locale: string; p
         {program.inviteCodes.length === 0 ? (
           <p className="text-sm text-muted-foreground">No invite codes yet.</p>
         ) : (
-          <ul className="space-y-1 font-mono text-sm text-neon-blue">
+          <ul className="space-y-1 font-mono text-sm text-ink-muted">
             {program.inviteCodes.map((c) => (
               <li key={c.id}>{c.code} · {c.uses}/{c.maxUses || "∞"} uses</li>
             ))}
@@ -178,7 +178,7 @@ export function ExclusiveProgramManager({ locale, program }: { locale: string; p
         )}
       </Card>
 
-      <Card className="glass p-5 space-y-4">
+      <Card className="p-5 space-y-4">
         <h3 className="font-semibold">Applications ({program.applications.length})</h3>
         {program.applications.length === 0 ? (
           <p className="text-sm text-muted-foreground">No applications yet.</p>
@@ -194,7 +194,7 @@ export function ExclusiveProgramManager({ locale, program }: { locale: string; p
                 {a.message && <p className="text-sm text-muted-foreground">{a.message}</p>}
                 {a.status === "PENDING" || a.status === "WAITLIST" ? (
                   <div className="flex gap-2">
-                    <Button size="sm" variant="neon" disabled={pending} onClick={() => review(a.id, "APPROVED")}>Approve</Button>
+                    <Button size="sm" disabled={pending} onClick={() => review(a.id, "APPROVED")}>Approve</Button>
                     <Button size="sm" variant="outline" disabled={pending} onClick={() => review(a.id, "REJECTED")}>Reject</Button>
                   </div>
                 ) : null}

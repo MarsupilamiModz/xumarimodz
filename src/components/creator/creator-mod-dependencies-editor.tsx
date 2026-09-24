@@ -85,7 +85,7 @@ export function CreatorModDependenciesEditor({
   }
 
   return (
-    <Card className="glass">
+    <Card>
       <CardHeader><CardTitle>Dependencies</CardTitle></CardHeader>
       <CardContent className="space-y-4">
         <ul className="space-y-2 text-sm">

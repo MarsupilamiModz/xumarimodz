@@ -15,11 +15,11 @@ export default async function AdminOrdersPage({ params: { locale } }: { params: 
 
       <div className="mt-8 space-y-3">
         {orders.length === 0 ? (
-          <Card className="glass p-8 text-center text-muted-foreground">No orders</Card>
+          <Card className="p-8 text-center text-muted-foreground">No orders</Card>
         ) : (
           orders.map((o) => (
             <Link key={o.id} href={`/${locale}/admin/orders/${o.id}`}>
-              <Card className="glass p-4 hover:border-neon-purple/40">
+              <Card className="p-4 hover:border-line-control">
                 <div className="flex justify-between items-start gap-4">
                   <div>
                     <p className="font-medium">{o.title}</p>

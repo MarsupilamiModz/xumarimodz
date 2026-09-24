@@ -70,11 +70,11 @@ export function OwnerAchievementsPanel({
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="glass p-4">
+        <Card className="p-4">
           <p className="text-xs text-muted-foreground uppercase">Total grants</p>
           <p className="text-2xl font-bold tabular-nums">{analytics.totalGrants}</p>
         </Card>
-        <Card className="glass p-4 sm:col-span-3">
+        <Card className="p-4 sm:col-span-3">
           <p className="text-xs text-muted-foreground uppercase mb-2">Most granted</p>
           <div className="flex flex-wrap gap-2">
             {analytics.mostGranted.slice(0, 5).map((g) => (
@@ -90,30 +90,30 @@ export function OwnerAchievementsPanel({
         <section className="space-y-3">
           <h2 className="text-lg font-semibold">Audio analytics</h2>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <Card className="glass p-4">
+            <Card className="p-4">
               <p className="text-xs text-muted-foreground uppercase">Total plays</p>
               <p className="text-2xl font-bold tabular-nums">{soundAnalytics.totalPlays}</p>
             </Card>
-            <Card className="glass p-4">
+            <Card className="p-4">
               <p className="text-xs text-muted-foreground uppercase">Plays (7 days)</p>
               <p className="text-2xl font-bold tabular-nums">{soundAnalytics.playsLast7Days}</p>
             </Card>
-            <Card className="glass p-4">
+            <Card className="p-4">
               <p className="text-xs text-muted-foreground uppercase">Avg plays / sound</p>
               <p className="text-2xl font-bold tabular-nums">{soundAnalytics.avgPlaysPerSound}</p>
             </Card>
-            <Card className="glass p-4">
+            <Card className="p-4">
               <p className="text-xs text-muted-foreground uppercase">Pending review</p>
               <p className="text-2xl font-bold tabular-nums">{soundAnalytics.pendingReview}</p>
             </Card>
           </div>
           <div className="grid gap-4 lg:grid-cols-2">
-            <Card className="glass p-4">
+            <Card className="p-4">
               <h3 className="font-semibold mb-3">Most played sounds</h3>
               <ul className="text-sm space-y-1">
                 {soundAnalytics.topPlayed.map((s) => (
                   <li key={s.id} className="flex justify-between gap-2">
-                    <Link href={`/mods/${s.slug}`} className="text-neon-purple hover:underline truncate">
+                    <Link href={`/mods/${s.slug}`} className="text-violet-bright hover:underline truncate">
                       {s.title}
                     </Link>
                     <span className="text-muted-foreground tabular-nums shrink-0">{s.plays} plays</span>
@@ -121,12 +121,12 @@ export function OwnerAchievementsPanel({
                 ))}
               </ul>
             </Card>
-            <Card className="glass p-4">
+            <Card className="p-4">
               <h3 className="font-semibold mb-3">Top downloads</h3>
               <ul className="text-sm space-y-1">
                 {soundAnalytics.topDownloads.map((s) => (
                   <li key={s.slug} className="flex justify-between gap-2">
-                    <Link href={`/mods/${s.slug}`} className="text-neon-purple hover:underline truncate">
+                    <Link href={`/mods/${s.slug}`} className="text-violet-bright hover:underline truncate">
                       {s.title}
                     </Link>
                     <span className="text-muted-foreground tabular-nums shrink-0">{s.downloadCount}</span>
@@ -139,7 +139,7 @@ export function OwnerAchievementsPanel({
       )}
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <Card className="glass p-4">
+        <Card className="p-4">
           <h3 className="font-semibold mb-3">Rarest badges</h3>
           <ul className="text-sm space-y-1">
             {analytics.rarest.slice(0, 8).map((g) => (
@@ -150,12 +150,12 @@ export function OwnerAchievementsPanel({
             ))}
           </ul>
         </Card>
-        <Card className="glass p-4">
+        <Card className="p-4">
           <h3 className="font-semibold mb-3">Top badge collectors</h3>
           <ul className="text-sm space-y-1">
             {analytics.topUsers.map((u) => (
               <li key={u.user.id} className="flex justify-between">
-                <Link href={`/admin/owner/users/${u.user.id}`} className="text-neon-purple hover:underline">
+                <Link href={`/admin/owner/users/${u.user.id}`} className="text-violet-bright hover:underline">
                   {u.user.displayName ?? u.user.username}
                 </Link>
                 <span className="text-muted-foreground tabular-nums">{u.badgeCount}</span>
@@ -165,7 +165,7 @@ export function OwnerAchievementsPanel({
         </Card>
       </div>
 
-      <Card className="glass p-6 space-y-4">
+      <Card className="p-6 space-y-4">
         <h3 className="font-semibold">Mass assignment</h3>
         <select
           value={achievementId}
@@ -200,7 +200,7 @@ export function OwnerAchievementsPanel({
             className="flex-1 min-w-[200px] font-mono text-xs"
           />
           <Button
-            variant="neon"
+           
             size="sm"
             disabled={pending || !userIds.trim()}
             onClick={() =>

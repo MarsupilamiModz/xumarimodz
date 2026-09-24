@@ -34,7 +34,7 @@ export function FavoriteButton({
         })
       }
     >
-      <Heart className={cn("h-4 w-4", favorited && "fill-neon-purple text-neon-purple")} />
+      <Heart className={cn("h-4 w-4", favorited && "fill-violet-bright text-violet-bright")} />
     </Button>
   );
 }

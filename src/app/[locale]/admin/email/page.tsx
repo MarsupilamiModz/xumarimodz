@@ -59,7 +59,7 @@ export default async function AdminEmailPage({ params: { locale } }: { params: {
           <h1 className="text-2xl font-bold">Email Settings</h1>
           <p className="text-muted-foreground text-sm">SMTP, notification routing, logs, and delivery testing.</p>
         </div>
-        <Link href={`/${locale}/admin/email/templates`} className="text-sm text-neon-purple hover:underline">
+        <Link href={`/${locale}/admin/email/templates`} className="text-sm text-violet-bright hover:underline">
           Edit templates →
         </Link>
       </div>

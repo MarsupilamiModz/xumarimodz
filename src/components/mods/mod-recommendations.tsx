@@ -62,7 +62,7 @@ export async function DashboardRecommendations({
       <section className="mt-8">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold">Recommended for you</h2>
-          <Link href={`/${locale}/search`} className="text-sm text-neon-purple hover:underline">
+          <Link href={`/${locale}/search`} className="text-sm text-violet-bright hover:underline">
             Browse all
           </Link>
         </div>

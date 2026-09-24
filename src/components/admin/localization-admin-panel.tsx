@@ -25,10 +25,10 @@ export function LocalizationAdminPanel({ jobs }: { jobs: Job[] }) {
   return (
     <div className="space-y-3">
       {jobs.length === 0 && (
-        <Card className="glass p-6 text-sm text-muted-foreground">No translation jobs queued.</Card>
+        <Card className="p-6 text-sm text-muted-foreground">No translation jobs queued.</Card>
       )}
       {jobs.map((job) => (
-        <Card key={job.id} className="glass p-4 space-y-2">
+        <Card key={job.id} className="p-4 space-y-2">
           <div className="flex flex-wrap items-center gap-2">
             <Badge variant="outline">{job.status}</Badge>
             <span className="text-xs text-muted-foreground">
@@ -37,7 +37,7 @@ export function LocalizationAdminPanel({ jobs }: { jobs: Job[] }) {
           </div>
           <p className="text-sm line-clamp-2">{job.sourceText}</p>
           {job.translatedText && (
-            <p className="text-sm text-neon-blue/90 line-clamp-2">{job.translatedText}</p>
+            <p className="text-sm text-ink-muted line-clamp-2">{job.translatedText}</p>
           )}
           <div className="flex gap-2">
             {job.status === "PENDING" && (
@@ -59,7 +59,7 @@ export function LocalizationAdminPanel({ jobs }: { jobs: Job[] }) {
             {job.status === "COMPLETED" && (
               <Button
                 size="sm"
-                variant="neon"
+               
                 disabled={pending}
                 onClick={() =>
                   startTransition(async () => {

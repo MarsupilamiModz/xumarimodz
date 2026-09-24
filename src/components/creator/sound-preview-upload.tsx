@@ -115,7 +115,7 @@ export function SoundPreviewUpload({ modId, hasPreview, hasCover }: Props) {
   const busy = uploading || pending;
 
   return (
-    <Card className="glass">
+    <Card>
       <CardHeader>
         <CardTitle className="text-base">Sound assets</CardTitle>
       </CardHeader>

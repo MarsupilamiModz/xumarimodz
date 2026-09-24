@@ -47,10 +47,10 @@ export default async function PartnerPage({ params: { locale } }: { params: { lo
       />
 
       {profile?.affiliateCode && (
-        <Card className="glass p-4 flex flex-wrap items-center justify-between gap-3">
+        <Card className="p-4 flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="text-xs text-muted-foreground">{t("affiliateCode")}</p>
-            <p className="font-mono text-lg text-neon-blue">{profile.affiliateCode}</p>
+            <p className="font-mono text-lg text-ink-muted">{profile.affiliateCode}</p>
           </div>
           {profile.isVerified && <Badge variant="premium">{t("verified")}</Badge>}
         </Card>

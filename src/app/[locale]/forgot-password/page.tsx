@@ -20,8 +20,8 @@ export default function ForgotPasswordPage() {
   return (
     <div className="mx-auto max-w-md px-4 py-16">
       <div className="mb-8 flex justify-center"><Logo /></div>
-      <Card className="glass p-8">
-        <h1 className="text-2xl font-bold text-gradient">Reset password</h1>
+      <Card className="p-8">
+        <h1 className="text-2xl font-bold text-ink">Reset password</h1>
         {sent ? (
           <p className="mt-4 text-sm text-muted-foreground">
             If an account exists for {email}, you will receive a reset link shortly.
@@ -41,13 +41,13 @@ export default function ForgotPasswordPage() {
             }}
           >
             <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" required />
-            <Button variant="neon" type="submit" className="w-full" disabled={pending}>
+            <Button type="submit" className="w-full" disabled={pending}>
               Send reset link
             </Button>
           </form>
         )}
         <p className="mt-4 text-center text-sm">
-          <Link href={`/${locale}/login`} className="text-neon-purple hover:underline">Back to login</Link>
+          <Link href={`/${locale}/login`} className="text-violet-bright hover:underline">Back to login</Link>
         </p>
       </Card>
     </div>

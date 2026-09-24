@@ -51,9 +51,8 @@ export default async function GameDetailPage({
   const { game, featured, trending, premium, creatorCount } = pageData;
   const covers = await getGameCoverOverrides();
   const cover = covers[game.id];
-  const heroStyle = cover?.backgroundGradient
-    ? { background: cover.backgroundGradient }
-    : undefined;
+  // Neues Design: keine Verläufe – cover.backgroundGradient bleibt gespeichert, wird aber nicht angezeigt.
+  const heroStyle = undefined;
 
   const { mods: filteredMods } = await getMods({
     gameSlug: slug,
@@ -118,7 +117,7 @@ export default async function GameDetailPage({
             <option value="PREMIUM">{t("premium")}</option>
             <option value="PAID">{t("paid")}</option>
           </select>
-          <Button type="submit" variant="neon">{t("filter")}</Button>
+          <Button type="submit">{t("filter")}</Button>
         </form>
 
         {featured.length > 0 && !searchParams.q && (

@@ -14,8 +14,6 @@ const buttonVariants = cva(
         secondary: "border border-line bg-elevated text-ink hover:bg-hover",
         ghost: "text-ink-muted hover:bg-hover hover:text-ink",
         link: "h-auto px-0 text-violet-bright underline-offset-4 hover:underline",
-        // Veraltet: entspricht jetzt dem Primär-Button
-        neon: "bg-violet text-violet-on hover:bg-violet-hover",
       },
       size: {
         default: "h-10 px-4",

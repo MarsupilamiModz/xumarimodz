@@ -43,7 +43,7 @@ export function CollectionActions({
 
   return (
     <div className="flex flex-wrap gap-2">
-      <Button variant="neon" disabled={pending} onClick={installAll}>
+      <Button disabled={pending} onClick={installAll}>
         Download entire collection
       </Button>
       <Button variant="outline" disabled={pending} onClick={toggleFollow}>

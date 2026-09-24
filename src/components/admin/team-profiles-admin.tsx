@@ -138,16 +138,16 @@ export function TeamProfilesAdmin({
       </TabsList>
 
       <TabsContent value="departments" className="space-y-4 mt-4">
-        <Card className="glass p-4 grid gap-3 sm:grid-cols-3">
+        <Card className="p-4 grid gap-3 sm:grid-cols-3">
           <Input placeholder="Department name" value={deptName} onChange={(e) => setDeptName(e.target.value)} />
           <Input placeholder="Slug (optional)" value={deptSlug} onChange={(e) => setDeptSlug(e.target.value)} />
-          <Button variant="neon" disabled={pending} onClick={saveDept}>
+          <Button disabled={pending} onClick={saveDept}>
             <Plus className="h-4 w-4 mr-1" /> Add department
           </Button>
         </Card>
         <div className="space-y-2">
           {departments.map((d) => (
-            <div key={d.id} className="flex items-center justify-between glass rounded-lg p-3 border border-border/40">
+            <div key={d.id} className="flex items-center justify-between rounded-lg p-3 border border-border/40">
               <div>
                 <p className="font-medium">{d.name}</p>
                 <p className="text-xs text-muted-foreground">{d._count.members} members · {d.slug}</p>
@@ -173,7 +173,7 @@ export function TeamProfilesAdmin({
       </TabsContent>
 
       <TabsContent value="profiles" className="space-y-4 mt-4">
-        <Card className="glass p-4">
+        <Card className="p-4">
           <h3 className="font-medium mb-3">{editing ? "Edit member" : "Add team member"}</h3>
           <form action={saveProfile} className="grid gap-3 sm:grid-cols-2">
             <Input name="name" placeholder="Name" required defaultValue={editing?.name} />
@@ -230,7 +230,7 @@ export function TeamProfilesAdmin({
             </select>
             <Input name="sortOrder" type="number" placeholder="Sort order" defaultValue={editing?.sortOrder ?? 0} />
             <div className="sm:col-span-2 flex gap-2">
-              <Button type="submit" variant="neon" disabled={pending}>
+              <Button type="submit" disabled={pending}>
                 {editing ? "Save changes" : "Create member"}
               </Button>
               {editing && (
@@ -244,7 +244,7 @@ export function TeamProfilesAdmin({
 
         <div className="space-y-2">
           {profiles.map((p, i) => (
-            <div key={p.id} className="flex flex-wrap items-center gap-2 glass rounded-lg p-3 border border-border/40">
+            <div key={p.id} className="flex flex-wrap items-center gap-2 rounded-lg p-3 border border-border/40">
               <div className="flex-1 min-w-0">
                 <p className="font-medium">{p.name}</p>
                 <p className="text-sm text-muted-foreground">

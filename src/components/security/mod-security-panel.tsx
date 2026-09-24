@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { safeToLocaleDateString } from "@/lib/i18n/safe-locale";
-import { ShieldCheck } from "lucide-react";
+import { ShieldCheck, CheckCircle2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SecurityBadge } from "@/components/security/security-badge";
 import { getPublicSecurityLevel } from "@/lib/security/status";
@@ -19,7 +19,7 @@ export async function ModSecurityPanel({ scanStatus, scannedAt, isTrusted = fals
   const verified = scanStatus === "CLEAN" || scanStatus === "APPROVED";
 
   return (
-    <Card className="glass border-success/20">
+    <Card className="border-success/20">
       <CardHeader className="pb-3">
         <CardTitle className="text-base flex items-center gap-2">
           <ShieldCheck className="h-4 w-4 text-success" />
@@ -42,7 +42,7 @@ export async function ModSecurityPanel({ scanStatus, scannedAt, isTrusted = fals
         </div>
 
         {verified && (
-          <p className="font-medium text-success">✓ {t("badges.verifiedSafe")}</p>
+          <p className="flex items-center gap-1.5 font-medium text-success"><CheckCircle2 className="h-4 w-4" aria-hidden />{t("badges.verifiedSafe")}</p>
         )}
 
         {isTrusted && verified && (

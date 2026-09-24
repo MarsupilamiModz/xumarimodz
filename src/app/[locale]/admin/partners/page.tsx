@@ -17,13 +17,13 @@ export default async function AdminPartnersPage({ params: { locale } }: { params
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-4">
         <h1 className="text-2xl font-bold">{t("partnerManagement")}</h1>
-        <Button variant="neon" size="sm" asChild>
+        <Button size="sm" asChild>
           <Link href={`/${locale}/admin/partners/new`}>Create Partner</Link>
         </Button>
       </div>
       <div className="space-y-2">
         {partners.map((p) => (
-          <Card key={p.id} className="glass p-4 flex flex-wrap justify-between items-center gap-3">
+          <Card key={p.id} className="p-4 flex flex-wrap justify-between items-center gap-3">
             <div>
               <p className="font-medium">{formatDisplayName(p.user)}</p>
               <p className="text-xs text-muted-foreground">/{p.slug} · {p.affiliateCode ?? "—"}</p>

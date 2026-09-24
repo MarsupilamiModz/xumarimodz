@@ -1,5 +1,6 @@
 "use client";
 
+import { EntityIcon } from "@/components/ui/entity-icon";
 import { cn } from "@/lib/utils";
 import { safeToLocaleDateString } from "@/lib/i18n/safe-locale";
 import { RARITY_STYLES } from "@/lib/achievements";
@@ -29,7 +30,8 @@ export function AchievementBadge({
   className,
 }: AchievementBadgeProps) {
   const style = RARITY_STYLES[rarity];
-  const sizeClass = size === "sm" ? "h-10 w-10 text-lg" : size === "lg" ? "h-16 w-16 text-3xl" : "h-12 w-12 text-2xl";
+  const sizeClass = size === "sm" ? "h-10 w-10" : size === "lg" ? "h-16 w-16" : "h-12 w-12";
+  const iconClass = size === "sm" ? "h-5 w-5" : size === "lg" ? "h-8 w-8" : "h-6 w-6";
 
   return (
     <div
@@ -38,18 +40,16 @@ export function AchievementBadge({
     >
       <div
         className={cn(
-          "flex items-center justify-center rounded-xl border-2 bg-card/80 backdrop-blur-sm transition-transform group-hover:scale-105",
-          sizeClass,
-          glowEffect && style.glow,
-          animated && "animate-pulse"
+          "flex items-center justify-center rounded-lg border-2 bg-elevated",
+          sizeClass
         )}
         style={{ borderColor: style.color }}
       >
-        <span>{icon ?? "🏅"}</span>
+        <EntityIcon value={icon} className={iconClass} />
       </div>
       <span className="mt-1 max-w-[72px] truncate text-[10px] text-muted-foreground text-center">{name}</span>
       <div className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
-        <div className="glass rounded px-2 py-1 text-xs max-w-[200px] border" style={{ borderColor: `${style.color}60` }}>
+        <div className="max-w-[200px] rounded-md border bg-raised px-2 py-1 text-xs" style={{ borderColor: `${style.color}60` }}>
           <span style={{ color: style.color }}>{style.label}</span> · {name}
           {description && <p className="text-muted-foreground mt-0.5 line-clamp-2">{description}</p>}
           {unlockedAt && <p className="text-[10px] text-muted-foreground mt-0.5">{safeToLocaleDateString(unlockedAt)}</p>}

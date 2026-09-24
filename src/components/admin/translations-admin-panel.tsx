@@ -101,7 +101,7 @@ function TranslationsAdminPanelInner() {
   }
 
   return (
-    <Card className="glass mt-8">
+    <Card className="mt-8">
       <CardHeader>
         <CardTitle>Static translations</CardTitle>
         <p className="text-sm text-muted-foreground">
@@ -152,7 +152,7 @@ function TranslationsAdminPanelInner() {
         <div className="grid gap-2 sm:grid-cols-2">
           <Input placeholder="New key (e.g. nav.collections)" value={newKey} onChange={(e) => setNewKey(e.target.value)} />
           <Input placeholder="Translation value" value={newValue} onChange={(e) => setNewValue(e.target.value)} />
-          <Button variant="neon" disabled={pending} onClick={addKey} className="sm:col-span-2 w-fit">
+          <Button disabled={pending} onClick={addKey} className="sm:col-span-2 w-fit">
             Add translation key
           </Button>
         </div>

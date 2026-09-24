@@ -57,7 +57,7 @@ function TeamAdminPanelInner({
 
   return (
     <div className="space-y-6">
-      <Card className="glass">
+      <Card>
         <CardHeader>
           <CardTitle>Add team member</CardTitle>
         </CardHeader>
@@ -86,7 +86,7 @@ function TeamAdminPanelInner({
               <span>{u.displayName ?? u.username} · {u.email}</span>
               <Button
                 size="sm"
-                variant="neon"
+               
                 disabled={pending}
                 onClick={() =>
                   startTransition(async () => {
@@ -106,7 +106,7 @@ function TeamAdminPanelInner({
         </CardContent>
       </Card>
 
-      <Card className="glass">
+      <Card>
         <CardHeader>
           <CardTitle>Team ({members.length})</CardTitle>
         </CardHeader>

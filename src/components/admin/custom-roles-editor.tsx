@@ -1,16 +1,10 @@
 "use client";
 
+import { EntityIcon } from "@/components/ui/entity-icon";
 import { colors } from "@/styles/tokens";
 import { memo, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import {
-  ArrowDown,
-  ArrowUp,
-  Copy,
-  Plus,
-  Shield,
-  Trash2,
-} from "lucide-react";
+import { ArrowDown, ArrowUp, Copy, Plus, Shield, Trash2 } from "lucide-react";
 import {
   duplicatePermissionGroup,
   reorderPermissionGroups,
@@ -116,7 +110,7 @@ function PermissionPicker({
           ))}
         </div>
       )}
-      <label className="flex items-center justify-between gap-3 rounded-md border border-neon-purple/30 bg-neon-purple/5 px-3 py-2 text-sm">
+      <label className="flex items-center justify-between gap-3 rounded-md border border-violet-bright/30 bg-violet-soft px-3 py-2 text-sm">
         <span className="font-mono text-xs">* (full access)</span>
         <Switch checked={selected.includes("*")} onCheckedChange={() => toggle("*")} />
       </label>
@@ -148,7 +142,7 @@ function CustomRolesEditorInner({ groups: initial }: { groups: CustomRole[] }) {
     setDescription("");
     setColor(colors.violet);
     setBadge("");
-    setIcon("🛡️");
+    setIcon("shield");
     setHierarchyTier("Custom");
     setDashboardAccess([]);
     setIsDisabled(false);
@@ -223,14 +217,14 @@ function CustomRolesEditorInner({ groups: initial }: { groups: CustomRole[] }) {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-lg font-semibold flex items-center gap-2">
-            <Shield className="h-5 w-5 text-neon-purple" />
+            <Shield className="h-5 w-5 text-violet-bright" />
             Custom roles
           </h2>
           <p className="text-sm text-muted-foreground mt-1">
             Create VIP, Developer, Translator, or any custom role. Permission changes sync live to assigned users.
           </p>
         </div>
-        <Button variant="neon" size="sm" onClick={startCreate}>
+        <Button size="sm" onClick={startCreate}>
           <Plus className="h-4 w-4 mr-1" /> Create role
         </Button>
       </div>
@@ -240,14 +234,14 @@ function CustomRolesEditorInner({ groups: initial }: { groups: CustomRole[] }) {
           {roles.map((role, index) => (
             <Card
               key={role.id}
-              className={`glass p-4 space-y-2 cursor-pointer transition-colors hover:border-neon-purple/30 ${
-                editing?.id === role.id ? "border-neon-purple/50" : ""
-              } ${role.isDisabled ? "opacity-60" : ""}`}
+              className={`p-4 space-y-2 cursor-pointer transition-colors hover:border-line-control ${
+ editing?.id === role.id ? "border-violet-bright/50" : ""
+ } ${role.isDisabled ? "opacity-60" : ""}`}
               onClick={() => startEdit(role)}
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="flex items-center gap-2 min-w-0">
-                  <span className="text-lg">{role.icon ?? "🛡️"}</span>
+                  <EntityIcon value={role.icon} fallback={Shield} className="h-5 w-5 text-ink-muted" />
                   <div className="min-w-0">
                     <p className="font-medium truncate">{formatGroupLabel(role.name, role.slug)}</p>
                     <p className="text-xs font-mono text-muted-foreground truncate">{role.slug}</p>
@@ -305,7 +299,7 @@ function CustomRolesEditorInner({ groups: initial }: { groups: CustomRole[] }) {
           ))}
         </div>
 
-        <Card className="glass p-5 space-y-4 xl:col-span-3 sticky top-24 h-fit">
+        <Card className="p-5 space-y-4 xl:col-span-3 sticky top-24 h-fit">
           <h3 className="font-semibold">{editing ? `Edit ${editing.name}` : "New custom role"}</h3>
           <div className="grid gap-3 sm:grid-cols-2">
             <Input placeholder="Role name" value={name} onChange={(e) => setName(e.target.value)} />
@@ -367,7 +361,7 @@ function CustomRolesEditorInner({ groups: initial }: { groups: CustomRole[] }) {
             onChange={(e) => setPermSearch(e.target.value)}
           />
           <PermissionPicker selected={selected} onChange={setSelected} search={permSearch} />
-          <Button variant="neon" disabled={pending || !!editing?.isSystem} onClick={saveRole}>
+          <Button disabled={pending || !!editing?.isSystem} onClick={saveRole}>
             {editing ? "Save role" : "Create role"}
           </Button>
         </Card>

@@ -47,7 +47,7 @@ export function CreatorModVersionManager({ versions }: { modId?: string; version
 
   if (versions.length === 0) {
     return (
-      <Card className="glass">
+      <Card>
         <CardHeader><CardTitle>Version history</CardTitle></CardHeader>
         <CardContent className="text-sm text-muted-foreground">No versions uploaded yet.</CardContent>
       </Card>
@@ -55,7 +55,7 @@ export function CreatorModVersionManager({ versions }: { modId?: string; version
   }
 
   return (
-    <Card className="glass">
+    <Card>
       <CardHeader><CardTitle>Version history</CardTitle></CardHeader>
       <CardContent className="space-y-3">
         {versions.map((v) => (

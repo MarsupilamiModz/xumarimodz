@@ -17,7 +17,7 @@ type MonitorData = Extract<
 
 function StatCard({ label, value, sub }: { label: string; value: string | number; sub?: string }) {
   return (
-    <Card className="glass p-4">
+    <Card className="p-4">
       <p className="text-xs uppercase tracking-wider text-muted-foreground">{label}</p>
       <p className="mt-1 text-2xl font-bold tabular-nums">{value}</p>
       {sub && <p className="text-xs text-muted-foreground mt-1">{sub}</p>}
@@ -32,7 +32,7 @@ export function EmailMonitorPanel({ data, locale }: { data: MonitorData; locale:
   return (
     <div className="space-y-6">
       <div>
-        <Badge className="mb-2 bg-neon-purple/20 text-neon-purple border-neon-purple/40">Owner only</Badge>
+        <Badge className="mb-2 bg-violet-soft text-violet-bright border-violet-bright/40">Owner only</Badge>
         <h1 className="text-2xl font-bold">Email Monitoring</h1>
         <p className="text-sm text-muted-foreground mt-1">
           Delivery metrics, SMTP status, queue health, and auth email errors.
@@ -72,7 +72,7 @@ export function EmailMonitorPanel({ data, locale }: { data: MonitorData; locale:
         </Button>
       </div>
 
-      <Card className="glass p-4">
+      <Card className="p-4">
         <h2 className="font-semibold mb-3">Recent delivery logs</h2>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -118,7 +118,7 @@ export function EmailMonitorPanel({ data, locale }: { data: MonitorData; locale:
       </Card>
 
       {data.authErrors.length > 0 && (
-        <Card className="glass p-4">
+        <Card className="p-4">
           <h2 className="font-semibold mb-3">Recent auth / email errors</h2>
           <ul className="space-y-2 text-sm">
             {data.authErrors.map((entry) => (

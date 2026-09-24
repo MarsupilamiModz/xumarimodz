@@ -43,7 +43,7 @@ export function ExclusiveApplyForm({
 
   if (existingApplication) {
     return (
-      <Card className="glass p-6 text-center space-y-2">
+      <Card className="p-6 text-center space-y-2">
         <Badge variant="premium">{existingApplication.status}</Badge>
         <p className="text-sm text-muted-foreground">
           You have already applied to this program. Status: {existingApplication.status.replace("_", " ")}
@@ -67,7 +67,7 @@ export function ExclusiveApplyForm({
   const atCapacity = program.maxSlots != null && program.currentCount >= program.maxSlots;
 
   return (
-    <Card className="glass p-6 space-y-4 max-w-lg">
+    <Card className="p-6 space-y-4 max-w-lg">
       <div className="flex flex-wrap gap-2">
         <Badge variant="premium">{program.type.replace("_", " ")}</Badge>
         {atCapacity && program.waitlistEnabled && <Badge variant="outline">Waitlist open</Badge>}
@@ -102,7 +102,7 @@ export function ExclusiveApplyForm({
         </label>
       )}
 
-      <Button variant="neon" disabled={pending} onClick={submit} className="w-full">
+      <Button disabled={pending} onClick={submit} className="w-full">
         {atCapacity && program.waitlistEnabled ? "Join waitlist" : "Apply for access"}
       </Button>
     </Card>

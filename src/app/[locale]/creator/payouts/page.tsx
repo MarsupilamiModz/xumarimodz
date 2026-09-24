@@ -21,21 +21,21 @@ export default async function CreatorPayoutsPage({ params: { locale } }: { param
   return (
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2">
-        <Card className="glass p-4">
+        <Card className="p-4">
           <p className="text-xs text-muted-foreground">{t("pendingPayout")}</p>
           <p className="text-2xl font-bold">{formatCents(summary.pendingCents, locale)}</p>
         </Card>
-        <Card className="glass p-4">
+        <Card className="p-4">
           <p className="text-xs text-muted-foreground">{t("totalPaid")}</p>
           <p className="text-2xl font-bold">{formatCents(summary.paidCents, locale)}</p>
         </Card>
       </div>
       <h2 className="text-lg font-semibold">{t("payoutHistory")}</h2>
       {summary.payouts.length === 0 ? (
-        <Card className="glass p-8 text-center text-muted-foreground">{t("noPayouts")}</Card>
+        <Card className="p-8 text-center text-muted-foreground">{t("noPayouts")}</Card>
       ) : (
         summary.payouts.map((p) => (
-          <Card key={p.id} className="glass p-4 flex justify-between items-center">
+          <Card key={p.id} className="p-4 flex justify-between items-center">
             <span>{formatCents(p.amountCents, locale)}</span>
             <Badge variant="outline">{p.status}</Badge>
           </Card>

@@ -191,10 +191,10 @@ export function ModMediaUploader({ modId, media: initialMedia, settings }: ModMe
 
   return (
     <div className="space-y-6">
-      <Card className="glass space-y-4 p-6">
+      <Card className="space-y-4 p-6">
         <div className="flex items-center justify-between">
           <h3 className="font-medium flex items-center gap-2">
-            <ImagePlus className="h-4 w-4 text-neon-purple" />
+            <ImagePlus className="h-4 w-4 text-violet-bright" />
             Screenshots
           </h3>
           <span className="text-xs text-muted-foreground">
@@ -213,12 +213,12 @@ export function ModMediaUploader({ modId, media: initialMedia, settings }: ModMe
           className={cn(
             "relative cursor-pointer rounded-xl border-2 border-dashed p-8 text-center transition-all",
             dragOver
-              ? "border-neon-purple bg-neon-purple/10"
-              : "border-border/50 hover:border-neon-purple/40 hover:bg-accent/5",
+              ? "border-violet-bright bg-violet-soft"
+              : "border-border/50 hover:border-line-control hover:bg-accent/5",
             !canAddMore && "pointer-events-none opacity-50"
           )}
         >
-          <Upload className="mx-auto h-8 w-8 text-neon-purple/70" />
+          <Upload className="mx-auto h-8 w-8 text-violet-bright/70" />
           <p className="mt-2 text-sm font-medium">Drag & drop screenshots here</p>
           <p className="mt-1 text-xs text-muted-foreground">
             {settings.allowedTypes.map((t) => t.split("/")[1]).join(", ")} · Max {settings.maxFileSizeMb}MB
@@ -245,7 +245,7 @@ export function ModMediaUploader({ modId, media: initialMedia, settings }: ModMe
                   <Image src={p.preview} alt="" fill className="object-cover" sizes="120px" unoptimized />
                   {p.status === "uploading" && (
                     <div className="absolute inset-0 flex items-center justify-center bg-background/70">
-                      <Loader2 className="h-5 w-5 animate-spin text-neon-purple" />
+                      <Loader2 className="h-5 w-5 animate-spin text-violet-bright" />
                     </div>
                   )}
                   {p.status === "error" && (
@@ -267,7 +267,7 @@ export function ModMediaUploader({ modId, media: initialMedia, settings }: ModMe
               ))}
             </div>
             <Button
-              variant="neon"
+             
               size="sm"
               onClick={() => startTransition(() => void uploadPending())}
               disabled={pending || pendingFiles.every((p) => p.status === "uploading")}
@@ -290,8 +290,8 @@ export function ModMediaUploader({ modId, media: initialMedia, settings }: ModMe
                 onDragEnd={() => setDragId(null)}
                 className={cn(
                   "group relative aspect-video cursor-grab overflow-hidden rounded-lg border border-border/50",
-                  "transition-all hover:border-neon-purple/40 active:cursor-grabbing",
-                  item.isFeatured && "ring-2 ring-neon-purple/60"
+                  "transition-all hover:border-line-control active:cursor-grabbing",
+                  item.isFeatured && "ring-2 ring-violet-bright/60"
                 )}
               >
                 <SafeImage
@@ -301,14 +301,14 @@ export function ModMediaUploader({ modId, media: initialMedia, settings }: ModMe
                   className="object-cover"
                   sizes="150px"
                 />
-                <div className="absolute inset-0 flex items-start justify-between bg-gradient-to-b from-background/60 to-transparent p-1.5 opacity-0 transition-opacity group-hover:opacity-100">
+                <div className="absolute inset-0 flex items-start justify-between p-1.5 opacity-0 transition-opacity group-hover:opacity-100">
                   <GripVertical className="h-4 w-4 text-muted-foreground" />
                   <div className="flex gap-1">
                     {!item.isFeatured && (
                       <button
                         type="button"
                         title="Set as featured"
-                        className="rounded bg-background/80 p-1 hover:text-neon-purple"
+                        className="rounded bg-background/80 p-1 hover:text-violet-bright"
                         onClick={() =>
                           startTransition(async () => {
                             const r = await setFeaturedModMedia(item.id);
@@ -340,7 +340,7 @@ export function ModMediaUploader({ modId, media: initialMedia, settings }: ModMe
                   </div>
                 </div>
                 {item.isFeatured && (
-                  <Badge className="absolute bottom-1.5 left-1.5 text-[10px] bg-neon-purple/90">
+                  <Badge className="absolute bottom-1.5 left-1.5 text-[10px] bg-violet-soft">
                     Featured
                   </Badge>
                 )}
@@ -350,7 +350,7 @@ export function ModMediaUploader({ modId, media: initialMedia, settings }: ModMe
         )}
       </Card>
 
-      <Card className="glass space-y-4 p-6">
+      <Card className="space-y-4 p-6">
         <h3 className="font-medium flex items-center gap-2">
           <Youtube className="h-4 w-4 text-danger" />
           YouTube Video
@@ -392,7 +392,7 @@ export function ModMediaUploader({ modId, media: initialMedia, settings }: ModMe
                   {thumb && (
                     <div className="relative h-12 w-20 shrink-0 overflow-hidden rounded">
                       <SafeImage src={thumb} alt="" fill className="object-cover" sizes="80px" />
-                      <Play className="absolute inset-0 m-auto h-4 w-4 text-ink drop-shadow" />
+                      <Play className="absolute inset-0 m-auto h-4 w-4 text-ink" />
                     </div>
                   )}
                   <p className="flex-1 truncate text-xs text-muted-foreground">{v.videoUrl}</p>

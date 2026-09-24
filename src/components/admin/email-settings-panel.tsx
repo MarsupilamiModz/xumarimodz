@@ -82,7 +82,7 @@ export function EmailSettingsPanel({
 
   return (
     <div className="space-y-6">
-      <Card className="glass p-6 space-y-4">
+      <Card className="p-6 space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h3 className="font-semibold">Email providers</h3>
@@ -191,7 +191,7 @@ export function EmailSettingsPanel({
           <Input name="contactFormEmail" type="email" defaultValue={settings.contactFormEmail} placeholder="Contact form" />
 
           <div className="sm:col-span-2 flex flex-wrap gap-2">
-            <Button type="submit" variant="neon" disabled={pending}>Save settings</Button>
+            <Button type="submit" disabled={pending}>Save settings</Button>
             <Button
               type="button"
               variant="outline"
@@ -235,7 +235,7 @@ export function EmailSettingsPanel({
         </div>
       </Card>
 
-      <Card className="glass p-6">
+      <Card className="p-6">
         <h3 className="font-semibold mb-4">Email logs</h3>
         {logs.length === 0 ? (
           <p className="text-sm text-muted-foreground">No emails logged yet.</p>

@@ -55,7 +55,7 @@ export default async function DashboardLayout({
   return (
     <div className="mx-auto flex max-w-7xl gap-8 px-4 py-8 sm:px-6">
       <aside className="hidden w-56 shrink-0 lg:block">
-        <div className="glass rounded-xl p-4 sticky top-24 dark-reader-lock">
+        <div className="rounded-xl p-4 sticky top-24 dark-reader-lock">
           <p className="font-semibold truncate">{user.displayName ?? user.username}</p>
           <p className="text-xs text-muted-foreground mb-4">{formatRoleLabel(user.role)}</p>
           <nav className="space-y-1">

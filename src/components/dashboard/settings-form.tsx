@@ -36,7 +36,7 @@ export function SettingsForm({ locale, user }: { locale: string; user: User }) {
 
   return (
     <div className="space-y-6 max-w-lg">
-      <Card className="glass">
+      <Card>
         <CardHeader><CardTitle>Profile</CardTitle></CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center gap-4">
@@ -100,21 +100,21 @@ export function SettingsForm({ locale, user }: { locale: string; user: User }) {
               </select>
             </div>
             <p className="text-xs text-muted-foreground">{formatDisplayName(user)}</p>
-            <Button type="submit" variant="neon" disabled={pending}>Save profile</Button>
+            <Button type="submit" disabled={pending}>Save profile</Button>
           </form>
         </CardContent>
       </Card>
 
-      <Card className="glass">
+      <Card>
         <CardHeader><CardTitle>Security</CardTitle></CardHeader>
         <CardContent>
-          <Link href={`/${locale}/dashboard/security`} className="text-sm text-neon-purple hover:underline">
+          <Link href={`/${locale}/dashboard/security`} className="text-sm text-violet-bright hover:underline">
             Security & 2FA →
           </Link>
         </CardContent>
       </Card>
 
-      <Card className="glass">
+      <Card>
         <CardHeader><CardTitle>Password</CardTitle></CardHeader>
         <CardContent className="space-y-3">
           <Input
@@ -142,11 +142,11 @@ export function SettingsForm({ locale, user }: { locale: string; user: User }) {
         </CardContent>
       </Card>
 
-      <Card className="glass">
+      <Card>
         <CardHeader><CardTitle>Discord</CardTitle></CardHeader>
         <CardContent>
           {user.discordId ? (
-            <p className="text-sm text-neon-blue">Discord connected</p>
+            <p className="text-sm text-ink-muted">Discord connected</p>
           ) : (
             <Button variant="outline" asChild>
               <a href={`/api/auth/discord?locale=${locale}`}>Connect Discord</a>
@@ -156,11 +156,11 @@ export function SettingsForm({ locale, user }: { locale: string; user: User }) {
       </Card>
 
       {!user.hasCreatorProfile && user.role === "USER" && (
-        <Card className="glass">
+        <Card>
           <CardHeader><CardTitle>Become a Creator</CardTitle></CardHeader>
           <CardContent>
             <Button
-              variant="neon"
+             
               disabled={pending}
               onClick={() =>
                 startTransition(async () => {

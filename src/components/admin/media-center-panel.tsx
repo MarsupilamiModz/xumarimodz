@@ -111,7 +111,7 @@ export function MediaCenterPanel({ locale, section, items, total, page, pages }:
         ))}
       </div>
 
-      <Card className="glass p-4 space-y-3">
+      <Card className="p-4 space-y-3">
         <h3 className="font-semibold text-sm">{t("mediaRepair")}</h3>
         <p className="text-xs text-muted-foreground">{t("mediaRepairHint")}</p>
         <div className="flex flex-wrap gap-2">
@@ -131,7 +131,7 @@ export function MediaCenterPanel({ locale, section, items, total, page, pages }:
           </Button>
           <Button
             size="sm"
-            variant="neon"
+           
             disabled={pending}
             onClick={() =>
               startTransition(async () => {
@@ -155,7 +155,7 @@ export function MediaCenterPanel({ locale, section, items, total, page, pages }:
         {repairResult && <p className="text-xs text-success">{repairResult}</p>}
       </Card>
 
-      <Card className="glass p-4 space-y-4">
+      <Card className="p-4 space-y-4">
         <form
           className="flex flex-wrap gap-2"
           onSubmit={(e) => {
@@ -238,7 +238,7 @@ export function MediaCenterPanel({ locale, section, items, total, page, pages }:
         )}
       </Card>
 
-      <div className="glass rounded-xl border border-border/50 overflow-hidden">
+      <div className="rounded-xl border border-border/50 overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow>

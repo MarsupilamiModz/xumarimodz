@@ -24,7 +24,7 @@ export function OrderRequirementsForm({
   const [files, setFiles] = useState<File[]>([]);
 
   return (
-    <Card className="glass p-6 space-y-4">
+    <Card className="p-6 space-y-4">
       <div>
         <h2 className="text-xl font-bold">Project details</h2>
         <p className="text-sm text-muted-foreground mt-1">
@@ -79,7 +79,7 @@ export function OrderRequirementsForm({
         </div>
 
         <div
-          className="rounded-lg border border-dashed border-neon-purple/40 p-4 text-center text-sm text-muted-foreground"
+          className="rounded-lg border border-dashed border-violet-bright/40 p-4 text-center text-sm text-muted-foreground"
           onDragOver={(e) => e.preventDefault()}
           onDrop={(e) => {
             e.preventDefault();
@@ -103,7 +103,7 @@ export function OrderRequirementsForm({
           )}
         </div>
 
-        <Button type="submit" variant="neon" className="w-full" disabled={pending}>
+        <Button type="submit" className="w-full" disabled={pending}>
           Submit project details
         </Button>
       </form>

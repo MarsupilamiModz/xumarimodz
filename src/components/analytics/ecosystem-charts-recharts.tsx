@@ -23,7 +23,7 @@ export function RevenueChart({
   title: string;
 }) {
   return (
-    <Card className="glass p-4">
+    <Card className="p-4">
       <h3 className="text-sm font-medium mb-4 text-muted-foreground">{title}</h3>
       <div className="h-56">
         <ResponsiveContainer width="100%" height="100%">
@@ -50,7 +50,7 @@ export function ConversionChart({
   title: string;
 }) {
   return (
-    <Card className="glass p-4">
+    <Card className="p-4">
       <h3 className="text-sm font-medium mb-4 text-muted-foreground">{title}</h3>
       <div className="h-56">
         <ResponsiveContainer width="100%" height="100%">

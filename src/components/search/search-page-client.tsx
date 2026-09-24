@@ -104,9 +104,9 @@ export function SearchPageClient({
             <SelectItem value="updated">Recently updated</SelectItem>
           </SelectContent>
         </Select>
-        <Button variant="neon" disabled={pending} onClick={runSearch}>Search</Button>
+        <Button disabled={pending} onClick={runSearch}>Search</Button>
         <Button
-          variant={verifiedOnly ? "neon" : "outline"}
+          variant={verifiedOnly ? "default" : "outline"}
           size="sm"
           onClick={() => setVerifiedOnly((v) => !v)}
         >

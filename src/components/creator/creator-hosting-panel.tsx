@@ -38,7 +38,7 @@ export function CreatorHostingPanel({ profile, platformSettings }: Props) {
 
   if (platformSettings.creatorOnlyGlobal) {
     return (
-      <Card className="glass">
+      <Card>
         <CardContent className="py-8 text-sm text-muted-foreground">
           Die Plattform nutzt ausschließlich globale Hosting-Partner. Eigene Links sind deaktiviert.
         </CardContent>
@@ -47,7 +47,7 @@ export function CreatorHostingPanel({ profile, platformSettings }: Props) {
   }
 
   return (
-    <Card className="glass">
+    <Card>
       <CardHeader>
         <CardTitle>Hosting Partner</CardTitle>
       </CardHeader>
@@ -84,7 +84,7 @@ export function CreatorHostingPanel({ profile, platformSettings }: Props) {
           </p>
         ) : null}
         <Button
-          variant="neon"
+         
           disabled={pending || !platformSettings.allowCreatorLinks}
           onClick={() =>
             startTransition(async () => {

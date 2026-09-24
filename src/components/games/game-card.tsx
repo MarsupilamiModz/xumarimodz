@@ -29,7 +29,7 @@ export function GameCard({ locale, game, variant = "default" }: GameCardProps) {
   if (variant === "hero" && bannerSrc) {
     return (
       <Link href={`/${locale}/games/${game.slug}`}>
-        <Card className="group relative overflow-hidden aspect-[21/9] glass border-border/50 hover:border-neon-purple/50 hover:shadow-neon transition">
+        <Card className="group relative overflow-hidden aspect-[21/9] border-border/50 hover:border-line-control transition">
           <SafeImage
             src={bannerSrc}
             alt={game.name}
@@ -38,7 +38,7 @@ export function GameCard({ locale, game, variant = "default" }: GameCardProps) {
             sizes="100vw"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+          <div className="absolute inset-0" />
           <div className="absolute bottom-0 left-0 p-6">
             {game.isFeatured && <Badge variant="premium" className="mb-2">Featured</Badge>}
             <h3 className="text-2xl font-bold">{game.name}</h3>
@@ -46,7 +46,7 @@ export function GameCard({ locale, game, variant = "default" }: GameCardProps) {
               <p className="mt-1 text-sm text-muted-foreground line-clamp-2 max-w-xl">{blurb}</p>
             )}
             {modCount !== undefined && (
-              <p className="mt-2 text-xs text-neon-blue">{modCount} mods</p>
+              <p className="mt-2 text-xs text-ink-muted">{modCount} mods</p>
             )}
           </div>
         </Card>
@@ -56,15 +56,15 @@ export function GameCard({ locale, game, variant = "default" }: GameCardProps) {
 
   return (
     <Link href={`/${locale}/games/${game.slug}`}>
-      <Card className="glass p-6 h-full transition hover:border-neon-purple/40 hover:shadow-neon group">
+      <Card className="p-6 h-full transition hover:border-line-control group">
         <div className="flex items-start gap-4">
           {iconSrc ? (
             <div className="relative h-14 w-14 shrink-0 rounded-xl overflow-hidden border border-border/50">
               <SafeImage src={iconSrc} alt="" fill className="object-cover" sizes="56px" />
             </div>
           ) : (
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-neon-purple/30 to-neon-blue/20 border border-neon-purple/20">
-              <Gamepad2 className="h-7 w-7 text-neon-blue" />
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border border-violet-bright/20">
+              <Gamepad2 className="h-7 w-7 text-ink-muted" />
             </div>
           )}
           <div className="min-w-0 flex-1">
@@ -76,7 +76,7 @@ export function GameCard({ locale, game, variant = "default" }: GameCardProps) {
               <p className="mt-1 text-sm text-muted-foreground line-clamp-2">{blurb}</p>
             )}
             {modCount !== undefined && (
-              <p className="mt-3 text-xs text-neon-purple">{modCount} mods available</p>
+              <p className="mt-3 text-xs text-violet-bright">{modCount} mods available</p>
             )}
           </div>
         </div>

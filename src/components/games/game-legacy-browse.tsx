@@ -42,9 +42,8 @@ export async function GameLegacyBrowse({
     getGameCategoriesWithStats(game.id),
   ]);
   const cover = covers[game.id];
-  const heroStyle = cover?.backgroundGradient
-    ? { background: cover.backgroundGradient }
-    : undefined;
+  // Neues Design: keine Verläufe – cover.backgroundGradient bleibt gespeichert, wird aber nicht angezeigt.
+  const heroStyle = undefined;
 
   const hasActiveFilter = Boolean(
     searchParams.q ||

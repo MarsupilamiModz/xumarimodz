@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Rocket, ExternalLink } from "lucide-react";
+import { Rocket, ExternalLink, Server } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { ResolvedHostingPartner } from "@/lib/hosting/resolve";
@@ -66,10 +66,10 @@ export function HostingServerCta({
   };
 
   return (
-    <Card className={`glass border-neon-purple/20 ${variant === "sidebar" ? "" : "mt-6"}`}>
+    <Card className={`border-violet-bright/20 ${variant === "sidebar" ? "" : "mt-6"}`}>
       <CardHeader className="pb-2">
         <CardTitle className="text-lg flex items-center gap-2">
-          <Rocket className="h-5 w-5 text-neon-purple" />
+          <Rocket className="h-5 w-5 text-violet-bright" />
           Passenden Server mieten
         </CardTitle>
       </CardHeader>
@@ -86,8 +86,9 @@ export function HostingServerCta({
           <img src={partner.logoUrl} alt={partner.name} className="h-8 object-contain" />
         ) : null}
         <div className="flex flex-wrap gap-2">
-          <Button variant="neon" disabled={pending} onClick={startServer}>
-            🚀 Server für dieses Modpack starten
+          <Button disabled={pending} onClick={startServer}>
+            <Server className="h-4 w-4" aria-hidden />
+            Server für dieses Modpack starten
           </Button>
           <Button variant="outline" size="sm" disabled={pending} onClick={openAffiliate}>
             <ExternalLink className="h-4 w-4 mr-1" />

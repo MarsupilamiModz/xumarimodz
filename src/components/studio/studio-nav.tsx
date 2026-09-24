@@ -16,7 +16,7 @@ export function StudioNav({
   const pathname = usePathname();
 
   return (
-    <nav className="flex flex-wrap gap-1 mb-8 p-1 rounded-xl bg-card/30 border border-border/40 backdrop-blur-sm">
+    <nav className="flex flex-wrap gap-1 mb-8 p-1 rounded-xl bg-card/30 border border-border/40">
       {items.map((item) => {
         const href = `/${locale}${base}${item.href}`;
         const active = pathname === href || (item.href !== "" && pathname.startsWith(href));
@@ -28,7 +28,7 @@ export function StudioNav({
             className={cn(
               "px-3 py-2 rounded-lg text-sm transition-all",
               active
-                ? "bg-neon-purple/20 text-foreground font-medium shadow-neon"
+                ? "bg-violet-soft text-foreground font-medium"
                 : "text-muted-foreground hover:text-foreground hover:bg-accent/20"
             )}
           >

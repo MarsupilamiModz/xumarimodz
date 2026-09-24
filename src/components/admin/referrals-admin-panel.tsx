@@ -32,25 +32,25 @@ export function ReferralsAdminPanel({ data, locale }: { data: ReferralData; loca
   return (
     <div className="space-y-6">
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="glass p-4">
+        <Card className="p-4">
           <p className="text-xs text-muted-foreground uppercase">Clicks</p>
           <p className="text-2xl font-bold tabular-nums">{data.totals.clicks}</p>
         </Card>
-        <Card className="glass p-4">
+        <Card className="p-4">
           <p className="text-xs text-muted-foreground uppercase">Registrations</p>
           <p className="text-2xl font-bold tabular-nums">{data.totals.registrations}</p>
         </Card>
-        <Card className="glass p-4">
+        <Card className="p-4">
           <p className="text-xs text-muted-foreground uppercase">Premium grants</p>
           <p className="text-2xl font-bold tabular-nums">{data.totals.signups}</p>
         </Card>
-        <Card className="glass p-4">
+        <Card className="p-4">
           <p className="text-xs text-muted-foreground uppercase">Conversion</p>
           <p className="text-2xl font-bold tabular-nums">{data.conversionRate}%</p>
         </Card>
       </div>
 
-      <Card className="glass p-6 space-y-4">
+      <Card className="p-6 space-y-4">
         <h3 className="font-semibold">Create referral link</h3>
         <form
           ref={formRef}
@@ -91,13 +91,13 @@ export function ReferralsAdminPanel({ data, locale }: { data: ReferralData; loca
           <label className="flex items-center gap-2 text-sm sm:col-span-2">
             <input type="checkbox" name="trackingEnabled" defaultChecked /> Enable click tracking
           </label>
-          <Button type="submit" variant="neon" disabled={pending} className="sm:col-span-2">
+          <Button type="submit" disabled={pending} className="sm:col-span-2">
             Create link
           </Button>
         </form>
       </Card>
 
-      <Card className="glass p-6">
+      <Card className="p-6">
         <h3 className="font-semibold mb-4">Referral links</h3>
         <div className="space-y-3">
           {data.links.map((link) => (
@@ -105,7 +105,7 @@ export function ReferralsAdminPanel({ data, locale }: { data: ReferralData; loca
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div>
                   <p className="font-medium">{link.name}</p>
-                  <p className="font-mono text-sm text-neon-purple">{link.code}</p>
+                  <p className="font-mono text-sm text-violet-bright">{link.code}</p>
                 </div>
                 <Badge variant={link.active ? "premium" : "outline"}>
                   {link.active ? "Active" : "Inactive"}

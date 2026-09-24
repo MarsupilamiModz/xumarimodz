@@ -39,13 +39,13 @@ export default async function CreatorsPage({ params: { locale } }: { params: { l
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
-      <h1 className="text-3xl font-bold text-gradient">{t("creatorDiscovery")}</h1>
+      <h1 className="text-3xl font-bold text-ink">{t("creatorDiscovery")}</h1>
       <p className="mt-2 text-muted-foreground">{t("creatorDiscoverySubtitle")}</p>
 
       {!hasAny ? (
-        <Card className="glass mt-10 p-12 text-center">
+        <Card className="mt-10 p-12 text-center">
           <p className="text-muted-foreground">{t("noCreators")}</p>
-          <Button variant="neon" className="mt-4" asChild>
+          <Button className="mt-4" asChild>
             <Link href={`/${locale}/register`}>{t("becomeCreator")}</Link>
           </Button>
         </Card>

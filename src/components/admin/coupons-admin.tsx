@@ -25,7 +25,7 @@ export function CouponsAdmin({ initialCoupons }: { initialCoupons: Coupon[] }) {
 
   return (
     <div className="space-y-6">
-      <Card className="glass p-6">
+      <Card className="p-6">
         <h3 className="font-medium mb-4">Create coupon</h3>
         <form
           onSubmit={(e) => {
@@ -60,13 +60,13 @@ export function CouponsAdmin({ initialCoupons }: { initialCoupons: Coupon[] }) {
             <option value="subscription">Subscription</option>
             <option value="product">Product</option>
           </select>
-          <Button type="submit" variant="neon" disabled={pending}>Create</Button>
+          <Button type="submit" disabled={pending}>Create</Button>
         </form>
       </Card>
 
       <div className="space-y-2">
         {coupons.map((c) => (
-          <Card key={c.id} className="glass p-4 flex justify-between items-center">
+          <Card key={c.id} className="p-4 flex justify-between items-center">
             <div>
               <p className="font-mono font-bold">{c.code}</p>
               <p className="text-xs text-muted-foreground">

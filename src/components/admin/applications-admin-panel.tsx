@@ -97,7 +97,7 @@ function ApplicationsAdminPanelInner({
 
   return (
     <div className="grid gap-8 lg:grid-cols-2">
-      <Card className="glass">
+      <Card>
         <CardHeader><CardTitle>Creator applications ({creatorApps.length})</CardTitle></CardHeader>
         <CardContent className="space-y-3">
           {creatorApps.length === 0 ? (
@@ -113,7 +113,7 @@ function ApplicationsAdminPanelInner({
                 {a.discord && <p className="text-xs text-muted-foreground">Discord: {a.discord}</p>}
                 {a.message && <p className="mt-1 line-clamp-2">{a.message}</p>}
                 {a.portfolioUrl && (
-                  <a href={a.portfolioUrl} target="_blank" rel="noreferrer" className="text-xs text-neon-purple hover:underline">
+                  <a href={a.portfolioUrl} target="_blank" rel="noreferrer" className="text-xs text-violet-bright hover:underline">
                     Portfolio
                   </a>
                 )}
@@ -127,7 +127,7 @@ function ApplicationsAdminPanelInner({
                       onChange={(e) => setNotes((prev) => ({ ...prev, [a.id]: e.target.value }))}
                     />
                     <div className="flex gap-1">
-                      <Button size="sm" variant="neon" disabled={pending} onClick={() => reviewCreator(a.id, "approve")}>Approve</Button>
+                      <Button size="sm" disabled={pending} onClick={() => reviewCreator(a.id, "approve")}>Approve</Button>
                       <Button size="sm" variant="outline" disabled={pending} onClick={() => reviewCreator(a.id, "info")}>Request info</Button>
                       <Button size="sm" variant="destructive" disabled={pending} onClick={() => reviewCreator(a.id, "reject")}>Reject</Button>
                     </div>
@@ -139,7 +139,7 @@ function ApplicationsAdminPanelInner({
         </CardContent>
       </Card>
 
-      <Card className="glass">
+      <Card>
         <CardHeader><CardTitle>Partner applications ({partnerApps.length})</CardTitle></CardHeader>
         <CardContent className="space-y-3">
           {partnerApps.length === 0 ? (
@@ -158,7 +158,7 @@ function ApplicationsAdminPanelInner({
                 {a.whyPartner && <p className="mt-1 line-clamp-3">{a.whyPartner}</p>}
                 {a.promotionStrategy && <p className="mt-1 line-clamp-2 text-muted-foreground">{a.promotionStrategy}</p>}
                 {(a.youtubeUrl || a.websiteUrl) && (
-                  <p className="text-xs text-neon-purple mt-1">
+                  <p className="text-xs text-violet-bright mt-1">
                     {[a.youtubeUrl, a.twitchUrl, a.websiteUrl].filter(Boolean).join(" · ")}
                   </p>
                 )}
@@ -214,7 +214,7 @@ function ApplicationsAdminPanelInner({
                       ))}
                     </select>
                     <div className="flex flex-wrap gap-1">
-                      <Button size="sm" variant="neon" disabled={pending} onClick={() => reviewPartner(a.id, "approve")}>Approve</Button>
+                      <Button size="sm" disabled={pending} onClick={() => reviewPartner(a.id, "approve")}>Approve</Button>
                       <Button size="sm" variant="outline" disabled={pending} onClick={() => reviewPartner(a.id, "info")}>Under review</Button>
                       <Button size="sm" variant="outline" disabled={pending} onClick={() => reviewPartner(a.id, "needs_changes")}>Request changes</Button>
                       <Button size="sm" variant="destructive" disabled={pending} onClick={() => reviewPartner(a.id, "reject")}>Reject</Button>

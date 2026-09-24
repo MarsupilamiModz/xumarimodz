@@ -34,14 +34,14 @@ export default async function AdminModsPage({
             {t("modTotal", { count: data.total })}
           </p>
         </div>
-        <Button variant="neon" size="sm" asChild>
+        <Button size="sm" asChild>
           <Link href={`/${locale}/admin/mods/new`}>
             <Plus className="h-4 w-4 mr-1" /> {t("uploadMod")}
           </Link>
         </Button>
       </div>
 
-      <div className="mt-8 glass rounded-xl border border-border/50 overflow-hidden">
+      <div className="mt-8 rounded-xl border border-border/50 overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow>
@@ -66,7 +66,7 @@ export default async function AdminModsPage({
                   <TableCell>
                     <Link
                       href={`/${locale}/mods/${m.slug}`}
-                      className="font-medium hover:text-neon-purple"
+                      className="font-medium hover:text-violet-bright"
                     >
                       {m.title}
                     </Link>

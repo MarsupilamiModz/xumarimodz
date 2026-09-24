@@ -101,10 +101,10 @@ export function SecurityDashboardPanel({
 
   return (
     <div className="space-y-6 max-w-2xl">
-      <Card className="glass">
+      <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Shield className="h-5 w-5 text-neon-purple" />
+            <Shield className="h-5 w-5 text-violet-bright" />
             Two-Factor Authentication
             {dashboard.mfaRequired && !dashboard.mfaEnabled && (
               <Badge variant="destructive" className="ml-2">Required</Badge>
@@ -124,7 +124,7 @@ export function SecurityDashboardPanel({
           )}
 
           {!dashboard.mfaEnabled && !enrollData && (
-            <Button variant="neon" disabled={pending} onClick={startEnroll}>
+            <Button disabled={pending} onClick={startEnroll}>
               Enable authenticator app
             </Button>
           )}
@@ -140,7 +140,7 @@ export function SecurityDashboardPanel({
                 onChange={(e) => setVerifyCode(e.target.value)}
                 maxLength={6}
               />
-              <Button variant="neon" disabled={pending || verifyCode.length < 6} onClick={confirmEnroll}>
+              <Button disabled={pending || verifyCode.length < 6} onClick={confirmEnroll}>
                 Verify & enable
               </Button>
             </div>
@@ -173,7 +173,7 @@ export function SecurityDashboardPanel({
         </CardContent>
       </Card>
 
-      <Card className="glass">
+      <Card>
         <CardHeader><CardTitle className="text-sm">Security activity</CardTitle></CardHeader>
         <CardContent>
           <p className="text-xs text-muted-foreground mb-3">

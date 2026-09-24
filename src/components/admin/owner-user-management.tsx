@@ -103,7 +103,7 @@ export function OwnerUserManagementClient({
           ["Open tickets", data.stats.openTickets],
           ["Open reports", data.stats.openReports],
         ].map(([label, value]) => (
-          <Card key={String(label)} className="glass p-4">
+          <Card key={String(label)} className="p-4">
             <p className="text-xs text-muted-foreground">{label}</p>
             <p className="text-2xl font-bold mt-1">{value}</p>
           </Card>
@@ -129,7 +129,7 @@ export function OwnerUserManagementClient({
         <Button variant="outline" disabled={pending} onClick={() => load({ q: search, page: 1 })}>
           Search
         </Button>
-        <Button variant="neon" onClick={() => setShowCreate((v) => !v)}>
+        <Button onClick={() => setShowCreate((v) => !v)}>
           Create user
         </Button>
         <Button variant="outline" asChild>
@@ -138,14 +138,14 @@ export function OwnerUserManagementClient({
       </div>
 
       {showCreate && (
-        <Card className="glass p-4 space-y-3">
+        <Card className="p-4 space-y-3">
           <p className="font-medium text-sm">Create account (Supabase + Prisma)</p>
           <div className="grid gap-2 sm:grid-cols-2">
             <Input placeholder="Email" type="email" value={newEmail} onChange={(e) => setNewEmail(e.target.value)} />
             <Input placeholder="Username (optional)" value={newUsername} onChange={(e) => setNewUsername(e.target.value)} />
           </div>
           <Button
-            variant="neon"
+           
             size="sm"
             disabled={pending || !newEmail}
             onClick={() =>
@@ -171,7 +171,7 @@ export function OwnerUserManagementClient({
         </Card>
       )}
 
-      <Card className="glass overflow-hidden">
+      <Card className="overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow>

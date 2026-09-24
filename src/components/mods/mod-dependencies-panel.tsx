@@ -63,7 +63,7 @@ export function ModDependenciesPanel({ locale, required, optional, conflicts = [
   if (required.length === 0 && optional.length === 0 && conflicts.length === 0) return null;
 
   return (
-    <Card className="glass">
+    <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Package className="h-5 w-5" />
@@ -102,7 +102,7 @@ export function ModDependenciesPanel({ locale, required, optional, conflicts = [
                     <li key={d.id}>
                       <Link
                         href={`/${locale}/mods/${d.dependency.slug}`}
-                        className="text-neon-purple hover:underline"
+                        className="text-violet-bright hover:underline"
                       >
                         {d.dependency.title}
                       </Link>
@@ -115,7 +115,7 @@ export function ModDependenciesPanel({ locale, required, optional, conflicts = [
                 <Button
                   size="sm"
                   className="mt-3"
-                  variant="neon"
+                 
                   disabled={pending}
                   onClick={downloadDependencies}
                 >
@@ -158,7 +158,7 @@ function DependencyRow({ locale, dep }: { locale: Locale; dep: Dep }) {
     <li className="flex items-center justify-between text-sm border-b border-border/20 pb-2">
       <Link
         href={`/${locale}/mods/${dep.dependency.slug}`}
-        className="font-medium hover:text-neon-purple"
+        className="font-medium hover:text-violet-bright"
       >
         {dep.dependency.title}
       </Link>

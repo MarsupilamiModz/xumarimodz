@@ -20,8 +20,8 @@ export default async function PartnerCodesPage({ params: { locale } }: { params:
     <div className="space-y-4">
       <h2 className="text-lg font-semibold">{t("affiliateCodes")}</h2>
       {coupons.map((c) => (
-        <Card key={c.id} className="glass p-4 flex flex-wrap justify-between gap-3">
-          <p className="font-mono text-neon-blue">{c.code}</p>
+        <Card key={c.id} className="p-4 flex flex-wrap justify-between gap-3">
+          <p className="font-mono text-ink-muted">{c.code}</p>
           <div className="flex gap-4 text-sm text-muted-foreground">
             <span>{c.clickCount} clicks</span>
             <span>{c.conversionCount} conv.</span>

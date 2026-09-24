@@ -37,7 +37,7 @@ export default function LicensesPage() {
   return (
     <div className="max-w-2xl space-y-8">
       <h1 className="text-2xl font-bold">{td("licenses")}</h1>
-      <Card className="glass p-6">
+      <Card className="p-6">
         <p className="text-sm text-muted-foreground mb-4">{t("productLocked")}</p>
         <div className="flex gap-2">
           <Input
@@ -47,7 +47,7 @@ export default function LicensesPage() {
             className="font-mono"
           />
           <Button
-            variant="neon"
+           
             disabled={pending || !key}
             onClick={() =>
               startTransition(async () => {
@@ -69,11 +69,11 @@ export default function LicensesPage() {
       <section>
         <h2 className="text-lg font-semibold mb-4">{t("myLicenses")}</h2>
         {activations.length === 0 ? (
-          <Card className="glass p-8 text-center text-muted-foreground">{t("activationHistory")}</Card>
+          <Card className="p-8 text-center text-muted-foreground">{t("activationHistory")}</Card>
         ) : (
           <div className="space-y-2">
             {activations.map((a) => (
-              <Card key={a.id} className="glass p-4 flex justify-between items-center">
+              <Card key={a.id} className="p-4 flex justify-between items-center">
                 <div>
                   <p className="font-medium">
                     {a.licenseKey.mod?.title ?? a.licenseKey.productType}

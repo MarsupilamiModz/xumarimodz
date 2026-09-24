@@ -76,10 +76,10 @@ function CategoryRow({
         href={href}
         scroll={false}
         className={cn(
-          "group flex flex-col items-center gap-2 rounded-2xl border p-3 transition-all duration-200",
+          "group flex flex-col items-center gap-2 rounded-lg border p-3 transition-all duration-200",
           isActive
-            ? "border-neon-purple/60 bg-neon-purple/10 scale-[1.02]"
-            : "border-border/40 bg-background/30 hover:border-neon-purple/40 hover:bg-background/50 hover:scale-[1.02]"
+            ? "border-violet-bright/60 bg-violet-soft scale-[1.02]"
+            : "border-border/40 bg-background/30 hover:border-line-control hover:bg-background/50"
         )}
         style={{
           marginLeft: depth * 8,
@@ -87,7 +87,7 @@ function CategoryRow({
         }}
       >
         <div
-          className="relative h-32 w-32 shrink-0 overflow-hidden rounded-xl border border-border/50 bg-muted/30 transition-transform duration-200 group-hover:scale-[1.03]"
+          className="relative h-32 w-32 shrink-0 overflow-hidden rounded-xl border border-border/50 bg-muted/30 transition-transform duration-200"
           style={category.accentColor ? { boxShadow: `0 0 16px ${category.accentColor}33` } : undefined}
         >
           {thumb ? (
@@ -100,7 +100,7 @@ function CategoryRow({
         </div>
         <div className="w-full text-center min-w-0">
           <p className="font-semibold text-sm leading-tight truncate">{category.name}</p>
-          <p className="mt-1 text-xs text-neon-blue">
+          <p className="mt-1 text-xs text-ink-muted">
             {t("modsCount", { count: category.modCount })}
           </p>
         </div>
@@ -142,8 +142,8 @@ export const CategorySidebar = memo(function CategorySidebar({
         className={cn(
           "flex items-center justify-center rounded-xl border px-3 py-2.5 text-sm font-medium transition-all",
           !hasFilter
-            ? "border-neon-purple/60 bg-neon-purple/10"
-            : "border-border/40 hover:border-neon-purple/30"
+            ? "border-violet-bright/60 bg-violet-soft"
+            : "border-border/40 hover:border-line-control"
         )}
       >
         {t("allCategories")}

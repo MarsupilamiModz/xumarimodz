@@ -60,7 +60,7 @@ export default async function ModsPage({
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
-      <h1 className="text-3xl font-bold tracking-tight text-gradient">{t("title")}</h1>
+      <h1 className="text-3xl font-bold tracking-tight text-ink">{t("title")}</h1>
       <p className="mt-1 text-sm text-muted-foreground">{t("subtitle")}</p>
       <Suspense fallback={<ModGridSkeleton />}>
         <CatalogContent locale={locale} searchParams={searchParams} />

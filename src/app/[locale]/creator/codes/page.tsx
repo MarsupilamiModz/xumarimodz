@@ -20,12 +20,12 @@ export default async function CreatorCodesPage({ params: { locale } }: { params:
     <div className="space-y-4">
       <h2 className="text-lg font-semibold">{t("codes")}</h2>
       {coupons.length === 0 ? (
-        <Card className="glass p-8 text-center text-muted-foreground">{t("noCodes")}</Card>
+        <Card className="p-8 text-center text-muted-foreground">{t("noCodes")}</Card>
       ) : (
         coupons.map((c) => (
-          <Card key={c.id} className="glass p-4 flex flex-wrap justify-between gap-3">
+          <Card key={c.id} className="p-4 flex flex-wrap justify-between gap-3">
             <div>
-              <p className="font-mono text-neon-purple">{c.code}</p>
+              <p className="font-mono text-violet-bright">{c.code}</p>
               <p className="text-xs text-muted-foreground mt-1">
                 {c.type === "PERCENT" ? `${c.value / 100}%` : formatCents(c.value, locale)} · {c.affiliateType}
               </p>

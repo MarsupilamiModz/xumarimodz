@@ -20,7 +20,7 @@ export default async function SupportPage({ params: { locale } }: { params: { lo
           <h1 className="text-2xl font-bold">Support</h1>
           <p className="text-sm text-muted-foreground">Track your support requests</p>
         </div>
-        <Button variant="neon" asChild>
+        <Button asChild>
           <Link href={`/${locale}/dashboard/support/new`}>
             <Plus className="h-4 w-4 mr-2" /> New Ticket
           </Link>
@@ -29,19 +29,19 @@ export default async function SupportPage({ params: { locale } }: { params: { lo
 
       <div className="mt-8 space-y-3">
         {tickets.length === 0 ? (
-          <Card className="glass p-12 text-center">
+          <Card className="p-12 text-center">
             <p className="text-muted-foreground">No support tickets yet.</p>
-            <Button variant="neon" className="mt-4" asChild>
+            <Button className="mt-4" asChild>
               <Link href={`/${locale}/dashboard/support/new`}>Create your first ticket</Link>
             </Button>
           </Card>
         ) : (
           tickets.map((t) => (
             <Link key={t.id} href={`/${locale}/dashboard/support/${t.id}`}>
-              <Card className="glass p-4 hover:border-neon-purple/40 transition">
+              <Card className="p-4 hover:border-line-control transition">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div>
-                    <p className="text-xs text-neon-blue">{t.ticketNumber}</p>
+                    <p className="text-xs text-ink-muted">{t.ticketNumber}</p>
                     <p className="font-medium">{t.subject}</p>
                     <p className="text-xs text-muted-foreground mt-1">
                       {TICKET_CATEGORY_LABELS[t.category]} · {t._count.messages} messages

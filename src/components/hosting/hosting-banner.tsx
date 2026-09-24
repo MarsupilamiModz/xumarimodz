@@ -48,7 +48,7 @@ export function HostingBannerWidget({
     <button
       type="button"
       onClick={trackAndOpen}
-      className={`block overflow-hidden rounded-lg border border-border/40 hover:border-neon-purple/40 transition-colors ${SIZE_CLASS[size]} ${className}`}
+      className={`block overflow-hidden rounded-lg border border-border/40 hover:border-line-control transition-colors ${SIZE_CLASS[size]} ${className}`}
       aria-label={`Hosting partner: ${partner.name}`}
     >
       <picture>

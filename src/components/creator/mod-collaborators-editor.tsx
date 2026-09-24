@@ -71,7 +71,7 @@ export function ModCollaboratorsEditor({
   };
 
   return (
-    <Card className="glass">
+    <Card>
       <CardHeader>
         <CardTitle>Co-Creators</CardTitle>
       </CardHeader>
@@ -112,7 +112,7 @@ export function ModCollaboratorsEditor({
             }
           />
         </div>
-        <Button variant="neon" size="sm" disabled={pending || !form.userId} onClick={add}>
+        <Button size="sm" disabled={pending || !form.userId} onClick={add}>
           Co-Creator hinzufügen
         </Button>
       </CardContent>

@@ -1,5 +1,6 @@
 "use client";
 
+import { StatusBadge } from "@/components/ui/status-badge";
 import { useState, useTransition } from "react";
 import { safeToLocaleString } from "@/lib/i18n/safe-locale";
 import { Button } from "@/components/ui/button";
@@ -114,14 +115,14 @@ export function AdsAdminPanel({ data }: Props) {
             ["placements", "Placements"],
           ] as const
         ).map(([id, label]) => (
-          <Button key={id} variant={tab === id ? "neon" : "outline"} size="sm" onClick={() => setTab(id)}>
+          <Button key={id} variant={tab === id ? "default" : "outline"} size="sm" onClick={() => setTab(id)}>
             {label}
           </Button>
         ))}
       </div>
 
       {tab === "status" && (
-        <Card className="glass p-6 space-y-4">
+        <Card className="p-6 space-y-4">
           <h3 className="font-semibold">AdSense readiness</h3>
           <p className="text-xs text-muted-foreground">
             Publisher: {data.readiness.publisherId || DEFAULT_ADSENSE_CLIENT_ID}
@@ -136,7 +137,7 @@ export function AdsAdminPanel({ data }: Props) {
                   <p className="text-sm font-medium">{check.label}</p>
                   <p className="text-xs text-muted-foreground mt-1">{check.detail}</p>
                 </div>
-                <Badge variant={check.ok ? "premium" : "destructive"}>{check.ok ? "✓" : "✗"}</Badge>
+                <StatusBadge tone={check.ok ? "success" : "danger"} label={check.ok ? "OK" : "Fehler"} />
               </div>
             ))}
           </div>
@@ -152,7 +153,7 @@ export function AdsAdminPanel({ data }: Props) {
             <a className="underline" href={data.readiness.adsTxtUrl} target="_blank" rel="noreferrer">
               {data.readiness.adsTxtUrl}
             </a>
-            {data.readiness.adsTxtReachable ? " · ✓ reachable" : " · ✗ not reachable"}
+            {data.readiness.adsTxtReachable ? " · erreichbar" : " · nicht erreichbar"}
           </p>
           <p className="text-xs text-muted-foreground">
             Static file: <a className="underline" href="/ads.txt" target="_blank" rel="noreferrer">/ads.txt</a>
@@ -161,18 +162,18 @@ export function AdsAdminPanel({ data }: Props) {
       )}
 
       {tab === "analytics" && (
-        <Card className="glass p-6 space-y-3">
+        <Card className="p-6 space-y-3">
           <h3 className="font-semibold">Analytics</h3>
           <div className="grid gap-4 sm:grid-cols-4">
-            <Card className="glass p-4">
+            <Card className="p-4">
               <p className="text-xs text-muted-foreground">Impressions</p>
               <p className="text-2xl font-bold">{safeToLocaleString(data.totalImpressions)}</p>
             </Card>
-            <Card className="glass p-4">
+            <Card className="p-4">
               <p className="text-xs text-muted-foreground">Clicks</p>
               <p className="text-2xl font-bold">{safeToLocaleString(data.totalClicks)}</p>
             </Card>
-            <Card className="glass p-4">
+            <Card className="p-4">
               <p className="text-xs text-muted-foreground">CTR</p>
               <p className="text-2xl font-bold">
                 {data.totalImpressions > 0
@@ -180,7 +181,7 @@ export function AdsAdminPanel({ data }: Props) {
                   : "—"}
               </p>
             </Card>
-            <Card className="glass p-4">
+            <Card className="p-4">
               <p className="text-xs text-muted-foreground">RPM (proxy)</p>
               <p className="text-2xl font-bold">{rpm}</p>
             </Card>
@@ -192,7 +193,7 @@ export function AdsAdminPanel({ data }: Props) {
       )}
 
       {tab === "verification" && (
-        <Card className="glass p-6 space-y-4">
+        <Card className="p-6 space-y-4">
           <h3 className="font-semibold">Site verification</h3>
           <Input
             placeholder="Google Search Console verification code"
@@ -210,7 +211,7 @@ export function AdsAdminPanel({ data }: Props) {
             onChange={(e) => setVerification((v) => ({ ...v, bingSiteVerification: e.target.value }))}
           />
           <Button
-            variant="neon"
+           
             disabled={pending}
             onClick={() =>
               startTransition(async () => {
@@ -264,7 +265,7 @@ export function AdsAdminPanel({ data }: Props) {
       )}
 
       {tab === "adsense" && (
-        <Card className="glass p-6 space-y-4">
+        <Card className="p-6 space-y-4">
           <h3 className="font-semibold">Google AdSense</h3>
           <label className="flex items-center justify-between gap-4 text-sm">
             Global verification script (all pages)
@@ -314,14 +315,14 @@ export function AdsAdminPanel({ data }: Props) {
               />
             ))}
           </div>
-          <Button variant="neon" disabled={pending} onClick={save}>
+          <Button disabled={pending} onClick={save}>
             Save AdSense settings
           </Button>
         </Card>
       )}
 
       {tab === "microsoft" && (
-        <Card className="glass p-6 space-y-4">
+        <Card className="p-6 space-y-4">
           <h3 className="font-semibold">Microsoft Advertising</h3>
           <label className="flex items-center justify-between gap-4 text-sm">
             Enable Microsoft Ads
@@ -346,7 +347,7 @@ export function AdsAdminPanel({ data }: Props) {
             onChange={(e) => setSettings((s) => ({ ...s, microsoftConversionId: e.target.value }))}
           />
           {tab === "microsoft" && (
-            <Button variant="neon" disabled={pending} onClick={save}>
+            <Button disabled={pending} onClick={save}>
               Save Microsoft settings
             </Button>
           )}
@@ -354,7 +355,7 @@ export function AdsAdminPanel({ data }: Props) {
       )}
 
       {tab === "placements" && (
-        <Card className="glass p-6 space-y-4">
+        <Card className="p-6 space-y-4">
           <h3 className="font-semibold">Multi-network manager</h3>
           <label className="flex items-center justify-between gap-4 text-sm">
             Enable ads globally
@@ -373,14 +374,14 @@ export function AdsAdminPanel({ data }: Props) {
           <p className="text-xs text-muted-foreground">
             Provider priority: {(settings.adProviderPriority ?? ["ADSENSE", "MICROSOFT"]).join(" → ")}
           </p>
-          <Button variant="neon" disabled={pending} onClick={save}>
+          <Button disabled={pending} onClick={save}>
             Save all settings
           </Button>
         </Card>
       )}
 
       {tab === "roles" && (
-        <Card className="glass p-6 space-y-4">
+        <Card className="p-6 space-y-4">
           <h3 className="font-semibold">Role-based ad control</h3>
           <p className="text-xs text-muted-foreground">
             full = all placements · reduced = fewer ads · none = ad-free
@@ -408,14 +409,14 @@ export function AdsAdminPanel({ data }: Props) {
               </div>
             ))}
           </div>
-          <Button variant="neon" disabled={pending} onClick={save}>
+          <Button disabled={pending} onClick={save}>
             Save role settings
           </Button>
         </Card>
       )}
 
       {(tab === "placements") && (
-        <Card className="glass p-6 space-y-4">
+        <Card className="p-6 space-y-4">
           <h3 className="font-semibold">Page placement controls</h3>
           <div className="grid gap-2 sm:grid-cols-2">
             {PLACEMENT_PAGES.map((p) => (
@@ -434,7 +435,7 @@ export function AdsAdminPanel({ data }: Props) {
             ))}
           </div>
           {tab === "placements" && (
-            <Button variant="neon" disabled={pending} onClick={save}>
+            <Button disabled={pending} onClick={save}>
               Save placement toggles
             </Button>
           )}
@@ -442,7 +443,7 @@ export function AdsAdminPanel({ data }: Props) {
       )}
 
       {(tab === "placements") && (
-        <Card className="glass p-6 space-y-4">
+        <Card className="p-6 space-y-4">
           <h3 className="font-semibold">Ad slot inventory</h3>
           <div className="space-y-2">
             {data.placements.map((ad) => (

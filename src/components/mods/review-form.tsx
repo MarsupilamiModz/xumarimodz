@@ -1,5 +1,6 @@
 "use client";
 
+import { Star } from "lucide-react";
 import { useState, useTransition } from "react";
 import { submitReview } from "@/actions/reviews";
 import { Button } from "@/components/ui/button";
@@ -13,7 +14,7 @@ export function ReviewForm({ modId }: { modId: string }) {
 
   return (
     <form
-      className="glass rounded-xl p-4 space-y-3"
+      className="rounded-xl p-4 space-y-3"
       onSubmit={(e) => {
         e.preventDefault();
         const fd = new FormData(e.currentTarget);
@@ -37,15 +38,17 @@ export function ReviewForm({ modId }: { modId: string }) {
             key={n}
             type="button"
             onClick={() => setRating(n)}
-            className={`text-lg ${n <= rating ? "text-neon-purple" : "text-muted-foreground"}`}
+            aria-label={`${n} / 5`}
+            aria-pressed={n === rating}
+            className="rounded-md p-1 transition-colors duration-fast hover:bg-hover"
           >
-            ★
+            <Star className={`h-5 w-5 ${n <= rating ? "fill-violet-bright text-violet-bright" : "text-ink-muted"}`} aria-hidden />
           </button>
         ))}
       </div>
       <Input name="title" placeholder="Title (optional)" />
       <Textarea name="content" placeholder="Your review..." rows={3} />
-      <Button type="submit" variant="neon" size="sm" disabled={pending}>
+      <Button type="submit" size="sm" disabled={pending}>
         Submit review
       </Button>
     </form>

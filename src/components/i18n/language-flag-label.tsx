@@ -14,14 +14,18 @@ export function LanguageFlagLabel({ language, showCountry, compact, className }:
   const label = language.nativeName ?? language.name;
   return (
     <span className={cn("inline-flex items-center gap-2", className)}>
-      <span className="text-base leading-none" aria-hidden>
-        {language.flagIcon}
+      {/* Sprachkürzel statt Flaggen-Emoji */}
+      <span
+        className="inline-flex min-w-[28px] justify-center rounded-sm bg-elevated px-1.5 py-0.5 text-[11px] font-semibold uppercase leading-none text-ink-muted"
+        aria-hidden
+      >
+        {language.code}
       </span>
       {!compact && (
         <span className="flex flex-col leading-tight">
           <span>{label}</span>
           {showCountry && language.countryName ? (
-            <span className="text-[10px] text-muted-foreground">{language.countryName}</span>
+            <span className="text-[11px] text-ink-muted">{language.countryName}</span>
           ) : null}
         </span>
       )}

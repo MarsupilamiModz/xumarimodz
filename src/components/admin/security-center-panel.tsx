@@ -225,17 +225,17 @@ export function SecurityCenterPanel({ settings, stats }: Props) {
   function soundStatusLabel(status: string) {
     switch (status) {
       case "VIRUS_TOTAL_VERIFIED":
-        return "✓ VirusTotal Verified";
+        return "VirusTotal geprüft";
       case "MANUALLY_APPROVED":
-        return "✓ Manually Approved";
+        return "Manuell freigegeben";
       case "REVIEW_REQUIRED":
-        return "⚠ Review Required";
+        return "Prüfung nötig";
       case "REJECTED":
-        return "✕ Rejected";
+        return "Abgelehnt";
       case "CHANGES_REQUESTED":
-        return "⚠ Changes Requested";
+        return "Änderungen angefordert";
       default:
-        return "⏳ Pending Review";
+        return "Wartet auf Prüfung";
     }
   }
 
@@ -259,7 +259,7 @@ export function SecurityCenterPanel({ settings, stats }: Props) {
             value: `${stats.quota.requestsUsed}/${stats.quota.requestsLimit}`,
           },
         ].map((s) => (
-          <Card key={s.label} className="glass">
+          <Card key={s.label}>
             <CardContent className="pt-6">
               <p className="text-2xl font-bold">{s.value}</p>
               <p className="text-xs text-muted-foreground">{s.label}</p>
@@ -315,7 +315,7 @@ export function SecurityCenterPanel({ settings, stats }: Props) {
       </div>
 
       {tab === "approvals" && (
-        <Card className="glass">
+        <Card>
             <CardHeader>
               <CardTitle>Pending file approvals</CardTitle>
             </CardHeader>
@@ -363,7 +363,7 @@ export function SecurityCenterPanel({ settings, stats }: Props) {
       )}
 
       {tab === "sounds" && (
-        <Card className="glass">
+        <Card>
           <CardHeader>
             <CardTitle>Pending sound reviews</CardTitle>
           </CardHeader>
@@ -393,7 +393,7 @@ export function SecurityCenterPanel({ settings, stats }: Props) {
                           {peaks.slice(0, 48).map((p, i) => (
                             <div
                               key={i}
-                              className="flex-1 bg-neon-purple/60 rounded-sm min-w-[2px]"
+                              className="flex-1 bg-violet-soft rounded-sm min-w-[2px]"
                               style={{ height: `${Math.max(4, p * 100)}%` }}
                             />
                           ))}
@@ -434,7 +434,7 @@ export function SecurityCenterPanel({ settings, stats }: Props) {
       )}
 
       {tab === "history" && (
-        <Card className="glass">
+        <Card>
             <CardHeader>
               <CardTitle>Scan history</CardTitle>
             </CardHeader>
@@ -479,7 +479,7 @@ export function SecurityCenterPanel({ settings, stats }: Props) {
       )}
 
       {tab === "audit" && (
-        <Card className="glass">
+        <Card>
             <CardHeader>
               <CardTitle>Security audit logs</CardTitle>
             </CardHeader>
@@ -498,7 +498,7 @@ export function SecurityCenterPanel({ settings, stats }: Props) {
       )}
 
       {tab === "settings" && (
-        <Card className="glass">
+        <Card>
             <CardHeader>
               <CardTitle>Malware scanner settings</CardTitle>
             </CardHeader>

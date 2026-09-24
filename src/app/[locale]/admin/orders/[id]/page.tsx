@@ -70,7 +70,7 @@ export default function AdminOrderDetailPage() {
 
       <div className="mt-6 space-y-3">
         {order.messages.map((m) => (
-          <Card key={m.id} className={`glass p-4 ${m.isInternal ? "border-neon-purple/30" : ""}`}>
+          <Card key={m.id} className={`p-4 ${m.isInternal ? "border-violet-bright/30" : ""}`}>
             <div className="mb-1">
               <UserIdentity username={m.sender.username} displayName={m.sender.displayName} size="sm" />
               {m.isInternal && <span className="text-xs text-muted-foreground ml-2">internal</span>}
@@ -80,10 +80,10 @@ export default function AdminOrderDetailPage() {
         ))}
       </div>
 
-      <Card className="glass mt-6 p-4 space-y-3">
+      <Card className="mt-6 p-4 space-y-3">
         <Textarea value={content} onChange={(e) => setContent(e.target.value)} placeholder="Reply to client..." rows={3} />
         <Button
-          variant="neon"
+         
           disabled={pending || !content.trim()}
           onClick={() =>
             startTransition(async () => {

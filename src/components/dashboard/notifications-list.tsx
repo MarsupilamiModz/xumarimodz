@@ -22,7 +22,7 @@ export function NotificationsList({ notifications, locale }: { notifications: No
   const [pending, startTransition] = useTransition();
 
   if (notifications.length === 0) {
-    return <Card className="glass p-8 text-center text-muted-foreground">No notifications</Card>;
+    return <Card className="p-8 text-center text-muted-foreground">No notifications</Card>;
   }
 
   return (
@@ -44,7 +44,7 @@ export function NotificationsList({ notifications, locale }: { notifications: No
         {notifications.map((n) => (
           <Card
             key={n.id}
-            className={`glass p-4 ${!n.read ? "border-neon-purple/30" : ""}`}
+            className={`p-4 ${!n.read ? "border-violet-bright/30" : ""}`}
             onClick={() =>
               !n.read &&
               startTransition(async () => {

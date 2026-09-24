@@ -92,7 +92,7 @@ export function ReportContentButton({
             onChange={(e) => setDescription(e.target.value)}
             rows={5}
           />
-          <Button variant="neon" disabled={pending || description.length < 10} onClick={submit}>
+          <Button disabled={pending || description.length < 10} onClick={submit}>
             Submit report
           </Button>
         </div>

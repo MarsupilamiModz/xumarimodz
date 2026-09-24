@@ -27,9 +27,9 @@ export default async function FollowingPage({ params: { locale } }: { params: { 
         <p className="text-muted-foreground">{t("following")}</p>
       </div>
       {followed.length === 0 ? (
-        <Card className="glass p-8 text-center text-muted-foreground">
+        <Card className="p-8 text-center text-muted-foreground">
           {t("emptyFollowing")}{" "}
-          <Link href={`/${locale}/creators`} className="text-neon-purple hover:underline">
+          <Link href={`/${locale}/creators`} className="text-violet-bright hover:underline">
             {t("discoverCreators")}
           </Link>
         </Card>
@@ -39,7 +39,7 @@ export default async function FollowingPage({ params: { locale } }: { params: { 
             const badges = badgeMap.get(c.id) ?? [];
             return (
               <Link key={c.id} href={`/${locale}/creators/${c.creatorProfile!.slug}`}>
-                <Card className="glass p-4 flex items-center gap-3 hover:border-neon-purple/40 transition-colors">
+                <Card className="p-4 flex items-center gap-3 hover:border-line-control transition-colors">
                   <div className="relative h-12 w-12 rounded-xl overflow-hidden shrink-0">
                     <SafeImage
                       src={resolveAssetUrl(c.avatarUrl)}

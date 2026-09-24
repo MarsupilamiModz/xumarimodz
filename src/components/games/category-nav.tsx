@@ -22,7 +22,7 @@ function CategoryLinks({
           <Link href={`/${locale}/games/${gameSlug}?category=${node.slug}`}>
             <Badge
               variant={activeSlug === node.slug ? "default" : "outline"}
-              className="hover:border-neon-purple/50 transition-colors"
+              className="hover:border-line-control transition-colors"
             >
               {node.name}
             </Badge>

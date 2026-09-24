@@ -22,7 +22,7 @@ export default async function AdminGamesPage({ params: { locale } }: { params: {
             Manage homepage visibility, order, featured games, and categories
           </p>
         </div>
-        <Button variant="neon" asChild>
+        <Button asChild>
           <Link href={`/${locale}/admin/games/new`}>
             <Plus className="h-4 w-4 mr-2" /> Add Game
           </Link>
@@ -36,8 +36,8 @@ export default async function AdminGamesPage({ params: { locale } }: { params: {
       )}
 
       {!loadError && games.length === 0 ? (
-        <Card className="glass p-12 text-center text-muted-foreground mt-8">
-          No games yet. Run <code className="text-neon-purple">npm run db:seed</code> or add a game.
+        <Card className="p-12 text-center text-muted-foreground mt-8">
+          No games yet. Run <code className="text-violet-bright">npm run db:seed</code> or add a game.
         </Card>
       ) : !loadError ? (
         <AdminGamesList locale={locale} games={games} />

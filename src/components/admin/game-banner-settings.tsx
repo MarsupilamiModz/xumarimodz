@@ -74,7 +74,7 @@ export function GameBannerSettings({ gameId, bannerUrl, coverUrl, settings }: Pr
   }
 
   return (
-    <Card className="glass p-6 space-y-6">
+    <Card className="p-6 space-y-6">
       <div>
         <h3 className="font-semibold">Banner display</h3>
         <p className="text-xs text-muted-foreground mt-1">
@@ -106,7 +106,7 @@ export function GameBannerSettings({ gameId, bannerUrl, coverUrl, settings }: Pr
                     key={h}
                     type="button"
                     size="sm"
-                    variant={heightPx === h ? "neon" : "outline"}
+                    variant={heightPx === h ? "default" : "outline"}
                     onClick={() => setHeightPx(h)}
                   >
                     {h}px
@@ -176,7 +176,7 @@ export function GameBannerSettings({ gameId, bannerUrl, coverUrl, settings }: Pr
             />
           </div>
 
-          <Button type="button" variant="neon" disabled={pending} onClick={save}>
+          <Button type="button" disabled={pending} onClick={save}>
             Save banner settings
           </Button>
         </div>
@@ -201,7 +201,7 @@ export function GameBannerSettings({ gameId, bannerUrl, coverUrl, settings }: Pr
                 Upload a banner or cover to preview
               </div>
             )}
-            <div className="absolute inset-0 bg-gradient-to-t from-background/90 to-transparent" />
+            <div className="absolute inset-0" />
             <div className="absolute bottom-3 left-3 text-xs font-medium">
               {previewHeight}px · {displayType}
             </div>

@@ -67,10 +67,10 @@ function GroupsAdminPanelInner({
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap gap-2">
-        <Button variant={tab === "custom" ? "neon" : "outline"} size="sm" onClick={() => setTab("custom")}>
+        <Button variant={tab === "custom" ? "default" : "outline"} size="sm" onClick={() => setTab("custom")}>
           Custom roles
         </Button>
-        <Button variant={tab === "builtin" ? "neon" : "outline"} size="sm" onClick={() => setTab("builtin")}>
+        <Button variant={tab === "builtin" ? "default" : "outline"} size="sm" onClick={() => setTab("builtin")}>
           Built-in role permissions
         </Button>
       </div>
@@ -79,7 +79,7 @@ function GroupsAdminPanelInner({
         <CustomRolesEditor groups={groups} />
       ) : (
         <div className="grid gap-6 lg:grid-cols-3">
-          <Card className="glass p-4 space-y-2 h-fit">
+          <Card className="p-4 space-y-2 h-fit">
             <h3 className="font-semibold text-sm">Built-in roles</h3>
             <p className="text-xs text-muted-foreground mb-2">Hierarchy: {ROLE_HIERARCHY_LABEL}</p>
             {ASSIGNABLE_ROLES.map((role) => (
@@ -88,15 +88,15 @@ function GroupsAdminPanelInner({
                 type="button"
                 onClick={() => selectRole(role)}
                 className={`w-full text-left rounded-md px-3 py-2 text-sm transition-colors ${
-                  activeRole === role ? "bg-neon-purple/15 text-neon-purple font-medium" : "hover:bg-accent/20"
-                }`}
+ activeRole === role ? "bg-violet-soft text-violet-bright font-medium" : "hover:bg-accent/20"
+ }`}
               >
                 {formatRoleLabel(role)}
               </button>
             ))}
           </Card>
 
-          <Card className="glass p-5 space-y-4 lg:col-span-2">
+          <Card className="p-5 space-y-4 lg:col-span-2">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h3 className="font-semibold">{formatRoleLabel(activeRole)} permissions</h3>
               <Badge variant="outline">{inheritedPreview().length} effective with inheritance</Badge>
@@ -137,7 +137,7 @@ function GroupsAdminPanelInner({
                 ))}
             </div>
             <Button
-              variant="neon"
+             
               disabled={pending || activeRole === "OWNER"}
               onClick={() =>
                 startTransition(async () => {

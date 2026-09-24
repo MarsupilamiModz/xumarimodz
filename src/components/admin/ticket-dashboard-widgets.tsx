@@ -15,9 +15,9 @@ type Stats = {
 
 export function TicketDashboardWidgets({ stats, locale }: { stats: Stats; locale: string }) {
   const widgets = [
-    { label: "Open tickets", value: stats.openTickets, accent: "text-neon-purple", queue: "open" as const },
+    { label: "Open tickets", value: stats.openTickets, accent: "text-violet-bright", queue: "open" as const },
     { label: "Unassigned", value: stats.unassigned, accent: "text-warning", queue: "unassigned" as const },
-    { label: "Assigned", value: stats.assigned, accent: "text-neon-blue", queue: "open" as const },
+    { label: "Assigned", value: stats.assigned, accent: "text-ink-muted", queue: "open" as const },
     { label: "SLA violations", value: stats.slaViolations, accent: "text-destructive", queue: "escalated" as const },
     { label: "Pending responses", value: stats.pendingResponses, accent: "text-warning", queue: "waiting_user" as const },
     { label: "Resolved today", value: stats.resolvedToday, accent: "text-success", queue: "solved" as const },
@@ -32,7 +32,7 @@ export function TicketDashboardWidgets({ stats, locale }: { stats: Stats; locale
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {widgets.map((w) => (
-        <Card key={w.label} className="glass">
+        <Card key={w.label}>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm text-muted-foreground">{w.label}</CardTitle>
           </CardHeader>

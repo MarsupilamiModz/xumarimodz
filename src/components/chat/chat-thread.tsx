@@ -42,7 +42,7 @@ function renderContent(content: string) {
   const parts = content.split(/(@[a-zA-Z0-9_]{2,32})/g);
   return parts.map((part, i) =>
     part.startsWith("@") ? (
-      <span key={i} className="text-neon-purple font-medium">
+      <span key={i} className="text-violet-bright font-medium">
         {part}
       </span>
     ) : (
@@ -159,7 +159,7 @@ export function ChatThread({
                     </span>
                   </div>
                   {msg.replyTo && (
-                    <p className="text-[10px] text-muted-foreground mb-1 border-l-2 border-neon-purple/40 pl-2">
+                    <p className="text-[10px] text-muted-foreground mb-1 border-l-2 border-violet-bright/40 pl-2">
                       {formatDisplayName(msg.replyTo.sender)}: {msg.replyTo.content.slice(0, 80)}
                     </p>
                   )}
@@ -167,7 +167,7 @@ export function ChatThread({
                     className={cn(
                       "rounded-lg border px-3 py-2 text-sm whitespace-pre-wrap",
                       mine
-                        ? "border-neon-purple/30 bg-neon-purple/10"
+                        ? "border-violet-bright/30 bg-violet-soft"
                         : "border-border/50 bg-card/40"
                     )}
                   >
@@ -192,7 +192,7 @@ export function ChatThread({
                               href={attachment.url}
                               target="_blank"
                               rel="noreferrer"
-                              className="flex items-center gap-2 text-sm hover:text-neon-purple"
+                              className="flex items-center gap-2 text-sm hover:text-violet-bright"
                             >
                               <Paperclip className="h-4 w-4" />
                               <span className="truncate">{attachment.fileName}</span>
@@ -272,7 +272,7 @@ export function ChatThread({
               {t("attach")}
             </Button>
             <Button
-              variant="neon"
+             
               size="sm"
               disabled={pending || uploading || (!content.trim() && files.length === 0)}
               onClick={submit}

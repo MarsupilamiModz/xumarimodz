@@ -21,9 +21,9 @@ export default async function LibraryPage({ params: { locale } }: { params: { lo
       <section>
         <h2 className="text-lg font-semibold mb-4">Owned mods ({modPurchases.length})</h2>
         {modPurchases.length === 0 ? (
-          <Card className="glass p-8 text-center text-muted-foreground">
+          <Card className="p-8 text-center text-muted-foreground">
             No purchased mods yet.{" "}
-            <Link href={`/${locale}/shop`} className="text-neon-purple hover:underline">
+            <Link href={`/${locale}/shop`} className="text-violet-bright hover:underline">
               Visit the shop
             </Link>
           </Card>
@@ -56,18 +56,18 @@ export default async function LibraryPage({ params: { locale } }: { params: { lo
       <section>
         <h2 className="text-lg font-semibold mb-4">Shop purchases ({shopPurchases.length})</h2>
         {shopPurchases.length === 0 ? (
-          <Card className="glass p-8 text-center text-muted-foreground">No shop purchases yet.</Card>
+          <Card className="p-8 text-center text-muted-foreground">No shop purchases yet.</Card>
         ) : (
           <div className="space-y-2">
             {shopPurchases.map((p) => (
-              <Card key={p.id} className="glass p-4 flex flex-wrap items-center justify-between gap-2">
+              <Card key={p.id} className="p-4 flex flex-wrap items-center justify-between gap-2">
                 <div>
                   <p className="font-medium">{p.product.name}</p>
                   <p className="text-xs text-muted-foreground">
                     {new Date(p.createdAt).toLocaleString(locale)} · {p.product.productType}
                   </p>
                 </div>
-                <p className="text-sm text-neon-purple">
+                <p className="text-sm text-violet-bright">
                   {p.creditsSpent > 0
                     ? formatCreditsFromCents(p.creditsSpent, locale)
                     : formatCreditsFromCents(p.priceCents, locale)}

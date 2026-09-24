@@ -66,7 +66,7 @@ export default function OrderDetailPage() {
 
       <div className="mt-6 space-y-3">
         {order.messages.map((m) => (
-          <Card key={m.id} className="glass p-4">
+          <Card key={m.id} className="p-4">
             <div className="mb-1">
               <UserIdentity username={m.sender.username} displayName={m.sender.displayName} size="sm" />
             </div>
@@ -74,10 +74,10 @@ export default function OrderDetailPage() {
           </Card>
         ))}
       </div>
-      <Card className="glass mt-6 p-4 space-y-3">
+      <Card className="mt-6 p-4 space-y-3">
         <Textarea value={content} onChange={(e) => setContent(e.target.value)} placeholder="Reply..." rows={3} />
         <Button
-          variant="neon"
+         
           disabled={pending || !content.trim()}
           onClick={() =>
             startTransition(async () => {

@@ -341,7 +341,7 @@ export function TeamManagementPanel({
       </TabsList>
 
       <TabsContent value="departments" className="mt-4 space-y-4">
-        <Card className="glass grid gap-3 p-4 sm:grid-cols-3">
+        <Card className="grid gap-3 p-4 sm:grid-cols-3">
           <Input
             placeholder="Category name"
             value={deptName}
@@ -352,7 +352,7 @@ export function TeamManagementPanel({
             value={deptSlug}
             onChange={(e) => setDeptSlug(e.target.value)}
           />
-          <Button variant="neon" disabled={pending} onClick={saveDept}>
+          <Button disabled={pending} onClick={saveDept}>
             <Plus className="mr-1 h-4 w-4" /> Add category
           </Button>
         </Card>
@@ -360,7 +360,7 @@ export function TeamManagementPanel({
           {departments.map((dept) => (
             <div
               key={dept.id}
-              className="flex items-center justify-between rounded-lg border border-border/40 p-3 glass"
+              className="flex items-center justify-between rounded-lg border border-border/40 p-3"
             >
               <div>
                 <p className="font-medium">{dept.name}</p>
@@ -396,7 +396,7 @@ export function TeamManagementPanel({
             </p>
           </div>
           {!isEditing && (
-            <Button variant="neon" onClick={startCreate}>
+            <Button onClick={startCreate}>
               <UserPlus className="mr-2 h-4 w-4" />
               Add team member
             </Button>
@@ -404,7 +404,7 @@ export function TeamManagementPanel({
         </div>
 
         {isEditing && (
-          <Card className="glass space-y-6 p-6">
+          <Card className="space-y-6 p-6">
             <div className="flex items-center justify-between gap-3">
               <h3 className="text-lg font-semibold">
                 {editingId === "new" ? "Add team member" : `Edit ${form.name}`}
@@ -698,7 +698,7 @@ export function TeamManagementPanel({
             </section>
 
             <div className="flex flex-wrap gap-2">
-              <Button variant="neon" disabled={pending} onClick={saveProfile}>
+              <Button disabled={pending} onClick={saveProfile}>
                 {editingId === "new" ? "Create member" : "Save changes"}
               </Button>
               <Button type="button" variant="outline" disabled={pending} onClick={cancelEdit}>
@@ -710,14 +710,14 @@ export function TeamManagementPanel({
 
         <div className="space-y-2">
           {profiles.length === 0 ? (
-            <Card className="glass p-8 text-center text-muted-foreground">
+            <Card className="p-8 text-center text-muted-foreground">
               No team members yet. Add your first profile to populate the public team page.
             </Card>
           ) : (
             profiles.map((profile, index) => (
               <div
                 key={profile.id}
-                className="flex flex-wrap items-center gap-3 rounded-lg border border-border/40 p-3 glass"
+                className="flex flex-wrap items-center gap-3 rounded-lg border border-border/40 p-3"
               >
                 <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full bg-muted/40">
                   <SafeImage

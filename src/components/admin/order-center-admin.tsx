@@ -81,10 +81,10 @@ export function OrderCenterAdmin({
     <div className="space-y-6">
       {analytics && (
         <div className="grid gap-3 sm:grid-cols-4">
-          <Card className="glass p-4"><p className="text-xs text-muted-foreground">Pending</p><p className="text-xl font-bold">{analytics.pendingOrders}</p></Card>
-          <Card className="glass p-4"><p className="text-xs text-muted-foreground">Today</p><p className="text-xl font-bold">{analytics.ordersToday}</p></Card>
-          <Card className="glass p-4"><p className="text-xs text-muted-foreground">Completion</p><p className="text-xl font-bold">{analytics.completionRate}%</p></Card>
-          <Card className="glass p-4"><p className="text-xs text-muted-foreground">Revenue (month)</p><p className="text-xl font-bold">€{(analytics.revenueMonthCents / 100).toFixed(2)}</p></Card>
+          <Card className="p-4"><p className="text-xs text-muted-foreground">Pending</p><p className="text-xl font-bold">{analytics.pendingOrders}</p></Card>
+          <Card className="p-4"><p className="text-xs text-muted-foreground">Today</p><p className="text-xl font-bold">{analytics.ordersToday}</p></Card>
+          <Card className="p-4"><p className="text-xs text-muted-foreground">Completion</p><p className="text-xl font-bold">{analytics.completionRate}%</p></Card>
+          <Card className="p-4"><p className="text-xs text-muted-foreground">Revenue (month)</p><p className="text-xl font-bold">€{(analytics.revenueMonthCents / 100).toFixed(2)}</p></Card>
         </div>
       )}
 
@@ -93,7 +93,7 @@ export function OrderCenterAdmin({
           <Button
             key={s}
             size="sm"
-            variant={filter === s ? "neon" : "outline"}
+            variant={filter === s ? "default" : "outline"}
             onClick={() => {
               setFilter(s);
               if (s !== "ALL") reload(s);
@@ -109,13 +109,13 @@ export function OrderCenterAdmin({
 
       <div className="space-y-3">
         {filtered.length === 0 ? (
-          <Card className="glass p-8 text-center text-muted-foreground">No orders match</Card>
+          <Card className="p-8 text-center text-muted-foreground">No orders match</Card>
         ) : (
           filtered.map((o) => (
-            <Card key={o.id} className="glass p-4">
+            <Card key={o.id} className="p-4">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <Link href={`/${locale}/admin/orders/${o.id}`} className="font-medium hover:text-neon-purple">
+                  <Link href={`/${locale}/admin/orders/${o.id}`} className="font-medium hover:text-violet-bright">
                     {o.title}
                   </Link>
                   <p className="text-xs text-muted-foreground mt-1">

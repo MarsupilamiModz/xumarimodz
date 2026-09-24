@@ -21,9 +21,9 @@ export default async function PublicExclusivePage({
   return (
     <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 space-y-6">
       {!user ? (
-        <div className="glass rounded-xl p-8 text-center space-y-4">
+        <div className="rounded-xl p-8 text-center space-y-4">
           <p className="text-muted-foreground">Sign in to apply for exclusive access.</p>
-          <Button variant="neon" asChild>
+          <Button asChild>
             <Link href={`/${locale}/login?next=/${locale}/exclusive/${programId}`}>Sign in</Link>
           </Button>
         </div>

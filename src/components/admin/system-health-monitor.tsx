@@ -46,7 +46,7 @@ function ServiceCard({ service }: { service: HealthServiceStatus }) {
   const Icon = meta.icon;
 
   return (
-    <Card className={cn("glass border p-4 transition-colors", meta.className)}>
+    <Card className={cn("border p-4 transition-colors", meta.className)}>
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
@@ -97,7 +97,7 @@ export function SystemHealthMonitor({ initial }: { initial: SystemHealthSnapshot
     <div className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <Badge className="mb-2 bg-neon-purple/20 text-neon-purple border-neon-purple/40">
+          <Badge className="mb-2 bg-violet-soft text-violet-bright border-violet-bright/40">
             Owner only
           </Badge>
           <h1 className="text-2xl font-bold">System Health</h1>
@@ -116,7 +116,7 @@ export function SystemHealthMonitor({ initial }: { initial: SystemHealthSnapshot
         </div>
       </div>
 
-      <Card className={cn("glass border p-5", overall.className)}>
+      <Card className={cn("border p-5", overall.className)}>
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-background/40">
@@ -135,7 +135,7 @@ export function SystemHealthMonitor({ initial }: { initial: SystemHealthSnapshot
         </div>
         <div className="mt-4 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
           <span className="inline-flex items-center gap-1">
-            <Activity className={cn("h-3.5 w-3.5", refreshing && "animate-pulse text-neon-purple")} />
+            <Activity className={cn("h-3.5 w-3.5", refreshing && "animate-pulse text-violet-bright")} />
             Auto-refresh every 15s
           </span>
           <span>Last checked {formatCheckedAt(snapshot.checkedAt)}</span>
@@ -150,7 +150,7 @@ export function SystemHealthMonitor({ initial }: { initial: SystemHealthSnapshot
       </div>
 
       {snapshot.performance && (
-        <Card className="glass border border-neon-purple/20 p-5 space-y-4">
+        <Card className="border border-violet-bright/20 p-5 space-y-4">
           <div>
             <h2 className="text-lg font-semibold">Performance Center</h2>
             <p className="text-sm text-muted-foreground mt-1">

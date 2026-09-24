@@ -131,7 +131,7 @@ export const HeaderSearch = memo(function HeaderSearch({ locale }: { locale: str
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder={t("placeholder")}
-          className="h-8 flex-1 border-0 bg-transparent shadow-none focus-visible:ring-0"
+          className="h-8 flex-1 border-0 bg-transparent focus-visible:ring-0"
         />
         {pending && <Loader2 className="h-4 w-4 shrink-0 animate-spin text-muted-foreground" />}
         <button
@@ -147,7 +147,7 @@ export const HeaderSearch = memo(function HeaderSearch({ locale }: { locale: str
       {(query.trim().length >= 2 || hasResults) && (
         <div
           className={cn(
-            "absolute right-0 top-full z-50 mt-2 w-[min(420px,90vw)] overflow-hidden rounded-xl border border-border/50 bg-card shadow-xl"
+            "absolute right-0 top-full z-50 mt-2 w-[min(420px,90vw)] overflow-hidden rounded-xl border border-border/50 bg-card"
           )}
         >
           <div className="max-h-[min(60vh,400px)] overflow-y-auto p-2">
@@ -177,7 +177,7 @@ export const HeaderSearch = memo(function HeaderSearch({ locale }: { locale: str
               <Link
                 href={`/${locale}/search?q=${encodeURIComponent(query)}`}
                 onClick={close}
-                className="text-xs text-neon-purple hover:underline"
+                className="text-xs text-violet-bright hover:underline"
               >
                 {t("viewAll")}
               </Link>
