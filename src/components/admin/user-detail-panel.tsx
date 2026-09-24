@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useId, useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
 import { safeToLocaleDateString } from "@/lib/i18n/safe-locale";
 import type { UserRole } from "@prisma/client";
 import {
@@ -19,11 +20,11 @@ import type { MembershipTier } from "@prisma/client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ConfirmDialog } from "@/components/admin/confirm-dialog";
-import { toast } from "@/hooks/use-toast";
-import { formatRoleLabel, roleBadgeVariant } from "@/lib/role-display";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { useAppToast } from "@/hooks/use-app-toast";
+import { formatRoleLabel } from "@/lib/role-display";
 import { TICKET_STATUS_LABELS } from "@/lib/ticket-labels";
-import { formatDisplayName } from "@/lib/display-name";
 import { ASSIGNABLE_ROLES } from "@/lib/permission-types";
 import { Input } from "@/components/ui/input";
 import { isPlaceholderEmail } from "@/lib/email/address";
@@ -123,58 +124,78 @@ export function UserDetailPanel({
   allAchievements?: AchievementOption[];
 }) {
   const router = useRouter();
+  const t = useTranslations("admin.us");
+  const ts = useTranslations("status.role");
+  const appToast = useAppToast();
+  const reasonId = useId();
   const [pending, startTransition] = useTransition();
-  const [confirmBan, setConfirmBan] = useState(false);
+  const [confirm, setConfirm] = useState<"ban" | "delete" | null>(null);
+  const [banReason, setBanReason] = useState("");
   const [adminEmail, setAdminEmail] = useState(user.email);
 
-  async function run(action: () => Promise<{ success: boolean; error?: string }>, msg: string) {
+  async function run(action: () => Promise<{ success: boolean; error?: string }>, msg: string, after?: () => void) {
     startTransition(async () => {
       const r = await action();
       if (r.success) {
-        toast({ title: msg });
+        appToast.updated(msg);
+        after?.();
         router.refresh();
-      } else toast({ title: "Error", description: r.error, variant: "destructive" });
+      } else appToast.error(r.error);
     });
   }
+
+  const closeConfirm = () => {
+    setConfirm(null);
+    setBanReason("");
+  };
 
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="h1-acp">{formatDisplayName(user)}</h1>
-          <p className="text-muted-foreground">{user.email}</p>
-          <div className="mt-2 flex gap-2">
-            <Badge variant={roleBadgeVariant(user.role)}>{formatRoleLabel(user.role)}</Badge>
-            {!isPlaceholderEmail(user.email) && (
-              <Badge variant={user.emailVerified ? "premium" : "destructive"}>
-                {user.emailVerified ? "Email verified" : "Email unverified"}
-              </Badge>
-            )}
-            {user.isBanned && <Badge variant="destructive">Banned</Badge>}
-            {user.deletedAt && <Badge variant="destructive">Deleted</Badge>}
+          <p className="text-ink-muted">@{user.username} · {user.email}</p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            <Badge variant={user.role === "OWNER" || user.role === "ADMIN" ? "default" : "outline"}>{ts(user.role)}</Badge>
+            {!isPlaceholderEmail(user.email) &&
+              (user.emailVerified ? (
+                <StatusBadge tone="success" label={t("emailVerified")} />
+              ) : (
+                <StatusBadge tone="warning" label={t("emailUnverified")} />
+              ))}
+            {user.isBanned && <StatusBadge tone="danger" label={t("stateBanned")} />}
+            {user.deletedAt && <StatusBadge tone="neutral" label={t("stateDeleted")} />}
           </div>
         </div>
         <div className="flex flex-wrap gap-2">
           {user.deletedAt ? (
-            <Button variant="outline" disabled={pending} onClick={() => run(() => restoreUser(user.id), "Restored")}>
-              Restore
+            <Button variant="outline" disabled={pending} onClick={() => run(() => restoreUser(user.id), t("restored"))}>
+              {t("restore")}
             </Button>
           ) : (
             <>
+              <Button
+                variant="outline"
+                disabled={pending}
+                onClick={() =>
+                  run(
+                    () => setUserPremium(user.id, user.role !== "PREMIUM"),
+                    user.role === "PREMIUM" ? t("premiumRevoked") : t("premiumGranted")
+                  )
+                }
+              >
+                {user.role === "PREMIUM" ? t("revokePremium") : t("grantPremium")}
+              </Button>
               {user.isBanned ? (
-                <Button variant="outline" disabled={pending} onClick={() => run(() => unbanUser(user.id), "Unbanned")}>
-                  Unban
+                <Button variant="outline" disabled={pending} onClick={() => run(() => unbanUser(user.id), t("unbanned"))}>
+                  {t("unban")}
                 </Button>
               ) : (
-                <Button variant="destructive" disabled={pending} onClick={() => setConfirmBan(true)}>
-                  Ban
+                <Button variant="outline" disabled={pending} onClick={() => setConfirm("ban")}>
+                  {t("ban")}
                 </Button>
               )}
-              <Button variant="outline" disabled={pending} onClick={() => run(() => setUserPremium(user.id, user.role !== "PREMIUM"), "Updated")}>
-                Toggle Premium
-              </Button>
-              <Button variant="outline" disabled={pending} onClick={() => run(() => softDeleteUser(user.id), "Soft deleted")}>
-                Soft Delete
+              <Button variant="destructive" disabled={pending} onClick={() => setConfirm("delete")}>
+                {t("softDelete")}
               </Button>
             </>
           )}
@@ -427,14 +448,28 @@ export function UserDetailPanel({
       </div>
 
       <ConfirmDialog
-        open={confirmBan}
-        onOpenChange={setConfirmBan}
-        title="Ban user"
-        description={`Ban @${user.username}?`}
+        open={confirm !== null}
+        onOpenChange={(o) => !o && closeConfirm()}
+        title={confirm === "ban" ? t("banTitle", { username: user.username }) : t("softDeleteTitle", { username: user.username })}
+        description={confirm === "ban" ? t("banText") : t("softDeleteText")}
+        confirmLabel={confirm === "ban" ? t("ban") : t("softDelete")}
         variant="destructive"
         loading={pending}
-        onConfirm={() => run(() => banUser(user.id, "Admin panel"), "Banned")}
-      />
+        onConfirm={() =>
+          confirm === "ban"
+            ? run(() => banUser(user.id, banReason.trim() || undefined), t("banned"), closeConfirm)
+            : run(() => softDeleteUser(user.id), t("deleted"), closeConfirm)
+        }
+      >
+        {confirm === "ban" && (
+          <>
+            <label htmlFor={reasonId} className="label-text mb-1.5 block text-ink-muted">
+              {t("banReason")}
+            </label>
+            <Input id={reasonId} value={banReason} onChange={(e) => setBanReason(e.target.value)} maxLength={500} />
+          </>
+        )}
+      </ConfirmDialog>
     </div>
   );
 }

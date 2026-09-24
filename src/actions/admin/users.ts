@@ -26,6 +26,8 @@ export async function getUsers(params: {
   role?: UserRole;
   banned?: boolean;
   includeDeleted?: boolean;
+  /** Nur gelöschte Konten (Filter „Gelöscht“). */
+  deletedOnly?: boolean;
 }) {
   const { error } = await requireActionPermission("users.read");
   if (error) return error;
@@ -35,7 +37,7 @@ export async function getUsers(params: {
   const skip = (page - 1) * limit;
 
   const where = {
-    ...(params.includeDeleted ? {} : { deletedAt: null }),
+    ...(params.deletedOnly ? { deletedAt: { not: null } } : params.includeDeleted ? {} : { deletedAt: null }),
     ...(params.role && { role: params.role }),
     ...(params.banned !== undefined && { isBanned: params.banned }),
     ...(params.search && {
@@ -71,19 +73,22 @@ export async function getUsers(params: {
           select: { id: true },
           take: 1,
         },
+        userMembership: { select: { status: true, membershipType: true } },
       },
     }),
     prisma.user.count({ where }),
   ]);
 
   return ok({
-    users: users.map((u) => ({
+    users: users.map(({ userMembership, ...u }) => ({
       ...u,
-      isPremium: hasPremiumAccess({
-        role: u.role,
-        subscriptions: u.subscriptions,
-        membershipPurchases: u.membershipPurchases,
-      }),
+      isPremium:
+        hasPremiumAccess({
+          role: u.role,
+          subscriptions: u.subscriptions,
+          membershipPurchases: u.membershipPurchases,
+        }) ||
+        (userMembership?.status === "ACTIVE" && userMembership.membershipType !== "FREE"),
     })),
     total,
     pages: Math.ceil(total / limit) || 1,

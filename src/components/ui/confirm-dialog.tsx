@@ -15,6 +15,7 @@ export function ConfirmDialog({
   variant = "default",
   loading,
   onConfirm,
+  children,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -24,6 +25,8 @@ export function ConfirmDialog({
   variant?: "default" | "destructive";
   loading?: boolean;
   onConfirm: () => void | Promise<void>;
+  /** Zusätzliche Felder, z. B. ein Grund für eine Sperre. */
+  children?: React.ReactNode;
 }) {
   const t = useTranslations("common");
   return (
@@ -33,6 +36,7 @@ export function ConfirmDialog({
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
+        {children && <div className="py-1">{children}</div>}
         <DialogFooter className="gap-2 sm:gap-0">
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={loading}>
             {t("cancel")}
