@@ -1,7 +1,7 @@
 {
   "shop": {
-    "title": "Custom Services Shop",
-    "subtitle": "Bestelle individuelle HUDs, Grafiken, Sounds, Scripts und mehr vom Xumari Modz Team.",
+    "title": "Shop",
+    "subtitle": "Mitgliedschaft, Custom Services und mehr – direkt vom Xumari-Modz-Team.",
     "empty": "Noch keine Services verfügbar.",
     "featured": "Empfohlen",
     "products": "Services",
@@ -26,6 +26,35 @@
         "DELIVERED": "Geliefert",
         "CANCELED": "Storniert"
       }
+    },
+    "categoriesLabel": "Kategorien",
+    "allCategories": "Alle",
+    "membershipTitle": "Mitgliedschaft",
+    "membershipText": "Premium-Mods, schnellere Downloads und keine Werbung.",
+    "membershipCta": "Pläne ansehen",
+    "vatNote": "Alle Preise inkl. MwSt.",
+    "viewProduct": "Zum Produkt",
+    "emptyCategory": "In dieser Kategorie gibt es gerade nichts.",
+    "from": "Ab {price}",
+    "product": {
+      "breadcrumb": "Brotkrumen",
+      "select": "Bitte wählen",
+      "required": "Pflichtfeld",
+      "filesTitle": "Referenzdateien",
+      "filesHint": "PNG, JPG, WEBP, ZIP, RAR, PSD oder PDF – bis zu 10 Dateien. Du kannst sie auch hierher ziehen.",
+      "afterPayment": "Nach der Zahlung füllst du ein Formular mit Details und Dateien zu deinem Projekt aus.",
+      "discord": "Discord-Name (optional)",
+      "acceptTerms": "Ich habe die AGB gelesen und akzeptiere sie.",
+      "termsLink": "AGB",
+      "digitalConsent": "Ich stimme zu, dass mit der Ausführung vor Ablauf der Widerrufsfrist begonnen wird. Mir ist bekannt, dass ich damit mein Widerrufsrecht verliere.",
+      "withdrawalLink": "Widerrufsbelehrung",
+      "orderPaid": "Zahlungspflichtig bestellen",
+      "requestQuote": "Angebot anfragen",
+      "sending": "Wird gesendet…",
+      "checkoutUnavailable": "Die Bezahlung ist gerade nicht verfügbar. Versuch es später noch einmal.",
+      "signInToOrder": "Melde dich an, um zu bestellen.",
+      "signIn": "Anmelden",
+      "back": "Zurück zum Shop"
     }
   }
 }

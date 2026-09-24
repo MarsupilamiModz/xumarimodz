@@ -1,9 +1,44 @@
 {
   "shop": {
-    "title": "Sklep usług na zamówienie",
-    "subtitle": "Zamów HUD, grafikę, dźwięki, skrypty i więcej.",
+    "title": "Sklep",
+    "subtitle": "Członkostwo, usługi na zamówienie i więcej – prosto od zespołu Xumari Modz.",
     "empty": "Brak dostępnych usług.",
-    "admin": { "title": "Zarządzanie sklepem", "subtitle": "Usługi, typy, kategorie i formularze." },
-    "orders": { "adminTitle": "Centrum zamówień", "adminSubtitle": "Zarządzaj zamówieniami i workflow." }
+    "admin": {
+      "title": "Zarządzanie sklepem",
+      "subtitle": "Usługi, typy, kategorie i formularze."
+    },
+    "orders": {
+      "adminTitle": "Centrum zamówień",
+      "adminSubtitle": "Zarządzaj zamówieniami i workflow."
+    },
+    "categoriesLabel": "Kategorie",
+    "allCategories": "Wszystkie",
+    "membershipTitle": "Członkostwo",
+    "membershipText": "Mody premium, szybsze pobieranie i brak reklam.",
+    "membershipCta": "Zobacz plany",
+    "vatNote": "Wszystkie ceny zawierają VAT.",
+    "viewProduct": "Zobacz produkt",
+    "emptyCategory": "W tej kategorii nic teraz nie ma.",
+    "from": "Od {price}",
+    "product": {
+      "breadcrumb": "Ścieżka",
+      "select": "Wybierz",
+      "required": "Wymagane",
+      "filesTitle": "Pliki referencyjne",
+      "filesHint": "PNG, JPG, WEBP, ZIP, RAR, PSD lub PDF – do 10 plików. Możesz je też przeciągnąć tutaj.",
+      "afterPayment": "Po płatności wypełnisz formularz ze szczegółami i plikami projektu.",
+      "discord": "Nazwa na Discordzie (opcjonalnie)",
+      "acceptTerms": "Przeczytałem(-am) i akceptuję regulamin.",
+      "termsLink": "Regulamin",
+      "digitalConsent": "Zgadzam się na rozpoczęcie realizacji przed upływem terminu odstąpienia i przyjmuję do wiadomości utratę prawa odstąpienia.",
+      "withdrawalLink": "Informacja o odstąpieniu",
+      "orderPaid": "Zamawiam z obowiązkiem zapłaty",
+      "requestQuote": "Poproś o wycenę",
+      "sending": "Wysyłanie…",
+      "checkoutUnavailable": "Płatność jest teraz niedostępna. Spróbuj później.",
+      "signInToOrder": "Zaloguj się, aby zamówić.",
+      "signIn": "Zaloguj się",
+      "back": "Wróć do sklepu"
+    }
   }
 }

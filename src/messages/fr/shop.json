@@ -1,9 +1,44 @@
 {
   "shop": {
-    "title": "Boutique de services sur mesure",
-    "subtitle": "Commandez des HUD, graphismes, sons, scripts et plus encore.",
+    "title": "Boutique",
+    "subtitle": "Adhésion, services sur mesure et plus – directement par l’équipe Xumari Modz.",
     "empty": "Aucun service disponible pour le moment.",
-    "admin": { "title": "Gestion boutique", "subtitle": "Services, types, catégories et formulaires." },
-    "orders": { "adminTitle": "Centre de commandes", "adminSubtitle": "Gérer les commandes et le workflow." }
+    "admin": {
+      "title": "Gestion boutique",
+      "subtitle": "Services, types, catégories et formulaires."
+    },
+    "orders": {
+      "adminTitle": "Centre de commandes",
+      "adminSubtitle": "Gérer les commandes et le workflow."
+    },
+    "categoriesLabel": "Catégories",
+    "allCategories": "Toutes",
+    "membershipTitle": "Adhésion",
+    "membershipText": "Mods premium, téléchargements plus rapides et sans publicité.",
+    "membershipCta": "Voir les plans",
+    "vatNote": "Tous les prix TTC.",
+    "viewProduct": "Voir le produit",
+    "emptyCategory": "Rien dans cette catégorie pour le moment.",
+    "from": "À partir de {price}",
+    "product": {
+      "breadcrumb": "Fil d’Ariane",
+      "select": "Choisis une option",
+      "required": "Obligatoire",
+      "filesTitle": "Fichiers de référence",
+      "filesHint": "PNG, JPG, WEBP, ZIP, RAR, PSD ou PDF – jusqu’à 10 fichiers. Tu peux aussi les glisser ici.",
+      "afterPayment": "Après le paiement, tu remplis un formulaire avec les détails et fichiers de ton projet.",
+      "discord": "Pseudo Discord (facultatif)",
+      "acceptTerms": "J’ai lu et j’accepte les CGV.",
+      "termsLink": "CGV",
+      "digitalConsent": "J’accepte que l’exécution commence avant la fin du délai de rétractation et je reconnais perdre ainsi mon droit de rétractation.",
+      "withdrawalLink": "Droit de rétractation",
+      "orderPaid": "Commander avec obligation de paiement",
+      "requestQuote": "Demander un devis",
+      "sending": "Envoi…",
+      "checkoutUnavailable": "Le paiement est indisponible pour le moment. Réessaie plus tard.",
+      "signInToOrder": "Connecte-toi pour commander.",
+      "signIn": "Se connecter",
+      "back": "Retour à la boutique"
+    }
   }
 }

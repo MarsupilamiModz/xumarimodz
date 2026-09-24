@@ -1,7 +1,7 @@
 {
   "shop": {
-    "title": "Custom Services Shop",
-    "subtitle": "Order custom HUDs, graphics, sounds, scripts, and more from the Xumari Modz team.",
+    "title": "Shop",
+    "subtitle": "Membership, custom services and more – straight from the Xumari Modz team.",
     "empty": "No services available yet. Check back soon.",
     "featured": "Featured",
     "products": "Services",
@@ -32,6 +32,35 @@
         "CANCELED": "Cancelled",
         "REFUNDED": "Refunded"
       }
+    },
+    "categoriesLabel": "Categories",
+    "allCategories": "All",
+    "membershipTitle": "Membership",
+    "membershipText": "Premium mods, faster downloads and no ads.",
+    "membershipCta": "See plans",
+    "vatNote": "All prices incl. VAT.",
+    "viewProduct": "View product",
+    "emptyCategory": "Nothing in this category right now.",
+    "from": "From {price}",
+    "product": {
+      "breadcrumb": "Breadcrumb",
+      "select": "Please choose",
+      "required": "Required",
+      "filesTitle": "Reference files",
+      "filesHint": "PNG, JPG, WEBP, ZIP, RAR, PSD or PDF – up to 10 files. You can also drag them here.",
+      "afterPayment": "After payment you fill in a form with details and files for your project.",
+      "discord": "Discord username (optional)",
+      "acceptTerms": "I have read and accept the terms.",
+      "termsLink": "Terms",
+      "digitalConsent": "I agree that performance begins before the withdrawal period ends. I understand that I thereby lose my right of withdrawal.",
+      "withdrawalLink": "Withdrawal policy",
+      "orderPaid": "Order with obligation to pay",
+      "requestQuote": "Request a quote",
+      "sending": "Sending…",
+      "checkoutUnavailable": "Payment is currently unavailable. Please try again later.",
+      "signInToOrder": "Sign in to order.",
+      "signIn": "Sign in",
+      "back": "Back to shop"
     }
   }
 }

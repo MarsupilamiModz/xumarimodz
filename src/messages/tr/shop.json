@@ -1,9 +1,44 @@
 {
   "shop": {
-    "title": "Özel hizmet mağazası",
-    "subtitle": "Özel HUD, grafik, ses, script ve daha fazlasını sipariş edin.",
+    "title": "Mağaza",
+    "subtitle": "Üyelik, özel hizmetler ve daha fazlası – doğrudan Xumari Modz ekibinden.",
     "empty": "Henüz hizmet yok.",
-    "admin": { "title": "Mağaza yönetimi", "subtitle": "Hizmetler, türler, kategoriler ve formlar." },
-    "orders": { "adminTitle": "Sipariş merkezi", "adminSubtitle": "Siparişleri ve iş akışını yönetin." }
+    "admin": {
+      "title": "Mağaza yönetimi",
+      "subtitle": "Hizmetler, türler, kategoriler ve formlar."
+    },
+    "orders": {
+      "adminTitle": "Sipariş merkezi",
+      "adminSubtitle": "Siparişleri ve iş akışını yönetin."
+    },
+    "categoriesLabel": "Kategoriler",
+    "allCategories": "Tümü",
+    "membershipTitle": "Üyelik",
+    "membershipText": "Premium modlar, daha hızlı indirme ve reklamsız.",
+    "membershipCta": "Planları gör",
+    "vatNote": "Tüm fiyatlara KDV dahildir.",
+    "viewProduct": "Ürünü gör",
+    "emptyCategory": "Bu kategoride şu anda ürün yok.",
+    "from": "{price} itibaren",
+    "product": {
+      "breadcrumb": "Gezinme yolu",
+      "select": "Seç",
+      "required": "Zorunlu",
+      "filesTitle": "Referans dosyaları",
+      "filesHint": "PNG, JPG, WEBP, ZIP, RAR, PSD veya PDF – en fazla 10 dosya. Buraya da sürükleyebilirsin.",
+      "afterPayment": "Ödemeden sonra projen için ayrıntılar ve dosyalar içeren bir form doldurursun.",
+      "discord": "Discord kullanıcı adı (isteğe bağlı)",
+      "acceptTerms": "Şartları okudum ve kabul ediyorum.",
+      "termsLink": "Şartlar",
+      "digitalConsent": "İfanın cayma süresi bitmeden başlamasını kabul ediyorum ve bu nedenle cayma hakkımı kaybettiğimi biliyorum.",
+      "withdrawalLink": "Cayma bilgilendirmesi",
+      "orderPaid": "Ödeme yükümlülüğüyle sipariş ver",
+      "requestQuote": "Teklif iste",
+      "sending": "Gönderiliyor…",
+      "checkoutUnavailable": "Ödeme şu anda kullanılamıyor. Daha sonra tekrar dene.",
+      "signInToOrder": "Sipariş vermek için giriş yap.",
+      "signIn": "Giriş yap",
+      "back": "Mağazaya dön"
+    }
   }
 }

@@ -1,9 +1,44 @@
 {
   "shop": {
-    "title": "Tienda de servicios personalizados",
-    "subtitle": "Pide HUDs, gráficos, sonidos, scripts y más.",
+    "title": "Tienda",
+    "subtitle": "Membresía, servicios a medida y más, directamente del equipo de Xumari Modz.",
     "empty": "No hay servicios disponibles todavía.",
-    "admin": { "title": "Gestión de tienda", "subtitle": "Servicios, tipos, categorías y formularios." },
-    "orders": { "adminTitle": "Centro de pedidos", "adminSubtitle": "Gestionar pedidos y flujo de trabajo." }
+    "admin": {
+      "title": "Gestión de tienda",
+      "subtitle": "Servicios, tipos, categorías y formularios."
+    },
+    "orders": {
+      "adminTitle": "Centro de pedidos",
+      "adminSubtitle": "Gestionar pedidos y flujo de trabajo."
+    },
+    "categoriesLabel": "Categorías",
+    "allCategories": "Todas",
+    "membershipTitle": "Membresía",
+    "membershipText": "Mods premium, descargas más rápidas y sin anuncios.",
+    "membershipCta": "Ver planes",
+    "vatNote": "Todos los precios con IVA incluido.",
+    "viewProduct": "Ver producto",
+    "emptyCategory": "No hay nada en esta categoría ahora.",
+    "from": "Desde {price}",
+    "product": {
+      "breadcrumb": "Ruta",
+      "select": "Elige una opción",
+      "required": "Obligatorio",
+      "filesTitle": "Archivos de referencia",
+      "filesHint": "PNG, JPG, WEBP, ZIP, RAR, PSD o PDF – hasta 10 archivos. También puedes arrastrarlos aquí.",
+      "afterPayment": "Tras el pago completarás un formulario con detalles y archivos de tu proyecto.",
+      "discord": "Usuario de Discord (opcional)",
+      "acceptTerms": "He leído y acepto las condiciones.",
+      "termsLink": "Condiciones",
+      "digitalConsent": "Acepto que la ejecución comience antes de que termine el plazo de desistimiento y entiendo que pierdo mi derecho de desistimiento.",
+      "withdrawalLink": "Información de desistimiento",
+      "orderPaid": "Comprar con obligación de pago",
+      "requestQuote": "Solicitar presupuesto",
+      "sending": "Enviando…",
+      "checkoutUnavailable": "El pago no está disponible ahora. Inténtalo más tarde.",
+      "signInToOrder": "Inicia sesión para pedir.",
+      "signIn": "Iniciar sesión",
+      "back": "Volver a la tienda"
+    }
   }
 }

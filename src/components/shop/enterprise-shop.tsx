@@ -1,17 +1,19 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useId, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { Loader2, Upload } from "lucide-react";
 import { submitShopProductOrder, startShopProductCheckout } from "@/actions/shop";
 import { useAppToast } from "@/hooks/use-app-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { SafeImage } from "@/components/ui/safe-image";
-import { formatShopPrice } from "@/lib/shop-enterprise";
+import { CoverPlaceholder } from "@/components/ui/cover-placeholder";
+import { ShopPrice } from "@/components/shop/shop-price";
 import type { ShopFormFieldType, ShopPricingMode } from "@prisma/client";
 
 type Product = {
@@ -40,14 +42,30 @@ type Product = {
   media: { mediaType: string; url: string; alt: string | null }[];
 };
 
-export function ShopProductOrderPage({ product, locale }: { product: Product; locale: string }) {
+const selectClass =
+  "h-10 w-full rounded-md border border-line-control bg-elevated px-3 text-sm text-ink transition-colors duration-fast hover:border-ink-faint";
+const labelClass = "text-sm font-semibold text-ink";
+
+export function ShopProductOrderPage({
+  product,
+  locale,
+  isLoggedIn = true,
+}: {
+  product: Product;
+  locale: string;
+  isLoggedIn?: boolean;
+}) {
+  const t = useTranslations("shop");
+  const tp = useTranslations("shop.product");
   const appToast = useAppToast();
   const router = useRouter();
+  const formId = useId();
   const [pending, startTransition] = useTransition();
   const [files, setFiles] = useState<File[]>([]);
 
   const hero = product.bannerImageUrl ?? product.coverImageUrl ?? product.thumbnailUrl;
   const gallery = product.media.filter((m) => m.mediaType === "GALLERY" || m.mediaType === "EXAMPLE");
+  const isQuoteProduct = product.pricingMode === "QUOTE" || !product.priceCents;
 
   function onDrop(e: React.DragEvent) {
     e.preventDefault();
@@ -55,222 +73,212 @@ export function ShopProductOrderPage({ product, locale }: { product: Product; lo
     setFiles((prev) => [...prev, ...dropped].slice(0, 10));
   }
 
-  const isQuoteProduct = product.pricingMode === "QUOTE" || !product.priceCents;
+  function submit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    const discord = String(fd.get("discord") ?? "").trim();
+
+    startTransition(async () => {
+      if (!isQuoteProduct) {
+        // TODO(backend): Zustimmung zu AGB und vorzeitigem Beginn serverseitig mit Zeitstempel speichern.
+        const r = await startShopProductCheckout(
+          product.slug,
+          locale,
+          discord,
+          typeof window !== "undefined" ? window.location.origin : undefined
+        );
+        if (!r.success) {
+          appToast.error(r.error);
+          return;
+        }
+        if (r.data.checkoutUrl) {
+          window.location.href = r.data.checkoutUrl;
+          return;
+        }
+        appToast.error(tp("checkoutUnavailable"));
+        return;
+      }
+
+      fd.set("productSlug", product.slug);
+      fd.set("clientOrigin", typeof window !== "undefined" ? window.location.origin : "");
+      files.forEach((f) => fd.append("order_files", f));
+
+      const r = await submitShopProductOrder(fd, locale);
+      if (!r.success) {
+        appToast.error(r.error);
+        return;
+      }
+      appToast.saved();
+      router.push(`/${locale}/dashboard/orders/${r.data.orderId}`);
+      router.refresh();
+    });
+  }
 
   return (
     <div className="space-y-8">
-      {hero && (
-        <div className="relative aspect-[21/9] rounded-xl overflow-hidden">
-          <SafeImage src={hero} alt="" fill className="object-cover" sizes="1200px" priority />
-        </div>
-      )}
+      <div className="relative aspect-[21/9] overflow-hidden rounded-xl bg-elevated">
+        {hero ? (
+          <SafeImage src={hero} alt="" fill className="object-cover" sizes="(max-width: 1440px) 100vw, 1344px" priority />
+        ) : (
+          <CoverPlaceholder name={product.name} />
+        )}
+      </div>
 
-      <div className="grid gap-8 lg:grid-cols-3">
-        <div className="lg:col-span-2 space-y-6">
+      <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_380px]">
+        <div className="min-w-0 space-y-6">
           <div>
-            <div className="flex flex-wrap items-center gap-2 mb-2">
+            <div className="flex flex-wrap items-center gap-2">
               {product.customType && <Badge variant="outline">{product.customType.name}</Badge>}
               {product.shopCategory && <Badge variant="secondary">{product.shopCategory.name}</Badge>}
             </div>
-            <h1 className="h1-display">{product.name}</h1>
-            {product.shortDescription && (
-              <p className="text-muted-foreground mt-2">{product.shortDescription}</p>
-            )}
+            <h1 className="h1-display mt-3">{product.name}</h1>
+            {product.shortDescription && <p className="mt-3 text-ink-muted md:text-lg">{product.shortDescription}</p>}
           </div>
           {product.description && (
-            <Card className="p-6 prose prose-invert max-w-none text-sm whitespace-pre-wrap">
-              {product.description}
-            </Card>
+            <div className="max-w-3xl whitespace-pre-wrap leading-7 text-ink-muted">{product.description}</div>
           )}
           {gallery.length > 0 && (
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
               {gallery.map((m, i) => (
-                <div key={i} className="relative aspect-video rounded-lg overflow-hidden">
-                  <SafeImage src={m.url} alt={m.alt ?? ""} fill className="object-cover" sizes="300px" />
+                <div key={i} className="relative aspect-video overflow-hidden rounded-md bg-elevated">
+                  <SafeImage src={m.url} alt={m.alt ?? ""} fill className="object-cover" sizes="(max-width: 640px) 50vw, 300px" />
                 </div>
               ))}
             </div>
           )}
         </div>
 
-        <Card className="p-6 space-y-4 h-fit sticky top-24">
-          <p className="text-2xl font-bold text-ink">
-            {formatShopPrice(product.priceCents, product.pricingMode, locale)}
-          </p>
+        <aside className="h-fit rounded-xl border border-line bg-raised p-6 lg:sticky lg:top-[calc(var(--header-height)+1.5rem)]">
+          <ShopPrice
+            priceCents={product.priceCents}
+            pricingMode={product.pricingMode}
+            locale={locale}
+            className="block text-[28px] font-extrabold tabular-nums text-ink"
+          />
+          {!isQuoteProduct && <p className="meta mt-1">{t("vatNote")}</p>}
 
-          <form
-            className="space-y-3"
-            onSubmit={(e) => {
-              e.preventDefault();
-              const form = e.currentTarget;
-              const fd = new FormData(form);
-              const discord = String(fd.get("discord") ?? "").trim();
-
-              startTransition(async () => {
-                if (!isQuoteProduct) {
-                  const r = await startShopProductCheckout(
-                    product.slug,
-                    locale,
-                    discord,
-                    typeof window !== "undefined" ? window.location.origin : undefined
-                  );
-                  if (!r.success) {
-                    appToast.error(r.error);
-                    return;
-                  }
-                  if (r.data.checkoutUrl) {
-                    window.location.href = r.data.checkoutUrl;
-                    return;
-                  }
-                  appToast.error("Checkout unavailable");
-                  return;
-                }
-
-                fd.set("productSlug", product.slug);
-                fd.set("clientOrigin", typeof window !== "undefined" ? window.location.origin : "");
-                files.forEach((f) => fd.append("order_files", f));
-
-                const r = await submitShopProductOrder(fd, locale);
-                if (!r.success) {
-                  appToast.error(r.error);
-                  return;
-                }
-                appToast.saved();
-                router.push(`/${locale}/dashboard/orders/${r.data.orderId}`);
-                router.refresh();
-              });
-            }}
-          >
-            {isQuoteProduct && product.formFields.map((field) => (
-              <div key={field.id} className="space-y-1">
-                <label className="text-sm font-medium">
-                  {field.label}
-                  {field.required && <span className="text-destructive ml-1">*</span>}
-                </label>
-                {field.fieldType === "TEXTAREA" ? (
-                  <Textarea
-                    name={`field_${field.id}`}
-                    placeholder={field.placeholder ?? undefined}
-                    required={field.required}
-                    rows={3}
-                  />
-                ) : field.fieldType === "DROPDOWN" || field.fieldType === "RADIO" ? (
-                  <select
-                    name={`field_${field.id}`}
-                    required={field.required}
-                    className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
-                  >
-                    <option value="">Select…</option>
-                    {(Array.isArray(field.options) ? field.options : []).map((opt) => (
-                      <option key={String(opt)} value={String(opt)}>{String(opt)}</option>
-                    ))}
-                  </select>
-                ) : field.fieldType === "CHECKBOX" ? (
-                  <label className="flex items-center gap-2 text-sm">
-                    <input type="checkbox" name={`field_${field.id}`} required={field.required} />
-                    {field.placeholder ?? field.label}
-                  </label>
-                ) : field.fieldType === "DATE" ? (
-                  <Input type="date" name={`field_${field.id}`} required={field.required} />
-                ) : field.fieldType === "IMAGE_UPLOAD" || field.fieldType === "FILE_UPLOAD" ? (
-                  <Input type="file" name={`field_${field.id}`} multiple accept=".png,.jpg,.jpeg,.webp,.zip,.pdf" />
-                ) : (
-                  <Input name={`field_${field.id}`} placeholder={field.placeholder ?? undefined} required={field.required} />
-                )}
-                {field.helpText && <p className="text-xs text-muted-foreground">{field.helpText}</p>}
-              </div>
-            ))}
-
-            {isQuoteProduct && (
-            <div
-              onDragOver={(e) => e.preventDefault()}
-              onDrop={onDrop}
-              className="rounded-lg border border-dashed border-violet-bright/40 p-4 text-center text-sm text-muted-foreground"
-            >
-              <p>Drag & drop reference files (PNG, JPG, WEBP, ZIP, RAR, PSD, PDF)</p>
-              <Input
-                type="file"
-                multiple
-                accept=".png,.jpg,.jpeg,.webp,.zip,.rar,.7z,.psd,.pdf"
-                className="mt-2"
-                onChange={(e) => setFiles(Array.from(e.target.files ?? []).slice(0, 10))}
-              />
-              {files.length > 0 && (
-                <ul className="mt-2 text-left text-xs space-y-1">
-                  {files.map((f) => (
-                    <li key={f.name}>{f.name} ({Math.round(f.size / 1024)} KB)</li>
-                  ))}
-                </ul>
-              )}
+          {!isLoggedIn ? (
+            <div className="mt-6 space-y-3">
+              <p className="text-sm text-ink-muted">{tp("signInToOrder")}</p>
+              <Button className="w-full" asChild>
+                <Link href={`/${locale}/login?redirect=/${locale}/shop/${product.slug}`}>{tp("signIn")}</Link>
+              </Button>
             </div>
-            )}
+          ) : (
+            <form className="mt-6 space-y-4" onSubmit={submit}>
+              {isQuoteProduct &&
+                product.formFields.map((field) => {
+                  const id = `${formId}-${field.id}`;
+                  const name = `field_${field.id}`;
+                  return (
+                    <div key={field.id} className="space-y-1.5">
+                      {field.fieldType !== "CHECKBOX" && (
+                        <label htmlFor={id} className={labelClass}>
+                          {field.label}
+                          {field.required && (
+                            <span className="ml-1 text-danger" aria-label={tp("required")}>
+                              *
+                            </span>
+                          )}
+                        </label>
+                      )}
+                      {field.fieldType === "TEXTAREA" ? (
+                        <Textarea id={id} name={name} placeholder={field.placeholder ?? undefined} required={field.required} rows={3} />
+                      ) : field.fieldType === "DROPDOWN" || field.fieldType === "RADIO" ? (
+                        <select id={id} name={name} required={field.required} className={selectClass}>
+                          <option value="">{tp("select")}</option>
+                          {(Array.isArray(field.options) ? field.options : []).map((opt) => (
+                            <option key={String(opt)} value={String(opt)}>
+                              {String(opt)}
+                            </option>
+                          ))}
+                        </select>
+                      ) : field.fieldType === "CHECKBOX" ? (
+                        <label htmlFor={id} className="flex items-start gap-2 text-sm text-ink">
+                          <input id={id} type="checkbox" name={name} required={field.required} className="mt-0.5 h-4 w-4 accent-violet" />
+                          {field.placeholder ?? field.label}
+                        </label>
+                      ) : field.fieldType === "DATE" ? (
+                        <Input id={id} type="date" name={name} required={field.required} />
+                      ) : field.fieldType === "IMAGE_UPLOAD" || field.fieldType === "FILE_UPLOAD" ? (
+                        <Input id={id} type="file" name={name} multiple accept=".png,.jpg,.jpeg,.webp,.zip,.pdf" />
+                      ) : (
+                        <Input id={id} name={name} placeholder={field.placeholder ?? undefined} required={field.required} />
+                      )}
+                      {field.helpText && <p className="meta">{field.helpText}</p>}
+                    </div>
+                  );
+                })}
 
-            {!isQuoteProduct && (
-              <p className="text-xs text-muted-foreground">
-                After payment you will complete a project details form with uploads and requirements.
-              </p>
-            )}
+              {isQuoteProduct && (
+                <div
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={onDrop}
+                  className="rounded-lg border border-dashed border-line-control p-4 text-sm"
+                >
+                  <label htmlFor={`${formId}-files`} className="flex items-center gap-2 font-semibold text-ink">
+                    <Upload className="h-4 w-4 text-ink-muted" aria-hidden />
+                    {tp("filesTitle")}
+                  </label>
+                  <p className="meta mt-1">{tp("filesHint")}</p>
+                  <Input
+                    id={`${formId}-files`}
+                    type="file"
+                    multiple
+                    accept=".png,.jpg,.jpeg,.webp,.zip,.rar,.7z,.psd,.pdf"
+                    className="mt-3"
+                    onChange={(e) => setFiles(Array.from(e.target.files ?? []).slice(0, 10))}
+                  />
+                  {files.length > 0 && (
+                    <ul className="mt-2 space-y-1 text-xs text-ink-muted">
+                      {files.map((f) => (
+                        <li key={f.name} className="tabular-nums">
+                          {f.name} ({Math.round(f.size / 1024)} KB)
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              )}
 
-            <Input name="discord" placeholder="Discord username (optional)" />
+              {!isQuoteProduct && <p className="meta">{tp("afterPayment")}</p>}
 
-            <Button type="submit" className="w-full" disabled={pending}>
-              {isQuoteProduct ? "Request quote" : "Proceed to checkout"}
-            </Button>
-          </form>
-        </Card>
+              <div className="space-y-1.5">
+                <label htmlFor={`${formId}-discord`} className={labelClass}>{tp("discord")}</label>
+                <Input id={`${formId}-discord`} name="discord" autoComplete="off" />
+              </div>
+
+              {!isQuoteProduct && (
+                <div className="space-y-3 border-t border-line pt-4">
+                  <label className="flex items-start gap-2.5 text-sm text-ink">
+                    <input type="checkbox" name="acceptTerms" required className="mt-0.5 h-4 w-4 shrink-0 accent-violet" />
+                    <span>
+                      {tp("acceptTerms")}{" "}
+                      <Link href={`/${locale}/legal/terms`} className="link" target="_blank">
+                        {tp("termsLink")}
+                      </Link>
+                    </span>
+                  </label>
+                  <label className="flex items-start gap-2.5 text-sm text-ink">
+                    <input type="checkbox" name="digitalConsent" required className="mt-0.5 h-4 w-4 shrink-0 accent-violet" />
+                    <span>
+                      {tp("digitalConsent")}{" "}
+                      <Link href={`/${locale}/legal/withdrawal`} className="link" target="_blank">
+                        {tp("withdrawalLink")}
+                      </Link>
+                    </span>
+                  </label>
+                </div>
+              )}
+
+              <Button type="submit" size="lg" className="w-full" disabled={pending} aria-busy={pending}>
+                {pending && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}
+                {pending ? tp("sending") : isQuoteProduct ? tp("requestQuote") : tp("orderPaid")}
+              </Button>
+            </form>
+          )}
+        </aside>
       </div>
-    </div>
-  );
-}
-
-export function ShopCatalog({
-  products,
-  locale,
-}: {
-  products: {
-    id: string;
-    slug: string;
-    name: string;
-    shortDescription: string | null;
-    pricingMode: ShopPricingMode;
-    priceCents: number;
-    isFeatured: boolean;
-    thumbnailUrl: string | null;
-    coverImageUrl: string | null;
-    customType: { name: string } | null;
-  }[];
-  locale: string;
-}) {
-  return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {products.map((p) => {
-        const image = p.coverImageUrl ?? p.thumbnailUrl;
-        return (
-          <Link key={p.id} href={`/${locale}/shop/${p.slug}`}>
-            <Card className="overflow-hidden h-full hover:border-line-control transition-all">
-              <div className="relative aspect-[16/10]">
-                {image ? (
-                  <SafeImage src={image} alt="" fill className="object-cover" sizes="400px" />
-                ) : (
-                  <div className="absolute inset-0 flex items-center justify-center text-muted-foreground text-sm">
-                    {p.customType?.name ?? "Custom service"}
-                  </div>
-                )}
-                {p.isFeatured && <Badge className="absolute top-3 right-3" variant="premium">Featured</Badge>}
-              </div>
-              <div className="p-5 space-y-2">
-                <h3 className="font-semibold text-lg">{p.name}</h3>
-                {p.shortDescription && (
-                  <p className="text-sm text-muted-foreground line-clamp-2">{p.shortDescription}</p>
-                )}
-                <p className="font-bold text-ink">
-                  {formatShopPrice(p.priceCents, p.pricingMode, locale)}
-                </p>
-              </div>
-            </Card>
-          </Link>
-        );
-      })}
     </div>
   );
 }
