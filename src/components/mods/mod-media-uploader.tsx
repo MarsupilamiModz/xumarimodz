@@ -352,7 +352,7 @@ export function ModMediaUploader({ modId, media: initialMedia, settings }: ModMe
 
       <Card className="glass space-y-4 p-6">
         <h3 className="font-medium flex items-center gap-2">
-          <Youtube className="h-4 w-4 text-red-400" />
+          <Youtube className="h-4 w-4 text-danger" />
           YouTube Video
         </h3>
         <form
@@ -392,7 +392,7 @@ export function ModMediaUploader({ modId, media: initialMedia, settings }: ModMe
                   {thumb && (
                     <div className="relative h-12 w-20 shrink-0 overflow-hidden rounded">
                       <SafeImage src={thumb} alt="" fill className="object-cover" sizes="80px" />
-                      <Play className="absolute inset-0 m-auto h-4 w-4 text-white drop-shadow" />
+                      <Play className="absolute inset-0 m-auto h-4 w-4 text-ink drop-shadow" />
                     </div>
                   )}
                   <p className="flex-1 truncate text-xs text-muted-foreground">{v.videoUrl}</p>

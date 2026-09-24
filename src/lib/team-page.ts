@@ -1,3 +1,4 @@
+import { colors } from "@/styles/tokens";
 import type { TeamRoleGroup } from "@prisma/client";
 
 export const TEAM_ROLE_GROUPS: Array<{
@@ -5,13 +6,13 @@ export const TEAM_ROLE_GROUPS: Array<{
   title: string;
   defaultColor: string;
 }> = [
-  { key: "OWNER", title: "OWNER", defaultColor: "#f59e0b" },
-  { key: "ADMINISTRATOR", title: "ADMINISTRATORS", defaultColor: "#ef4444" },
-  { key: "MANAGER", title: "MANAGERS", defaultColor: "#6366f1" },
-  { key: "SUPPORT", title: "SUPPORT", defaultColor: "#22c55e" },
-  { key: "MODERATOR", title: "MODERATORS", defaultColor: "#a855f7" },
-  { key: "DESIGNER", title: "DESIGNERS", defaultColor: "#ec4899" },
-  { key: "CREATOR", title: "CREATORS", defaultColor: "#06b6d4" },
+  { key: "OWNER", title: "OWNER", defaultColor: colors.warning },
+  { key: "ADMINISTRATOR", title: "ADMINISTRATORS", defaultColor: colors.danger },
+  { key: "MANAGER", title: "MANAGERS", defaultColor: colors.violetBright },
+  { key: "SUPPORT", title: "SUPPORT", defaultColor: colors.success },
+  { key: "MODERATOR", title: "MODERATORS", defaultColor: colors.violetBright },
+  { key: "DESIGNER", title: "DESIGNERS", defaultColor: colors.inkMuted },
+  { key: "CREATOR", title: "CREATORS", defaultColor: colors.inkMuted },
 ] as const;
 
 export function teamRoleTitle(group: TeamRoleGroup) {
@@ -19,5 +20,5 @@ export function teamRoleTitle(group: TeamRoleGroup) {
 }
 
 export function teamRoleColor(group: TeamRoleGroup, override?: string | null) {
-  return override || TEAM_ROLE_GROUPS.find((entry) => entry.key === group)?.defaultColor || "#a855f7";
+  return override || TEAM_ROLE_GROUPS.find((entry) => entry.key === group)?.defaultColor || colors.violetBright;
 }

@@ -152,7 +152,7 @@ export function MediaCenterPanel({ locale, section, items, total, page, pages }:
             {t("mediaRepairAll")}
           </Button>
         </div>
-        {repairResult && <p className="text-xs text-emerald-400">{repairResult}</p>}
+        {repairResult && <p className="text-xs text-success">{repairResult}</p>}
       </Card>
 
       <Card className="glass p-4 space-y-4">

@@ -40,7 +40,7 @@ export function YouTubeEmbed({ videoId, title = "YouTube video", className, prio
       className={cn(
         "relative aspect-video w-full overflow-hidden rounded-xl border border-border/50",
         "bg-gradient-to-br from-neon-purple/10 via-background to-neon-blue/10",
-        "shadow-[inset_0_0_40px_rgba(168,85,247,0.08)]",
+        "",
         className
       )}
     >

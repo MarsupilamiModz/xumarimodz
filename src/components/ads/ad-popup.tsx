@@ -29,8 +29,8 @@ export function AdPopup({ ad }: AdPopupProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
-      <div className="relative w-full max-w-lg glass rounded-xl border border-neon-purple/30 shadow-[0_0_40px_-8px_rgba(168,85,247,0.4)] overflow-hidden">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-canvas/60 backdrop-blur-sm animate-in fade-in duration-300">
+      <div className="relative w-full max-w-lg glass rounded-xl border border-neon-purple/30 overflow-hidden">
         <Button
           variant="ghost"
           size="icon"

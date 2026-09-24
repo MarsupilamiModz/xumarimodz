@@ -132,7 +132,7 @@ export function SecurityDashboardPanel({
           {enrollData && (
             <div className="space-y-3 rounded-lg border border-border/40 p-4">
               <p className="text-sm">Scan this QR code with your authenticator app:</p>
-              <div className="bg-white p-2 inline-block rounded" dangerouslySetInnerHTML={{ __html: enrollData.qrCode }} />
+              <div className="bg-qr-background p-2 inline-block rounded" dangerouslySetInnerHTML={{ __html: enrollData.qrCode }} />
               <p className="text-xs font-mono text-muted-foreground break-all">Secret: {enrollData.secret}</p>
               <Input
                 placeholder="Enter 6-digit code"
@@ -161,7 +161,7 @@ export function SecurityDashboardPanel({
           )}
 
           {backupCodes && (
-            <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-4">
+            <div className="rounded-lg border border-warning/30 bg-warning/10 p-4">
               <p className="text-sm font-medium mb-2">Save these backup codes — shown once:</p>
               <ul className="grid grid-cols-2 gap-1 font-mono text-xs">
                 {backupCodes.map((c) => (

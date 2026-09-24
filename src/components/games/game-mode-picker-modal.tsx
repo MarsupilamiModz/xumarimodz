@@ -102,7 +102,7 @@ export const GameModePickerModal = memo(function GameModePickerModal({
         aria-label="Close"
         tabIndex={open ? 0 : -1}
         className={cn(
-          "absolute inset-0 bg-[#050508]/88 transition-opacity duration-100",
+          "absolute inset-0 bg-canvas/90 transition-opacity duration-100",
           open ? "opacity-100" : "opacity-0"
         )}
         onPointerDown={handleOverlayPointerDown}
@@ -120,21 +120,20 @@ export const GameModePickerModal = memo(function GameModePickerModal({
           onTouchEnd={onTouchEnd}
           className={cn(
             "game-mode-picker-panel pointer-events-auto relative flex max-h-[92vh] w-full max-w-3xl flex-col overflow-hidden",
-            "rounded-t-2xl border border-white/10 sm:rounded-2xl",
+            "rounded-t-2xl border border-line sm:rounded-2xl",
             "transition-[transform,opacity] duration-150 ease-out",
             open
               ? "opacity-100"
-              : "opacity-0",
-            picker.glowEnabled && open && "shadow-[0_0_64px_rgba(168,85,247,0.22)]"
+              : "opacity-0"
           )}
           style={{
-            backgroundColor: `rgba(8, 8, 12, ${picker.panelOpacity})`,
+            backgroundColor: `rgb(var(--bg-raised) / ${picker.panelOpacity})`,
             transform: open ? "translate3d(0,0,0) scale(1)" : "translate3d(0,12px,0) scale(0.98)",
             willChange: "transform, opacity",
           }}
         >
           <div className="absolute inset-x-0 top-2 flex justify-center sm:hidden">
-            <span className="h-1 w-10 rounded-full bg-white/25" aria-hidden />
+            <span className="h-1 w-10 rounded-full bg-line-control" aria-hidden />
           </div>
 
           <button
@@ -143,7 +142,7 @@ export const GameModePickerModal = memo(function GameModePickerModal({
               e.stopPropagation();
               onClose();
             }}
-            className="absolute right-3 top-3 z-30 flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/60 text-white hover:bg-black/80"
+            className="absolute right-3 top-3 z-30 flex h-10 w-10 items-center justify-center rounded-full border border-line-control bg-canvas/60 text-ink hover:bg-canvas/80"
             aria-label="Close"
             tabIndex={open ? 0 : -1}
           >
@@ -152,7 +151,7 @@ export const GameModePickerModal = memo(function GameModePickerModal({
 
           <div className="relative min-h-[380px] flex-1 overflow-hidden">
             <div
-              className="absolute inset-0 bg-gradient-to-br from-neon-purple/25 via-[#08080c] to-neon-blue/15"
+              className="absolute inset-0 bg-raised"
               aria-hidden
             />
             {activeBg && (
@@ -163,13 +162,13 @@ export const GameModePickerModal = memo(function GameModePickerModal({
               />
             )}
             <div
-              className="absolute inset-0 bg-gradient-to-t from-[#08080c] via-[#08080c]/75 to-[#08080c]/25"
+              className="absolute inset-0 bg-canvas/75"
               style={{ opacity: picker.overlayOpacity }}
               aria-hidden
             />
 
             <div className="relative z-10 flex max-h-[92vh] flex-col">
-              <div className="border-b border-white/10 px-6 pb-5 pt-10 sm:p-8">
+              <div className="border-b border-line px-6 pb-5 pt-10 sm:p-8">
                 <h2 id="game-mode-picker-title" className="text-2xl font-bold tracking-tight sm:text-3xl">
                   {gameName}
                 </h2>
@@ -193,7 +192,7 @@ export const GameModePickerModal = memo(function GameModePickerModal({
                 ))}
               </div>
 
-              <p className="border-t border-white/10 px-6 py-4 text-center text-sm text-muted-foreground sm:px-8">
+              <p className="border-t border-line px-6 py-4 text-center text-sm text-muted-foreground sm:px-8">
                 {t("modesAvailable", { count: modes.length })}
               </p>
             </div>

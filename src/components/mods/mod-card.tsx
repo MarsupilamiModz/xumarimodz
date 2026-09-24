@@ -61,7 +61,7 @@ export const ModCard = memo(function ModCard({ locale, mod, pricingLabel, isFavo
 
   return (
     <Link href={`/${locale}/mods/${mod.slug}`} prefetch className="group block h-full">
-      <Card className="h-full overflow-hidden border-border/50 transition-all duration-300 hover:-translate-y-0.5 hover:border-neon-purple/40 hover:shadow-[0_0_24px_-4px_rgba(168,85,247,0.25)]">
+      <Card className="h-full overflow-hidden border-border/50 transition-all duration-300 hover:-translate-y-0.5 hover:border-neon-purple/40">
         <div className="relative aspect-[16/10] overflow-hidden bg-gradient-to-br from-neon-purple/20 via-background to-neon-blue/10">
           {cover && (
             <SafeImage
@@ -75,8 +75,8 @@ export const ModCard = memo(function ModCard({ locale, mod, pricingLabel, isFavo
           )}
           {hasVideo && (
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="rounded-full bg-background/60 p-2 backdrop-blur-sm border border-white/20 opacity-80 group-hover:opacity-100 transition-opacity">
-                <Play className="h-5 w-5 fill-white text-white" />
+              <div className="rounded-full bg-background/60 p-2 backdrop-blur-sm border border-line-control opacity-80 group-hover:opacity-100 transition-opacity">
+                <Play className="h-5 w-5 fill-ink text-ink" />
               </div>
             </div>
           )}

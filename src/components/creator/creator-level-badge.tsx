@@ -29,8 +29,8 @@ export function CreatorLevelBadge({
         config.borderClass,
         config.glowClass,
         sizeClass,
-        level === "VERIFIED" && "text-emerald-400",
-        level === "TRUSTED" && "text-orange-400",
+        level === "VERIFIED" && "text-success",
+        level === "TRUSTED" && "text-warning",
         level === "ELITE" && "text-neon-purple",
         level === "OFFICIAL_PARTNER" && "text-neon-blue",
         className

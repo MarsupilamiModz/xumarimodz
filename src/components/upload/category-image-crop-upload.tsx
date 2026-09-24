@@ -178,7 +178,7 @@ export function CategoryImageCropUpload({
                   </Button>
                 ))}
               </div>
-              <div className="relative h-72 w-full rounded-xl overflow-hidden bg-black/60 border border-border/40">
+              <div className="relative h-72 w-full rounded-xl overflow-hidden bg-canvas/60 border border-border/40">
                 {imageSrc && (
                   <Cropper
                     image={imageSrc}
@@ -207,7 +207,7 @@ export function CategoryImageCropUpload({
                   step={0.05}
                   value={zoom}
                   onChange={(e) => setZoom(Number(e.target.value))}
-                  className="w-full accent-[#a855f7]"
+                  className="w-full accent-violet"
                 />
               </div>
               <div className="flex items-center gap-3 px-1">
@@ -227,7 +227,7 @@ export function CategoryImageCropUpload({
                   step={1}
                   value={rotation}
                   onChange={(e) => setRotation(Number(e.target.value))}
-                  className="w-full accent-[#a855f7]"
+                  className="w-full accent-violet"
                 />
               </div>
             </div>

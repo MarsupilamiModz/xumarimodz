@@ -78,8 +78,8 @@ function CategoryRow({
         className={cn(
           "group flex flex-col items-center gap-2 rounded-2xl border p-3 transition-all duration-200",
           isActive
-            ? "border-neon-purple/60 bg-neon-purple/10 shadow-[0_0_20px_rgba(168,85,247,0.18)] scale-[1.02]"
-            : "border-border/40 bg-background/30 hover:border-neon-purple/40 hover:bg-background/50 hover:scale-[1.02] hover:shadow-[0_0_16px_rgba(168,85,247,0.12)]"
+            ? "border-neon-purple/60 bg-neon-purple/10 scale-[1.02]"
+            : "border-border/40 bg-background/30 hover:border-neon-purple/40 hover:bg-background/50 hover:scale-[1.02]"
         )}
         style={{
           marginLeft: depth * 8,

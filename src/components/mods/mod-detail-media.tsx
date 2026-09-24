@@ -31,7 +31,7 @@ export function ModDetailMedia({
 
   return (
     <div className="space-y-8">
-      <div className="relative aspect-video overflow-hidden rounded-xl border border-border/50 bg-gradient-to-br from-neon-purple/20 via-background to-neon-blue/10 shadow-[0_0_40px_-12px_rgba(168,85,247,0.25)]">
+      <div className="relative aspect-video overflow-hidden rounded-xl border border-border/50 bg-gradient-to-br from-neon-purple/20 via-background to-neon-blue/10">
         {featuredIsVideo && featuredVideoId ? (
           <YouTubeEmbed videoId={featuredVideoId} title={title} priority />
         ) : featuredUrl ? (
@@ -50,7 +50,7 @@ export function ModDetailMedia({
         )}
         {featuredIsVideo && featuredUrl && !featuredVideoId && (
           <div className="absolute inset-0 flex items-center justify-center">
-            <Play className="h-12 w-12 text-white/80" />
+            <Play className="h-12 w-12 text-ink/80" />
           </div>
         )}
       </div>

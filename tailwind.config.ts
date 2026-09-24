@@ -13,52 +13,58 @@ const config: Config = {
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-    extend: {
-      colors: {
-        // Design-Tokens
-        canvas: token("bg-base"),
-        raised: token("bg-raised"),
-        elevated: token("bg-elevated"),
-        hover: token("bg-hover"),
-        footer: token("bg-footer"),
-        sidebar: token("bg-sidebar"),
-        line: { DEFAULT: token("line"), control: token("line-control") },
-        ink: { DEFAULT: token("ink"), muted: token("ink-muted"), faint: token("ink-faint") },
-        violet: {
-          DEFAULT: token("violet"),
-          hover: token("violet-hover"),
-          bright: token("violet-bright"),
-          soft: "rgb(var(--violet) / var(--violet-soft-alpha))",
-          on: token("on-violet"),
-        },
-        success: { DEFAULT: token("success"), soft: "rgb(var(--success) / var(--status-bg-alpha))" },
-        warning: { DEFAULT: token("warning"), soft: "rgb(var(--warning) / var(--status-bg-alpha))" },
-        danger: { DEFAULT: token("danger"), soft: "rgb(var(--danger) / var(--status-bg-alpha))" },
-        game: {
-          gta: token("game-gta"),
-          fivem: token("game-fivem"),
-          minecraft: token("game-minecraft"),
-          ets2: token("game-ets2"),
-          ls25: token("game-ls25"),
-        },
+    // Nur Token-Farben: die Tailwind-Standardpalette (red-500, white …) ist bewusst nicht verfügbar.
+    colors: {
+      transparent: "transparent",
+      current: "currentColor",
+      inherit: "inherit",
 
-        // shadcn/ui-Namen, auf die Tokens abgebildet
-        background: token("bg-base"),
-        foreground: token("ink"),
-        card: { DEFAULT: token("bg-raised"), foreground: token("ink") },
-        popover: { DEFAULT: token("bg-raised"), foreground: token("ink") },
-        primary: { DEFAULT: token("violet"), foreground: token("on-violet") },
-        secondary: { DEFAULT: token("bg-elevated"), foreground: token("ink") },
-        muted: { DEFAULT: token("bg-elevated"), foreground: token("ink-muted") },
-        accent: { DEFAULT: token("bg-hover"), foreground: token("ink") },
-        destructive: { DEFAULT: token("danger"), foreground: token("bg-base") },
-        border: token("line"),
-        input: token("line-control"),
-        ring: token("violet-bright"),
-
-        // Veraltet: alte Neon-Klassen, bis alle Komponenten umgestellt sind
-        neon: { purple: token("violet-bright"), blue: token("ink-muted"), cyan: token("ink-muted") },
+      // Design-Tokens
+      canvas: token("bg-base"),
+      raised: token("bg-raised"),
+      elevated: token("bg-elevated"),
+      hover: token("bg-hover"),
+      footer: token("bg-footer"),
+      sidebar: token("bg-sidebar"),
+      line: { DEFAULT: token("line"), control: token("line-control") },
+      ink: { DEFAULT: token("ink"), muted: token("ink-muted"), faint: token("ink-faint") },
+      violet: {
+        DEFAULT: token("violet"),
+        hover: token("violet-hover"),
+        bright: token("violet-bright"),
+        soft: "rgb(var(--violet) / var(--violet-soft-alpha))",
+        on: token("on-violet"),
       },
+      success: { DEFAULT: token("success"), soft: "rgb(var(--success) / var(--status-bg-alpha))" },
+      warning: { DEFAULT: token("warning"), soft: "rgb(var(--warning) / var(--status-bg-alpha))" },
+      danger: { DEFAULT: token("danger"), soft: "rgb(var(--danger) / var(--status-bg-alpha))" },
+      "qr-background": token("qr-background"),
+      game: {
+        gta: token("game-gta"),
+        fivem: token("game-fivem"),
+        minecraft: token("game-minecraft"),
+        ets2: token("game-ets2"),
+        ls25: token("game-ls25"),
+      },
+
+      // shadcn/ui-Namen, auf die Tokens abgebildet
+      background: token("bg-base"),
+      foreground: token("ink"),
+      card: { DEFAULT: token("bg-raised"), foreground: token("ink") },
+      popover: { DEFAULT: token("bg-raised"), foreground: token("ink") },
+      primary: { DEFAULT: token("violet"), foreground: token("on-violet") },
+      secondary: { DEFAULT: token("bg-elevated"), foreground: token("ink") },
+      muted: { DEFAULT: token("bg-elevated"), foreground: token("ink-muted") },
+      accent: { DEFAULT: token("bg-hover"), foreground: token("ink") },
+      destructive: { DEFAULT: token("danger"), foreground: token("bg-base") },
+      border: token("line"),
+      input: token("line-control"),
+      ring: token("violet-bright"),
+
+      // Veraltet: alte Neon-Klassen, bis alle Komponenten umgestellt sind
+      neon: { purple: token("violet-bright"), blue: token("ink-muted"), cyan: token("ink-muted") },
+    },
+    extend: {
       fontFamily: {
         sans: ["var(--font-sans)", ...fontFamily.sans],
         mono: ["var(--font-mono)", ...fontFamily.mono],

@@ -1,3 +1,4 @@
+import { colors } from "@/styles/tokens";
 import { prisma } from "@/lib/db";
 import { unstable_cache } from "next/cache";
 import type { AchievementCategory, AchievementRarity, Prisma } from "@prisma/client";
@@ -36,11 +37,11 @@ export const RARITY_STYLES: Record<
   AchievementRarity,
   { color: string; glow: string; label: string }
 > = {
-  COMMON: { color: "#94a3b8", glow: "shadow-slate-500/20", label: "Common" },
-  UNCOMMON: { color: "#22c55e", glow: "shadow-emerald-500/30", label: "Uncommon" },
-  RARE: { color: "#3b82f6", glow: "shadow-blue-500/40", label: "Rare" },
-  EPIC: { color: "#a855f7", glow: "shadow-purple-500/50", label: "Epic" },
-  LEGENDARY: { color: "#f59e0b", glow: "shadow-amber-500/60", label: "Legendary" },
+  COMMON: { color: colors.inkMuted, glow: "", label: "Common" },
+  UNCOMMON: { color: colors.success, glow: "", label: "Uncommon" },
+  RARE: { color: colors.violetBright, glow: "", label: "Rare" },
+  EPIC: { color: colors.violetBright, glow: "", label: "Epic" },
+  LEGENDARY: { color: colors.warning, glow: "", label: "Legendary" },
 };
 
 export const DEFAULT_ACHIEVEMENTS: {

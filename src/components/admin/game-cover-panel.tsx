@@ -1,5 +1,6 @@
 "use client";
 
+import { colors } from "@/styles/tokens";
 import { useTransition } from "react";
 import { saveGameCoverAdmin } from "@/actions/admin/branding";
 import { Button } from "@/components/ui/button";
@@ -56,7 +57,7 @@ export function GameCoverPanel({ gameId, gameName, currentBanner, coverOverride 
           <Input
             name="accentColor"
             type="color"
-            defaultValue={coverOverride?.accentColor ?? "#a855f7"}
+            defaultValue={coverOverride?.accentColor ?? colors.violet}
             className="mt-1 h-10 w-24"
           />
         </div>
@@ -65,7 +66,7 @@ export function GameCoverPanel({ gameId, gameName, currentBanner, coverOverride 
           <Input
             name="backgroundGradient"
             defaultValue={coverOverride?.backgroundGradient ?? ""}
-            placeholder="linear-gradient(135deg, #1a1a2e, #16213e)"
+            placeholder="linear-gradient(…)"
             className="mt-1 font-mono text-xs"
           />
         </div>

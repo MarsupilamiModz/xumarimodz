@@ -62,7 +62,7 @@ export function ModGallery({ images, title, className }: ModGalleryProps) {
             }}
             className={cn(
               "group relative aspect-video overflow-hidden rounded-lg border border-border/50",
-              "transition-all duration-300 hover:border-neon-purple/50 hover:shadow-[0_0_20px_-4px_rgba(168,85,247,0.3)]",
+              "transition-all duration-300 hover:border-neon-purple/50",
               i === activeIndex && "ring-2 ring-neon-purple/60"
             )}
           >
@@ -75,7 +75,7 @@ export function ModGallery({ images, title, className }: ModGalleryProps) {
               loading="lazy"
             />
             <div className="absolute inset-0 flex items-center justify-center bg-background/40 opacity-0 transition-opacity group-hover:opacity-100">
-              <ZoomIn className="h-5 w-5 text-white drop-shadow" />
+              <ZoomIn className="h-5 w-5 text-ink drop-shadow" />
             </div>
           </button>
         ))}
@@ -104,7 +104,7 @@ export function ModGallery({ images, title, className }: ModGalleryProps) {
             </div>
 
             <div
-              className="relative flex min-h-[50vh] items-center justify-center overflow-hidden bg-black/80 p-4"
+              className="relative flex min-h-[50vh] items-center justify-center overflow-hidden bg-canvas/80 p-4"
               onTouchStart={(e) => setTouchStart(e.touches[0].clientX)}
               onTouchEnd={(e) => {
                 if (touchStart === null) return;

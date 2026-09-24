@@ -1,5 +1,6 @@
 "use client";
 
+import { colors } from "@/styles/tokens";
 import { memo, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -132,7 +133,7 @@ function CustomRolesEditorInner({ groups: initial }: { groups: CustomRole[] }) {
   const [name, setName] = useState("");
   const { slug, setSlug } = useSlugField(name);
   const [description, setDescription] = useState("");
-  const [color, setColor] = useState("#a855f7");
+  const [color, setColor] = useState<string>(colors.violet);
   const [badge, setBadge] = useState("");
   const [icon, setIcon] = useState("");
   const [hierarchyTier, setHierarchyTier] = useState("");
@@ -145,7 +146,7 @@ function CustomRolesEditorInner({ groups: initial }: { groups: CustomRole[] }) {
     setEditing(null);
     setName("");
     setDescription("");
-    setColor("#a855f7");
+    setColor(colors.violet);
     setBadge("");
     setIcon("🛡️");
     setHierarchyTier("Custom");
@@ -161,7 +162,7 @@ function CustomRolesEditorInner({ groups: initial }: { groups: CustomRole[] }) {
     setName(role.name);
     setSlug(role.slug);
     setDescription(role.description ?? "");
-    setColor(role.color ?? "#a855f7");
+    setColor(role.color ?? colors.violet);
     setBadge(role.badge ?? "");
     setIcon(role.icon ?? "");
     setHierarchyTier(role.hierarchyTier ?? "");

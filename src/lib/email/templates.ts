@@ -1,3 +1,4 @@
+import { colors } from "@/styles/tokens";
 import { getSiteSetting, setSiteSettingSafe } from "@/lib/site-settings";
 import { SITE } from "@/lib/site";
 
@@ -88,7 +89,7 @@ const DEFAULT_TEMPLATES: EmailTemplate[] = [
     key: "email_verification",
     name: "Email verification",
     subject: "Verify your email — {website_name}",
-    html: `<p>Hi {username},</p><p>Please verify your email address to activate your {website_name} account.</p><p><a href="{verify_link}" style="display:inline-block;padding:12px 20px;background:#a855f7;color:#fff;text-decoration:none;border-radius:8px;font-weight:600">Verify email address</a></p><p style="font-size:12px;color:#71717a">If you did not create this account, you can ignore this email.</p>`,
+    html: `<p>Hi {username},</p><p>Please verify your email address to activate your {website_name} account.</p><p><a href="{verify_link}" style="display:inline-block;padding:12px 20px;background:${colors.violet};color:${colors.onViolet};text-decoration:none;border-radius:8px;font-weight:600">Verify email address</a></p><p style="font-size:12px;color:${colors.inkMuted}">If you did not create this account, you can ignore this email.</p>`,
   },
 ];
 
@@ -138,10 +139,10 @@ export function renderTemplate(
 
 export function wrapEmailHtml(body: string) {
   return `
-    <div style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:24px;background:#0a0a0f;color:#f4f4f5;border-radius:12px;border:1px solid #a855f740">
-      <div style="margin-bottom:16px;font-weight:700;color:#a855f7">${SITE.name}</div>
+    <div style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:24px;background:${colors.bgRaised};color:${colors.ink};border-radius:12px;border:1px solid ${colors.line}">
+      <div style="margin-bottom:16px;font-weight:700;color:${colors.ink}">${SITE.name}</div>
       ${body}
-      <p style="margin-top:24px;font-size:12px;color:#71717a">© ${SITE.name}</p>
+      <p style="margin-top:24px;font-size:12px;color:${colors.inkMuted}">© ${SITE.name}</p>
     </div>
   `;
 }

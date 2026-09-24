@@ -16,11 +16,11 @@ type Stats = {
 export function TicketDashboardWidgets({ stats, locale }: { stats: Stats; locale: string }) {
   const widgets = [
     { label: "Open tickets", value: stats.openTickets, accent: "text-neon-purple", queue: "open" as const },
-    { label: "Unassigned", value: stats.unassigned, accent: "text-amber-400", queue: "unassigned" as const },
+    { label: "Unassigned", value: stats.unassigned, accent: "text-warning", queue: "unassigned" as const },
     { label: "Assigned", value: stats.assigned, accent: "text-neon-blue", queue: "open" as const },
     { label: "SLA violations", value: stats.slaViolations, accent: "text-destructive", queue: "escalated" as const },
-    { label: "Pending responses", value: stats.pendingResponses, accent: "text-orange-400", queue: "waiting_user" as const },
-    { label: "Resolved today", value: stats.resolvedToday, accent: "text-emerald-400", queue: "solved" as const },
+    { label: "Pending responses", value: stats.pendingResponses, accent: "text-warning", queue: "waiting_user" as const },
+    { label: "Resolved today", value: stats.resolvedToday, accent: "text-success", queue: "solved" as const },
     {
       label: "Avg response time",
       value: stats.avgResponseMinutes > 0 ? `${stats.avgResponseMinutes}m` : "—",

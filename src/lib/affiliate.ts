@@ -34,13 +34,13 @@ export const SOCIAL_LABELS: Record<SocialPlatform, string> = {
 };
 
 export const SOCIAL_COLORS: Record<SocialPlatform, string> = {
-  YOUTUBE: "hover:border-red-500/60 hover:text-red-400",
-  TWITCH: "hover:border-purple-500/60 hover:text-purple-400",
-  TIKTOK: "hover:border-pink-500/60 hover:text-pink-400",
-  INSTAGRAM: "hover:border-orange-500/60 hover:text-orange-400",
-  TWITTER: "hover:border-sky-500/60 hover:text-sky-400",
-  DISCORD: "hover:border-indigo-500/60 hover:text-indigo-400",
-  WEBSITE: "hover:border-neon-blue/60 hover:text-neon-blue",
+  YOUTUBE: "hover:border-line-control hover:text-violet-bright",
+  TWITCH: "hover:border-line-control hover:text-violet-bright",
+  TIKTOK: "hover:border-line-control hover:text-violet-bright",
+  INSTAGRAM: "hover:border-line-control hover:text-violet-bright",
+  TWITTER: "hover:border-line-control hover:text-violet-bright",
+  DISCORD: "hover:border-line-control hover:text-violet-bright",
+  WEBSITE: "hover:border-line-control hover:text-violet-bright",
 };
 
 import { formatCreditsFromCents } from "@/lib/credits";

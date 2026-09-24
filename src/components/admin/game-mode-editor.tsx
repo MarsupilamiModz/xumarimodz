@@ -1,5 +1,6 @@
 "use client";
 
+import { colors } from "@/styles/tokens";
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -339,7 +340,7 @@ export function GameModeEditor({
                           <label className="text-xs text-muted-foreground">{t("categoryAccentColor")}</label>
                           <Input
                             type="color"
-                            defaultValue={mode.accentColor ?? "#a855f7"}
+                            defaultValue={mode.accentColor ?? colors.violet}
                             className="mt-1 h-9 w-16 p-1"
                             onBlur={(e) => {
                               startTransition(async () => {

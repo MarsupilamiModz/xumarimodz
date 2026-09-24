@@ -37,7 +37,7 @@ type Props = {
 function StatusBadge({ ok }: { ok: boolean | null }) {
   if (ok === true) {
     return (
-      <Badge variant="outline" className="gap-1 border-green-500/40 text-green-400">
+      <Badge variant="outline" className="gap-1 border-success/40 text-success">
         <CheckCircle2 className="h-3 w-3" /> Reachable
       </Badge>
     );
@@ -97,7 +97,7 @@ export function ScreenshotDiagnosticsPanel({ locale, initial }: Props) {
         </Card>
         <Card className="glass p-4">
           <p className="text-xs text-muted-foreground">Reachable</p>
-          <p className="text-2xl font-bold text-green-400">{summary.ok}</p>
+          <p className="text-2xl font-bold text-success">{summary.ok}</p>
         </Card>
         <Card className="glass p-4">
           <p className="text-xs text-muted-foreground">Broken / missing URL</p>

@@ -34,7 +34,7 @@ export function DMCAPortalForm() {
   if (submitted) {
     return (
       <Card className="glass p-8 text-center">
-        <h2 className="text-xl font-semibold text-emerald-400">Notice received</h2>
+        <h2 className="text-xl font-semibold text-success">Notice received</h2>
         <p className="mt-2 text-sm text-muted-foreground">
           Our legal team will review your submission and respond via email.
         </p>

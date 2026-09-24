@@ -134,7 +134,7 @@ export function SoundPreviewUpload({ modId, hasPreview, hasCover }: Props) {
               e.target.value = "";
             }}
           />
-          {hasPreview && <p className="text-xs text-emerald-400 mt-1">Preview configured</p>}
+          {hasPreview && <p className="text-xs text-success mt-1">Preview configured</p>}
         </div>
 
         <div>
@@ -151,7 +151,7 @@ export function SoundPreviewUpload({ modId, hasPreview, hasCover }: Props) {
               e.target.value = "";
             }}
           />
-          {hasCover && <p className="text-xs text-emerald-400 mt-1">Cover configured</p>}
+          {hasCover && <p className="text-xs text-success mt-1">Cover configured</p>}
         </div>
 
         {busy && (

@@ -40,8 +40,8 @@ export function PartnerApplicationStatus({
       </CardHeader>
       <CardContent className="space-y-4 text-sm">
         {application.requiredChanges && (
-          <div className="rounded-lg border border-amber-500/40 bg-amber-500/10 p-3">
-            <p className="font-medium text-amber-200">Required changes</p>
+          <div className="rounded-lg border border-warning/40 bg-warning/10 p-3">
+            <p className="font-medium text-warning">Required changes</p>
             <p className="mt-1 text-muted-foreground whitespace-pre-wrap">{application.requiredChanges}</p>
           </div>
         )}

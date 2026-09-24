@@ -1,3 +1,4 @@
+import { colors } from "@/styles/tokens";
 import {
   getBrandingAssetSettings,
   saveBrandingAssetSettings,
@@ -24,11 +25,11 @@ export const DEFAULT_BRANDING: BrandingSettings = {
   siteSymbolLetter: "X",
   siteSymbolUrl: null,
   siteSymbolLibrary: "sparkles",
-  siteSymbolColor: "#a855f7",
+  siteSymbolColor: colors.violet,
   logoObjectPosition: "center",
   footerText: "© Xumari Modz. All rights reserved.",
-  primaryColor: "#a855f7",
-  accentColor: "#3b82f6",
+  primaryColor: colors.violet,
+  accentColor: colors.violetBright,
 };
 
 export async function getBrandingSettings() {

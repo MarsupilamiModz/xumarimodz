@@ -17,19 +17,19 @@ const LEVEL_META: Record<
     label: "Healthy",
     badge: "premium",
     icon: CheckCircle2,
-    className: "border-emerald-500/30 bg-emerald-500/5",
+    className: "border-success/30 bg-success/5",
   },
   warning: {
     label: "Warning",
     badge: "outline",
     icon: AlertTriangle,
-    className: "border-amber-500/30 bg-amber-500/5",
+    className: "border-warning/30 bg-warning/5",
   },
   critical: {
     label: "Critical",
     badge: "destructive",
     icon: XCircle,
-    className: "border-red-500/30 bg-red-500/5",
+    className: "border-danger/30 bg-danger/5",
   },
 };
 
@@ -53,9 +53,9 @@ function ServiceCard({ service }: { service: HealthServiceStatus }) {
             <Icon
               className={cn(
                 "h-4 w-4 shrink-0",
-                service.level === "healthy" && "text-emerald-400",
-                service.level === "warning" && "text-amber-400",
-                service.level === "critical" && "text-red-400"
+                service.level === "healthy" && "text-success",
+                service.level === "warning" && "text-warning",
+                service.level === "critical" && "text-danger"
               )}
             />
             <p className="font-medium">{service.name}</p>

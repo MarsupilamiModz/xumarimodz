@@ -38,7 +38,7 @@ export function FileIntegrityPanel({
     <Card className="glass border-border/40">
       <CardHeader className="pb-2">
         <CardTitle className="text-sm flex items-center gap-2">
-          <ShieldCheck className="h-4 w-4 text-emerald-400" />
+          <ShieldCheck className="h-4 w-4 text-success" />
           File Integrity
           <Badge variant="premium" className="text-[10px] ml-auto">Verified Upload</Badge>
         </CardTitle>

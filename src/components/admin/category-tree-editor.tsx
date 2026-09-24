@@ -1,5 +1,6 @@
 "use client";
 
+import { colors } from "@/styles/tokens";
 import { useMemo, useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import {
@@ -230,7 +231,7 @@ export function CategoryTreeEditor({
                         <label className="text-xs text-muted-foreground">{t("categoryAccentColor")}</label>
                         <Input
                           type="color"
-                          defaultValue={cat.accentColor ?? "#a855f7"}
+                          defaultValue={cat.accentColor ?? colors.violet}
                           className="mt-1 h-9 w-16 p-1"
                           onBlur={(e) => {
                             startTransition(async () => {

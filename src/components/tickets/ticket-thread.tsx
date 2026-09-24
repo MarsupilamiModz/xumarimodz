@@ -199,7 +199,7 @@ export function TicketThread({
             className={cn(
               "flex gap-3 rounded-lg border p-4",
               msg.isInternal
-                ? "border-amber-500/40 bg-amber-500/5"
+                ? "border-warning/40 bg-warning/5"
                 : msg.isStaff
                   ? "border-neon-blue/30 bg-neon-blue/5 ml-0 mr-8"
                   : "border-border/50 bg-card/40 mr-0 ml-8"
@@ -213,7 +213,7 @@ export function TicketThread({
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
                 <span className="font-medium text-foreground">{formatDisplayName(msg.sender)}</span>
-                {msg.isInternal && <Badge variant="outline" className="text-[10px] border-amber-500/50 text-amber-600">Internal</Badge>}
+                {msg.isInternal && <Badge variant="outline" className="text-[10px] border-warning/50 text-warning">Internal</Badge>}
                 {msg.isStaff && !msg.isInternal && <Badge variant="outline" className="text-[10px]">Staff</Badge>}
                 <span>{new Date(msg.createdAt).toLocaleString()}</span>
               </div>
@@ -280,8 +280,8 @@ export function TicketThread({
       )}
 
       {isStaff && ticket.status !== "CLOSED" && (
-        <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-4 space-y-3">
-          <p className="text-xs font-medium text-amber-600">Internal note (staff only)</p>
+        <div className="rounded-xl border border-warning/30 bg-warning/5 p-4 space-y-3">
+          <p className="text-xs font-medium text-warning">Internal note (staff only)</p>
           <Textarea
             placeholder="Add an internal note visible only to staff..."
             value={internalNote}

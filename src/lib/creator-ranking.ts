@@ -1,3 +1,4 @@
+import { colors } from "@/styles/tokens";
 import type { CreatorRankTier } from "@prisma/client";
 
 export const RANK_TIERS: CreatorRankTier[] = [
@@ -13,12 +14,12 @@ export const RANK_CONFIG: Record<
   CreatorRankTier,
   { minScore: number; color: string; border: string; glow: string; label: string }
 > = {
-  BRONZE: { minScore: 0, color: "#cd7f32", border: "border-amber-700/50", glow: "", label: "Bronze" },
-  SILVER: { minScore: 100, color: "#c0c0c0", border: "border-slate-400/50", glow: "shadow-slate-400/20", label: "Silver" },
-  GOLD: { minScore: 500, color: "#fbbf24", border: "border-yellow-500/50", glow: "shadow-yellow-500/30", label: "Gold" },
-  DIAMOND: { minScore: 2000, color: "#38bdf8", border: "border-sky-400/50", glow: "shadow-sky-400/40", label: "Diamond" },
-  ELITE: { minScore: 10000, color: "#a855f7", border: "border-purple-500/50", glow: "shadow-purple-500/50", label: "Elite" },
-  LEGENDARY: { minScore: 50000, color: "#f97316", border: "border-orange-500/50", glow: "shadow-orange-500/60", label: "Legendary" },
+  BRONZE: { minScore: 0, color: colors.inkFaint, border: "border-line-control", glow: "", label: "Bronze" },
+  SILVER: { minScore: 100, color: colors.inkMuted, border: "border-line-control", glow: "", label: "Silver" },
+  GOLD: { minScore: 500, color: colors.warning, border: "border-warning/50", glow: "", label: "Gold" },
+  DIAMOND: { minScore: 2000, color: colors.violetBright, border: "border-violet-bright/50", glow: "", label: "Diamond" },
+  ELITE: { minScore: 10000, color: colors.violetBright, border: "border-violet-bright/50", glow: "", label: "Elite" },
+  LEGENDARY: { minScore: 50000, color: colors.warning, border: "border-warning/50", glow: "", label: "Legendary" },
 };
 
 export function scoreToRankTier(score: number): CreatorRankTier {

@@ -4,7 +4,7 @@ import { SITE } from "@/lib/site";
 
 export default async function manifest(): Promise<MetadataRoute.Manifest> {
   const { branding } = await getCachedPublicBranding();
-  const icon = branding.pwaIconUrl ?? branding.faviconUrl ?? "/icon.svg";
+  const icon = branding.pwaIconUrl ?? branding.faviconUrl ?? "/app-icon.svg";
 
   return {
     name: branding.siteTitle,
@@ -36,7 +36,7 @@ export default async function manifest(): Promise<MetadataRoute.Manifest> {
 
 export async function generateMetadata() {
   const { branding } = await getCachedPublicBranding();
-  const icon = branding.faviconUrl ?? "/icon.svg";
+  const icon = branding.faviconUrl ?? "/app-icon.svg";
   return {
     icons: {
       icon: [{ url: icon, type: icon.endsWith(".svg") ? "image/svg+xml" : "image/png" }],

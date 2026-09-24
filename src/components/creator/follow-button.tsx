@@ -42,7 +42,7 @@ export function FollowButton({
       variant={following ? "outline" : "neon"}
       disabled={pending || !loaded}
       className={cn(
-        "transition-all duration-300 hover:shadow-[0_0_20px_-4px_rgba(168,85,247,0.45)]",
+        "transition-all duration-300",
         following && "border-neon-purple/40 bg-neon-purple/10",
         className
       )}

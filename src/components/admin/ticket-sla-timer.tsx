@@ -38,8 +38,8 @@ export function TicketSlaTimer({
         className={cn(
           "text-xs font-normal",
           state.variant === "overdue" && "border-destructive/50 text-destructive",
-          state.variant === "warning" && "border-amber-500/50 text-amber-600",
-          state.variant === "met" && "border-emerald-500/50 text-emerald-600",
+          state.variant === "warning" && "border-warning/50 text-warning",
+          state.variant === "met" && "border-success/50 text-success",
           state.variant === "ok" && "border-border/50"
         )}
       >

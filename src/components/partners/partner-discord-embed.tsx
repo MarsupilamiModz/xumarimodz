@@ -57,7 +57,7 @@ function PartnerDiscordEmbedInner({ config }: { config: PartnerDiscordConfig }) 
   const showWidget = config.widgetEnabled && config.widgetUrl;
 
   return (
-    <div className="rounded-xl border border-[#5865F2]/30 bg-gradient-to-br from-[#5865F2]/10 to-background/40 p-5 space-y-4">
+    <div className="rounded-lg border border-line bg-raised p-5 space-y-4">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="min-w-0 flex-1">
           <p className="text-xs uppercase tracking-wide text-muted-foreground">Discord community</p>
@@ -67,16 +67,16 @@ function PartnerDiscordEmbedInner({ config }: { config: PartnerDiscordConfig }) 
           )}
           {loading && <p className="text-xs text-muted-foreground mt-2">Loading server info…</p>}
           {!loading && data?.presence_count != null && (
-            <p className="text-sm text-emerald-400 mt-2">{data.presence_count} online now</p>
+            <p className="text-sm text-success mt-2">{data.presence_count} online now</p>
           )}
-          {error && <p className="text-xs text-amber-400 mt-2">{error}</p>}
+          {error && <p className="text-xs text-warning mt-2">{error}</p>}
         </div>
         {joinUrl && (
           <a
             href={joinUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex shrink-0 items-center rounded-lg bg-[#5865F2] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#4752C4] transition-colors shadow-lg shadow-[#5865F2]/20"
+            className="inline-flex shrink-0 items-center rounded-md bg-violet px-5 py-2.5 text-sm font-semibold text-violet-on hover:bg-violet-hover transition-colors duration-fast"
           >
             Join Discord
           </a>
@@ -97,7 +97,7 @@ function PartnerDiscordEmbedInner({ config }: { config: PartnerDiscordConfig }) 
       )}
 
       {showWidget && (
-        <div className="overflow-hidden rounded-lg border border-border/30 bg-black/20">
+        <div className="overflow-hidden rounded-lg border border-border/30 bg-canvas/20">
           <iframe
             src={config.widgetUrl!}
             width="100%"

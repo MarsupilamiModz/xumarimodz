@@ -1,5 +1,6 @@
 "use client";
 
+import { colors } from "@/styles/tokens";
 import { useState, useTransition, type Dispatch, type SetStateAction } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowDown, ArrowUp, Plus, Trash2 } from "lucide-react";
@@ -367,7 +368,7 @@ function PlanForm({
           <Input name="storageLimitMb" type="number" placeholder="Storage MB" defaultValue={plan?.perks.storageLimitMb ?? ""} />
           <Input name="marketplaceFeeBps" type="number" placeholder="Marketplace fee (bps)" defaultValue={plan?.perks.marketplaceFeeBps ?? ""} />
           <Input name="customBadge" placeholder="Custom badge ID" defaultValue={plan?.perks.customBadge ?? ""} />
-          <Input name="accentColor" type="color" defaultValue={plan?.perks.accentColor ?? "#a855f7"} className="h-10" />
+          <Input name="accentColor" type="color" defaultValue={plan?.perks.accentColor ?? colors.violet} className="h-10" />
         </div>
         <div className="flex flex-wrap gap-4 text-sm">
           {(

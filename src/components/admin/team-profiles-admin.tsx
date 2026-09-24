@@ -1,5 +1,6 @@
 "use client";
 
+import { colors } from "@/styles/tokens";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronDown, ChevronUp, Plus, Trash2 } from "lucide-react";
@@ -191,7 +192,7 @@ export function TeamProfilesAdmin({
             </select>
             <Input name="position" placeholder="Position" required defaultValue={editing?.position} />
             <Input name="roleBadge" placeholder="Role badge" defaultValue={editing?.roleBadge ?? ""} />
-            <Input name="roleColor" type="color" placeholder="Role color" defaultValue={editing?.roleColor ?? "#a855f7"} />
+            <Input name="roleColor" type="color" placeholder="Role color" defaultValue={editing?.roleColor ?? colors.violet} />
             <Textarea
               name="description"
               placeholder="Bio"

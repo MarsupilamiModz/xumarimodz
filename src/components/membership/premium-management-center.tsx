@@ -134,7 +134,7 @@ export function PremiumManagementCenter({
       )}
 
       {membership.isLifetime && (
-        <div className="card-surface text-sm text-emerald-400 flex items-center gap-2 rounded-xl p-3">
+        <div className="card-surface text-sm text-success flex items-center gap-2 rounded-xl p-3">
           <RefreshCw className="h-4 w-4 shrink-0" /> Lifetime access — no recurring billing
         </div>
       )}

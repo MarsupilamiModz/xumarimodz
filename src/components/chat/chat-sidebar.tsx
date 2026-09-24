@@ -120,7 +120,7 @@ export function ChatSidebar({
               <div className="relative">
                 <UserAvatar src={s.avatarUrl} name={formatDisplayName(s)} className="h-5 w-5" />
                 {onlineUserIds.includes(s.id) && (
-                  <span className="absolute -bottom-0.5 -right-0.5 h-2 w-2 rounded-full bg-emerald-500 ring-2 ring-background" />
+                  <span className="absolute -bottom-0.5 -right-0.5 h-2 w-2 rounded-full bg-success ring-2 ring-background" />
                 )}
               </div>
               <span className="truncate text-xs">@{s.username}</span>

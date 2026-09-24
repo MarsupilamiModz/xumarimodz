@@ -44,7 +44,7 @@ function ResultRow({ item, onSelect }: { item: GlobalSearchItem; onSelect: () =>
     <Link
       href={item.href}
       onClick={onSelect}
-      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-white/5"
+      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-hover"
     >
       <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md bg-muted/30">
         {item.thumbnailUrl ? (
@@ -129,7 +129,7 @@ export const GlobalSearchDialog = memo(function GlobalSearchDialog({ locale }: {
             className="border-0 bg-transparent shadow-none focus-visible:ring-0"
           />
           {pending && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground shrink-0" />}
-          <button type="button" onClick={close} className="rounded-md p-1 hover:bg-white/5 shrink-0" aria-label={t("close")}>
+          <button type="button" onClick={close} className="rounded-md p-1 hover:bg-hover shrink-0" aria-label={t("close")}>
             <X className="h-4 w-4" />
           </button>
         </div>

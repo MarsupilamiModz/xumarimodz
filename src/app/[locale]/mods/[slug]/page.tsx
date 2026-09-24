@@ -174,7 +174,7 @@ export default async function ModDetailPage({
 
         <div className="lg:col-span-2 space-y-4 lg:sticky lg:top-24 lg:h-fit">
           <AdLocationSlot location="sidebar" />
-          <Card className="glass border-neon-purple/20 p-6 shadow-[0_0_30px_-8px_rgba(168,85,247,0.2)]">
+          <Card className="glass border-neon-purple/20 p-6">
             <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
               <span className="flex items-center gap-1">
                 <Star className="h-4 w-4 fill-neon-purple text-neon-purple" />

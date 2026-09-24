@@ -99,7 +99,7 @@ export function SiteBannerRail({ banners }: { banners: SiteBannerData[] }) {
             <button
               type="button"
               aria-label="Dismiss"
-              className="shrink-0 rounded-md p-1 hover:bg-white/5"
+              className="shrink-0 rounded-md p-1 hover:bg-hover"
               onClick={() => dismiss(banner)}
             >
               <X className="h-4 w-4" />

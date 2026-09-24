@@ -1,3 +1,4 @@
+import { colors } from "@/styles/tokens";
 import { formatMoneyFromCents, formatMoneyWithInterval } from "@/lib/currency";
 
 export type MembershipPerks = {
@@ -92,7 +93,7 @@ export const DEFAULT_MEMBERSHIP_PLANS: Omit<MembershipPlanData, "id">[] = [
       adFree: true,
       earlyAccess: false,
       customBadge: "premium-lite",
-      accentColor: "#60a5fa",
+      accentColor: colors.violet,
     },
     badgeSlug: "premium-lite",
     sortOrder: 0,
@@ -134,7 +135,7 @@ export const DEFAULT_MEMBERSHIP_PLANS: Omit<MembershipPlanData, "id">[] = [
       earlyAccessDays: 7,
       prioritySupport: true,
       customBadge: "premium",
-      accentColor: "#a855f7",
+      accentColor: colors.violet,
     },
     badgeSlug: "premium",
     sortOrder: 1,
@@ -181,7 +182,7 @@ export const DEFAULT_MEMBERSHIP_PLANS: Omit<MembershipPlanData, "id">[] = [
       exclusiveFeatures: true,
       prioritySupport: true,
       customBadge: "premium-max",
-      accentColor: "#3b82f6",
+      accentColor: colors.violet,
     },
     badgeSlug: "premium-max",
     sortOrder: 2,

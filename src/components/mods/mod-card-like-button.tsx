@@ -26,7 +26,7 @@ export function ModCardLikeButton({
       disabled={pending}
       className={cn(
         "absolute bottom-2.5 right-2.5 z-10 flex h-8 w-8 items-center justify-center rounded-full",
-        "border border-white/10 bg-background/70 backdrop-blur-md transition-all duration-200",
+        "border border-line bg-background/70 backdrop-blur-md transition-all duration-200",
         "hover:scale-110 hover:border-neon-purple/50 hover:bg-neon-purple/20",
         bump && "scale-125",
         className

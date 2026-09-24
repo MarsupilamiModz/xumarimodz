@@ -46,7 +46,7 @@ export function PartnerHubCard({
 
   return (
     <Link href={`/${locale}/partners/${partner.slug}`}>
-      <Card className="glass overflow-hidden h-full hover:border-neon-blue/40 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_0_24px_-4px_rgba(96,165,250,0.25)]">
+      <Card className="glass overflow-hidden h-full hover:border-neon-blue/40 transition-all duration-300 hover:-translate-y-0.5">
         <div className="relative h-24 bg-gradient-to-r from-neon-blue/20 to-neon-purple/20">
           {banner && <SafeImage src={banner} alt="" fill className="object-cover opacity-60" sizes="400px" />}
           <div className="absolute -bottom-6 left-4">

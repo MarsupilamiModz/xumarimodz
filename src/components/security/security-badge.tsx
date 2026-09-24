@@ -38,10 +38,10 @@ export function SecurityBadge({ scanStatus, isTrusted = false, compact = false, 
       variant="outline"
       className={cn(
         "gap-1 font-normal",
-        variant === "success" && "border-emerald-500/40 text-emerald-400 bg-emerald-500/10",
-        variant === "warning" && "border-amber-500/40 text-amber-400 bg-amber-500/10",
-        variant === "danger" && "border-red-500/40 text-red-400 bg-red-500/10",
-        variant === "info" && "border-blue-500/40 text-blue-400 bg-blue-500/10",
+        variant === "success" && "border-success/40 text-success bg-success/10",
+        variant === "warning" && "border-warning/40 text-warning bg-warning/10",
+        variant === "danger" && "border-danger/40 text-danger bg-danger/10",
+        variant === "info" && "border-line-control text-ink-muted bg-hover",
         className
       )}
     >
@@ -61,5 +61,5 @@ export function SecurityVerifiedIcon({
   className?: string;
 }) {
   if (!isSecurityVerified(scanStatus, isTrusted)) return null;
-  return <ShieldCheck className={cn("h-3.5 w-3.5 text-emerald-400", className)} />;
+  return <ShieldCheck className={cn("h-3.5 w-3.5 text-success", className)} />;
 }

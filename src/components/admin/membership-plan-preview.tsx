@@ -1,5 +1,6 @@
 "use client";
 
+import { colors } from "@/styles/tokens";
 import { useMemo } from "react";
 import { Crown, Check } from "lucide-react";
 import { Card } from "@/components/ui/card";
@@ -22,7 +23,7 @@ export function MembershipPlanPreview({
   const fullPlan = plan as MembershipPlanData;
   const pricing = useMemo(() => getEffectivePlanPrice(fullPlan), [fullPlan]);
   const timeLeft = getSaleTimeRemaining(fullPlan);
-  const accent = plan.cardStyle?.accentColor ?? plan.perks?.accentColor ?? "#a855f7";
+  const accent = plan.cardStyle?.accentColor ?? plan.perks?.accentColor ?? colors.violet;
   const icon = plan.iconKey ?? plan.cardStyle?.iconKey ?? PLAN_ICONS[plan.slug ?? ""] ?? "👑";
 
   return (
@@ -55,7 +56,7 @@ export function MembershipPlanPreview({
         {plan.isFeatured && <Crown className="h-5 w-5 text-neon-purple" />}
       </div>
       {timeLeft != null && timeLeft > 0 && (
-        <p className="text-xs text-amber-400 mb-2">Sale ends in {Math.ceil(timeLeft / 3600000)}h</p>
+        <p className="text-xs text-warning mb-2">Sale ends in {Math.ceil(timeLeft / 3600000)}h</p>
       )}
       <ul className="space-y-1 flex-1">
         {plan.features.slice(0, 4).map((f) => (

@@ -32,7 +32,7 @@ export function TutorialCard({ locale, tutorial }: { locale: string; tutorial: T
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={thumb} alt="" className="h-full w-full object-cover" />
             {duration ? (
-              <span className="absolute bottom-2 right-2 rounded bg-black/70 px-1.5 py-0.5 text-xs">
+              <span className="absolute bottom-2 right-2 rounded bg-canvas/70 px-1.5 py-0.5 text-xs">
                 {duration}
               </span>
             ) : null}

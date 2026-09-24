@@ -1,3 +1,4 @@
+import { colors } from "@/styles/tokens";
 import { getSiteSetting, setSiteSettingSafe } from "@/lib/site-settings";
 import type { Locale } from "@/i18n/config";
 import { locales } from "@/i18n/config";
@@ -110,11 +111,11 @@ export const DEFAULT_BRANDING_ASSETS: BrandingAssetSettings = {
   siteSymbolLetter: "X",
   siteSymbolUrl: null,
   siteSymbolLibrary: "sparkles",
-  siteSymbolColor: "#a855f7",
+  siteSymbolColor: colors.violet,
   logoObjectPosition: "center",
   footerText: "© Xumari Modz. All rights reserved.",
-  primaryColor: "#a855f7",
-  accentColor: "#3b82f6",
+  primaryColor: colors.violet,
+  accentColor: colors.violetBright,
 };
 
 export const DEFAULT_SEO: SeoSettings = {

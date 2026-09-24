@@ -37,7 +37,7 @@ export type LogoBranding = Pick<
 >;
 
 /** Alte Standardfarbe aus dem Branding-CMS; wird durch den Akzent-Token ersetzt. */
-const LEGACY_SYMBOL_COLOR = "#a855f7";
+const LEGACY_SYMBOL_COLOR = "#a855f7"; // check-tokens: ignore – Vergleichswert für alte CMS-Daten
 
 export function Logo({
   className,

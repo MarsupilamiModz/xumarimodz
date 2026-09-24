@@ -111,7 +111,7 @@ export function RevenueSharingPanel({ data }: { data: Dashboard }) {
               />
             </div>
           ))}
-          <p className={`text-sm ${Math.abs(total - 100) < 0.01 ? "text-emerald-400" : "text-destructive"}`}>
+          <p className={`text-sm ${Math.abs(total - 100) < 0.01 ? "text-success" : "text-destructive"}`}>
             Total: {total.toFixed(1)}% (must equal 100%)
           </p>
           <p className="text-xs text-muted-foreground">

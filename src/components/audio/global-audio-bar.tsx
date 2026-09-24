@@ -27,7 +27,7 @@ export function GlobalAudioBar() {
     <div
       className={cn(
         "fixed bottom-0 inset-x-0 z-50 border-t border-border/60 bg-background/95 backdrop-blur-md",
-        "shadow-[0_-8px_32px_-8px_rgba(0,0,0,0.45)]"
+        ""
       )}
     >
       <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-2.5 sm:gap-4">
@@ -53,7 +53,7 @@ export function GlobalAudioBar() {
           <button
             type="button"
             onClick={toggle}
-            className="rounded-full bg-neon-purple p-2 text-white hover:opacity-90"
+            className="rounded-full bg-violet text-violet-on hover:bg-violet-hover p-2 transition-colors duration-fast"
             aria-label={isPlaying ? "Pause" : "Play"}
           >
             {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4 ml-0.5" />}

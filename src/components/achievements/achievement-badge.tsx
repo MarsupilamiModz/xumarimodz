@@ -43,7 +43,7 @@ export function AchievementBadge({
           glowEffect && style.glow,
           animated && "animate-pulse"
         )}
-        style={{ borderColor: style.color, boxShadow: glowEffect ? `0 0 20px ${style.color}40` : undefined }}
+        style={{ borderColor: style.color }}
       >
         <span>{icon ?? "🏅"}</span>
       </div>

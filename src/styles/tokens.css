@@ -43,6 +43,9 @@
   --game-ets2: 30 58 95; /* #1e3a5f */
   --game-ls25: 107 84 18; /* #6b5412 */
 
+  /* Funktional: QR-Codes brauchen reinen weißen Hintergrund zum Scannen */
+  --qr-background: 255 255 255; /* #ffffff */
+
   /* Form */
   --radius-badge: 6px;
   --radius-control: 8px;

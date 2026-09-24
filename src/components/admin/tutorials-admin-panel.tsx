@@ -115,7 +115,7 @@ export function TutorialsAdminPanel({ data }: { data: AdminData }) {
                 }}
               />
               {uploading ? <span className="text-xs text-muted-foreground">Upload läuft…</span> : null}
-              {form.videoUrl ? <span className="text-xs text-emerald-400 truncate max-w-xs">{form.videoUrl}</span> : null}
+              {form.videoUrl ? <span className="text-xs text-success truncate max-w-xs">{form.videoUrl}</span> : null}
             </div>
             <Textarea placeholder="Kurzbeschreibung" className="sm:col-span-2" value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} />
             <Textarea placeholder="Artikel-Inhalt" className="sm:col-span-2 min-h-[120px]" value={form.content} onChange={(e) => setForm((f) => ({ ...f, content: e.target.value }))} />

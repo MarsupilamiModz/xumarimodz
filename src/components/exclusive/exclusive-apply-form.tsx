@@ -82,7 +82,7 @@ export function ExclusiveApplyForm({
       {program.description && <p className="text-sm">{program.description}</p>}
 
       {program.discordRequired && (
-        <p className="text-xs text-amber-400">Discord account must be linked in your settings.</p>
+        <p className="text-xs text-warning">Discord account must be linked in your settings.</p>
       )}
 
       <div>

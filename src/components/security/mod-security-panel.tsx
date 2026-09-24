@@ -19,10 +19,10 @@ export async function ModSecurityPanel({ scanStatus, scannedAt, isTrusted = fals
   const verified = scanStatus === "CLEAN" || scanStatus === "APPROVED";
 
   return (
-    <Card className="glass border-emerald-500/20">
+    <Card className="glass border-success/20">
       <CardHeader className="pb-3">
         <CardTitle className="text-base flex items-center gap-2">
-          <ShieldCheck className="h-4 w-4 text-emerald-400" />
+          <ShieldCheck className="h-4 w-4 text-success" />
           {t("panel.title")}
         </CardTitle>
       </CardHeader>
@@ -30,19 +30,19 @@ export async function ModSecurityPanel({ scanStatus, scannedAt, isTrusted = fals
         <div className="flex flex-wrap gap-2">
           {verified && (
             <>
-              <span className="text-emerald-400">{t("panel.virusTotalPassed")}</span>
+              <span className="text-success">{t("panel.virusTotalPassed")}</span>
               {scanStatus === "APPROVED" && (
-                <span className="text-emerald-400">{t("panel.manuallyVerified")}</span>
+                <span className="text-success">{t("panel.manuallyVerified")}</span>
               )}
-              <span className="text-emerald-400">{t("panel.safeDownload")}</span>
-              <span className="text-emerald-400">{t("panel.secureStorage")}</span>
+              <span className="text-success">{t("panel.safeDownload")}</span>
+              <span className="text-success">{t("panel.secureStorage")}</span>
             </>
           )}
           {!verified && <SecurityBadge scanStatus={scanStatus} isTrusted={isTrusted} />}
         </div>
 
         {verified && (
-          <p className="font-medium text-emerald-400">✓ {t("badges.verifiedSafe")}</p>
+          <p className="font-medium text-success">✓ {t("badges.verifiedSafe")}</p>
         )}
 
         {isTrusted && verified && (

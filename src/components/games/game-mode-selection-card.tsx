@@ -1,5 +1,6 @@
 "use client";
 
+import { colors } from "@/styles/tokens";
 import { memo } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
@@ -31,7 +32,7 @@ export const GameModeSelectionCard = memo(function GameModeSelectionCard({
   const t = useTranslations("games");
   const banner = mode.backgroundUrl ?? mode.bannerUrl ?? mode.thumbnailUrl;
   const href = `/${locale}/games/${gameSlug}/${mode.slug}`;
-  const accent = mode.accentColor ?? "#a855f7";
+  const accent = mode.accentColor ?? colors.violet;
 
   return (
     <Link
@@ -43,9 +44,9 @@ export const GameModeSelectionCard = memo(function GameModeSelectionCard({
     >
       <Card
         className={cn(
-          "relative overflow-hidden rounded-2xl border-white/15 bg-background/35 backdrop-blur-md",
+          "relative overflow-hidden rounded-2xl border-line bg-background/35 backdrop-blur-md",
           "transition-[transform,box-shadow,border-color] duration-150",
-          "hover:-translate-y-0.5 hover:border-white/30 will-change-transform",
+          "hover:-translate-y-0.5 hover:border-line-control will-change-transform",
           glowEnabled && "hover:shadow-[0_0_24px_var(--mode-glow)]"
         )}
         style={
@@ -72,7 +73,7 @@ export const GameModeSelectionCard = memo(function GameModeSelectionCard({
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
           {(mode.logoUrl || mode.iconUrl) && (
-            <div className="absolute left-3 top-3 flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl border border-white/20 bg-background/80 p-1">
+            <div className="absolute left-3 top-3 flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl border border-line-control bg-background/80 p-1">
               <SafeImage
                 src={mode.logoUrl ?? mode.iconUrl!}
                 alt=""

@@ -100,7 +100,7 @@ export const GameDiscoveryCard = memo(function GameDiscoveryCard({
       onKeyDown={handleKeyDown}
       className="group mx-auto w-full max-w-[280px] cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-neon-purple rounded-2xl"
     >
-      <Card className="relative flex h-full flex-col overflow-hidden rounded-2xl border-border/50 bg-background/40 transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-1 hover:border-neon-purple/50 hover:shadow-[0_8px_32px_rgba(168,85,247,0.22)]">
+      <Card className="relative flex h-full flex-col overflow-hidden rounded-2xl border-border/50 bg-background/40 transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-1 hover:border-neon-purple/50">
         <div className="relative aspect-[2/3] w-full shrink-0 overflow-hidden bg-muted/20">
           {coverSrc ? (
             <SafeImage

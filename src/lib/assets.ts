@@ -1,3 +1,4 @@
+import { colors } from "@/styles/tokens";
 import { getAppUrl } from "@/lib/app-url";
 import { resolveAvatarDisplayUrl } from "@/lib/avatar-url";
 import { getMediaUrl, getMediaProxyFallback } from "@/lib/media-url";
@@ -47,7 +48,7 @@ export function normalizeStoredAssetUrl(stored: string | null | undefined): stri
 export const DEFAULT_AVATAR_DATA_URI =
   "data:image/svg+xml," +
   encodeURIComponent(
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none"><rect width="64" height="64" rx="32" fill="#1e1b4b"/><circle cx="32" cy="26" r="12" fill="#6366f1"/><path d="M12 56c4-12 12-18 20-18s16 6 20 18" fill="#6366f1"/></svg>`
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none"><rect width="64" height="64" rx="32" fill="${colors.bgHover}"/><circle cx="32" cy="26" r="12" fill="${colors.inkFaint}"/><path d="M12 56c4-12 12-18 20-18s16 6 20 18" fill="${colors.inkFaint}"/></svg>`
   );
 
 function pickAvatarUrl(

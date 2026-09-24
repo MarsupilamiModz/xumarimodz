@@ -1,3 +1,4 @@
+import { colors } from "@/styles/tokens";
 import { getAppUrl } from "@/lib/app-url";
 
 export const SITE = {
@@ -10,5 +11,5 @@ export const SITE = {
   discord: "https://discord.gg/xumarimodz",
   twitter: "https://twitter.com/xumarimodz",
   // Muss bg-base aus src/styles/tokens.css entsprechen (Meta-Tag braucht einen festen Wert).
-  themeColor: "#121212",
+  themeColor: colors.bgBase,
 } as const;

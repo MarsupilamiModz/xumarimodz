@@ -1,5 +1,6 @@
 "use client";
 
+import { colors } from "@/styles/tokens";
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { Crown, Check, Loader2 } from "lucide-react";
@@ -117,7 +118,7 @@ export function PremiumPlansClient({ locale, plans, pageSettings, isLoggedIn, cu
         {plans.map((plan, index) => {
           const isCurrent = currentPlanSlug === plan.slug;
           const isOwnedHigher = currentSort >= 0 && index < currentSort;
-          const accent = plan.cardStyle?.accentColor ?? plan.perks?.accentColor ?? "#a855f7";
+          const accent = plan.cardStyle?.accentColor ?? plan.perks?.accentColor ?? colors.violet;
           const pricing = getEffectivePlanPrice(planForPricing(plan));
           const saleEnds = getSaleTimeRemaining(planForPricing(plan));
           const icon = plan.iconKey ?? plan.cardStyle?.iconKey ?? "👑";
@@ -150,7 +151,7 @@ export function PremiumPlansClient({ locale, plans, pageSettings, isLoggedIn, cu
                   </div>
                   <p className="text-xs text-muted-foreground mt-1">{billingLabel}</p>
                   {remaining != null && (
-                    <p className="text-xs text-amber-400/90 mt-1">
+                    <p className="text-xs text-warning/90 mt-1">
                       {soldOut ? "Sold out" : `${remaining} remaining`}
                     </p>
                   )}
@@ -160,12 +161,12 @@ export function PremiumPlansClient({ locale, plans, pageSettings, isLoggedIn, cu
                     </Badge>
                   )}
                   {pricing.onSale && (
-                    <span className="inline-block mt-1 text-xs rounded-full bg-amber-500/20 text-amber-400 px-2 py-0.5">
+                    <span className="inline-block mt-1 text-xs rounded-full bg-warning/20 text-warning px-2 py-0.5">
                       -{pricing.discountPercent}% limited offer
                     </span>
                   )}
                   {saleEnds != null && saleEnds > 0 && (
-                    <p className="text-xs text-amber-400 mt-1">Ends in {Math.ceil(saleEnds / 3600000)}h</p>
+                    <p className="text-xs text-warning mt-1">Ends in {Math.ceil(saleEnds / 3600000)}h</p>
                   )}
                 </div>
                 {plan.isFeatured && <Badge variant="premium">Popular</Badge>}

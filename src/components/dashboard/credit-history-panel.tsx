@@ -58,7 +58,7 @@ export function CreditHistoryPanel({
                     {formatDateTime(tx.createdAt, locale)}
                   </p>
                 </div>
-                <span className={tx.amount >= 0 ? "text-neon-blue font-semibold shrink-0" : "text-red-400 font-semibold shrink-0"}>
+                <span className={tx.amount >= 0 ? "text-neon-blue font-semibold shrink-0" : "text-danger font-semibold shrink-0"}>
                   {tx.amount >= 0 ? "+" : ""}
                   {formatCredits(tx.amount, locale)}
                 </span>

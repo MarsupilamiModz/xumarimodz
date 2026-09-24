@@ -141,7 +141,7 @@ export function AdsAdminPanel({ data }: Props) {
             ))}
           </div>
           {data.readiness.warnings.length > 0 && (
-            <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-xs text-amber-200">
+            <div className="rounded-lg border border-warning/30 bg-warning/10 p-3 text-xs text-warning">
               {data.readiness.warnings.map((w) => (
                 <p key={w}>{w}</p>
               ))}

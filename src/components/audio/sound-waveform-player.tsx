@@ -1,5 +1,7 @@
 "use client";
 
+
+import { colors } from "@/styles/tokens";
 import { useEffect, useRef, useState } from "react";
 import { Pause, Play, Volume2 } from "lucide-react";
 import { formatDuration } from "@/lib/sound";
@@ -82,9 +84,9 @@ export function SoundWaveformPlayer({
         normalize: true,
         interact: true,
         mediaControls: false,
-        waveColor: "rgba(168, 85, 247, 0.35)",
-        progressColor: "rgba(168, 85, 247, 0.95)",
-        cursorColor: "#a855f7",
+        waveColor: colors.lineControl,
+        progressColor: colors.violetBright,
+        cursorColor: colors.violetBright,
         ...(waveformPeaks?.length
           ? { peaks: [waveformPeaks], duration: durationSeconds ?? undefined }
           : {}),
@@ -173,7 +175,7 @@ export function SoundWaveformPlayer({
         <button
           type="button"
           onClick={togglePlay}
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-neon-purple text-white shadow-[0_0_20px_-4px_rgba(168,85,247,0.6)] hover:scale-105 transition-transform"
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-violet text-violet-on hover:bg-violet-hover transition-colors duration-fast"
           aria-label={isPlaying ? "Pause" : "Play"}
         >
           {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5 ml-0.5" />}

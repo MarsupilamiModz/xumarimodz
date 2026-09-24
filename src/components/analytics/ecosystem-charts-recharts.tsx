@@ -1,5 +1,7 @@
 "use client";
 
+
+import { colors } from "@/styles/tokens";
 import {
   Area,
   AreaChart,
@@ -26,19 +28,13 @@ export function RevenueChart({
       <div className="h-56">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data}>
-            <defs>
-              <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#a855f7" stopOpacity={0.35} />
-                <stop offset="95%" stopColor="#a855f7" stopOpacity={0} />
-              </linearGradient>
-            </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
-            <XAxis dataKey="date" tick={{ fontSize: 10 }} stroke="#888" tickFormatter={(v) => v.slice(5)} />
-            <YAxis tick={{ fontSize: 10 }} stroke="#888" />
+            <CartesianGrid strokeDasharray="3 3" stroke={colors.line} />
+            <XAxis dataKey="date" tick={{ fontSize: 10 }} stroke={colors.inkFaint} tickFormatter={(v) => v.slice(5)} />
+            <YAxis tick={{ fontSize: 10 }} stroke={colors.inkFaint} />
             <Tooltip
-              contentStyle={{ background: "rgba(10,10,20,0.95)", border: "1px solid rgba(168,85,247,0.3)", borderRadius: 8 }}
+              contentStyle={{ background: colors.bgRaised, border: `1px solid ${colors.line}`, borderRadius: 8, color: colors.ink }}
             />
-            <Area type="monotone" dataKey="revenue" stroke="#a855f7" fill="url(#revGrad)" name="Revenue (¢)" />
+            <Area type="monotone" dataKey="revenue" stroke={colors.violet} fill={colors.violet} fillOpacity={0.16} name="Revenue (¢)" />
           </AreaChart>
         </ResponsiveContainer>
       </div>
@@ -59,14 +55,14 @@ export function ConversionChart({
       <div className="h-56">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
-            <XAxis dataKey="date" tick={{ fontSize: 10 }} stroke="#888" tickFormatter={(v) => v.slice(5)} />
-            <YAxis tick={{ fontSize: 10 }} stroke="#888" />
+            <CartesianGrid strokeDasharray="3 3" stroke={colors.line} />
+            <XAxis dataKey="date" tick={{ fontSize: 10 }} stroke={colors.inkFaint} tickFormatter={(v) => v.slice(5)} />
+            <YAxis tick={{ fontSize: 10 }} stroke={colors.inkFaint} />
             <Tooltip
-              contentStyle={{ background: "rgba(10,10,20,0.95)", border: "1px solid rgba(59,130,246,0.3)", borderRadius: 8 }}
+              contentStyle={{ background: colors.bgRaised, border: `1px solid ${colors.line}`, borderRadius: 8, color: colors.ink }}
             />
-            <Bar dataKey="clicks" fill="#3b82f6" name="Clicks" radius={[4, 4, 0, 0]} />
-            <Bar dataKey="conversions" fill="#a855f7" name="Conversions" radius={[4, 4, 0, 0]} />
+            <Bar dataKey="clicks" fill={colors.inkFaint} name="Clicks" radius={[4, 4, 0, 0]} />
+            <Bar dataKey="conversions" fill={colors.violet} name="Conversions" radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>

@@ -47,7 +47,7 @@ export function TeamPageClient({ members, contactTicketHref }: Props) {
       <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6">
         <header className="mb-16 space-y-4 text-center">
           <p className="text-sm uppercase tracking-[0.3em] text-neon-purple">Xumari Modz</p>
-          <h1 className="bg-gradient-to-r from-white via-neon-purple to-neon-blue bg-clip-text text-4xl font-bold text-transparent sm:text-5xl">
+          <h1 className="bg-gradient-to-r from-ink via-neon-purple to-neon-blue bg-clip-text text-4xl font-bold text-transparent sm:text-5xl">
             Our Team
           </h1>
           <p className="mx-auto max-w-3xl text-muted-foreground">
@@ -62,15 +62,15 @@ export function TeamPageClient({ members, contactTicketHref }: Props) {
             {grouped.map((group) => (
               <section key={group.key} className="space-y-6">
                 <div className="space-y-3">
-                  <div className="h-px w-full bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+                  <div className="h-px w-full bg-gradient-to-r from-transparent via-ink/30 to-transparent" />
                   <div className="flex items-center justify-center gap-4">
-                    <span className="h-px flex-1 bg-white/10" />
-                    <h2 className="text-center text-xl font-bold tracking-[0.28em] text-white sm:text-2xl">
+                    <span className="h-px flex-1 bg-line" />
+                    <h2 className="text-center text-xl font-bold tracking-[0.28em] text-ink sm:text-2xl">
                       {teamRoleTitle(group.key)}
                     </h2>
-                    <span className="h-px flex-1 bg-white/10" />
+                    <span className="h-px flex-1 bg-line" />
                   </div>
-                  <div className="h-px w-full bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+                  <div className="h-px w-full bg-gradient-to-r from-transparent via-ink/30 to-transparent" />
                 </div>
 
                 <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -79,7 +79,7 @@ export function TeamPageClient({ members, contactTicketHref }: Props) {
                       key={member.id}
                       type="button"
                       onClick={() => setSelected(member)}
-                      className="group overflow-hidden rounded-2xl border border-white/10 bg-background/40 text-left transition-all duration-300 hover:-translate-y-1 hover:border-white/20 hover:shadow-[0_0_40px_-12px_rgba(168,85,247,0.45)]"
+                      className="group overflow-hidden rounded-2xl border border-line bg-background/40 text-left transition-all duration-300 hover:-translate-y-1 hover:border-line-control"
                       style={{ boxShadow: `0 0 0 1px ${teamRoleColor(member.roleGroup, member.roleColor)}20 inset` }}
                     >
                       <div
@@ -101,9 +101,9 @@ export function TeamPageClient({ members, contactTicketHref }: Props) {
                       </div>
                       <div className="space-y-2 p-4 pt-10">
                         <div className="flex flex-wrap items-center gap-2">
-                          <p className="font-semibold transition-colors group-hover:text-white">{member.name}</p>
+                          <p className="font-semibold transition-colors group-hover:text-ink">{member.name}</p>
                           <span
-                            className="rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white"
+                            className="rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-ink"
                             style={{ backgroundColor: teamRoleColor(member.roleGroup, member.roleColor) }}
                           >
                             {member.roleBadge || teamRoleTitle(member.roleGroup).replace(/S$/, "")}
@@ -172,7 +172,7 @@ export function TeamPageClient({ members, contactTicketHref }: Props) {
                           {selected.position}
                         </span>
                         <span
-                          className="rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white"
+                          className="rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-ink"
                           style={{ backgroundColor: teamRoleColor(selected.roleGroup, selected.roleColor) }}
                         >
                           {selected.roleBadge || teamRoleTitle(selected.roleGroup).replace(/S$/, "")}

@@ -1,5 +1,6 @@
 "use client";
 
+import { colors } from "@/styles/tokens";
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -107,7 +108,7 @@ const EMPTY_FORM: FormState = {
   name: "",
   roleGroup: "SUPPORT",
   roleBadge: "",
-  roleColor: "#a855f7",
+  roleColor: colors.violet,
   position: "",
   description: "",
   email: "",
