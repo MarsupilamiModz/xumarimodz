@@ -15,5 +15,28 @@
     "partners": "Partnerzy",
     "games": "Gry",
     "categories": "Kategorie"
+  },
+  "search": {
+    "pageTitle": "Szukaj",
+    "pageSubtitle": "Znajdź mody po nazwie, tagu, grze lub twórcy.",
+    "searchLabel": "Szukana fraza",
+    "submit": "Szukaj",
+    "gameLabel": "Gra",
+    "allGames": "Wszystkie gry",
+    "sortLabel": "Sortuj",
+    "sort": {
+      "downloads": "Najczęściej pobierane",
+      "trending": "Na czasie",
+      "rating": "Najlepiej oceniane",
+      "likes": "Najczęściej ulubione",
+      "newest": "Najnowsze",
+      "updated": "Ostatnio zaktualizowane"
+    },
+    "verifiedOnly": "Tylko zweryfikowani twórcy",
+    "tagsLabel": "Popularne tagi",
+    "resultsCount": "{count, plural, one {# wynik} few {# wyniki} other {# wyników}}",
+    "noResultsText": "Spróbuj innej frazy lub usuń filtry.",
+    "trendingTitle": "Popularne w tym tygodniu",
+    "loading": "Wyszukiwanie…"
   }
 }

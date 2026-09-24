@@ -15,5 +15,28 @@
     "partners": "Socios",
     "games": "Juegos",
     "categories": "Categorías"
+  },
+  "search": {
+    "pageTitle": "Buscar",
+    "pageSubtitle": "Encuentra mods por nombre, etiqueta, juego o creador.",
+    "searchLabel": "Término de búsqueda",
+    "submit": "Buscar",
+    "gameLabel": "Juego",
+    "allGames": "Todos los juegos",
+    "sortLabel": "Ordenar",
+    "sort": {
+      "downloads": "Más descargados",
+      "trending": "Tendencia",
+      "rating": "Mejor valorados",
+      "likes": "Más favoritos",
+      "newest": "Más nuevos",
+      "updated": "Actualizados recientemente"
+    },
+    "verifiedOnly": "Solo creadores verificados",
+    "tagsLabel": "Etiquetas populares",
+    "resultsCount": "{count, plural, one {# resultado} other {# resultados}}",
+    "noResultsText": "Prueba otro término o quita filtros.",
+    "trendingTitle": "Populares esta semana",
+    "loading": "Buscando…"
   }
 }
