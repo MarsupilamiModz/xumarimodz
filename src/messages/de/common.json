@@ -67,7 +67,8 @@
     "termsShort": "AGB",
     "withdrawal": "Widerrufsbelehrung",
     "disclaimer": "Nicht verbunden mit Rockstar Games, Cfx.re, Mojang, SCS Software oder GIANTS Software.",
-    "languages": "Sprachen"
+    "languages": "Sprachen",
+    "cookieSettings": "Cookie-Einstellungen"
   },
   "common": {
     "loading": "Lädt…",
@@ -139,5 +140,34 @@
     "placeholder": "Platzhalter",
     "new": "Neu",
     "unreadCount": "{count, plural, one {# ungelesene} other {# ungelesene}}"
+  },
+  "cookie": {
+    "title": "Cookies und Werbung",
+    "text": "Wir nutzen Cookies für Werbung, Statistik und Funktionen der Seite. Du kannst personalisierte Werbung erlauben oder nur notwendige Cookies zulassen. Deine Wahl kannst du jederzeit im Footer ändern.",
+    "essentialOnly": "Nur notwendige",
+    "acceptAll": "Alle erlauben",
+    "privacy": "Datenschutz"
+  },
+  "legal": {
+    "placeholderTitle": "Inhalt folgt",
+    "placeholderText": "Dieser Text wird gerade vorbereitet. Bei Fragen erreichst du uns über den Support.",
+    "imprint": "Impressum",
+    "withdrawal": "Widerrufsbelehrung",
+    "dmcaTitle": "Urheberrechtsverletzung melden",
+    "dmcaIntro": "Du bist Rechteinhaber und ein Inhalt auf Xumari Modz verletzt dein Urheberrecht? Schick uns eine Meldung. Wir antworten per E-Mail.",
+    "dmca": {
+      "company": "Firma / Organisation",
+      "legalName": "Vollständiger Name",
+      "email": "E-Mail für Rückfragen",
+      "phone": "Telefon (optional)",
+      "url": "Link zum betroffenen Inhalt",
+      "description": "Beschreibung und Nachweis der Rechte",
+      "descriptionPlaceholder": "Beschreib das geschützte Werk und wie der Inhalt es verletzt.",
+      "submit": "Meldung senden",
+      "sending": "Wird gesendet…",
+      "successTitle": "Meldung eingegangen",
+      "successText": "Wir prüfen deine Meldung und antworten per E-Mail.",
+      "error": "Die Meldung konnte nicht gesendet werden. Prüf deine Eingaben und versuch es erneut."
+    }
   }
 }

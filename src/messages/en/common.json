@@ -68,7 +68,8 @@
     "termsShort": "Terms",
     "withdrawal": "Right of withdrawal",
     "disclaimer": "Not affiliated with Rockstar Games, Cfx.re, Mojang, SCS Software or GIANTS Software.",
-    "languages": "Languages"
+    "languages": "Languages",
+    "cookieSettings": "Cookie settings"
   },
   "common": {
     "loading": "Loading…",
@@ -140,5 +141,34 @@
     "placeholder": "Placeholder",
     "new": "New",
     "unreadCount": "{count, plural, one {# unread} other {# unread}}"
+  },
+  "cookie": {
+    "title": "Cookies and ads",
+    "text": "We use cookies for ads, analytics and site features. You can allow personalized ads or keep essential cookies only. You can change your choice any time in the footer.",
+    "essentialOnly": "Essential only",
+    "acceptAll": "Allow all",
+    "privacy": "Privacy"
+  },
+  "legal": {
+    "placeholderTitle": "Content coming soon",
+    "placeholderText": "This text is being prepared. If you have questions, reach us via support.",
+    "imprint": "Legal notice",
+    "withdrawal": "Right of withdrawal",
+    "dmcaTitle": "Report copyright infringement",
+    "dmcaIntro": "Are you a rights holder and content on Xumari Modz infringes your copyright? Send us a notice. We will reply by email.",
+    "dmca": {
+      "company": "Company / organization",
+      "legalName": "Full legal name",
+      "email": "Contact email",
+      "phone": "Phone (optional)",
+      "url": "Link to the infringing content",
+      "description": "Description and proof of ownership",
+      "descriptionPlaceholder": "Describe the protected work and how the content infringes it.",
+      "submit": "Send notice",
+      "sending": "Sending…",
+      "successTitle": "Notice received",
+      "successText": "We will review your notice and reply by email.",
+      "error": "The notice could not be sent. Check your input and try again."
+    }
   }
 }

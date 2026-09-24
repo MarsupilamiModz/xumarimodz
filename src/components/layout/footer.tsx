@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { openCookieSettings } from "@/components/ads/cookie-consent-banner";
 import { useTranslations } from "next-intl";
 import { Logo, type LogoBranding } from "@/components/brand/logo";
 import { DEFAULT_FOOTER, type FooterSettings } from "@/lib/branding-defaults";
@@ -52,7 +53,7 @@ const LINK_LABEL_KEYS: Record<string, string> = {
   dmca: "dmca",
 };
 
-// TODO(content): Seiten /legal/imprint und /legal/withdrawal fehlen im Projekt – Rechtstexte liefern.
+// TODO(content): /legal/imprint und /legal/withdrawal zeigen einen Platzhalter – Rechtstexte liefern.
 const REQUIRED_LEGAL_LINKS = [
   { id: "imprint", href: "/legal/imprint", order: -2 },
   { id: "privacy", href: "/legal/privacy", order: -1 },
@@ -64,10 +65,12 @@ export function Footer({
   locale,
   footer,
   branding,
+  showCookieSettings = false,
 }: {
   locale: string;
   footer?: FooterSettings | null;
   branding?: LogoBranding | null;
+  showCookieSettings?: boolean;
 }) {
   const t = useTranslations("footer");
   const siteName = branding?.siteTitle ?? "Xumari Modz";
@@ -142,6 +145,13 @@ export function Footer({
                   </Link>
                 </li>
               ))}
+              {column.id === "legal" && showCookieSettings && (
+                <li>
+                  <button type="button" onClick={openCookieSettings} className={linkClass}>
+                    {t("cookieSettings")}
+                  </button>
+                </li>
+              )}
             </ul>
           </nav>
         ))}

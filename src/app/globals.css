@@ -102,6 +102,36 @@
   .link {
     @apply text-violet-bright underline-offset-4 hover:underline;
   }
+
+  /* Rechtstexte (ohne Typography-Plugin) */
+  .legal-body {
+    @apply text-[15px] leading-7 text-ink-muted;
+  }
+  .legal-body > * + * {
+    @apply mt-4;
+  }
+  .legal-body h2 {
+    @apply mt-10 text-xl font-bold text-ink;
+  }
+  .legal-body h3 {
+    @apply mt-8 text-base font-semibold text-ink;
+  }
+  .legal-body ul,
+  .legal-body ol {
+    @apply space-y-2 pl-5;
+  }
+  .legal-body ul {
+    @apply list-disc;
+  }
+  .legal-body ol {
+    @apply list-decimal;
+  }
+  .legal-body a {
+    @apply text-violet-bright underline underline-offset-4;
+  }
+  .legal-body strong {
+    @apply font-semibold text-ink;
+  }
 }
 
 @layer utilities {

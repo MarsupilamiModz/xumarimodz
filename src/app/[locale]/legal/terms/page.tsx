@@ -1,8 +1,13 @@
+import type { Metadata } from "next";
 import { SITE } from "@/lib/site";
+import { LegalPage } from "@/components/legal/legal-page";
+
+// TODO(content): AGB sind nur ein kurzer englischer Platzhalter – vollständigen Text liefern.
+export const metadata: Metadata = { title: "Terms of Service" };
+
 export default function TermsPage() {
   return (
-    <article className="mx-auto max-w-3xl px-4 py-16 sm:px-6 prose prose-invert">
-      <h1>Terms of Service</h1>
+    <LegalPage title="Terms of Service">
       <p>
         By using {SITE.name} you agree to these terms. Mod creators retain intellectual property rights to
         their content. Premium subscriptions renew automatically unless canceled before the renewal date.
@@ -11,6 +16,6 @@ export default function TermsPage() {
         You may not redistribute premium downloads outside the platform. Violations may result in account
         suspension.
       </p>
-    </article>
+    </LegalPage>
   );
 }

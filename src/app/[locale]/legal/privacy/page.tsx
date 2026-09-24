@@ -1,8 +1,13 @@
+import type { Metadata } from "next";
 import { SITE } from "@/lib/site";
+import { LegalPage } from "@/components/legal/legal-page";
+
+// TODO(content): Datenschutzerklärung ist nur ein kurzer englischer Platzhalter – vollständigen Text liefern.
+export const metadata: Metadata = { title: "Privacy Policy" };
+
 export default function PrivacyPage() {
   return (
-    <article className="mx-auto max-w-3xl px-4 py-16 sm:px-6 prose prose-invert">
-      <h1>Privacy Policy</h1>
+    <LegalPage title="Privacy Policy">
       <p>
         {SITE.name} collects account data, download analytics, and payment information processed securely
         via Stripe. We do not sell personal data to third parties.
@@ -11,6 +16,6 @@ export default function PrivacyPage() {
         Discord OAuth is used for login and community role sync. You can request account deletion by
         contacting support.
       </p>
-    </article>
+    </LegalPage>
   );
 }

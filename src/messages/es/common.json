@@ -67,7 +67,8 @@
     "termsShort": "Condiciones",
     "withdrawal": "Derecho de desistimiento",
     "disclaimer": "Sin afiliación con Rockstar Games, Cfx.re, Mojang, SCS Software ni GIANTS Software.",
-    "languages": "Idiomas"
+    "languages": "Idiomas",
+    "cookieSettings": "Configuración de cookies"
   },
   "common": {
     "loading": "Cargando…",
@@ -121,5 +122,34 @@
     "placeholder": "Marcador de posición",
     "new": "Nuevo",
     "unreadCount": "{count, plural, one {# sin leer} other {# sin leer}}"
+  },
+  "cookie": {
+    "title": "Cookies y publicidad",
+    "text": "Usamos cookies para publicidad, estadísticas y funciones del sitio. Puedes permitir anuncios personalizados o solo cookies esenciales. Puedes cambiar tu elección en cualquier momento en el pie de página.",
+    "essentialOnly": "Solo esenciales",
+    "acceptAll": "Permitir todas",
+    "privacy": "Privacidad"
+  },
+  "legal": {
+    "placeholderTitle": "Contenido próximamente",
+    "placeholderText": "Este texto se está preparando. Si tienes preguntas, contáctanos a través del soporte.",
+    "imprint": "Aviso legal",
+    "withdrawal": "Derecho de desistimiento",
+    "dmcaTitle": "Denunciar infracción de derechos de autor",
+    "dmcaIntro": "¿Eres titular de derechos y un contenido de Xumari Modz infringe tus derechos de autor? Envíanos un aviso. Te responderemos por correo.",
+    "dmca": {
+      "company": "Empresa / organización",
+      "legalName": "Nombre completo",
+      "email": "Correo de contacto",
+      "phone": "Teléfono (opcional)",
+      "url": "Enlace al contenido infractor",
+      "description": "Descripción y prueba de titularidad",
+      "descriptionPlaceholder": "Describe la obra protegida y cómo la infringe el contenido.",
+      "submit": "Enviar aviso",
+      "sending": "Enviando…",
+      "successTitle": "Aviso recibido",
+      "successText": "Revisaremos tu aviso y responderemos por correo.",
+      "error": "No se pudo enviar el aviso. Revisa los datos e inténtalo de nuevo."
+    }
   }
 }

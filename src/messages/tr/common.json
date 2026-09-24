@@ -67,7 +67,8 @@
     "termsShort": "Koşullar",
     "withdrawal": "Cayma hakkı",
     "disclaimer": "Rockstar Games, Cfx.re, Mojang, SCS Software veya GIANTS Software ile bağlantılı değildir.",
-    "languages": "Diller"
+    "languages": "Diller",
+    "cookieSettings": "Çerez ayarları"
   },
   "common": {
     "loading": "Yükleniyor…",
@@ -121,5 +122,34 @@
     "placeholder": "Yer tutucu",
     "new": "Yeni",
     "unreadCount": "{count, plural, other {# okunmamış}}"
+  },
+  "cookie": {
+    "title": "Çerezler ve reklamlar",
+    "text": "Reklam, istatistik ve site özellikleri için çerez kullanıyoruz. Kişiselleştirilmiş reklamlara izin verebilir veya yalnızca gerekli çerezleri seçebilirsin. Seçimini istediğin zaman alt bilgiden değiştirebilirsin.",
+    "essentialOnly": "Yalnızca gerekli",
+    "acceptAll": "Tümüne izin ver",
+    "privacy": "Gizlilik"
+  },
+  "legal": {
+    "placeholderTitle": "İçerik yakında",
+    "placeholderText": "Bu metin hazırlanıyor. Sorun varsa destek üzerinden bize ulaşabilirsin.",
+    "imprint": "Künye",
+    "withdrawal": "Cayma hakkı",
+    "dmcaTitle": "Telif hakkı ihlali bildir",
+    "dmcaIntro": "Hak sahibi misin ve Xumari Modz'daki bir içerik telif hakkını mı ihlal ediyor? Bize bildirim gönder. E-postayla yanıt vereceğiz.",
+    "dmca": {
+      "company": "Şirket / kuruluş",
+      "legalName": "Tam ad",
+      "email": "İletişim e-postası",
+      "phone": "Telefon (isteğe bağlı)",
+      "url": "İhlal eden içeriğin bağlantısı",
+      "description": "Açıklama ve sahiplik kanıtı",
+      "descriptionPlaceholder": "Korunan eseri ve içeriğin onu nasıl ihlal ettiğini açıkla.",
+      "submit": "Bildirimi gönder",
+      "sending": "Gönderiliyor…",
+      "successTitle": "Bildirim alındı",
+      "successText": "Bildirimini inceleyip e-postayla yanıt vereceğiz.",
+      "error": "Bildirim gönderilemedi. Bilgilerini kontrol edip tekrar dene."
+    }
   }
 }

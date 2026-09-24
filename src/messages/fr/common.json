@@ -67,7 +67,8 @@
     "termsShort": "CGV",
     "withdrawal": "Droit de rétractation",
     "disclaimer": "Non affilié à Rockstar Games, Cfx.re, Mojang, SCS Software ou GIANTS Software.",
-    "languages": "Langues"
+    "languages": "Langues",
+    "cookieSettings": "Paramètres des cookies"
   },
   "common": {
     "loading": "Chargement…",
@@ -121,5 +122,34 @@
     "placeholder": "Espace réservé",
     "new": "Nouveau",
     "unreadCount": "{count, plural, one {# non lue} other {# non lues}}"
+  },
+  "cookie": {
+    "title": "Cookies et publicité",
+    "text": "Nous utilisons des cookies pour la publicité, les statistiques et les fonctions du site. Tu peux autoriser la publicité personnalisée ou seulement les cookies essentiels. Tu peux modifier ton choix à tout moment dans le pied de page.",
+    "essentialOnly": "Essentiels uniquement",
+    "acceptAll": "Tout autoriser",
+    "privacy": "Confidentialité"
+  },
+  "legal": {
+    "placeholderTitle": "Contenu à venir",
+    "placeholderText": "Ce texte est en cours de préparation. Pour toute question, contacte-nous via le support.",
+    "imprint": "Mentions légales",
+    "withdrawal": "Droit de rétractation",
+    "dmcaTitle": "Signaler une violation de droits d'auteur",
+    "dmcaIntro": "Tu es titulaire de droits et un contenu sur Xumari Modz enfreint ton droit d'auteur ? Envoie-nous une notification. Nous répondrons par e-mail.",
+    "dmca": {
+      "company": "Entreprise / organisation",
+      "legalName": "Nom complet",
+      "email": "E-mail de contact",
+      "phone": "Téléphone (facultatif)",
+      "url": "Lien vers le contenu concerné",
+      "description": "Description et preuve de propriété",
+      "descriptionPlaceholder": "Décris l'œuvre protégée et comment le contenu l'enfreint.",
+      "submit": "Envoyer la notification",
+      "sending": "Envoi…",
+      "successTitle": "Notification reçue",
+      "successText": "Nous examinerons ta notification et répondrons par e-mail.",
+      "error": "La notification n'a pas pu être envoyée. Vérifie tes données et réessaie."
+    }
   }
 }

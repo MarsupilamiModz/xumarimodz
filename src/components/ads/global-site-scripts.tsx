@@ -2,7 +2,6 @@ import Script from "next/script";
 import { getHeadScriptsSettings, stripScriptTags } from "@/lib/head-scripts";
 import { AdSenseScript } from "@/components/ads/adsense-script";
 import { GoogleConsentDefault } from "@/components/ads/google-consent-mode";
-import { CookieConsentBanner } from "@/components/ads/cookie-consent-banner";
 import { shouldLoadGlobalAdSense } from "@/components/ads/global-site-ads";
 
 export async function GlobalSiteScripts() {
@@ -38,7 +37,6 @@ export async function GlobalSiteScripts() {
           dangerouslySetInnerHTML={{ __html: stripScriptTags(snippet.html) }}
         />
       ))}
-      {consentMode && <CookieConsentBanner />}
     </>
   );
 }

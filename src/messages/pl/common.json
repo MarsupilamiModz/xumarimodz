@@ -67,7 +67,8 @@
     "termsShort": "Regulamin",
     "withdrawal": "Prawo odstąpienia",
     "disclaimer": "Brak powiązań z Rockstar Games, Cfx.re, Mojang, SCS Software ani GIANTS Software.",
-    "languages": "Języki"
+    "languages": "Języki",
+    "cookieSettings": "Ustawienia cookie"
   },
   "common": {
     "loading": "Ładowanie…",
@@ -121,5 +122,34 @@
     "placeholder": "Symbol zastępczy",
     "new": "Nowe",
     "unreadCount": "{count, plural, one {# nieprzeczytane} few {# nieprzeczytane} many {# nieprzeczytanych} other {# nieprzeczytanych}}"
+  },
+  "cookie": {
+    "title": "Pliki cookie i reklamy",
+    "text": "Używamy plików cookie do reklam, statystyk i funkcji strony. Możesz zezwolić na spersonalizowane reklamy lub tylko na niezbędne pliki cookie. Wybór możesz zmienić w każdej chwili w stopce.",
+    "essentialOnly": "Tylko niezbędne",
+    "acceptAll": "Zezwól na wszystkie",
+    "privacy": "Prywatność"
+  },
+  "legal": {
+    "placeholderTitle": "Treść wkrótce",
+    "placeholderText": "Ten tekst jest w przygotowaniu. W razie pytań skontaktuj się z pomocą.",
+    "imprint": "Nota prawna",
+    "withdrawal": "Prawo odstąpienia",
+    "dmcaTitle": "Zgłoś naruszenie praw autorskich",
+    "dmcaIntro": "Jesteś właścicielem praw, a treść na Xumari Modz narusza Twoje prawa autorskie? Wyślij nam zgłoszenie. Odpowiemy e-mailem.",
+    "dmca": {
+      "company": "Firma / organizacja",
+      "legalName": "Imię i nazwisko",
+      "email": "E-mail kontaktowy",
+      "phone": "Telefon (opcjonalnie)",
+      "url": "Link do naruszającej treści",
+      "description": "Opis i dowód posiadania praw",
+      "descriptionPlaceholder": "Opisz chronione dzieło i sposób, w jaki treść je narusza.",
+      "submit": "Wyślij zgłoszenie",
+      "sending": "Wysyłanie…",
+      "successTitle": "Zgłoszenie otrzymane",
+      "successText": "Sprawdzimy zgłoszenie i odpowiemy e-mailem.",
+      "error": "Nie udało się wysłać zgłoszenia. Sprawdź dane i spróbuj ponownie."
+    }
   }
 }

@@ -19,6 +19,7 @@ import { PlatformVisitTracker } from "@/components/analytics/platform-visit-trac
 import { GlobalSearchShell } from "@/components/search/global-search-shell";
 import { GlobalSiteBanners } from "@/components/banners/global-site-banners";
 import { isDynamicServerUsageError } from "@/lib/is-dynamic-server-error";
+import { CookieConsentSlot } from "@/components/ads/cookie-consent-slot";
 
 const PlatformAudioShell = dynamic(
   () =>
@@ -98,6 +99,7 @@ export default async function LocaleLayout({
         </div>
       </GlobalSearchShell>
       <Toaster />
+      <CookieConsentSlot />
     </IntlProvider>
   );
 }
