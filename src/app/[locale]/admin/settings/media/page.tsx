@@ -8,7 +8,7 @@ export default async function AdminMediaSettingsPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold">Media Settings</h1>
+      <h1 className="h1-acp">Media Settings</h1>
       <p className="mt-1 text-sm text-muted-foreground">
         Configure screenshot limits, file types, and compression for mod uploads.
       </p>

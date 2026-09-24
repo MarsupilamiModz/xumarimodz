@@ -19,7 +19,8 @@ export default async function PartnerLayout({
   const profile = await prisma.partnerProfile.findUnique({ where: { userId: user.id } });
 
   if (!profile && !isPartner(user.role)) {
-    redirect(`/${locale}/dashboard/settings`);
+    // Noch kein Partner: zur Bewerbung.
+    redirect(`/${locale}/become-partner`);
   }
 
   const nav = [
@@ -31,10 +32,10 @@ export default async function PartnerLayout({
   ];
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+    <div className="page-container py-8">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-ink">{t("partnerStudio")}</h1>
-        <p className="text-sm text-muted-foreground mt-1">{t("partnerSubtitle")}</p>
+        <h1 className="h1-acp">{t("partnerStudio")}</h1>
+        <p className="mt-1 text-sm text-ink-muted">{t("partnerSubtitle")}</p>
       </div>
       <StudioNav locale={locale} base="/partner" items={nav} />
       {children}

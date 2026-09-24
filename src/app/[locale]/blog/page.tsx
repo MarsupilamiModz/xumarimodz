@@ -16,7 +16,7 @@ export default async function BlogPage({ params: { locale } }: { params: { local
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6">
-      <h1 className="text-3xl font-bold text-ink">News & Updates</h1>
+      <h1 className="h1-display">News & Updates</h1>
       <div className="mt-10 space-y-4">
         {posts.length === 0 ? (
           <p className="text-muted-foreground">No posts yet. Check back soon.</p>

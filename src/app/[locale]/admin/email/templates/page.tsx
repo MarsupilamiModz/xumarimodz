@@ -15,7 +15,7 @@ export default async function AdminEmailTemplatesPage({ params: { locale } }: { 
       <Link href={`/${locale}/admin/email`} className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
         <ArrowLeft className="h-4 w-4" /> Back to email settings
       </Link>
-      <h1 className="text-2xl font-bold">Email Templates</h1>
+      <h1 className="h1-acp">Email Templates</h1>
       {!result.success && (
         <div className="rounded-lg border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive">
           {result.error}

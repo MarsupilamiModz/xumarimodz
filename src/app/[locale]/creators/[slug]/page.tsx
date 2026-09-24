@@ -78,7 +78,7 @@ export default async function CreatorProfilePage({
           </div>
         )}
         <div className="absolute inset-0" />
-        <div className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6">
+        <div className="page-container relative py-14">
           <div className="flex flex-wrap items-start gap-5">
             {profile.user.avatarUrl ? (
               <div className="relative h-24 w-24 rounded-lg overflow-hidden border-2 border-violet-bright/40">
@@ -91,7 +91,7 @@ export default async function CreatorProfilePage({
                 <CreatorRankBadge tier={profile.rankTier} size="sm" />
                 {profile.isFeatured && <Badge variant="outline">{t("featured")}</Badge>}
               </div>
-              <h1 className="text-3xl font-bold">{formatDisplayName(profile.user)}</h1>
+              <h1 className="h1-acp">{formatDisplayName(profile.user)}</h1>
               <div className="mt-3">
                 <FollowButton followingUserId={profile.userId} profileType="creator" locale={locale} />
               </div>
@@ -119,14 +119,14 @@ export default async function CreatorProfilePage({
       </section>
 
       {profile.description && (
-        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+        <div className="page-container py-8">
           <Card className="p-6">
             <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">{profile.description}</p>
           </Card>
         </div>
       )}
 
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+      <div className="page-container py-8">
         <AdLocationSlot location="creator" className="mb-6" />
         <h2 className="text-xl font-bold mb-6">{t("uploads")}</h2>
         {mods.length === 0 ? (

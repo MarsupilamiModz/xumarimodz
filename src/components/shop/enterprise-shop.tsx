@@ -72,7 +72,7 @@ export function ShopProductOrderPage({ product, locale }: { product: Product; lo
               {product.customType && <Badge variant="outline">{product.customType.name}</Badge>}
               {product.shopCategory && <Badge variant="secondary">{product.shopCategory.name}</Badge>}
             </div>
-            <h1 className="text-3xl font-bold">{product.name}</h1>
+            <h1 className="h1-display">{product.name}</h1>
             {product.shortDescription && (
               <p className="text-muted-foreground mt-2">{product.shortDescription}</p>
             )}

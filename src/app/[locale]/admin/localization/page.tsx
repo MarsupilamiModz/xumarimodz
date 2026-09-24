@@ -9,7 +9,7 @@ export default async function AdminLocalizationPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold">AI Localization</h1>
+      <h1 className="h1-acp">AI Localization</h1>
       <p className="mt-1 text-sm text-muted-foreground">
         Translation queue, approvals, and AI-powered content localization.
       </p>

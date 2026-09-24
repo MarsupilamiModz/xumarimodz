@@ -39,7 +39,7 @@ export default function AdminAnnouncementsPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold">Announcements</h1>
+      <h1 className="h1-acp">Announcements</h1>
       <p className="mt-1 text-sm text-muted-foreground">Site-wide banners on the homepage</p>
 
       <Card className="mt-8 p-6 max-w-xl">

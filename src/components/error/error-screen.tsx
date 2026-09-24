@@ -29,7 +29,7 @@ export function ErrorScreen({
           <Icon className="h-6 w-6" aria-hidden />
         </span>
         <p className="meta mt-6 font-semibold uppercase tracking-wide tabular-nums">{label}</p>
-        <h1 className="mt-2 text-[28px] font-extrabold leading-tight tracking-display text-ink md:text-[36px]">
+        <h1 className="h1-display mt-2">
           {title}
         </h1>
         <p className="mt-3 text-base text-ink-muted">{description}</p>

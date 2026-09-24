@@ -258,7 +258,7 @@ export function ModAdminPanel({
       <div className="space-y-6 max-w-3xl">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-bold">{mod.title}</h1>
+            <h1 className="h1-acp">{mod.title}</h1>
             <p className="text-sm text-muted-foreground mt-1">/{mod.slug}</p>
           </div>
           <div className="flex gap-2">

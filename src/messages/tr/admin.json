@@ -86,6 +86,51 @@
     "apiKeys": {
       "title": "API Anahtarı Yönetimi",
       "subtitle": "Geliştiriciler ve masaüstü istemcisi için genel API anahtarları oluşturun ve iptal edin"
+    },
+    "acpTitle": "ACP",
+    "acpSubtitle": "Admin Control Panel",
+    "acpMenu": "ACP menüsü",
+    "navGroup": {
+      "general": "Genel",
+      "shop": "Mağaza",
+      "website": "Web sitesi",
+      "more": "Diğer"
+    },
+    "nav": {
+      "dashboard": "Pano",
+      "mods": "Modlar",
+      "games": "Oyunlar",
+      "users": "Kullanıcılar",
+      "reports": "Bildirimler",
+      "settings": "Ayarlar",
+      "shopOverview": "Mağaza özeti",
+      "products": "Ürünler",
+      "orders": "Siparişler",
+      "coupons": "Kuponlar",
+      "subscriptions": "Satın alımlar ve abonelikler",
+      "memberships": "Üyelikler",
+      "licenses": "Lisanslar",
+      "content": "İçerik",
+      "announcements": "Duyurular",
+      "partners": "Ortaklar",
+      "creators": "Üreticiler",
+      "applications": "Başvurular",
+      "commissions": "Komisyonlar",
+      "collections": "Koleksiyonlar",
+      "tickets": "Destek talepleri",
+      "analytics": "Analitik",
+      "audit": "Denetim günlüğü",
+      "achievements": "Başarımlar",
+      "leaderboards": "Lider tabloları",
+      "ads": "Reklamlar",
+      "email": "E-posta",
+      "emailTemplates": "E-posta şablonları",
+      "groups": "Gruplar ve izinler",
+      "localization": "Yerelleştirme",
+      "media": "Medya",
+      "system": "Sistem durumu",
+      "security": "Güvenlik",
+      "apiKeys": "API anahtarları"
     }
   }
 }

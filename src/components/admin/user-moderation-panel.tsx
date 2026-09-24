@@ -79,7 +79,7 @@ export function UserModerationPanel({
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">User Moderation</h1>
+        <h1 className="h1-acp">User Moderation</h1>
         <p className="text-sm text-muted-foreground mt-1">
           Manage bans, suspensions, warnings, and account actions. {flagged} users currently flagged.
         </p>

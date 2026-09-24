@@ -95,7 +95,7 @@ export default async function DashboardPage({
 
   return (
     <div>
-      <h1 className="text-2xl font-bold">{t("title")}</h1>
+      <h1 className="h1-acp">{t("title")}</h1>
       <p className="text-muted-foreground">{t("welcome", { name: formatDisplayName(user) })}</p>
 
       <Suspense fallback={<StatsSkeleton />}>

@@ -64,7 +64,7 @@ export function CategoryNav({
     : [];
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 space-y-3">
+    <div className="page-container py-6 space-y-3">
       {breadcrumb.length > 0 && (
         <nav className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
           <Link href={`/${locale}/games/${gameSlug}`} className="hover:text-foreground transition-colors">

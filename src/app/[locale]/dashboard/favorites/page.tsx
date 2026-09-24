@@ -13,7 +13,7 @@ export default async function FavoritesPage({ params: { locale } }: { params: { 
 
   return (
     <div>
-      <h1 className="text-2xl font-bold">Favorites</h1>
+      <h1 className="h1-acp">Favorites</h1>
       <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {favorites.length === 0 ? (
           <Card className="col-span-full p-12 text-center">

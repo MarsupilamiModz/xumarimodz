@@ -32,7 +32,7 @@ export default async function AdminShopPage({ params: { locale } }: { params: { 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Shop Management</h1>
+        <h1 className="h1-acp">Shop Management</h1>
         <p className="text-muted-foreground">Manage credit packs, products, prices, and featured items.</p>
       </div>
       {loadError && (

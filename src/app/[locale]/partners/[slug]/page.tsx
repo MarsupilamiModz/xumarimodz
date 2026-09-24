@@ -48,7 +48,7 @@ export default async function PartnerProfilePage({
           </div>
         )}
         <div className="absolute inset-0" />
-        <div className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6">
+        <div className="page-container relative py-14">
           <div className="flex flex-wrap items-start gap-5">
             {profile.user.avatarUrl && (
               <div className="relative h-24 w-24 rounded-lg overflow-hidden border-2 border-line-control">
@@ -61,7 +61,7 @@ export default async function PartnerProfilePage({
                 {profile.isVerified && <Badge variant="premium">{t("verified")}</Badge>}
                 {profile.isFeatured && <Badge variant="outline">{t("featured")}</Badge>}
               </div>
-              <h1 className="text-3xl font-bold">{formatDisplayName(profile.user)}</h1>
+              <h1 className="h1-acp">{formatDisplayName(profile.user)}</h1>
               {profile.tagline && <p className="text-muted-foreground mt-1">{profile.tagline}</p>}
               {profile.affiliateCode && (
                 <p className="text-sm mt-2 font-mono text-ink-muted">{t("affiliateCode")}: {profile.affiliateCode}</p>
@@ -86,7 +86,7 @@ export default async function PartnerProfilePage({
         </div>
       </section>
       {(showcased.length > 0 || profile.description) && (
-        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 space-y-6">
+        <div className="page-container py-8 space-y-6">
           {showcased.length > 0 && <ProfileShowcase achievements={showcased} />}
           {profile.description && (
           <Card className="p-6">

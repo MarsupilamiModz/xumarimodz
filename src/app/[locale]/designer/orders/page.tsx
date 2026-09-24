@@ -12,7 +12,7 @@ export default async function DesignerOrdersPage({ params: { locale } }: { param
 
   return (
     <div>
-      <h1 className="text-2xl font-bold">{t("orders")}</h1>
+      <h1 className="h1-acp">{t("orders")}</h1>
       <div className="mt-8 space-y-3">
         {orders.length === 0 ? (
           <Card className="p-10 text-center text-muted-foreground">{t("emptyOrders")}</Card>

@@ -100,7 +100,7 @@ export function SystemHealthMonitor({ initial }: { initial: SystemHealthSnapshot
           <Badge className="mb-2 bg-violet-soft text-violet-bright border-violet-bright/40">
             Owner only
           </Badge>
-          <h1 className="text-2xl font-bold">System Health</h1>
+          <h1 className="h1-acp">System Health</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Live infrastructure status — active users, upload queues, storage, payments, and integrations.
           </p>

@@ -29,7 +29,7 @@ export default async function EditGamePage({
       >
         <ArrowLeft className="h-4 w-4" /> {tc("back")}
       </Link>
-      <h1 className="text-2xl font-bold tracking-tight">{t("games")}: {game.name}</h1>
+      <h1 className="h1-acp">{t("games")}: {game.name}</h1>
       <GameForm
         locale={locale}
         game={{

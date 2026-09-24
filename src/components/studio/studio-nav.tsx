@@ -16,26 +16,28 @@ export function StudioNav({
   const pathname = usePathname();
 
   return (
-    <nav className="flex flex-wrap gap-1 mb-8 p-1 rounded-xl bg-card/30 border border-border/40">
+    <nav className="-mx-4 mb-8 overflow-x-auto border-b border-line px-4 lg:mx-0 lg:px-0">
+      <ul className="flex gap-1">
       {items.map((item) => {
         const href = `/${locale}${base}${item.href}`;
-        const active = pathname === href || (item.href !== "" && pathname.startsWith(href));
+        const active = pathname === href || (item.href !== "" && pathname?.startsWith(`${href}/`));
         return (
-          <Link
-            key={item.href}
-            href={href}
-            prefetch
-            className={cn(
-              "px-3 py-2 rounded-lg text-sm transition-all",
-              active
-                ? "bg-violet-soft text-foreground font-medium"
-                : "text-muted-foreground hover:text-foreground hover:bg-accent/20"
-            )}
-          >
-            {item.label}
-          </Link>
+          <li key={item.href} className="shrink-0">
+            <Link
+              href={href}
+              aria-current={active ? "page" : undefined}
+              className={cn(
+                "relative flex h-11 items-center whitespace-nowrap px-3 text-sm transition-colors duration-fast",
+                "after:absolute after:inset-x-3 after:bottom-0 after:h-0.5 after:rounded-full",
+                active ? "font-semibold text-ink after:bg-violet-bright" : "text-ink-muted hover:text-ink"
+              )}
+            >
+              {item.label}
+            </Link>
+          </li>
         );
       })}
+      </ul>
     </nav>
   );
 }

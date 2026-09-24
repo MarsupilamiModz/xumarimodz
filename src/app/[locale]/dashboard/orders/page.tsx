@@ -15,7 +15,7 @@ export default async function OrdersPage({ params: { locale } }: { params: { loc
   return (
     <div>
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Custom Orders</h1>
+        <h1 className="h1-acp">Custom Orders</h1>
         <Button size="sm" asChild>
           <Link href={`/${locale}/custom-orders`}>
             <Plus className="h-4 w-4 mr-1" /> New order

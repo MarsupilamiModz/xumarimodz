@@ -18,7 +18,7 @@ export default async function SettingsPage({ params: { locale } }: { params: { l
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold">Settings</h1>
+        <h1 className="h1-acp">Settings</h1>
         <div className="mt-6">
           <SettingsForm
             locale={locale}

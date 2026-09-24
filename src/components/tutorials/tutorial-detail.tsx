@@ -41,7 +41,7 @@ export function TutorialDetail({ tutorial }: { locale: string; tutorial: Tutoria
   return (
     <article className="mt-6 space-y-8">
       <header>
-        <h1 className="text-3xl font-semibold tracking-tight">{tutorial.title}</h1>
+        <h1 className="h1-display">{tutorial.title}</h1>
         {tutorial.description ? (
           <p className="mt-3 text-muted-foreground leading-relaxed">{tutorial.description}</p>
         ) : null}

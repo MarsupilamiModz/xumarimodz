@@ -43,7 +43,7 @@ export default function RegisterPage() {
   return (
     <div className="mx-auto max-w-md px-4 py-16">
       <Card className="p-8">
-        <h1 className="text-2xl font-bold text-ink">{t("register")}</h1>
+        <h1 className="h1-display">{t("register")}</h1>
         <form onSubmit={handleRegister} className="mt-6 space-y-4">
           <div>
             <label className="text-sm">{t("email")}</label>

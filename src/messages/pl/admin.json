@@ -89,6 +89,51 @@
     "apiKeys": {
       "title": "Zarządzanie kluczami API",
       "subtitle": "Twórz i unieważniaj publiczne klucze API dla deweloperów i klienta desktopowego"
+    },
+    "acpTitle": "ACP",
+    "acpSubtitle": "Admin Control Panel",
+    "acpMenu": "Menu ACP",
+    "navGroup": {
+      "general": "Ogólne",
+      "shop": "Sklep",
+      "website": "Strona",
+      "more": "Więcej"
+    },
+    "nav": {
+      "dashboard": "Pulpit",
+      "mods": "Mody",
+      "games": "Gry",
+      "users": "Użytkownicy",
+      "reports": "Zgłoszenia",
+      "settings": "Ustawienia",
+      "shopOverview": "Przegląd sklepu",
+      "products": "Produkty",
+      "orders": "Zamówienia",
+      "coupons": "Kupony",
+      "subscriptions": "Zakupy i subskrypcje",
+      "memberships": "Członkostwa",
+      "licenses": "Licencje",
+      "content": "Treści",
+      "announcements": "Ogłoszenia",
+      "partners": "Partnerzy",
+      "creators": "Twórcy",
+      "applications": "Zgłoszenia",
+      "commissions": "Prowizje",
+      "collections": "Kolekcje",
+      "tickets": "Zgłoszenia pomocy",
+      "analytics": "Analityka",
+      "audit": "Dziennik audytu",
+      "achievements": "Osiągnięcia",
+      "leaderboards": "Rankingi",
+      "ads": "Reklamy",
+      "email": "E-mail",
+      "emailTemplates": "Szablony e-mail",
+      "groups": "Grupy i uprawnienia",
+      "localization": "Lokalizacja",
+      "media": "Media",
+      "system": "Stan systemu",
+      "security": "Bezpieczeństwo",
+      "apiKeys": "Klucze API"
     }
   }
 }

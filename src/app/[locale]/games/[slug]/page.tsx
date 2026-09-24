@@ -98,7 +98,7 @@ export default async function GameDetailPage({
         />
       )}
 
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+      <div className="page-container py-8">
         <AdLocationSlot location="category" className="mb-6" />
         <form className="flex flex-wrap gap-3 mb-10">
           <input

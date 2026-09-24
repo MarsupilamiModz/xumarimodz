@@ -10,7 +10,7 @@
     "affiliateCodes": "Affiliate codes",
     "licenses": "Licenses",
     "payouts": "Payouts",
-    "upload": "Upload",
+    "upload": "Mod yükle",
     "newMod": "New mod",
     "downloads": "Downloads",
     "revenue": "Revenue",
@@ -123,6 +123,8 @@
     "badgeOfficial": "Official Partner",
     "toolsUnlocked": "Tools unlocked",
     "upgradePartner": "Upgrade partner level",
-    "partnerAnalytics": "Partner analytics"
+    "partnerAnalytics": "Partner analytics",
+    "exclusiveAccess": "Özel erişim",
+    "collectionsNav": "Koleksiyonlar"
   }
 }

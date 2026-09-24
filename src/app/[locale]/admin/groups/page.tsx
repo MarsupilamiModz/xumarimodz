@@ -15,7 +15,7 @@ export default async function AdminGroupsPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold">Groups & Permissions</h1>
+      <h1 className="h1-acp">Groups & Permissions</h1>
       <p className="mt-1 text-sm text-muted-foreground">
         Edit role permissions (synced to database) and manage optional permission groups for users.
       </p>

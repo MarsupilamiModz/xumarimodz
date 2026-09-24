@@ -64,7 +64,7 @@ export function OwnerControlCenter({ data }: { data: OwnerData }) {
     <div className="space-y-8">
       <div>
         <Badge className="mb-2 bg-violet-soft text-violet-bright border-violet-bright/40">Owner only</Badge>
-        <h1 className="text-2xl font-bold">Owner Control Center</h1>
+        <h1 className="h1-acp">Owner Control Center</h1>
         <p className="text-sm text-muted-foreground mt-1">
           Platform analytics, auth diagnostics, and lifetime membership campaigns.
         </p>

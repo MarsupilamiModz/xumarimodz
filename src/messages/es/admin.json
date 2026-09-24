@@ -86,6 +86,51 @@
     "apiKeys": {
       "title": "Gestión de claves API",
       "subtitle": "Crear y revocar claves API públicas para desarrolladores y el cliente de escritorio"
+    },
+    "acpTitle": "ACP",
+    "acpSubtitle": "Admin Control Panel",
+    "acpMenu": "Menú ACP",
+    "navGroup": {
+      "general": "General",
+      "shop": "Tienda",
+      "website": "Sitio web",
+      "more": "Más"
+    },
+    "nav": {
+      "dashboard": "Panel",
+      "mods": "Mods",
+      "games": "Juegos",
+      "users": "Usuarios",
+      "reports": "Denuncias",
+      "settings": "Ajustes",
+      "shopOverview": "Resumen de tienda",
+      "products": "Productos",
+      "orders": "Pedidos",
+      "coupons": "Cupones",
+      "subscriptions": "Compras y suscripciones",
+      "memberships": "Membresías",
+      "licenses": "Licencias",
+      "content": "Contenido",
+      "announcements": "Anuncios",
+      "partners": "Socios",
+      "creators": "Creadores",
+      "applications": "Solicitudes",
+      "commissions": "Comisiones",
+      "collections": "Colecciones",
+      "tickets": "Tickets",
+      "analytics": "Analítica",
+      "audit": "Registro de auditoría",
+      "achievements": "Logros",
+      "leaderboards": "Clasificaciones",
+      "ads": "Anuncios",
+      "email": "Correo",
+      "emailTemplates": "Plantillas de correo",
+      "groups": "Grupos y permisos",
+      "localization": "Localización",
+      "media": "Medios",
+      "system": "Estado del sistema",
+      "security": "Seguridad",
+      "apiKeys": "Claves API"
     }
   }
 }

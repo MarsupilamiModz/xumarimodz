@@ -13,7 +13,7 @@ export default async function AdminMembershipPurchasesPage({ params: { locale } 
 
   return (
     <div>
-      <h1 className="text-2xl font-bold">Membership Purchases</h1>
+      <h1 className="h1-acp">Membership Purchases</h1>
       <p className="mt-1 text-sm text-muted-foreground">Lifetime one-time membership payments via Stripe</p>
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2">

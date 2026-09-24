@@ -44,10 +44,10 @@ export function TeamPageClient({ members, contactTicketHref }: Props) {
         <div className="absolute top-1/3 right-0 h-80 w-80 rounded-full bg-elevated blur-[100px]" />
       </div>
 
-      <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6">
+      <div className="page-container relative py-16">
         <header className="mb-16 space-y-4 text-center">
           <p className="text-sm uppercase tracking-[0.3em] text-violet-bright">Xumari Modz</p>
-          <h1 className="text-4xl font-bold text-ink sm:text-5xl">
+          <h1 className="h1-display">
             Our Team
           </h1>
           <p className="mx-auto max-w-3xl text-muted-foreground">

@@ -22,7 +22,7 @@ export default async function MembershipPage({ params: { locale } }: { params: {
 
   return (
     <div className="max-w-2xl space-y-6">
-      <h1 className="text-2xl font-bold">Membership</h1>
+      <h1 className="h1-acp">Membership</h1>
       <p className="text-sm text-muted-foreground">Lifetime access — no recurring billing.</p>
 
       <Card>

@@ -15,7 +15,7 @@ export default async function CreatorVisibilityPage({ params: { locale } }: { pa
       <Link href={`/${locale}/admin/creators`} className="text-sm text-muted-foreground hover:text-foreground">
         ← {t("creatorManagement")}
       </Link>
-      <h1 className="text-2xl font-bold">{t("visibleCreators")}</h1>
+      <h1 className="h1-acp">{t("visibleCreators")}</h1>
       <CreatorVisibilityManager creators={creators} />
     </div>
   );

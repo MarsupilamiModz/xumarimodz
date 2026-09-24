@@ -1,58 +1,69 @@
-import Link from "next/link";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { requireStaff } from "@/lib/auth";
 import { userHasPermission } from "@/lib/permission-store";
 import { formatDisplayName } from "@/lib/display-name";
 import type { PermissionKey } from "@/lib/permissions";
+import { AcpNav, type AcpNavGroup } from "@/components/admin/acp-nav";
 
-const linkDefs = [
-  { href: "", labelKey: "overview", permission: "analytics.read" as const },
-  { href: "/users", labelKey: "users", permission: "users.read" as const },
-  { href: "/tickets", labelKey: "tickets", permission: "tickets.read" as const },
-  { href: "/mods", labelKey: "mods", permission: "mods.read" as const },
-  { href: "/games", labelKey: "games", permission: "games.write" as const },
-  { href: "/analytics", labelKey: "analytics", permission: "analytics.read" as const },
-  { href: "/subscriptions", labelKey: "subscriptions", permission: "subscriptions.read" as const },
-  { href: "/coupons", labelKey: "coupons", permission: "coupons.write" as const },
-  { href: "/creators", labelKey: "creators", permission: "users.read" as const },
-  { href: "/applications", labelKey: "applications", permission: "users.read" as const },
-  { href: "/partners", labelKey: "partners", permission: "users.read" as const },
-  { href: "/commissions", labelKey: "commissions", permission: "settings.write" as const },
-  { href: "/licenses", labelKey: "licenses", permission: "licenses.write" as const },
-  { href: "/orders", labelKey: "orders", permission: "orders.read" as const },
-  { href: "/audit", labelKey: "audit", permission: "audit.read" as const },
-  { href: "/announcements", labelKey: "announcements", permission: "settings.write" as const },
-  { href: "/memberships", labelKey: "memberships", permission: "settings.write" as const },
-  { href: "/shop", labelKey: "shop", permission: "settings.write" as const },
-  { href: "/payments", labelKey: "payments", permission: "settings.write" as const },
-  { href: "/achievements", labelKey: "achievements", permission: "settings.write" as const },
-  { href: "/leaderboards", labelKey: "leaderboards", permission: "settings.write" as const },
-  { href: "/ads", labelKey: "ads", permission: "settings.write" as const },
-  { href: "/email", labelKey: "emailSettings", permission: "settings.write" as const },
-  { href: "/email/templates", labelKey: "emailTemplates", permission: "settings.write" as const },
-  { href: "/branding", labelKey: "branding", permission: "settings.write" as const },
-  { href: "/collections", labelKey: "collections", permission: "settings.write" as const },
-  { href: "/groups", labelKey: "groups", permission: "settings.write" as const },
-  { href: "/localization", labelKey: "localization", permission: "settings.write" as const },
-  { href: "/settings/media", labelKey: "mediaSettings", permission: "settings.write" as const },
-  { href: "/system", labelKey: "systemHealth", permission: "settings.write" as const },
-  { href: "/security", labelKey: "securityCenter", permission: "settings.write" as const },
-  { href: "/api-keys", labelKey: "apiKeys", permission: "settings.write" as const },
-] as const;
+type LinkDef = { href: string; key: string; permission: PermissionKey };
 
-async function filterLinks(user: { id: string; role: Parameters<typeof userHasPermission>[0]["role"]; permissionGroupId?: string | null }) {
-  const links: typeof linkDefs[number][] = [];
-  for (const link of linkDefs) {
-    try {
-      if (await userHasPermission(user, link.permission as PermissionKey)) {
-        links.push(link);
-      }
-    } catch {
-      /* skip */
-    }
-  }
-  return links;
-}
+/** ACP-Navigation nach Spezifikation: Allgemein, Shop, Webseite – alle übrigen Bereiche unter „Weitere“. */
+const NAV: { id: "general" | "shop" | "website" | "more"; links: LinkDef[] }[] = [
+  {
+    id: "general",
+    links: [
+      { href: "", key: "dashboard", permission: "analytics.read" },
+      { href: "/mods", key: "mods", permission: "mods.read" },
+      { href: "/games", key: "games", permission: "games.write" },
+      { href: "/users", key: "users", permission: "users.read" },
+      { href: "/reports", key: "reports", permission: "moderation.reports" },
+      { href: "/settings", key: "settings", permission: "settings.write" },
+    ],
+  },
+  {
+    id: "shop",
+    links: [
+      { href: "/payments", key: "shopOverview", permission: "settings.write" },
+      { href: "/shop", key: "products", permission: "settings.write" },
+      { href: "/orders", key: "orders", permission: "orders.read" },
+      { href: "/coupons", key: "coupons", permission: "coupons.write" },
+      { href: "/subscriptions", key: "subscriptions", permission: "subscriptions.read" },
+      { href: "/memberships", key: "memberships", permission: "settings.write" },
+      { href: "/licenses", key: "licenses", permission: "licenses.write" },
+    ],
+  },
+  {
+    id: "website",
+    links: [
+      { href: "/branding", key: "content", permission: "settings.write" },
+      { href: "/announcements", key: "announcements", permission: "settings.write" },
+      { href: "/partners", key: "partners", permission: "users.read" },
+      { href: "/creators", key: "creators", permission: "users.read" },
+      { href: "/applications", key: "applications", permission: "users.read" },
+      { href: "/commissions", key: "commissions", permission: "settings.write" },
+      { href: "/collections", key: "collections", permission: "settings.write" },
+    ],
+  },
+  {
+    id: "more",
+    links: [
+      { href: "/tickets", key: "tickets", permission: "tickets.read" },
+      { href: "/analytics", key: "analytics", permission: "analytics.read" },
+      { href: "/audit", key: "audit", permission: "audit.read" },
+      { href: "/achievements", key: "achievements", permission: "settings.write" },
+      { href: "/leaderboards", key: "leaderboards", permission: "settings.write" },
+      { href: "/ads", key: "ads", permission: "settings.write" },
+      { href: "/email", key: "email", permission: "settings.write" },
+      { href: "/email/templates", key: "emailTemplates", permission: "settings.write" },
+      { href: "/groups", key: "groups", permission: "settings.write" },
+      { href: "/localization", key: "localization", permission: "settings.write" },
+      { href: "/settings/media", key: "media", permission: "settings.write" },
+      { href: "/system", key: "system", permission: "settings.write" },
+      { href: "/security", key: "security", permission: "settings.write" },
+      { href: "/api-keys", key: "apiKeys", permission: "settings.write" },
+    ],
+  },
+];
 
 export default async function AdminLayout({
   children,
@@ -63,28 +74,34 @@ export default async function AdminLayout({
 }) {
   setRequestLocale(locale);
   const user = await requireStaff();
-  const [links, t] = await Promise.all([filterLinks(user), getTranslations("admin")]);
+  const t = await getTranslations("admin");
+
+  // Rechte parallel prüfen; nur erlaubte Bereiche anzeigen.
+  const allowed = await Promise.all(
+    NAV.flatMap((g) => g.links).map((l) =>
+      userHasPermission(user, l.permission).catch(() => false)
+    )
+  );
+  let i = 0;
+  const groups: AcpNavGroup[] = NAV.map((g) => ({
+    id: g.id,
+    title: t(`navGroup.${g.id}`),
+    links: g.links
+      .filter(() => allowed[i++])
+      .map((l) => ({ href: l.href, label: t(`nav.${l.key}`) })),
+  })).filter((g) => g.links.length > 0);
 
   return (
-    <div className="mx-auto flex max-w-7xl gap-6 px-4 py-8 sm:px-6">
-      <aside className="w-52 shrink-0 hidden md:block">
-        <div className="rounded-xl p-4 sticky top-24 dark-reader-lock">
-          <p className="font-bold text-violet-bright mb-1">{t("panelTitle")}</p>
-          <p className="text-xs text-muted-foreground mb-4 truncate">{formatDisplayName(user)}</p>
-          <nav className="space-y-1 text-sm">
-            {links.map((l) => (
-              <Link
-                key={l.href}
-                href={`/${locale}/admin${l.href}`}
-                className="block rounded px-2 py-1.5 text-muted-foreground hover:bg-accent/20 hover:text-foreground"
-              >
-                {t(l.labelKey)}
-              </Link>
-            ))}
-          </nav>
-        </div>
-      </aside>
-      <div className="flex-1 min-w-0">{children}</div>
+    <div className="flex min-h-[calc(100vh-var(--header-height))] flex-col lg:flex-row">
+      <AcpNav
+        groups={groups}
+        base={`/${locale}/admin`}
+        title={t("acpTitle")}
+        subtitle={t("acpSubtitle")}
+        userName={formatDisplayName(user)}
+        menuLabel={t("acpMenu")}
+      />
+      <div className="min-w-0 flex-1 px-4 py-8 md:px-8 xl:px-10">{children}</div>
     </div>
   );
 }

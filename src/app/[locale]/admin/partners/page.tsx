@@ -16,7 +16,7 @@ export default async function AdminPartnersPage({ params: { locale } }: { params
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-4">
-        <h1 className="text-2xl font-bold">{t("partnerManagement")}</h1>
+        <h1 className="h1-acp">{t("partnerManagement")}</h1>
         <Button size="sm" asChild>
           <Link href={`/${locale}/admin/partners/new`}>Create Partner</Link>
         </Button>

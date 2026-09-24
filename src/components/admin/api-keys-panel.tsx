@@ -120,7 +120,7 @@ export function ApiKeysPanel({
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold">API Center</h1>
+        <h1 className="h1-acp">API Center</h1>
         <p className="text-sm text-muted-foreground mt-1">
           Manage API keys, upload access, rate limits, and audit logs. Auth via{" "}
           <code className="text-xs">Authorization: Bearer xm_…</code> or{" "}

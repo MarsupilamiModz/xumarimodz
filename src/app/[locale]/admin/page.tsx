@@ -34,7 +34,7 @@ export default async function AdminOverviewPage({ params: { locale } }: { params
 
   return (
     <div>
-      <h1 className="text-2xl font-bold">Admin Overview</h1>
+      <h1 className="h1-acp">Admin Overview</h1>
       <p className="mt-1 text-sm text-muted-foreground">Platform analytics at a glance</p>
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

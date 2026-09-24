@@ -17,7 +17,7 @@ export default async function SupportPage({ params: { locale } }: { params: { lo
     <div>
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Support</h1>
+          <h1 className="h1-acp">Support</h1>
           <p className="text-sm text-muted-foreground">Track your support requests</p>
         </div>
         <Button asChild>

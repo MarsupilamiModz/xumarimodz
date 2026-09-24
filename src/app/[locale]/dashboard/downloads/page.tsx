@@ -19,7 +19,7 @@ export default async function DownloadsPage({ params: { locale } }: { params: { 
 
   return (
     <div>
-      <h1 className="text-2xl font-bold">Downloads</h1>
+      <h1 className="h1-acp">Downloads</h1>
       <div className="mt-8 space-y-2">
         {downloads.length === 0 ? (
           <Card className="p-8 text-center text-muted-foreground">No downloads yet</Card>

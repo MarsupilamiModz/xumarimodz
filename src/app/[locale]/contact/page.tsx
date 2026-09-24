@@ -14,7 +14,7 @@ export default function ContactPage() {
 
   return (
     <div className="mx-auto max-w-lg px-4 py-16 sm:px-6">
-      <h1 className="text-3xl font-bold text-ink">Contact {SITE.name}</h1>
+      <h1 className="h1-display">Contact {SITE.name}</h1>
       <Card className="mt-8 p-6">
         {sent ? (
           <p className="text-sm text-ink-muted">Message sent. We&apos;ll respond within 48 hours.</p>

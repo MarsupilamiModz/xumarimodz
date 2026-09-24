@@ -14,7 +14,7 @@ export default async function DesignerUploadsPage({ params: { locale } }: { para
   return (
     <div>
       <div className="flex justify-between items-center gap-4">
-        <h1 className="text-2xl font-bold">{t("uploads")}</h1>
+        <h1 className="h1-acp">{t("uploads")}</h1>
         <Button size="sm" asChild>
           <Link href={`/${locale}/designer/new`}>{t("newAsset")}</Link>
         </Button>

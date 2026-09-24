@@ -56,7 +56,7 @@ export function TranslationCenterPanel({ queue, cache, missing, audit }: Props) 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">{t("translationCenter")}</h1>
+        <h1 className="h1-acp">{t("translationCenter")}</h1>
         <p className="text-sm text-muted-foreground mt-1">{t("translationCenterHint")}</p>
       </div>
 

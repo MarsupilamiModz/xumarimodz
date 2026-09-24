@@ -58,8 +58,8 @@ export default async function PartnersPage({ params: { locale } }: { params: { l
   const hasAny = sections.some((s) => s.items.length > 0);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
-      <h1 className="text-3xl font-bold text-ink">{t("partnerHub")}</h1>
+    <div className="page-container py-12">
+      <h1 className="h1-acp">{t("partnerHub")}</h1>
       <p className="mt-2 text-muted-foreground">{t("partnersSubtitle")}</p>
 
       {!hasAny ? (

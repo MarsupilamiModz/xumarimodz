@@ -15,7 +15,7 @@ export default async function AdminCreatorsPage({ params: { locale } }: { params
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-bold">{t("creatorManagement")}</h1>
+        <h1 className="h1-acp">{t("creatorManagement")}</h1>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" asChild>
             <Link href={`/${locale}/admin/creators/visibility`}>{t("visibleCreators")}</Link>

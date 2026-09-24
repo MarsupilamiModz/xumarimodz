@@ -182,7 +182,7 @@ export function TicketThread({
           {TICKET_STATUS_LABELS[ticket.status]}
         </Badge>
       </div>
-      <h1 className="text-2xl font-bold">{ticket.subject}</h1>
+      <h1 className="h1-acp">{ticket.subject}</h1>
 
       {orphanAttachments.length > 0 && (
         <div className="flex flex-wrap gap-2">

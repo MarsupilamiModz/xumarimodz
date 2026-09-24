@@ -14,7 +14,7 @@ export default async function LibraryPage({ params: { locale } }: { params: { lo
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold">My Library</h1>
+        <h1 className="h1-acp">My Library</h1>
         <p className="text-muted-foreground">Owned mods and purchased products</p>
       </div>
 

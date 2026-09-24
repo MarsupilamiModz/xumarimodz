@@ -84,7 +84,7 @@ export function ScreenshotDiagnosticsPanel({ locale, initial }: Props) {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Screenshot Diagnostics</h1>
+        <h1 className="h1-acp">Screenshot Diagnostics</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Verify database records, storage paths, and public URL reachability for mod screenshots.
         </p>

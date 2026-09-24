@@ -7,7 +7,7 @@ export default async function NewCreatorPage({ params: { locale } }: { params: {
   const t = await getTranslations("ecosystem");
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold">{t("createCreator")}</h1>
+      <h1 className="h1-acp">{t("createCreator")}</h1>
       <NewCreatorForm locale={locale} />
     </div>
   );

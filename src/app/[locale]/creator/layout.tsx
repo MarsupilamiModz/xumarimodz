@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Plus } from "lucide-react";
 import { StudioNav } from "@/components/studio/studio-nav";
+import { Button } from "@/components/ui/button";
 import { isCreatorOrPartner } from "@/lib/permissions";
 import type { Locale } from "@/i18n/config";
 
@@ -26,7 +27,8 @@ export default async function CreatorLayout({
     isCreatorOrPartner(user.role);
 
   if (!allowed) {
-    redirect(`/${locale}/dashboard/settings`);
+    // Noch kein Creator: zur Bewerbung.
+    redirect(`/${locale}/become-creator`);
   }
 
   const nav = [
@@ -35,25 +37,23 @@ export default async function CreatorLayout({
     { href: "/codes", label: t("codes") },
     { href: "/licenses", label: t("licenses") },
     { href: "/payouts", label: t("payouts") },
-    { href: "/exclusive", label: "Exclusive Access" },
-    { href: "/collections", label: "Collections" },
+    { href: "/exclusive", label: t("exclusiveAccess") },
+    { href: "/collections", label: t("collectionsNav") },
     { href: "/settings", label: t("profileSettings") },
-    { href: "/mods/new", label: t("upload") },
   ];
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+    <div className="page-container py-8">
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-ink">{t("creatorStudio")}</h1>
-          <p className="text-sm text-muted-foreground mt-1">{t("creatorSubtitle")}</p>
+          <h1 className="h1-acp">{t("creatorStudio")}</h1>
+          <p className="mt-1 text-sm text-ink-muted">{t("creatorSubtitle")}</p>
         </div>
-        <Link
-          href={`/${locale}/creator/mods/new`}
-          className="inline-flex items-center gap-1.5 text-sm text-violet-bright hover:underline"
-        >
-          <Plus className="h-4 w-4" /> {t("newMod")}
-        </Link>
+        <Button asChild>
+          <Link href={`/${locale}/creator/mods/new`}>
+            <Plus className="h-4 w-4" aria-hidden /> {t("upload")}
+          </Link>
+        </Button>
       </div>
       <StudioNav locale={locale} base="/creator" items={nav} />
       {children}

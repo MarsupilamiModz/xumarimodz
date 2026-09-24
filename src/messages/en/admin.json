@@ -210,6 +210,51 @@
     "apiKeys": {
       "title": "API Key Management",
       "subtitle": "Create and revoke public API keys for developers and the desktop client"
+    },
+    "acpTitle": "ACP",
+    "acpSubtitle": "Admin Control Panel",
+    "acpMenu": "ACP menu",
+    "navGroup": {
+      "general": "General",
+      "shop": "Shop",
+      "website": "Website",
+      "more": "More"
+    },
+    "nav": {
+      "dashboard": "Dashboard",
+      "mods": "Mods",
+      "games": "Games",
+      "users": "Users",
+      "reports": "Reports",
+      "settings": "Settings",
+      "shopOverview": "Shop overview",
+      "products": "Products",
+      "orders": "Orders",
+      "coupons": "Coupons",
+      "subscriptions": "Purchases and subscriptions",
+      "memberships": "Memberships",
+      "licenses": "Licenses",
+      "content": "Content",
+      "announcements": "Announcements",
+      "partners": "Partners",
+      "creators": "Creators",
+      "applications": "Applications",
+      "commissions": "Commissions",
+      "collections": "Collections",
+      "tickets": "Tickets",
+      "analytics": "Analytics",
+      "audit": "Audit log",
+      "achievements": "Achievements",
+      "leaderboards": "Leaderboards",
+      "ads": "Ads",
+      "email": "Email",
+      "emailTemplates": "Email templates",
+      "groups": "Groups and permissions",
+      "localization": "Localization",
+      "media": "Media",
+      "system": "System status",
+      "security": "Security",
+      "apiKeys": "API keys"
     }
   }
 }

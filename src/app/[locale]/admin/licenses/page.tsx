@@ -12,7 +12,7 @@ export default function AdminLicensesPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold">License Keys</h1>
+      <h1 className="h1-acp">License Keys</h1>
       <Card className="p-6 mt-8 max-w-lg">
         <h3 className="font-medium mb-4">Bulk generate</h3>
         <form

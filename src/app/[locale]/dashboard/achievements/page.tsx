@@ -17,7 +17,7 @@ export default async function AchievementsPage({ params: { locale } }: { params:
 
   return (
     <div>
-      <h1 className="text-2xl font-bold">{t("achievementsTitle")}</h1>
+      <h1 className="h1-acp">{t("achievementsTitle")}</h1>
       <p className="text-muted-foreground mt-1">{t("achievementsSubtitle")}</p>
       <div className="mt-8">
         <AchievementShowcasePanel

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { requireAuth } from "@/lib/auth";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import {
@@ -18,6 +17,7 @@ import {
 } from "lucide-react";
 import { formatRoleLabel } from "@/lib/role-display";
 import { AdLocationSlot } from "@/components/ads/ad-location-slot";
+import { SectionNav } from "@/components/layout/section-nav";
 
 const navDefs = [
   { href: "", icon: LayoutDashboard, labelKey: "overview" },
@@ -52,27 +52,25 @@ export default async function DashboardLayout({
     { href: `/${locale}/shop`, icon: Coins, labelKey: "shop" as const, dashboard: false as const },
   ];
 
+  const items = navWithShop.map((item) => ({
+    href: item.dashboard ? `/${locale}/dashboard${item.href}` : item.href,
+    label: t(item.labelKey),
+    icon: item.icon,
+    exact: item.dashboard && item.href === "",
+  }));
+
   return (
-    <div className="mx-auto flex max-w-7xl gap-8 px-4 py-8 sm:px-6">
-      <aside className="hidden w-56 shrink-0 lg:block">
-        <div className="rounded-xl p-4 sticky top-24 dark-reader-lock">
-          <p className="font-semibold truncate">{user.displayName ?? user.username}</p>
-          <p className="text-xs text-muted-foreground mb-4">{formatRoleLabel(user.role)}</p>
-          <nav className="space-y-1">
-            {navWithShop.map((item) => (
-              <Link
-                key={item.labelKey}
-                href={item.dashboard ? `/${locale}/dashboard${item.href}` : item.href}
-                className="flex items-center gap-2 rounded-md px-3 py-2 text-sm text-muted-foreground hover:bg-accent/20 hover:text-foreground"
-              >
-                <item.icon className="h-4 w-4" />
-                {t(item.labelKey)}
-              </Link>
-            ))}
-          </nav>
+    <div className="page-container flex flex-col gap-6 py-8 lg:flex-row lg:gap-10">
+      <aside className="shrink-0 lg:w-56">
+        <div className="lg:sticky lg:top-[calc(var(--header-height)+2rem)]">
+          <div className="mb-4 hidden lg:block">
+            <p className="truncate font-semibold text-ink">{user.displayName ?? user.username}</p>
+            <p className="meta">{formatRoleLabel(user.role)}</p>
+          </div>
+          <SectionNav items={items} label={t("title")} />
         </div>
       </aside>
-      <div className="flex-1 min-w-0 space-y-4">
+      <div className="min-w-0 flex-1 space-y-4">
         <AdLocationSlot location="dashboard" />
         {children}
       </div>

@@ -9,7 +9,7 @@ export default async function AdminAchievementsPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold">Achievements Management</h1>
+      <h1 className="h1-acp">Achievements Management</h1>
       <p className="mt-1 text-sm text-muted-foreground">Badges, XP rewards, unlock rules, and seasonal events.</p>
       <div className="mt-8">
         <AchievementsAdminPanel achievements={result.data} />

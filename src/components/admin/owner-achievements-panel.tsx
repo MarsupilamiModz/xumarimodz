@@ -63,7 +63,7 @@ export function OwnerAchievementsPanel({
         <Link href="/admin/owner" className="text-sm text-muted-foreground hover:text-foreground">
           ← Owner Control Center
         </Link>
-        <h1 className="text-2xl font-bold mt-2">Achievements management</h1>
+        <h1 className="h1-acp mt-2">Achievements management</h1>
         <p className="text-sm text-muted-foreground mt-1">
           Grant badges from user profiles or mass-assign to roles and groups.
         </p>

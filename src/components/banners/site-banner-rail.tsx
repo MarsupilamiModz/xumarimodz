@@ -79,7 +79,7 @@ export function SiteBannerRail({ banners }: { banners: SiteBannerData[] }) {
           key={banner.id}
           className="relative border-b border-violet-bright/20"
         >
-          <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3 sm:px-6">
+          <div className="page-container flex items-center gap-4 py-3">
             {banner.imageUrl && (
               <div className="relative hidden h-12 w-20 shrink-0 overflow-hidden rounded-md sm:block">
                 <SafeImage src={banner.imageUrl} alt="" fill className="object-cover" sizes="80px" />

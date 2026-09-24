@@ -23,7 +23,7 @@ export default async function DevelopersPage({
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
-      <h1 className="text-3xl font-bold mb-2">Developer Portal</h1>
+      <h1 className="h1-display mb-2">Developer Portal</h1>
       <p className="text-muted-foreground mb-8">
         Public REST and GraphQL APIs for the Xumari Modz desktop client and third-party integrations.
       </p>

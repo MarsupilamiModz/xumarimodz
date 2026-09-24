@@ -99,7 +99,7 @@ export function MediaCenterPanel({ locale, section, items, total, page, pages }:
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">{t("mediaCenter")}</h1>
+        <h1 className="h1-acp">{t("mediaCenter")}</h1>
         <p className="text-sm text-muted-foreground mt-1">{t("mediaCenterHint", { count: total })}</p>
       </div>
 

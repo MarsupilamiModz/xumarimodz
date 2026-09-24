@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { openCookieSettings } from "@/components/ads/cookie-consent-banner";
 import { useTranslations } from "next-intl";
 import { Logo, type LogoBranding } from "@/components/brand/logo";
@@ -73,6 +74,7 @@ export function Footer({
   showCookieSettings?: boolean;
 }) {
   const t = useTranslations("footer");
+  const pathname = usePathname() ?? "";
   const siteName = branding?.siteTitle ?? "Xumari Modz";
   // Unveränderte englische Standardtexte aus dem CMS durch die Übersetzung ersetzen.
   const cmsTagline = footer?.tagline?.trim();
@@ -114,6 +116,9 @@ export function Footer({
   ].filter(Boolean) as { label: string; href: string }[];
 
   const languages = getLanguageDisplayCatalog().filter((l) => l.isActive);
+
+  // Im ACP gibt es keinen Webseiten-Footer (feste Sidebar bis zum Seitenende).
+  if (/^\/[a-z]{2}\/admin(\/|$)/.test(pathname)) return null;
 
   return (
     <footer className="border-t border-line bg-footer">

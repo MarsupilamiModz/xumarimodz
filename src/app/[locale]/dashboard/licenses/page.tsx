@@ -36,7 +36,7 @@ export default function LicensesPage() {
 
   return (
     <div className="max-w-2xl space-y-8">
-      <h1 className="text-2xl font-bold">{td("licenses")}</h1>
+      <h1 className="h1-acp">{td("licenses")}</h1>
       <Card className="p-6">
         <p className="text-sm text-muted-foreground mb-4">{t("productLocked")}</p>
         <div className="flex gap-2">

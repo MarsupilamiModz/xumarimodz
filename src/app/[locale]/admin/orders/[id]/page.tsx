@@ -61,7 +61,7 @@ export default function AdminOrderDetailPage() {
         ← Orders
       </Link>
       <div className="mt-4 flex flex-wrap items-center gap-2">
-        <h1 className="text-2xl font-bold">{order.title}</h1>
+        <h1 className="h1-acp">{order.title}</h1>
         <Badge variant="outline">{order.status}</Badge>
         <UserIdentity username={order.client.username} displayName={order.client.displayName} />
       </div>

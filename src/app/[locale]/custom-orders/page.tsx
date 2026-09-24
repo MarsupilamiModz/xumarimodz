@@ -27,7 +27,7 @@ export default function CustomOrdersPage() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6">
-      <h1 className="text-3xl font-bold tracking-tight text-ink">{t("title")}</h1>
+      <h1 className="h1-display">{t("title")}</h1>
       <p className="mt-3 text-muted-foreground leading-relaxed">{t("subtitle")}</p>
       <p className="mt-3 text-sm text-muted-foreground">
         <Link href={`/${locale}/login`} className="text-violet-bright hover:underline">

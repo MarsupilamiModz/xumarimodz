@@ -9,7 +9,7 @@ export default async function AdminLeaderboardsPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold">Leaderboard Management</h1>
+      <h1 className="h1-acp">Leaderboard Management</h1>
       <p className="mt-1 text-sm text-muted-foreground">Ranking weights, featured creators, and pinned spots.</p>
       <div className="mt-8">
         <LeaderboardsAdminPanel weights={result.data.weights} pinned={result.data.pinned} />

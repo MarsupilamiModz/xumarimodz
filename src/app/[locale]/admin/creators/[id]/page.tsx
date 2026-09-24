@@ -20,7 +20,7 @@ export default async function AdminCreatorDetailPage({
       <Link href={`/${locale}/admin/creators`} className="text-sm text-muted-foreground hover:text-foreground">
         ← {t("creatorManagement")}
       </Link>
-      <h1 className="text-2xl font-bold">{result.data.user.displayName ?? result.data.user.username}</h1>
+      <h1 className="h1-acp">{result.data.user.displayName ?? result.data.user.username}</h1>
       <CreatorAdminPanel locale={locale} creator={result.data} />
     </div>
   );

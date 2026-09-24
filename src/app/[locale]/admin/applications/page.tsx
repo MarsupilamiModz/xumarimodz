@@ -27,7 +27,7 @@ export default async function AdminApplicationsPage({
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Applications</h1>
+        <h1 className="h1-acp">Applications</h1>
         <p className="text-sm text-muted-foreground mt-1">
           Review creator and partner applications — partners are provisioned only on approval
         </p>

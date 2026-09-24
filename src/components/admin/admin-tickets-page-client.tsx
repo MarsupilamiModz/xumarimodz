@@ -45,7 +45,7 @@ export function AdminTicketsPageClient({
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold">Support Tickets</h1>
+        <h1 className="h1-acp">Support Tickets</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Enterprise support dashboard — queues, SLA, assignments, and escalation
         </p>

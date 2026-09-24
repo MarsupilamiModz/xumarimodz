@@ -104,10 +104,10 @@ export function PremiumPlansClient({ locale, plans, pageSettings, isLoggedIn, cu
   }
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+    <div className="page-container py-16">
       <div className="text-center">
         <Crown className="mx-auto h-14 w-14 text-violet-bright mb-6" />
-        <h1 className="text-4xl font-bold tracking-tight text-ink">{pageSettings.heroTitle}</h1>
+        <h1 className="h1-display">{pageSettings.heroTitle}</h1>
         <p className="mt-4 text-muted-foreground max-w-2xl mx-auto leading-relaxed">{pageSettings.heroSubtitle}</p>
         {currentPlan && (
           <Badge variant="premium" className="mt-4">Your plan: {currentPlan.name}</Badge>

@@ -21,7 +21,7 @@ export default async function BecomePartnerPage({
       <div className="mx-auto max-w-2xl px-4 py-12">
         <Card className="p-6">
           <Badge className="mb-3">{existing.status.replace("_", " ")}</Badge>
-          <h1 className="text-2xl font-bold">Partner application</h1>
+          <h1 className="h1-display">Partner application</h1>
           <p className="text-muted-foreground mt-2">
             Submitted {new Date(existing.createdAt).toLocaleDateString()}.
             {existing.adminNotes && ` Note: ${existing.adminNotes}`}
@@ -33,7 +33,7 @@ export default async function BecomePartnerPage({
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-12">
-      <h1 className="text-3xl font-bold mb-6">Become a Partner</h1>
+      <h1 className="h1-display mb-6">Become a Partner</h1>
       <PartnerApplicationForm fields={await getPartnerFormFields()} userEmail={user.email} username={user.username} />
     </div>
   );

@@ -6,7 +6,7 @@ export default async function NewPartnerPage({ params: { locale } }: { params: {
   setRequestLocale(locale);
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold">Create Partner</h1>
+      <h1 className="h1-acp">Create Partner</h1>
       <NewPartnerForm locale={locale} />
     </div>
   );

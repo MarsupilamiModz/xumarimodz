@@ -21,7 +21,7 @@ export default async function AdminPartnerDetailPage({
         ← {t("partnerManagement")}
       </Link>
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">{result.data.user.displayName ?? result.data.user.username}</h1>
+        <h1 className="h1-acp">{result.data.user.displayName ?? result.data.user.username}</h1>
         <Link href={`/${locale}/partners/${result.data.slug}`} className="text-sm text-ink-muted hover:underline">
           {t("viewPublicProfile")}
         </Link>

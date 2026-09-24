@@ -70,9 +70,9 @@ export function SearchPageClient({
   }, [tag, gameSlug, sort, verifiedOnly, initialQuery]);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10 space-y-8">
+    <div className="page-container py-10 space-y-8">
       <div>
-        <h1 className="text-2xl font-bold">Search mods</h1>
+        <h1 className="h1-display">Search mods</h1>
         <p className="text-sm text-muted-foreground mt-1">Filter by game, tags, creator verification, and more</p>
       </div>
 

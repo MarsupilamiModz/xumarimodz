@@ -29,7 +29,7 @@ export default async function AdminModsPage({
     <div>
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">{t("modManagement")}</h1>
+          <h1 className="h1-acp">{t("modManagement")}</h1>
           <p className="text-sm text-muted-foreground mt-1">
             {t("modTotal", { count: data.total })}
           </p>

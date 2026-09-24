@@ -60,7 +60,7 @@ export function RevenueSharingPanel({ data }: { data: Dashboard }) {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold">Payout settings</h1>
+        <h1 className="h1-acp">Payout settings</h1>
         <p className="text-sm text-muted-foreground mt-1">
           Global revenue split for mod sales. Per-creator overrides remain in creator profiles.
         </p>

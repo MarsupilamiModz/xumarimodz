@@ -88,7 +88,7 @@ export function OwnerUserManagementClient({
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Owner · User Management</h1>
+        <h1 className="h1-acp">Owner · User Management</h1>
         <p className="text-sm text-muted-foreground mt-1">
           Full account control — roles, permissions, premium, bans, and audit history.
         </p>

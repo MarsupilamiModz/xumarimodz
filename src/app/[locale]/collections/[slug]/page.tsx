@@ -34,14 +34,14 @@ export default async function CollectionDetailPage({
     : null;
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
+    <div className="page-container py-12">
       <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-2">
             {collection.isFeatured && <Badge>Featured</Badge>}
             <Badge variant="outline">{collection.visibility}</Badge>
           </div>
-          <h1 className="text-3xl font-bold">{collection.title}</h1>
+          <h1 className="h1-display">{collection.title}</h1>
           {collection.description && (
             <p className="text-muted-foreground mt-2 max-w-2xl">{collection.description}</p>
           )}

@@ -28,7 +28,7 @@ export default async function AdminUsersPage({
 
   return (
     <div>
-      <h1 className="text-2xl font-bold">User Management</h1>
+      <h1 className="h1-acp">User Management</h1>
       <p className="mt-1 text-sm text-muted-foreground">Manage roles, bans, and premium access</p>
       <div className="mt-8">
         <UsersTable

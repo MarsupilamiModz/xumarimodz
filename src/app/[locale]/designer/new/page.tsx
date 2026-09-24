@@ -9,7 +9,7 @@ export default async function DesignerNewAssetPage({ params: { locale } }: { par
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">{t("newAsset")}</h1>
+      <h1 className="h1-acp mb-6">{t("newAsset")}</h1>
       <ModAdminPanel locale={locale} games={games} redirectBase="/designer/assets" />
     </div>
   );

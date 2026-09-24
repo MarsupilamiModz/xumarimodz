@@ -20,7 +20,7 @@ export default function ResetPasswordPage() {
     <div className="mx-auto max-w-md px-4 py-16">
       <div className="mb-8 flex justify-center"><Logo /></div>
       <Card className="p-8">
-        <h1 className="text-2xl font-bold text-ink">Set new password</h1>
+        <h1 className="h1-display">Set new password</h1>
         <form
           className="mt-6 space-y-4"
           onSubmit={(e) => {

@@ -14,7 +14,7 @@ export default async function AdminCommissionsPage({ params: { locale } }: { par
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Commissions & Payouts</h1>
+      <h1 className="h1-acp">Commissions & Payouts</h1>
       <CommissionsAdminPanel
         locale={locale}
         rules={rulesResult.success ? rulesResult.data : []}

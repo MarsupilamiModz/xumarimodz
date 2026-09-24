@@ -9,7 +9,7 @@ export default async function AdminBrandingPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold">Branding & Content Center</h1>
+      <h1 className="h1-acp">Branding & Content Center</h1>
       <p className="mt-1 text-sm text-muted-foreground">
         Logo, favicon, header, footer, multilingual page content, and SEO — no code changes required.
       </p>

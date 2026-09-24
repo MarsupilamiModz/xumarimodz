@@ -55,7 +55,7 @@ export function LeaderboardClient({
     <div className="space-y-8">
       <div className="text-center">
         <Trophy className="mx-auto h-12 w-12 text-violet-bright mb-4" />
-        <h1 className="text-3xl font-bold text-ink">Creator Leaderboards</h1>
+        <h1 className="h1-display">Creator Leaderboards</h1>
         <p className="text-muted-foreground mt-2">Compete across downloads, likes, growth, and engagement.</p>
       </div>
 

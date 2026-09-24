@@ -15,7 +15,7 @@ export default async function AdminMembershipsPage({ params: { locale } }: { par
 
   return (
     <div>
-      <h1 className="text-2xl font-bold">Membership Pricing Management</h1>
+      <h1 className="h1-acp">Membership Pricing Management</h1>
       <p className="mt-1 text-sm text-muted-foreground">
         Dynamic pricing, sales, card styling, perks, and premium page content with live preview.
       </p>

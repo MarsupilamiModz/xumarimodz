@@ -6,7 +6,7 @@ export default async function AdminCouponsPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold">Coupons</h1>
+      <h1 className="h1-acp">Coupons</h1>
       <div className="mt-8">
         <CouponsAdmin initialCoupons={coupons} />
       </div>

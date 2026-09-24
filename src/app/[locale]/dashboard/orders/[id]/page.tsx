@@ -58,7 +58,7 @@ export default function OrderDetailPage() {
         ← Back
       </Link>
       <div className="mt-4 flex items-center gap-2">
-        <h1 className="text-2xl font-bold">{order.title}</h1>
+        <h1 className="h1-acp">{order.title}</h1>
         <Badge variant="outline">{order.status}</Badge>
       </div>
 

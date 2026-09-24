@@ -20,8 +20,8 @@ export default async function GamesPage({ params: { locale } }: { params: { loca
   const games = await getAllGames().catch(() => []);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
-      <h1 className="text-3xl font-bold text-ink">{t("title")}</h1>
+    <div className="page-container py-12">
+      <h1 className="h1-display">{t("title")}</h1>
       <p className="mt-2 text-muted-foreground">{t("subtitle")}</p>
       <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {games.length === 0 ? (

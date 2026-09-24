@@ -12,7 +12,7 @@ export default async function AuditLogPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold">Audit Logs</h1>
+      <h1 className="h1-acp">Audit Logs</h1>
       <p className="mt-1 text-sm text-muted-foreground">Security and admin action history</p>
       <div className="mt-8 space-y-2">
         {logs.length === 0 ? (

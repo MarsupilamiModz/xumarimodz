@@ -25,7 +25,7 @@ export default async function AdminPaymentsPage({ params: { locale } }: { params
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold">Payments</h1>
+      <h1 className="h1-acp">Payments</h1>
       <p className="text-muted-foreground">Provider status, webhooks, and recent checkout activity.</p>
       <PaymentsAdminPanel settings={settings} transactions={transactions} locale={locale} />
     </div>

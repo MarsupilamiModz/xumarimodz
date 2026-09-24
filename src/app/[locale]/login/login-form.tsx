@@ -70,7 +70,7 @@ export function LoginForm() {
     <div className="mx-auto max-w-md px-4 py-16">
       <div className="mb-8 flex justify-center"><Logo /></div>
       <Card className="p-8">
-        <h1 className="text-2xl font-bold text-ink">{t("login")}</h1>
+        <h1 className="h1-display">{t("login")}</h1>
         <form onSubmit={handleLogin} className="mt-6 space-y-4">
           <div>
             <label className="text-sm">{t("email")}</label>

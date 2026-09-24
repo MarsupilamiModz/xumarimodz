@@ -94,6 +94,51 @@
     "apiKeys": {
       "title": "API-Schlüssel-Verwaltung",
       "subtitle": "Öffentliche API-Schlüssel für Entwickler und den Desktop-Client erstellen und widerrufen"
+    },
+    "acpTitle": "ACP",
+    "acpSubtitle": "Admin Control Panel",
+    "acpMenu": "ACP-Menü",
+    "navGroup": {
+      "general": "Allgemein",
+      "shop": "Shop",
+      "website": "Webseite",
+      "more": "Weitere"
+    },
+    "nav": {
+      "dashboard": "Dashboard",
+      "mods": "Mods",
+      "games": "Spiele",
+      "users": "Nutzer",
+      "reports": "Meldungen",
+      "settings": "Einstellungen",
+      "shopOverview": "Shop-Übersicht",
+      "products": "Produkte",
+      "orders": "Bestellungen",
+      "coupons": "Gutscheine",
+      "subscriptions": "Käufe und Abos",
+      "memberships": "Mitgliedschaften",
+      "licenses": "Lizenzen",
+      "content": "Inhalte",
+      "announcements": "Ankündigungen",
+      "partners": "Partner",
+      "creators": "Creator",
+      "applications": "Bewerbungen",
+      "commissions": "Provisionen",
+      "collections": "Sammlungen",
+      "tickets": "Tickets",
+      "analytics": "Analytics",
+      "audit": "Audit-Log",
+      "achievements": "Erfolge",
+      "leaderboards": "Bestenlisten",
+      "ads": "Werbung",
+      "email": "E-Mail",
+      "emailTemplates": "E-Mail-Vorlagen",
+      "groups": "Gruppen und Rechte",
+      "localization": "Lokalisierung",
+      "media": "Medien",
+      "system": "Systemstatus",
+      "security": "Sicherheit",
+      "apiKeys": "API-Schlüssel"
     }
   }
 }

@@ -94,7 +94,7 @@ export default async function LocaleLayout({
           <PlatformAudioShell>
             <main className="flex-1">{children}</main>
           </PlatformAudioShell>
-          <AdLocationSlot location="footer" className="mx-auto max-w-7xl px-4 pb-4 sm:px-6" />
+          <AdLocationSlot location="footer" className="page-container pb-4" />
           <AsyncFooter locale={locale} />
         </div>
       </GlobalSearchShell>

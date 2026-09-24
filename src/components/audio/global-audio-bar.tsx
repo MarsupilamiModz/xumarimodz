@@ -30,7 +30,7 @@ export function GlobalAudioBar() {
         ""
       )}
     >
-      <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-2.5 sm:gap-4">
+      <div className="page-container flex items-center gap-3 py-2.5 sm:gap-4">
         <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md bg-muted">
           {current.coverUrl ? (
             <SafeImage src={current.coverUrl} alt="" fill className="object-cover" sizes="40px" />

@@ -63,7 +63,7 @@ export function GameHeroBanner({
           />
         </div>
       )}
-      <div className="relative mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-16">
+      <div className="page-container relative py-10 sm:py-16">
         <div className="flex flex-wrap items-end gap-4 sm:gap-6">
           {iconUrl ? (
             <div className="relative h-16 w-16 sm:h-24 sm:w-24 rounded-lg overflow-hidden border border-violet-bright/30 shrink-0">
@@ -76,7 +76,7 @@ export function GameHeroBanner({
                 {featuredLabel}
               </Badge>
             )}
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-ink">{name}</h1>
+            <h1 className="h1-display">{name}</h1>
             {blurb && (
               <p className="mt-2 max-w-2xl text-sm sm:text-base text-muted-foreground leading-relaxed">
                 {blurb}

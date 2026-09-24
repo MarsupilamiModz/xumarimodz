@@ -25,7 +25,7 @@ export default async function AdminAnalyticsPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold">Analytics</h1>
+      <h1 className="h1-acp">Analytics</h1>
       <p className="mt-1 text-sm text-muted-foreground">Platform metrics and trends</p>
 
       {data && (

@@ -86,6 +86,51 @@
     "apiKeys": {
       "title": "Gestion des clés API",
       "subtitle": "Créer et révoquer des clés API publiques pour les développeurs et le client desktop"
+    },
+    "acpTitle": "ACP",
+    "acpSubtitle": "Admin Control Panel",
+    "acpMenu": "Menu ACP",
+    "navGroup": {
+      "general": "Général",
+      "shop": "Boutique",
+      "website": "Site web",
+      "more": "Plus"
+    },
+    "nav": {
+      "dashboard": "Tableau de bord",
+      "mods": "Mods",
+      "games": "Jeux",
+      "users": "Utilisateurs",
+      "reports": "Signalements",
+      "settings": "Paramètres",
+      "shopOverview": "Aperçu boutique",
+      "products": "Produits",
+      "orders": "Commandes",
+      "coupons": "Coupons",
+      "subscriptions": "Achats et abonnements",
+      "memberships": "Adhésions",
+      "licenses": "Licences",
+      "content": "Contenu",
+      "announcements": "Annonces",
+      "partners": "Partenaires",
+      "creators": "Créateurs",
+      "applications": "Candidatures",
+      "commissions": "Commissions",
+      "collections": "Collections",
+      "tickets": "Tickets",
+      "analytics": "Analytique",
+      "audit": "Journal d’audit",
+      "achievements": "Succès",
+      "leaderboards": "Classements",
+      "ads": "Publicité",
+      "email": "E-mail",
+      "emailTemplates": "Modèles d’e-mail",
+      "groups": "Groupes et droits",
+      "localization": "Localisation",
+      "media": "Médias",
+      "system": "État du système",
+      "security": "Sécurité",
+      "apiKeys": "Clés API"
     }
   }
 }

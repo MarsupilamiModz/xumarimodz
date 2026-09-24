@@ -16,9 +16,9 @@ export default async function CollectionsPage({
   const { items } = await listPublicCollections(1, 24);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
+    <div className="page-container py-12">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold">Collections & Modpacks</h1>
+        <h1 className="h1-display">Collections & Modpacks</h1>
         <p className="text-muted-foreground mt-2">
           Curated mod lists from creators and the community.
         </p>

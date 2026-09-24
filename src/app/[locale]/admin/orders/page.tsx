@@ -10,7 +10,7 @@ export default async function AdminOrdersPage({ params: { locale } }: { params: 
 
   return (
     <div>
-      <h1 className="text-2xl font-bold">Custom Orders</h1>
+      <h1 className="h1-acp">Custom Orders</h1>
       <p className="mt-1 text-sm text-muted-foreground">Commission and custom work requests</p>
 
       <div className="mt-8 space-y-3">

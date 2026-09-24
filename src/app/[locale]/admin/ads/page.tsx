@@ -9,7 +9,7 @@ export default async function AdminAdsPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold">Advertising Management</h1>
+      <h1 className="h1-acp">Advertising Management</h1>
       <p className="mt-1 text-sm text-muted-foreground">
         Configure ad providers, placements, and track performance.
       </p>

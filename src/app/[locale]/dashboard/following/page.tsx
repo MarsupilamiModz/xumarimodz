@@ -23,7 +23,7 @@ export default async function FollowingPage({ params: { locale } }: { params: { 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">{t("following")}</h1>
+        <h1 className="h1-acp">{t("following")}</h1>
         <p className="text-muted-foreground">{t("following")}</p>
       </div>
       {followed.length === 0 ? (

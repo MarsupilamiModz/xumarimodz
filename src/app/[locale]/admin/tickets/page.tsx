@@ -25,7 +25,7 @@ export default async function AdminTicketsPage({
 
   return (
     <div>
-      <h1 className="text-2xl font-bold">Support Tickets</h1>
+      <h1 className="h1-acp">Support Tickets</h1>
       <p className="mt-1 text-sm text-muted-foreground">Manage and respond to user support requests</p>
       <div className="mt-8">
         <TicketsTable

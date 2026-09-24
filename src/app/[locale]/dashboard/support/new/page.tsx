@@ -15,7 +15,7 @@ export default async function NewTicketPage({ params: { locale } }: { params: { 
       >
         <ArrowLeft className="h-4 w-4" /> Back
       </Link>
-      <h1 className="text-2xl font-bold">New Support Ticket</h1>
+      <h1 className="h1-acp">New Support Ticket</h1>
       <p className="mt-1 text-sm text-muted-foreground mb-6">
         We typically respond within 24–48 hours.
       </p>

@@ -33,7 +33,7 @@ export function EmailMonitorPanel({ data, locale }: { data: MonitorData; locale:
     <div className="space-y-6">
       <div>
         <Badge className="mb-2 bg-violet-soft text-violet-bright border-violet-bright/40">Owner only</Badge>
-        <h1 className="text-2xl font-bold">Email Monitoring</h1>
+        <h1 className="h1-acp">Email Monitoring</h1>
         <p className="text-sm text-muted-foreground mt-1">
           Delivery metrics, SMTP status, queue health, and auth email errors.
         </p>

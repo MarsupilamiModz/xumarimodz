@@ -108,7 +108,7 @@ export default async function ModDetailPage({
   const creatorBadges = badgeMap.get(authorId) ?? [];
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
+    <div className="page-container py-12">
       <AdLocationSlot location="mod-detail" className="mb-6" />
       <div className="grid gap-8 lg:grid-cols-5">
         <div className="lg:col-span-3 space-y-8">
@@ -127,7 +127,7 @@ export default async function ModDetailPage({
               {mod.category && <Badge variant="outline">{mod.category.name}</Badge>}
               <span className="text-sm text-ink-muted">{mod.game.name}</span>
             </div>
-            <h1 className="text-3xl font-bold tracking-tight">{localized.title}</h1>
+            <h1 className="h1-display">{localized.title}</h1>
             {localized.shortDescription && (
               <p className="mt-2 text-muted-foreground">{localized.shortDescription}</p>
             )}
