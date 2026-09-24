@@ -1,14 +1,23 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { toast } from "@/hooks/use-toast";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { useId, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { KeyRound, Loader2 } from "lucide-react";
 import { createApiKeyAdmin, revokeApiKeyAdmin } from "@/actions/admin/api-keys";
 import { API_KEY_PRESETS } from "@/lib/api-scopes";
-import { formatNumber } from "@/lib/format-locale";
+import { formatDateTime, formatNumber } from "@/lib/format-locale";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { ChipTabs } from "@/components/ui/chip-tabs";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { CopyButton } from "@/components/ui/copy-button";
+import { EmptyState } from "@/components/ui/empty-state";
+import { KpiTile } from "@/components/ui/kpi-tile";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { useAppToast } from "@/hooks/use-app-toast";
+import { cn } from "@/lib/utils";
 
 type ApiKeyRow = {
   id: string;
@@ -17,12 +26,9 @@ type ApiKeyRow = {
   keyPrefix: string;
   scopes: string[];
   rateLimit: number;
-  ipWhitelist: string[];
   isActive: boolean;
   requestCount: number;
   errorCount: number;
-  uploadCount: number;
-  uploadBytes: bigint | number;
   lastUsedAt: Date | null;
   expiresAt: Date | null;
   createdAt: Date;
@@ -30,292 +36,224 @@ type ApiKeyRow = {
 };
 
 type Totals = {
-  _sum: {
-    requestCount: number | null;
-    errorCount: number | null;
-    uploadCount: number | null;
-    uploadBytes: bigint | number | null;
-  };
-  _count: number;
+  _sum: { requestCount: number | null; errorCount: number | null; uploadCount: number | null; uploadBytes: bigint | number | null };
 };
 
-type ApiLog = {
-  id: string;
-  action: string;
-  entityId: string | null;
-  createdAt: Date;
-  metadata: unknown;
-};
+type ApiLog = { id: string; action: string; entityId: string | null; createdAt: Date };
 
-const RATE_PRESETS = [
-  { label: "100 / min", value: 100 },
-  { label: "1,000 / min", value: 1000 },
-  { label: "10,000 / min", value: 10000 },
-  { label: "Unlimited", value: 100000 },
-];
+type Preset = keyof typeof API_KEY_PRESETS;
+const PRESET_LABEL: Record<string, string> = { upload: "presetUpload", download: "presetDownload", readonly: "presetReadonly", full: "presetFull" };
+const RATE_OPTIONS = [100, 1000, 10000];
 
 export function ApiKeysPanel({
-  keys: initialKeys,
+  locale,
+  keys,
   totals,
   recentLogs,
 }: {
+  locale: string;
   keys: ApiKeyRow[];
   totals: Totals;
   recentLogs: ApiLog[];
 }) {
-  const [keys, setKeys] = useState(initialKeys);
+  const t = useTranslations("admin.ak");
+  const router = useRouter();
+  const appToast = useAppToast();
+  const uid = useId();
   const [pending, startTransition] = useTransition();
   const [revealed, setRevealed] = useState<string | null>(null);
-  const [form, setForm] = useState({
-    name: "",
-    description: "",
-    preset: "readonly" as keyof typeof API_KEY_PRESETS,
-    rateLimit: 1000,
-    expiresAt: "",
-    ipWhitelist: "",
-  });
+  const [revoke, setRevoke] = useState<ApiKeyRow | null>(null);
+  const [form, setForm] = useState({ name: "", description: "", preset: "readonly" as Preset, rateLimit: API_KEY_PRESETS.readonly.rateLimit, expiresAt: "", ipWhitelist: "" });
 
-  function createKey() {
+  function createKey(e: React.FormEvent) {
+    e.preventDefault();
     startTransition(async () => {
-      const preset = API_KEY_PRESETS[form.preset];
       const r = await createApiKeyAdmin({
         name: form.name,
         description: form.description || undefined,
         preset: form.preset,
         scopes: [],
-        rateLimit: form.rateLimit || preset.rateLimit,
+        rateLimit: form.rateLimit,
         expiresAt: form.expiresAt || undefined,
-        ipWhitelist: form.ipWhitelist
-          .split(/[\n,]/)
-          .map((s) => s.trim())
-          .filter(Boolean),
+        ipWhitelist: form.ipWhitelist.split(/[\n,]/).map((s) => s.trim()).filter(Boolean),
       });
-      if (r.success) {
-        setRevealed(r.data.key);
-        toast({ title: "API key created — copy it now" });
-        setForm({
-          name: "",
-          description: "",
-          preset: "readonly",
-          rateLimit: 1000,
-          expiresAt: "",
-          ipWhitelist: "",
-        });
-      } else toast({ title: r.error, variant: "destructive" });
-    });
-  }
-
-  function revoke(id: string) {
-    startTransition(async () => {
-      const r = await revokeApiKeyAdmin(id);
-      if (r.success) {
-        setKeys((k) => k.map((x) => (x.id === id ? { ...x, isActive: false } : x)));
-        toast({ title: "Key revoked" });
+      if (!r.success) {
+        appToast.error(r.error);
+        return;
       }
+      setRevealed(r.data.key);
+      setForm({ name: "", description: "", preset: "readonly", rateLimit: API_KEY_PRESETS.readonly.rateLimit, expiresAt: "", ipWhitelist: "" });
+      appToast.created(t("created"));
+      router.refresh();
     });
   }
 
-  const uploadBytes = Number(totals._sum.uploadBytes ?? 0);
+  function confirmRevoke() {
+    if (!revoke) return;
+    startTransition(async () => {
+      const r = await revokeApiKeyAdmin(revoke.id);
+      if (!r.success) {
+        appToast.error(r.error);
+        return;
+      }
+      setRevoke(null);
+      appToast.updated(t("revokedToast"));
+      router.refresh();
+    });
+  }
+
+  const now = Date.now();
+  const uploadMb = Number(totals._sum.uploadBytes ?? 0) / (1024 * 1024);
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="h1-acp">API Center</h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          Manage API keys, upload access, rate limits, and audit logs. Auth via{" "}
-          <code className="text-xs">Authorization: Bearer xm_…</code> or{" "}
-          <code className="text-xs">x-api-key</code>.
-        </p>
-      </div>
-
+    <div className="space-y-6">
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="p-4">
-          <p className="text-xs uppercase text-muted-foreground">Total requests</p>
-          <p className="text-2xl font-bold tabular-nums">{formatNumber(totals._sum.requestCount ?? 0)}</p>
-        </Card>
-        <Card className="p-4">
-          <p className="text-xs uppercase text-muted-foreground">Errors</p>
-          <p className="text-2xl font-bold tabular-nums">{formatNumber(totals._sum.errorCount ?? 0)}</p>
-        </Card>
-        <Card className="p-4">
-          <p className="text-xs uppercase text-muted-foreground">API uploads</p>
-          <p className="text-2xl font-bold tabular-nums">{formatNumber(totals._sum.uploadCount ?? 0)}</p>
-        </Card>
-        <Card className="p-4">
-          <p className="text-xs uppercase text-muted-foreground">Bandwidth</p>
-          <p className="text-2xl font-bold tabular-nums">{(uploadBytes / (1024 * 1024)).toFixed(1)} MB</p>
-        </Card>
+        <KpiTile label={t("requests")} value={formatNumber(totals._sum.requestCount ?? 0, locale)} />
+        <KpiTile label={t("errors")} value={formatNumber(totals._sum.errorCount ?? 0, locale)} />
+        <KpiTile label={t("uploads")} value={formatNumber(totals._sum.uploadCount ?? 0, locale)} />
+        <KpiTile label={t("bandwidth")} value={`${uploadMb.toFixed(1)} MB`} />
       </div>
 
       {revealed && (
-        <Card className="border-violet-bright/30">
-          <CardContent className="pt-6">
-            <p className="text-sm font-medium mb-2">New API key (shown once)</p>
-            <code className="block p-3 rounded bg-muted text-xs break-all">{revealed}</code>
-            <Button size="sm" className="mt-2" onClick={() => setRevealed(null)}>
-              Dismiss
-            </Button>
-          </CardContent>
-        </Card>
+        <section role="alert" className="rounded-lg border border-violet/40 bg-violet-soft p-4">
+          <h2 className="section-title">{t("revealTitle")}</h2>
+          <p className="mt-1 text-sm text-ink-muted">{t("revealText")}</p>
+          <code className="mono-id mt-3 block break-all rounded-md border border-line bg-canvas p-3 text-ink">{revealed}</code>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <CopyButton value={revealed} label={t("copy")} copiedLabel={t("copied")} />
+            <Button size="sm" onClick={() => setRevealed(null)}>{t("done")}</Button>
+          </div>
+        </section>
       )}
 
-      <Card>
-        <CardHeader><CardTitle>Create API key</CardTitle></CardHeader>
-        <CardContent className="space-y-4 max-w-2xl">
-          <div className="grid gap-3 sm:grid-cols-2">
-            {Object.entries(API_KEY_PRESETS).map(([id, preset]) => (
-              <button
-                key={id}
-                type="button"
-                onClick={() => setForm((f) => ({ ...f, preset: id as keyof typeof API_KEY_PRESETS, rateLimit: preset.rateLimit }))}
-                className={`rounded-lg border p-3 text-left text-sm transition-colors ${
- form.preset === id ? "border-violet-bright bg-violet-soft" : "border-border/50"
- }`}
-              >
-                <p className="font-medium">{preset.label}</p>
-                <p className="text-xs text-muted-foreground mt-1">{preset.rateLimit} req/min</p>
-              </button>
-            ))}
-          </div>
-          <div>
-            <label className="text-sm font-medium">Name</label>
-            <Input
-              value={form.name}
-              onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-              placeholder="Production upload key"
-            />
-          </div>
-          <div>
-            <label className="text-sm font-medium">Description</label>
-            <Input
-              value={form.description}
-              onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
-              placeholder="Used by desktop mod uploader"
-            />
-          </div>
-          <div>
-            <label className="text-sm font-medium">Rate limit</label>
-            <div className="flex flex-wrap gap-2 mt-1">
-              {RATE_PRESETS.map((p) => (
-                <Button
-                  key={p.value}
-                  type="button"
-                  size="sm"
-                  variant={form.rateLimit === p.value ? "default" : "outline"}
-                  onClick={() => setForm((f) => ({ ...f, rateLimit: p.value }))}
-                >
-                  {p.label}
-                </Button>
-              ))}
-            </div>
-          </div>
-          <div>
-            <label className="text-sm font-medium">Expiry (optional)</label>
-            <Input
-              type="date"
-              value={form.expiresAt}
-              onChange={(e) => setForm((f) => ({ ...f, expiresAt: e.target.value }))}
-            />
-          </div>
-          <div>
-            <label className="text-sm font-medium">IP whitelist (optional, comma-separated)</label>
-            <Input
-              value={form.ipWhitelist}
-              onChange={(e) => setForm((f) => ({ ...f, ipWhitelist: e.target.value }))}
-              placeholder="203.0.113.10, 198.51.100.0"
-            />
-          </div>
-          <Button onClick={createKey} disabled={pending || !form.name.trim()}>
-            Generate key
-          </Button>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader><CardTitle>API keys</CardTitle></CardHeader>
-        <CardContent className="space-y-4">
+      <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_380px]">
+        <section className="rounded-lg border border-line bg-raised">
+          <h2 className="section-title flex h-12 items-center border-b border-line px-4">{t("keys")}</h2>
           {keys.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No API keys yet.</p>
+            <EmptyState className="m-4" icon={KeyRound} title={t("emptyTitle")} description={t("emptyText")} />
           ) : (
-            keys.map((key) => (
-              <div key={key.id} className="rounded-lg border border-border/40 p-4 space-y-2">
-                <div className="flex flex-wrap items-start justify-between gap-2">
-                  <div>
-                    <p className="font-medium">{key.name}</p>
-                    {key.description && (
-                      <p className="text-xs text-muted-foreground mt-0.5">{key.description}</p>
-                    )}
-                    <p className="text-xs text-muted-foreground font-mono mt-1">{key.keyPrefix}…</p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Badge variant={key.isActive ? "default" : "destructive"}>
-                      {key.isActive ? "Active" : "Revoked"}
-                    </Badge>
-                    {key.isActive && (
-                      <Button size="sm" variant="destructive" disabled={pending} onClick={() => revoke(key.id)}>
-                        Revoke
-                      </Button>
-                    )}
-                  </div>
-                </div>
-                <div className="flex flex-wrap gap-1">
-                  {key.scopes.map((s) => (
-                    <Badge key={s} variant="outline" className="text-[10px]">{s}</Badge>
-                  ))}
-                </div>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs text-muted-foreground">
-                  <span>{formatNumber(key.requestCount)} requests</span>
-                  <span>{formatNumber(key.errorCount)} errors</span>
-                  <span>{formatNumber(key.uploadCount)} uploads</span>
-                  <span>{key.rateLimit}/min limit</span>
-                </div>
-                {key.lastUsedAt && (
-                  <p className="text-[10px] text-muted-foreground">
-                    Last used {new Date(key.lastUsedAt).toLocaleString()}
-                  </p>
-                )}
-              </div>
-            ))
-          )}
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader><CardTitle>Recent API audit log</CardTitle></CardHeader>
-        <CardContent>
-          {recentLogs.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No API activity logged yet.</p>
-          ) : (
-            <ul className="space-y-2 text-sm max-h-64 overflow-y-auto">
-              {recentLogs.map((log) => (
-                <li key={log.id} className="flex justify-between gap-4 border-b border-border/30 pb-2">
-                  <span>
-                    <span className="font-mono text-xs">{log.action}</span>
-                    {log.entityId && (
-                      <span className="text-muted-foreground text-xs ml-2">key …{log.entityId.slice(-6)}</span>
-                    )}
-                  </span>
-                  <span className="text-xs text-muted-foreground shrink-0">
-                    {new Date(log.createdAt).toLocaleString()}
-                  </span>
-                </li>
-              ))}
+            <ul className="divide-y divide-line">
+              {keys.map((key) => {
+                const expired = !!key.expiresAt && new Date(key.expiresAt).getTime() < now;
+                return (
+                  <li key={key.id} className="flex flex-wrap items-start justify-between gap-3 px-4 py-3">
+                    <div className="min-w-0 space-y-1">
+                      <p className="text-[13px] font-semibold text-ink">{key.name}</p>
+                      {key.description && <p className="text-xs text-ink-muted">{key.description}</p>}
+                      <p className="mono-id text-ink-faint">{key.keyPrefix}••••••••</p>
+                      <div className="flex flex-wrap gap-1">
+                        {key.scopes.map((s) => (
+                          <Badge key={s} variant="outline">{s}</Badge>
+                        ))}
+                      </div>
+                      <p className="meta text-ink-faint">
+                        {t("usage", { requests: formatNumber(key.requestCount, locale), errors: formatNumber(key.errorCount, locale) })} ·{" "}
+                        {t("perMinute", { count: formatNumber(key.rateLimit, locale) })} · {t("colLastUsed")}:{" "}
+                        {key.lastUsedAt ? formatDateTime(key.lastUsedAt, locale) : t("never")}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {!key.isActive ? (
+                        <StatusBadge tone="neutral" label={t("revoked")} />
+                      ) : expired ? (
+                        <StatusBadge tone="warning" label={t("expired")} />
+                      ) : (
+                        <StatusBadge tone="success" label={t("active")} />
+                      )}
+                      {key.isActive && (
+                        <Button size="sm" variant="outline" disabled={pending} onClick={() => setRevoke(key)}>
+                          {t("revoke")}
+                        </Button>
+                      )}
+                    </div>
+                  </li>
+                );
+              })}
             </ul>
           )}
-        </CardContent>
-      </Card>
+        </section>
 
-      <Card>
-        <CardHeader><CardTitle>Upload API</CardTitle></CardHeader>
-        <CardContent className="text-sm space-y-2 text-muted-foreground">
-          <p>
-            <code className="text-foreground">POST /api/v1/upload</code> — multipart field{" "}
-            <code className="text-foreground">file</code>
-          </p>
-          <p>Scopes: upload:write · Types: PNG, JPG, WEBP, GIF, MP3, WAV, OGG, ZIP, RAR, 7Z, DLL, ASI</p>
-          <p>Response: url, fileName, size, hash, virusTotalStatus</p>
-        </CardContent>
-      </Card>
+        <div className="space-y-6">
+          <section className="rounded-lg border border-line bg-raised p-4">
+            <h2 className="section-title mb-4">{t("create")}</h2>
+            <form onSubmit={createKey} className="space-y-4">
+              <ChipTabs
+                label={t("preset")}
+                value={form.preset}
+                options={Object.keys(API_KEY_PRESETS).map((id) => ({ value: id, label: t(PRESET_LABEL[id] ?? "presetReadonly") }))}
+                onChange={(v) => setForm((f) => ({ ...f, preset: v as Preset, rateLimit: API_KEY_PRESETS[v as Preset].rateLimit }))}
+              />
+              <div>
+                <label htmlFor={`${uid}-name`} className="label-text mb-1.5 block text-ink-muted">{t("name")}</label>
+                <Input id={`${uid}-name`} value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} required maxLength={80} />
+              </div>
+              <div>
+                <label htmlFor={`${uid}-desc`} className="label-text mb-1.5 block text-ink-muted">{t("description")}</label>
+                <Input id={`${uid}-desc`} value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} maxLength={200} />
+              </div>
+              <fieldset>
+                <legend className="label-text mb-1.5 text-ink-muted">{t("rateLimit")}</legend>
+                <div className="flex flex-wrap gap-2">
+                  {Array.from(new Set([...RATE_OPTIONS, API_KEY_PRESETS[form.preset].rateLimit])).sort((a, b) => a - b).map((v) => (
+                    <button
+                      key={v}
+                      type="button"
+                      aria-pressed={form.rateLimit === v}
+                      onClick={() => setForm((f) => ({ ...f, rateLimit: v }))}
+                      className={cn(
+                        "h-[30px] rounded-md border px-3 text-xs font-semibold tabular-nums transition-colors duration-fast",
+                        form.rateLimit === v ? "border-violet bg-violet-soft text-violet-bright" : "border-line text-ink-muted hover:text-ink"
+                      )}
+                    >
+                      {formatNumber(v, locale)}
+                    </button>
+                  ))}
+                </div>
+              </fieldset>
+              <div>
+                <label htmlFor={`${uid}-exp`} className="label-text mb-1.5 block text-ink-muted">{t("expires")}</label>
+                <Input id={`${uid}-exp`} type="date" value={form.expiresAt} onChange={(e) => setForm((f) => ({ ...f, expiresAt: e.target.value }))} />
+              </div>
+              <div>
+                <label htmlFor={`${uid}-ip`} className="label-text mb-1.5 block text-ink-muted">{t("ipWhitelist")}</label>
+                <Input id={`${uid}-ip`} value={form.ipWhitelist} onChange={(e) => setForm((f) => ({ ...f, ipWhitelist: e.target.value }))} />
+              </div>
+              <p className="meta text-ink-faint">{t("auth")}</p>
+              <Button type="submit" disabled={pending || !form.name.trim()}>
+                {pending && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}
+                {t("generate")}
+              </Button>
+            </form>
+          </section>
+
+          <section className="rounded-lg border border-line bg-raised">
+            <h2 className="section-title flex h-12 items-center border-b border-line px-4">{t("log")}</h2>
+            {recentLogs.length === 0 ? (
+              <p className="px-4 py-6 text-center text-sm text-ink-muted">{t("logEmpty")}</p>
+            ) : (
+              <ul className="max-h-72 divide-y divide-line overflow-y-auto">
+                {recentLogs.map((log) => (
+                  <li key={log.id} className="flex justify-between gap-3 px-4 py-2 text-xs">
+                    <span className="mono-id text-ink">{log.action}</span>
+                    <span className="shrink-0 tabular-nums text-ink-faint">{formatDateTime(log.createdAt, locale)}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        </div>
+      </div>
+
+      <ConfirmDialog
+        open={revoke !== null}
+        onOpenChange={(o) => !o && setRevoke(null)}
+        title={t("revokeTitle", { name: revoke?.name ?? "" })}
+        description={t("revokeText")}
+        confirmLabel={t("revoke")}
+        variant="destructive"
+        loading={pending}
+        onConfirm={confirmRevoke}
+      />
     </div>
   );
 }

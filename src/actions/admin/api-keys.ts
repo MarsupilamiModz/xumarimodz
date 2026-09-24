@@ -3,6 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/db";
 import { fail, ok, requireActionPermission } from "@/lib/action-utils";
+import { createAuditLog } from "@/lib/audit";
+import { rateLimit } from "@/lib/rate-limit";
 import {
   generateApiKey,
   API_SCOPES,
@@ -14,9 +16,27 @@ export async function listApiKeysAdmin() {
   const { error } = await requireActionPermission("settings.write");
   if (error) return error;
 
+  // Hash nie an den Client geben: explizite Feldauswahl.
   const keys = await prisma.apiKey.findMany({
     orderBy: { createdAt: "desc" },
-    include: { createdBy: { select: { username: true } } },
+    select: {
+      id: true,
+      name: true,
+      description: true,
+      keyPrefix: true,
+      scopes: true,
+      rateLimit: true,
+      ipWhitelist: true,
+      isActive: true,
+      requestCount: true,
+      errorCount: true,
+      uploadCount: true,
+      uploadBytes: true,
+      lastUsedAt: true,
+      expiresAt: true,
+      createdAt: true,
+      createdBy: { select: { username: true } },
+    },
   });
 
   const totals = await prisma.apiKey.aggregate({
@@ -47,6 +67,8 @@ export async function createApiKeyAdmin(input: {
   if (error) return error;
 
   if (!input.name.trim()) return fail("Name required");
+  // Schutz gegen versehentliches oder automatisiertes Massen-Erzeugen: 10 Schlüssel pro Stunde und Admin.
+  if (!rateLimit(`api-key-create:${user.id}`, 10, 60 * 60 * 1000).success) return fail("Too many keys created. Try again later.");
 
   let scopes = input.preset ? resolvePresetScopes(input.preset) : input.scopes.filter(Boolean).map(String);
   if (!input.preset) {
@@ -70,17 +92,36 @@ export async function createApiKeyAdmin(input: {
     },
   });
 
+  await createAuditLog({
+    actorId: user.id,
+    action: "api_key.create",
+    entityType: "ApiKey",
+    entityId: key.id,
+    metadata: { name: key.name, prefix, scopes },
+  });
+
   revalidatePath("/admin/api-keys");
   return ok({ id: key.id, key: raw, prefix });
 }
 
 export async function revokeApiKeyAdmin(keyId: string) {
-  const { error } = await requireActionPermission("settings.write");
+  const { user, error } = await requireActionPermission("settings.write");
   if (error) return error;
+
+  const key = await prisma.apiKey.findUnique({ where: { id: keyId }, select: { name: true, keyPrefix: true, isActive: true } });
+  if (!key) return fail("API key not found");
+  if (!key.isActive) return ok(undefined);
 
   await prisma.apiKey.update({
     where: { id: keyId },
     data: { isActive: false },
+  });
+  await createAuditLog({
+    actorId: user.id,
+    action: "api_key.revoke",
+    entityType: "ApiKey",
+    entityId: keyId,
+    metadata: { name: key.name, prefix: key.keyPrefix },
   });
 
   revalidatePath("/admin/api-keys");
@@ -98,7 +139,7 @@ export async function updateApiKeyAdmin(
     ipWhitelist?: string[];
   }
 ) {
-  const { error } = await requireActionPermission("settings.write");
+  const { user, error } = await requireActionPermission("settings.write");
   if (error) return error;
 
   const scopes = input.scopes?.filter((s) => s === "*" || API_SCOPES.includes(s as ApiScope));
@@ -113,6 +154,13 @@ export async function updateApiKeyAdmin(
       ...(input.isActive !== undefined && { isActive: input.isActive }),
       ...(input.ipWhitelist !== undefined && { ipWhitelist: input.ipWhitelist.filter(Boolean) }),
     },
+  });
+  await createAuditLog({
+    actorId: user.id,
+    action: "api_key.update",
+    entityType: "ApiKey",
+    entityId: keyId,
+    metadata: { fields: Object.keys(input) },
   });
 
   revalidatePath("/admin/api-keys");
