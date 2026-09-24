@@ -247,5 +247,51 @@
     "submit": "Submit review",
     "sent": "Thanks for your review",
     "error": "The review could not be saved."
+  },
+  "status": {
+    "ticket": {
+      "NEW": "New",
+      "OPEN": "Open",
+      "PENDING": "Pending",
+      "IN_PROGRESS": "In progress",
+      "WAITING_FOR_USER": "Waiting for user",
+      "WAITING_FOR_STAFF": "Waiting for team",
+      "ESCALATED": "Escalated",
+      "RESOLVED": "Resolved",
+      "CLOSED": "Closed"
+    },
+    "mod": {
+      "DRAFT": "Draft",
+      "PENDING": "In review",
+      "PUBLISHED": "Published",
+      "REJECTED": "Rejected",
+      "ARCHIVED": "Archived"
+    },
+    "application": {
+      "PENDING": "New",
+      "UNDER_REVIEW": "Under review",
+      "NEEDS_CHANGES": "Needs changes",
+      "APPROVED": "Approved",
+      "REJECTED": "Rejected"
+    },
+    "report": {
+      "SUBMITTED": "New",
+      "UNDER_REVIEW": "Under review",
+      "NEEDS_MORE_INFO": "Needs more info",
+      "INVESTIGATING": "Investigating",
+      "RESOLVED": "Resolved",
+      "REJECTED": "Rejected"
+    },
+    "role": {
+      "OWNER": "Owner",
+      "ADMIN": "Admin",
+      "MODERATOR": "Moderator",
+      "SUPPORT": "Support",
+      "CREATOR": "Creator",
+      "PARTNER": "Partner",
+      "DESIGNER": "Designer",
+      "PREMIUM": "Premium",
+      "USER": "User"
+    }
   }
 }

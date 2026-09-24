@@ -1,85 +1,151 @@
-import { getAdminAnalytics } from "@/actions/admin/analytics";
-import { prisma } from "@/lib/db";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { requireStaff } from "@/lib/auth";
-export default async function AdminAnalyticsPage() {
-  await requireStaff();
-  const result = await getAdminAnalytics();
-  const data = result.success ? result.data : null;
+import Link from "next/link";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import { requirePagePermission } from "@/lib/auth";
+import { ANALYTICS_RANGES, getAnalyticsOverview, type AnalyticsRange } from "@/lib/admin-analytics";
+import { AdminPageHeader, AdminLoadError } from "@/components/admin/admin-page-header";
+import { BarChart } from "@/components/admin/bar-chart";
+import { ChipTabs } from "@/components/ui/chip-tabs";
+import { KpiTile } from "@/components/ui/kpi-tile";
+import { formatCompactNumber, formatEuro } from "@/lib/format-locale";
+import { safeIntlDateTimeFormat } from "@/lib/i18n/safe-locale";
+import type { Locale } from "@/i18n/config";
 
-  const [topGames, topMods, downloadCount] = await Promise.all([
-    prisma.game.findMany({
-      where: { isActive: true },
-      orderBy: { mods: { _count: "desc" } },
-      take: 5,
-      include: { _count: { select: { mods: true } } },
-    }),
-    prisma.mod.findMany({
-      where: { status: "PUBLISHED" },
-      orderBy: { downloadCount: "desc" },
-      take: 10,
-      select: { title: true, downloadCount: true, slug: true },
-    }),
-    prisma.download.count(),
-  ]);
+function ShareList({ rows, total }: { rows: { key: string; label: React.ReactNode; value: number; href?: string }[]; total: number }) {
+  return (
+    <ul className="divide-y divide-line">
+      {rows.map((r) => {
+        const pct = total > 0 ? Math.round((r.value / total) * 100) : 0;
+        return (
+          <li key={r.key} className="px-4 py-2.5 text-[13px]">
+            <div className="flex items-center justify-between gap-3">
+              {r.href ? (
+                <Link href={r.href} className="truncate text-ink hover:text-violet-bright">
+                  {r.label}
+                </Link>
+              ) : (
+                <span className="truncate text-ink">{r.label}</span>
+              )}
+              <span className="shrink-0 tabular-nums text-ink-muted">{r.value.toLocaleString()}</span>
+            </div>
+            <div className="mt-1.5 h-1 rounded-full bg-elevated" aria-hidden>
+              <div className="h-1 rounded-full bg-violet" style={{ width: `${pct}%` }} />
+            </div>
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <section className="rounded-lg border border-line bg-raised">
+      <h2 className="section-title flex h-12 items-center border-b border-line px-4">{title}</h2>
+      {children}
+    </section>
+  );
+}
+
+export default async function AdminAnalyticsPage({
+  params: { locale },
+  searchParams,
+}: {
+  params: { locale: Locale };
+  searchParams: { range?: string };
+}) {
+  setRequestLocale(locale);
+  await requirePagePermission("analytics.read");
+  const t = await getTranslations("admin.an");
+  const range = (ANALYTICS_RANGES.includes(Number(searchParams.range) as AnalyticsRange) ? Number(searchParams.range) : 30) as AnalyticsRange;
+  const base = `/${locale}/admin/analytics`;
+
+  let data;
+  try {
+    data = await getAnalyticsOverview(range);
+  } catch (err) {
+    console.error("[admin/analytics]", err);
+    return (
+      <div>
+        <AdminPageHeader title={t("title")} />
+        <AdminLoadError message={t("loadError")} />
+      </div>
+    );
+  }
+
+  const dayFormat = safeIntlDateTimeFormat(locale, { day: "2-digit", month: "2-digit", timeZone: "UTC" });
+  const originTotal = data.origin.browser + data.origin.other;
+  const gameTotal = data.byGame.reduce((s, g) => s + g.downloads, 0);
 
   return (
     <div>
-      <h1 className="h1-acp">Analytics</h1>
-      <p className="mt-1 text-sm text-muted-foreground">Platform metrics and trends</p>
+      <AdminPageHeader
+        title={t("title")}
+        description={t("subtitle")}
+        actions={
+          <ChipTabs
+            label={t("range")}
+            value={String(range)}
+            options={ANALYTICS_RANGES.map((r) => ({ value: String(r), label: t("days", { count: r }) }))}
+            hrefFor={(v) => `${base}?range=${v}`}
+          />
+        }
+      />
 
-      {data && (
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {[
-            { label: "Total users", value: data.totalUsers },
-            { label: "Premium users", value: data.premiumUsers },
-            { label: "Active subs", value: data.activeSubscriptions },
-            { label: "Total downloads", value: downloadCount },
-            { label: "Open tickets", value: data.openTickets },
-            { label: "Revenue (30d)", value: `$${data.revenue30d.toFixed(0)}` },
-          ].map((s) => (
-            <Card key={s.label}>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm text-muted-foreground">{s.label}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-2xl font-bold">{s.value}</p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+        <KpiTile label={t("downloads")} value={formatCompactNumber(data.totals.downloads, locale)} />
+        <KpiTile label={t("pageViews")} value={formatCompactNumber(data.totals.pageViews, locale)} />
+        <KpiTile label={t("visitors")} value={formatCompactNumber(data.totals.visitors, locale)} />
+        <KpiTile label={t("newUsers")} value={formatCompactNumber(data.totals.newUsers, locale)} />
+        <KpiTile label={t("revenue")} value={formatEuro(data.totals.revenueCents, locale)} />
+      </div>
 
-      <div className="mt-10 grid gap-6 lg:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Top games by mod count</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2 text-sm">
-            {topGames.map((g) => (
-              <div key={g.id} className="flex justify-between">
-                <span>{g.name}</span>
-                <span className="text-muted-foreground">{g._count.mods} mods</span>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
+      <div className="mt-4">
+        <Section title={t("downloadsPerDay")}>
+          <div className="p-4 pt-8">
+            {data.totals.downloads === 0 ? (
+              <p className="py-10 text-center text-sm text-ink-muted">{t("empty")}</p>
+            ) : (
+              <BarChart
+                locale={locale}
+                label={t("downloadsPerDay")}
+                data={data.days.map((d) => ({ key: d.day, label: dayFormat.format(new Date(d.day)), value: d.downloads }))}
+              />
+            )}
+          </div>
+        </Section>
+      </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Top mods by downloads</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2 text-sm">
-            {topMods.map((m) => (
-              <div key={m.slug} className="flex justify-between">
-                <span className="line-clamp-1">{m.title}</span>
-                <span className="text-muted-foreground shrink-0 ml-2">
-                  {m.downloadCount.toLocaleString()}
-                </span>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
+      <div className="mt-4 grid gap-4 lg:grid-cols-3">
+        <Section title={t("topMods")}>
+          {data.topMods.length === 0 ? (
+            <p className="px-4 py-8 text-center text-sm text-ink-muted">{t("empty")}</p>
+          ) : (
+            <ShareList
+              total={data.topMods[0]?.downloads ?? 0}
+              rows={data.topMods.map((m) => ({ key: m.id, label: m.title, value: m.downloads, href: `/${locale}/admin/mods/${m.id}` }))}
+            />
+          )}
+        </Section>
+        <Section title={t("origin")}>
+          {originTotal === 0 ? (
+            <p className="px-4 py-8 text-center text-sm text-ink-muted">{t("empty")}</p>
+          ) : (
+            <ShareList
+              total={originTotal}
+              rows={[
+                { key: "browser", label: t("originBrowser"), value: data.origin.browser },
+                { key: "other", label: t("originOther"), value: data.origin.other },
+              ]}
+            />
+          )}
+        </Section>
+        <Section title={t("byGame")}>
+          {data.byGame.length === 0 ? (
+            <p className="px-4 py-8 text-center text-sm text-ink-muted">{t("empty")}</p>
+          ) : (
+            <ShareList total={gameTotal} rows={data.byGame.map((g) => ({ key: g.name, label: g.name, value: g.downloads }))} />
+          )}
+        </Section>
       </div>
     </div>
   );

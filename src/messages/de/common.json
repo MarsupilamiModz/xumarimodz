@@ -247,5 +247,51 @@
     "submit": "Bewertung senden",
     "sent": "Danke für deine Bewertung",
     "error": "Die Bewertung konnte nicht gespeichert werden."
+  },
+  "status": {
+    "ticket": {
+      "NEW": "Neu",
+      "OPEN": "Offen",
+      "PENDING": "Ausstehend",
+      "IN_PROGRESS": "In Bearbeitung",
+      "WAITING_FOR_USER": "Wartet auf Nutzer",
+      "WAITING_FOR_STAFF": "Wartet auf Team",
+      "ESCALATED": "Eskaliert",
+      "RESOLVED": "Gelöst",
+      "CLOSED": "Geschlossen"
+    },
+    "mod": {
+      "DRAFT": "Entwurf",
+      "PENDING": "In Prüfung",
+      "PUBLISHED": "Veröffentlicht",
+      "REJECTED": "Abgelehnt",
+      "ARCHIVED": "Archiviert"
+    },
+    "application": {
+      "PENDING": "Neu",
+      "UNDER_REVIEW": "In Prüfung",
+      "NEEDS_CHANGES": "Änderungen nötig",
+      "APPROVED": "Angenommen",
+      "REJECTED": "Abgelehnt"
+    },
+    "report": {
+      "SUBMITTED": "Neu",
+      "UNDER_REVIEW": "In Prüfung",
+      "NEEDS_MORE_INFO": "Rückfrage",
+      "INVESTIGATING": "Wird untersucht",
+      "RESOLVED": "Erledigt",
+      "REJECTED": "Abgewiesen"
+    },
+    "role": {
+      "OWNER": "Owner",
+      "ADMIN": "Admin",
+      "MODERATOR": "Moderator",
+      "SUPPORT": "Support",
+      "CREATOR": "Creator",
+      "PARTNER": "Partner",
+      "DESIGNER": "Designer",
+      "PREMIUM": "Premium",
+      "USER": "Nutzer"
+    }
   }
 }
