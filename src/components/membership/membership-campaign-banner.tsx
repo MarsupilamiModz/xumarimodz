@@ -1,6 +1,7 @@
 import { prismaModelExists } from "@/lib/prisma-schema";
 import { prisma } from "@/lib/db";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { Badge } from "@/components/ui/badge";
 
 export async function MembershipCampaignBanner({ locale }: { locale: string }) {
@@ -19,24 +20,22 @@ export async function MembershipCampaignBanner({ locale }: { locale: string }) {
     const remaining = Math.max(0, campaign.totalSlots - campaign.soldSlots);
     if (remaining <= 0) return null;
 
+    const t = await getTranslations("premium");
+
     return (
-      <div className="mx-auto max-w-7xl px-4 pt-4 sm:px-6">
+      <div className="page-container pt-4">
         <Link
           href={`/${locale}/premium`}
-          className="block rounded-xl border border-neon-purple/40 bg-gradient-to-r from-neon-purple/15 to-neon-blue/10 p-4 hover:border-neon-purple/60 transition-colors"
+          className="block rounded-lg border border-line bg-raised p-4 transition-colors duration-fast hover:border-line-control"
         >
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              {campaign.badgeLabel && (
-                <Badge className="mb-2 bg-neon-purple/30 text-neon-purple">{campaign.badgeLabel}</Badge>
-              )}
-              <p className="font-semibold">{campaign.bannerText ?? campaign.title}</p>
-              {campaign.description && (
-                <p className="text-sm text-muted-foreground mt-1">{campaign.description}</p>
-              )}
+              {campaign.badgeLabel && <Badge className="mb-2">{campaign.badgeLabel}</Badge>}
+              <p className="font-semibold text-ink">{campaign.bannerText ?? campaign.title}</p>
+              {campaign.description && <p className="mt-1 text-sm text-ink-muted">{campaign.description}</p>}
             </div>
-            <p className="text-lg font-bold tabular-nums text-neon-purple">
-              {remaining} / {campaign.totalSlots} left
+            <p className="text-sm font-semibold tabular-nums text-ink">
+              {t("campaignRemaining", { remaining, total: campaign.totalSlots })}
             </p>
           </div>
         </Link>

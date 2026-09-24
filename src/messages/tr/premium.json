@@ -10,6 +10,7 @@
     "perkExclusive": "Seçili sürümlere erken erişim",
     "perkDiscord": "Premium Discord rolü ve kanalları",
     "perkSupport": "Öncelikli destek kuyruğu",
-    "perkCreator": "Bağımsız creator'lara doğrudan destek"
+    "perkCreator": "Bağımsız creator'lara doğrudan destek",
+    "campaignRemaining": "{total} yerden {remaining} kaldı"
   }
 }

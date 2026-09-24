@@ -32,7 +32,10 @@
     "sortDate": "Recently updated",
     "loadMore": "Load more mods",
     "choosePlatform": "Choose your platform",
-    "modesAvailable": "{count, plural, one {# area available} other {# areas available}}"
+    "modesAvailable": "{count, plural, one {# area available} other {# areas available}}",
+    "statMods": "Mods",
+    "statDownloads": "Downloads",
+    "statCreators": "Creators"
   },
   "mods": {
     "title": "Mod catalog",
@@ -50,6 +53,13 @@
     "versions": "Version history",
     "signInPremium": "Sign in to access premium mods",
     "noReviews": "No reviews yet — be the first to share feedback.",
-    "leaveReview": "Write a review"
+    "leaveReview": "Write a review",
+    "like": "Add to favorites",
+    "unlike": "Remove from favorites",
+    "signInToLike": "Sign in to save mods",
+    "video": "Video",
+    "sound": "Sound",
+    "downloadsLabel": "{count} downloads",
+    "ratingLabel": "Rated {rating} out of 5"
   }
 }

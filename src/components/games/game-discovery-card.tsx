@@ -3,12 +3,13 @@
 import { memo, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Download, Gamepad2, Sparkles, TrendingUp, Users } from "lucide-react";
-import { Card } from "@/components/ui/card";
+import { Sparkles, TrendingUp } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { SafeImage } from "@/components/ui/safe-image";
 import { useGameModePickerOptional } from "@/components/games/game-mode-picker-context";
-import { formatCompactCount, type GameDiscoveryCardData } from "@/lib/game-discovery";
+import type { GameDiscoveryCardData } from "@/lib/game-discovery";
+import { formatCompactNumber } from "@/lib/format-locale";
+import { CoverPlaceholder } from "@/components/ui/cover-placeholder";
 import { prefetchGameModeAssets } from "@/lib/image-prefetch";
 
 type Props = {
@@ -80,113 +81,68 @@ export const GameDiscoveryCard = memo(function GameDiscoveryCard({
     navigate(`/${locale}/games/${game.slug}`);
   }, [game, locale, navigate, picker]);
 
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        handleClick();
-      }
-    },
-    [handleClick]
-  );
-
   return (
-    <div
-      role="button"
-      tabIndex={0}
+    <button
+      type="button"
       onClick={handleClick}
       onMouseEnter={warmAssets}
       onFocus={warmAssets}
-      onKeyDown={handleKeyDown}
-      className="group mx-auto w-full max-w-[280px] cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-neon-purple rounded-2xl"
+      className="group flex h-full w-full flex-col overflow-hidden rounded-lg border border-line bg-raised text-left transition-colors duration-fast hover:border-line-control"
     >
-      <Card className="relative flex h-full flex-col overflow-hidden rounded-2xl border-border/50 bg-background/40 transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-1 hover:border-neon-purple/50">
-        <div className="relative aspect-[2/3] w-full shrink-0 overflow-hidden bg-muted/20">
-          {coverSrc ? (
-            <SafeImage
-              src={coverSrc}
-              alt={game.name}
-              fill
-              priority={priority}
-              loading={priority ? "eager" : "lazy"}
-              className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
-              sizes={imageSizes}
-            />
-          ) : (
-            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-neon-purple/25 to-neon-blue/10">
-              <Gamepad2 className="h-16 w-16 text-muted-foreground/35" />
-            </div>
+      <span className="relative block aspect-[3/4] w-full shrink-0 overflow-hidden bg-elevated">
+        {coverSrc ? (
+          <SafeImage
+            src={coverSrc}
+            alt=""
+            fill
+            priority={priority}
+            loading={priority ? "eager" : "lazy"}
+            className="object-cover"
+            sizes={imageSizes}
+          />
+        ) : (
+          <CoverPlaceholder name={game.name} gameSlug={game.slug} />
+        )}
+        <span className="absolute inset-x-0 top-0 flex flex-wrap gap-1.5 p-3">
+          {game.isFeatured && <Badge variant="premium">{t("featured")}</Badge>}
+          {showNew && (
+            <Badge variant="secondary">
+              <Sparkles className="h-3 w-3" aria-hidden />
+              {t("new")}
+            </Badge>
           )}
+          {showPopular && !game.isFeatured && (
+            <Badge variant="secondary">
+              <TrendingUp className="h-3 w-3" aria-hidden />
+              {t("popular")}
+            </Badge>
+          )}
+        </span>
+      </span>
 
-          <div className="absolute inset-x-0 top-0 flex flex-wrap gap-1.5 p-2.5 sm:p-3">
-            {game.isFeatured && (
-              <Badge variant="premium" className="text-[10px] shadow-md sm:text-xs">
-                {t("featured")}
-              </Badge>
-            )}
-            {showNew && (
-              <Badge
-                variant="outline"
-                className="border-neon-blue/50 bg-background/85 text-[10px] text-neon-blue sm:text-xs"
-              >
-                <Sparkles className="mr-1 h-3 w-3" />
-                {t("new")}
-              </Badge>
-            )}
-            {showPopular && !game.isFeatured && (
-              <Badge variant="outline" className="border-neon-purple/50 bg-background/85 text-[10px] sm:text-xs">
-                <TrendingUp className="mr-1 h-3 w-3 text-neon-purple" />
-                {t("popular")}
-              </Badge>
-            )}
-            {game.modeCount > 1 && (
-              <Badge variant="outline" className="ml-auto bg-background/80 text-[10px] sm:text-xs">
-                {t("modesAvailable", { count: game.modeCount })}
-              </Badge>
-            )}
-          </div>
-        </div>
+      <span className="flex flex-1 flex-col gap-3 p-4">
+        <span className="block">
+          <span className="line-clamp-2 text-base font-bold leading-snug text-ink">{game.name}</span>
+          {game.modeCount > 1 && (
+            <span className="meta mt-1 block">{t("modesAvailable", { count: game.modeCount })}</span>
+          )}
+        </span>
 
-        <div className="flex flex-1 flex-col gap-3 p-3 sm:p-4">
-          <div className="min-h-0">
-            <h3 className="line-clamp-2 text-base font-bold leading-snug tracking-tight text-foreground transition-colors duration-150 group-hover:text-neon-purple sm:text-lg">
-              {game.name}
-            </h3>
-            {game.shortDescription && (
-              <p className="mt-1 line-clamp-2 text-xs text-muted-foreground sm:text-sm">
-                {game.shortDescription}
-              </p>
-            )}
-          </div>
-
-          <dl className="mt-auto grid grid-cols-3 gap-1 border-t border-border/40 pt-3 text-center text-[10px] sm:text-xs">
-            <div>
-              <dt className="sr-only">{t("modsCountShort", { count: game.modCount })}</dt>
-              <dd className="flex flex-col items-center gap-0.5 font-medium">
-                <Gamepad2 className="h-3.5 w-3.5 text-neon-blue sm:h-4 sm:w-4" />
-                <span>{formatCompactCount(game.modCount)}</span>
-                <span className="font-normal text-muted-foreground">Mods</span>
-              </dd>
-            </div>
-            <div>
-              <dt className="sr-only">{t("downloadsCount", { count: game.downloadCount })}</dt>
-              <dd className="flex flex-col items-center gap-0.5 font-medium">
-                <Download className="h-3.5 w-3.5 text-neon-purple sm:h-4 sm:w-4" />
-                <span>{formatCompactCount(game.downloadCount)}</span>
-                <span className="font-normal text-muted-foreground">Downloads</span>
-              </dd>
-            </div>
-            <div>
-              <dt className="sr-only">{t("creatorsCountShort", { count: game.creatorCount })}</dt>
-              <dd className="flex flex-col items-center gap-0.5 font-medium">
-                <Users className="h-3.5 w-3.5 text-neon-blue sm:h-4 sm:w-4" />
-                <span>{game.creatorCount}</span>
-                <span className="font-normal text-muted-foreground">Creators</span>
-              </dd>
-            </div>
-          </dl>
-        </div>
-      </Card>
-    </div>
+        <span className="mt-auto grid grid-cols-3 gap-2 border-t border-line pt-3 text-[13px] tabular-nums">
+          <span className="flex flex-col" aria-label={t("modsCountShort", { count: game.modCount })}>
+            <span className="font-semibold text-ink">{formatCompactNumber(game.modCount, locale)}</span>
+            <span className="text-xs text-ink-muted">{t("statMods")}</span>
+          </span>
+          <span className="flex flex-col" aria-label={t("downloadsCount", { count: game.downloadCount })}>
+            <span className="font-semibold text-ink">{formatCompactNumber(game.downloadCount, locale)}</span>
+            <span className="text-xs text-ink-muted">{t("statDownloads")}</span>
+          </span>
+          <span className="flex flex-col" aria-label={t("creatorsCountShort", { count: game.creatorCount })}>
+            <span className="font-semibold text-ink">{formatCompactNumber(game.creatorCount, locale)}</span>
+            <span className="text-xs text-ink-muted">{t("statCreators")}</span>
+          </span>
+        </span>
+      </span>
+    </button>
   );
 });

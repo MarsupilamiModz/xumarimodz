@@ -17,6 +17,7 @@ const modListSelect = {
   averageRating: true,
   favoriteCount: true,
   game: { select: { name: true, slug: true } },
+  category: { select: { name: true } },
   screenshots: { take: 1, orderBy: { sortOrder: "asc" as const } },
   author: { select: { username: true, displayName: true, avatarUrl: true } },
   versions: {

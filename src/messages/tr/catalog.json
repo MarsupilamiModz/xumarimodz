@@ -14,7 +14,16 @@
     "premiumMods": "Premium modlar",
     "trendingMods": "Trend modlar",
     "results": "Sonuçlar",
-    "noModsYet": "Bu oyun için henüz mod yok. Yakında tekrar kontrol edin."
+    "noModsYet": "Bu oyun için henüz mod yok. Yakında tekrar kontrol edin.",
+    "new": "Yeni",
+    "popular": "Popüler",
+    "modesAvailable": "{count} alan",
+    "statMods": "Mod",
+    "statDownloads": "İndirme",
+    "statCreators": "Üretici",
+    "modsCountShort": "{count} mod",
+    "downloadsCount": "{count} indirme",
+    "creatorsCountShort": "{count} üretici"
   },
   "mods": {
     "title": "Mod kataloğu",
@@ -32,6 +41,13 @@
     "versions": "Sürüm geçmişi",
     "signInPremium": "Premium modlar için giriş yap",
     "noReviews": "Henüz yorum yok — ilk sen ol.",
-    "leaveReview": "Yorum yaz"
+    "leaveReview": "Yorum yaz",
+    "like": "Favorilere ekle",
+    "unlike": "Favorilerden çıkar",
+    "signInToLike": "Modları kaydetmek için giriş yap",
+    "video": "Video",
+    "sound": "Ses",
+    "downloadsLabel": "{count} indirme",
+    "ratingLabel": "5 üzerinden {rating} puan"
   }
 }

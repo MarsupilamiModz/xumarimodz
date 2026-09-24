@@ -14,7 +14,16 @@
     "premiumMods": "Mods premium",
     "trendingMods": "Mods populaires",
     "results": "Résultats",
-    "noModsYet": "Aucun mod publié pour ce jeu pour le moment. Revenez bientôt."
+    "noModsYet": "Aucun mod publié pour ce jeu pour le moment. Revenez bientôt.",
+    "new": "Nouveau",
+    "popular": "Populaire",
+    "modesAvailable": "{count, plural, one {# espace} other {# espaces}}",
+    "statMods": "Mods",
+    "statDownloads": "Téléchargements",
+    "statCreators": "Créateurs",
+    "modsCountShort": "{count} mods",
+    "downloadsCount": "{count} téléchargements",
+    "creatorsCountShort": "{count} créateurs"
   },
   "mods": {
     "title": "Catalogue de mods",
@@ -32,6 +41,13 @@
     "versions": "Historique des versions",
     "signInPremium": "Connectez-vous pour les mods Premium",
     "noReviews": "Pas encore d'avis — soyez le premier.",
-    "leaveReview": "Laisser un avis"
+    "leaveReview": "Laisser un avis",
+    "like": "Ajouter aux favoris",
+    "unlike": "Retirer des favoris",
+    "signInToLike": "Connecte-toi pour enregistrer des mods",
+    "video": "Vidéo",
+    "sound": "Son",
+    "downloadsLabel": "{count} téléchargements",
+    "ratingLabel": "Note {rating} sur 5"
   }
 }

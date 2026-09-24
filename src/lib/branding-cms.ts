@@ -143,6 +143,13 @@ export const PAGE_CONTENT_FIELDS: Record<PageId, string[]> = {
     "statsMods",
     "statsGames",
     "statsCreators",
+    // Neues Design: Hero-Bild (URL), Funktionen und FAQ (leere FAQ-Frage = Eintrag ausgeblendet)
+    "heroDownload",
+    "heroImageUrl",
+    "featuresTitle",
+    ...[1, 2, 3, 4, 5, 6].flatMap((n) => [`feature${n}Title`, `feature${n}Text`]),
+    "faqTitle",
+    ...[1, 2, 3, 4, 5, 6].flatMap((n) => [`faq${n}Q`, `faq${n}A`]),
   ],
   premium: ["heroTitle", "heroSubtitle", "ctaText", "featuresIntro", "benefitsIntro"],
   shop: ["heroTitle", "heroSubtitle", "categoryIntro"],

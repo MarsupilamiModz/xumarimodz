@@ -1,8 +1,19 @@
 import Link from "next/link";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { ArrowRight, Crown, Sparkles } from "lucide-react";
+import {
+  ArrowRight,
+  Download,
+  Gamepad2,
+  HeartHandshake,
+  History,
+  Layers,
+  ShieldCheck,
+  UserRound,
+  type LucideIcon,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
+import { SafeImage } from "@/components/ui/safe-image";
 import { ModCard } from "@/components/mods/mod-card";
 import { GameDiscoveryGrid } from "@/components/games/game-discovery-grid";
 import { getGamesDiscoveryCards } from "@/lib/game-discovery";
@@ -15,8 +26,26 @@ import { getCachedPublicBranding } from "@/lib/branding-data";
 import { resolvePageContent } from "@/lib/branding-cms";
 import type { Locale } from "@/i18n/config";
 import { MembershipCampaignBanner } from "@/components/membership/membership-campaign-banner";
+import { FaqList } from "@/components/faq/faq-list";
+import { getFaqEntries } from "@/lib/faq";
 
 export const revalidate = REVALIDATE.homepage;
+
+const FEATURE_ICONS: LucideIcon[] = [Download, ShieldCheck, Layers, History, UserRound, HeartHandshake];
+
+function SectionHeader({ title, href, linkLabel }: { title: string; href?: string; linkLabel?: string }) {
+  return (
+    <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+      <h2 className="text-[28px] font-bold leading-tight tracking-tight text-ink">{title}</h2>
+      {href && linkLabel && (
+        <Link href={href} className="link inline-flex items-center gap-1 text-sm font-semibold">
+          {linkLabel}
+          <ArrowRight className="h-4 w-4" aria-hidden />
+        </Link>
+      )}
+    </div>
+  );
+}
 
 export default async function HomePage({ params }: { params: Promise<{ locale: Locale }> }) {
   const { locale } = await params;
@@ -37,6 +66,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
   const page = cms.pageContent;
   const txt = (field: string, fallback: string) =>
     resolvePageContent(page, "homepage", locale, field, fallback);
+  // Nur im ACP gesetzte Werte, ohne Standardtext (Hero-Bild).
+  const cmsOnly = (field: string) => resolvePageContent(page, "homepage", locale, field, "").trim();
 
   const pricingLabels: Record<string, string> = {
     FREE: tm("free"),
@@ -44,19 +75,32 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
     PAID: tm("paid"),
   };
 
+  const features = FEATURE_ICONS.map((icon, i) => {
+    const n = i + 1;
+    return {
+      icon,
+      title: txt(`feature${n}Title`, t(`feature${n}Title`)),
+      text: txt(`feature${n}Text`, t(`feature${n}Text`)),
+    };
+  });
+
+  const faqs = await getFaqEntries(locale);
+
+  // TODO(content): App-Screenshot im ACP hinterlegen (Webseite → Inhalte → Startseite → heroImageUrl).
+  const heroImageUrl = cmsOnly("heroImageUrl");
+
   return (
     <div>
       <MembershipCampaignBanner locale={locale} />
       {announcements.length > 0 && (
-        <div className="border-b border-neon-purple/20 bg-neon-purple/5">
-          <div className="mx-auto max-w-7xl px-4 py-2.5 sm:px-6">
+        <div className="border-b border-line bg-raised">
+          <div className="page-container space-y-1 py-3">
             {announcements.map((a: { id: string; title: string; content: string; link: string | null }) => (
-              <p key={a.id} className="text-center text-sm">
-                <span className="font-medium text-neon-purple">{a.title}</span>
-                <span className="text-muted-foreground"> — {a.content}</span>
+              <p key={a.id} className="text-sm text-ink-muted">
+                <span className="font-semibold text-ink">{a.title}</span> {a.content}
                 {a.link && (
-                  <Link href={a.link} className="ml-2 text-neon-blue hover:underline">
-                    →
+                  <Link href={a.link} className="link ml-2 font-semibold">
+                    {t("announcementMore")}
                   </Link>
                 )}
               </p>
@@ -65,90 +109,105 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
         </div>
       )}
 
-      <section className="relative overflow-hidden px-4 py-20 sm:px-6 lg:py-28">
-        <div className="absolute inset-0 bg-hero-glow pointer-events-none" />
-        <div className="relative mx-auto max-w-4xl text-center">
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-neon-purple/30 bg-neon-purple/10 px-4 py-1.5 text-xs font-medium text-neon-purple">
-            <Sparkles className="h-3.5 w-3.5" />
-            {txt("heroBadge", t("heroBadge"))}
+      {/* Hero: Text links, App-Screenshot rechts */}
+      <section className="page-section">
+        <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
+          <div>
+            <p className="meta font-semibold">{txt("heroBadge", t("heroBadge"))}</p>
+            <h1 className="h1-display mt-3">{txt("heroTitle", t("heroTitle"))}</h1>
+            <p className="mt-5 max-w-xl text-base text-ink-muted md:text-lg">
+              {txt("heroSubtitle", t("heroSubtitle"))}
+            </p>
+            <div className="mt-8 flex flex-wrap items-center gap-3">
+              <Button size="lg" asChild>
+                <Link href={`/${locale}/download`}>
+                  <Download className="h-4 w-4" aria-hidden />
+                  {txt("heroDownload", t("heroDownload"))}
+                </Link>
+              </Button>
+              <Button size="lg" variant="outline" asChild>
+                <Link href={`/${locale}/premium`}>{txt("goPremium", t("heroPremium"))}</Link>
+              </Button>
+              <Link href={`/${locale}/mods`} className="link px-2 text-sm font-semibold">
+                {txt("browseMods", t("browseMods"))}
+              </Link>
+            </div>
           </div>
-          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl text-gradient leading-[1.1]">
-            {txt("heroTitle", t("heroTitle"))}
-          </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground leading-relaxed">
-            {txt("heroSubtitle", t("heroSubtitle"))}
-          </p>
-          <div className="mt-10 flex flex-wrap justify-center gap-3">
-            <Button variant="neon" size="lg" asChild>
-              <Link href={`/${locale}/mods`} prefetch>
-                {txt("browseMods", t("browseMods"))} <ArrowRight className="h-4 w-4" />
-              </Link>
-            </Button>
-            <Button variant="outline" size="lg" asChild>
-              <Link href={`/${locale}/premium`} prefetch>
-                <Crown className="h-4 w-4 mr-2" /> {txt("goPremium", t("goPremium"))}
-              </Link>
-            </Button>
+          <div className="relative aspect-[16/10] overflow-hidden rounded-xl border border-line bg-elevated">
+            {heroImageUrl ? (
+              <SafeImage src={heroImageUrl} alt={t("heroScreenshot")} fill priority className="object-cover" sizes="(max-width: 1024px) 100vw, 55vw" />
+            ) : (
+              <div role="img" aria-label={t("heroScreenshot")} className="flex h-full items-center justify-center p-6">
+                <span className="text-lg font-bold text-ink-muted">{t("heroScreenshot")}</span>
+              </div>
+            )}
           </div>
         </div>
       </section>
 
-      <AdLocationSlot location="homepage" className="mx-auto max-w-7xl px-4 sm:px-6" />
+      <AdLocationSlot location="homepage" className="page-container" />
 
-      <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6">
-        <div className="mb-8 flex items-end justify-between gap-4">
-          <h2 className="text-2xl font-bold tracking-tight">{t("featuredGames")}</h2>
-          <Button variant="ghost" size="sm" asChild>
-            <Link href={`/${locale}/games`}>{t("viewAllGames")}</Link>
-          </Button>
-        </div>
+      <section className="page-section">
+        <SectionHeader title={t("gamesTitle")} href={`/${locale}/games`} linkLabel={t("viewAllGames")} />
         {games.length === 0 ? (
-          <Card className="glass p-12 text-center text-muted-foreground">{t("noGamesYet")}</Card>
+          <EmptyState icon={Gamepad2} title={t("noGamesYet")} />
         ) : (
-          <GameDiscoveryGrid locale={locale} games={games} priorityCount={6} />
+          <GameDiscoveryGrid locale={locale} games={games} priorityCount={5} />
         )}
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6">
-        <div className="mb-8 flex items-end justify-between gap-4">
-          <h2 className="text-2xl font-bold tracking-tight">{t("trendingMods")}</h2>
-          {mods.length > 0 && (
-            <Button variant="ghost" size="sm" asChild>
-              <Link href={`/${locale}/mods`}>{t("viewAllMods")}</Link>
-            </Button>
-          )}
-        </div>
+      <section className="page-section border-y border-line bg-raised">
+        <SectionHeader title={txt("featuresTitle", t("featuresTitle"))} />
+        <ul className="grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+          {features.map(({ icon: Icon, title, text }) => (
+            <li key={title}>
+              <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-elevated text-ink">
+                <Icon className="h-5 w-5" aria-hidden />
+              </span>
+              <h3 className="mt-4 text-base font-semibold text-ink">{title}</h3>
+              <p className="mt-1.5 text-sm text-ink-muted">{text}</p>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section className="page-section">
+        <SectionHeader
+          title={t("popularTitle")}
+          href={mods.length > 0 ? `/${locale}/mods` : undefined}
+          linkLabel={t("viewAllMods")}
+        />
         {mods.length === 0 ? (
-          <Card className="glass p-12 text-center text-muted-foreground">{t("noModsYet")}</Card>
+          <EmptyState icon={Layers} title={t("noModsYet")} />
         ) : (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
             {mods.map((mod) => (
-              <ModCard
-                key={mod.id}
-                locale={locale}
-                mod={mod}
-                pricingLabel={pricingLabels[mod.pricing] ?? mod.pricing}
-              />
+              <ModCard key={mod.id} locale={locale} mod={mod} pricingLabel={pricingLabels[mod.pricing] ?? mod.pricing} />
             ))}
           </div>
         )}
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 pb-20 sm:px-6">
-        <Card className="glass relative overflow-hidden border-neon-purple/25 p-8 sm:p-12 text-center">
-          <div className="absolute inset-0 bg-gradient-to-br from-neon-purple/10 via-transparent to-neon-blue/10 pointer-events-none" />
-          <div className="relative">
-            <Crown className="mx-auto h-11 w-11 text-neon-purple mb-4" />
-            <h2 className="text-2xl font-bold tracking-tight">{txt("premiumBanner", t("premiumBanner"))}</h2>
-            <p className="mt-3 text-muted-foreground max-w-lg mx-auto leading-relaxed">
-              {txt("premiumBannerDesc", t("premiumBannerDesc"))}
-            </p>
-            <Button variant="neon" className="mt-7" asChild>
-              <Link href={`/${locale}/premium`}>{txt("premiumCta", t("premiumCta"))}</Link>
-            </Button>
+      <section className="page-container">
+        <div className="flex flex-col gap-6 rounded-xl border border-line bg-raised p-8 md:flex-row md:items-center md:justify-between md:p-10">
+          <div className="max-w-xl">
+            <h2 className="text-[28px] font-bold leading-tight text-ink">{txt("premiumBanner", t("premiumBanner"))}</h2>
+            <p className="mt-2 text-ink-muted">{txt("premiumBannerDesc", t("premiumBannerDesc"))}</p>
           </div>
-        </Card>
+          <Button size="lg" asChild>
+            <Link href={`/${locale}/premium`}>{txt("premiumCta", t("premiumCta"))}</Link>
+          </Button>
+        </div>
       </section>
+
+      {faqs.length > 0 && (
+        <section className="page-section">
+          <div className="max-w-3xl">
+            <SectionHeader title={txt("faqTitle", t("faqTitle"))} href={`/${locale}/faq`} linkLabel={t("faqAll")} />
+            <FaqList entries={faqs} />
+          </div>
+        </section>
+      )}
     </div>
   );
 }

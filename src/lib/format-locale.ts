@@ -13,6 +13,15 @@ export function formatNumber(value: number, locale?: string | null) {
   return safeToLocaleString(value, locale);
 }
 
+/** Kurze Zahlen für Karten und Kennzahlen, z. B. „1,2 Mio.“ (de) oder „1.2M“ (en). */
+export function formatCompactNumber(value: number, locale?: string | null) {
+  try {
+    return safeIntlNumberFormat(locale, { notation: "compact", maximumFractionDigits: 1 }).format(value);
+  } catch {
+    return safeToLocaleString(value, locale);
+  }
+}
+
 export function formatEuro(cents: number, locale?: string | null) {
   try {
     return safeIntlNumberFormat(locale, { style: "currency", currency: "EUR" }).format(cents / 100);

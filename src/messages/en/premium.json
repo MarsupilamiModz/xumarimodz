@@ -10,6 +10,7 @@
     "perkExclusive": "Early access to select releases",
     "perkDiscord": "Premium Discord role & channels",
     "perkSupport": "Priority support queue",
-    "perkCreator": "Direct support for independent creators"
+    "perkCreator": "Direct support for independent creators",
+    "campaignRemaining": "{remaining} of {total} left"
   }
 }

@@ -5,7 +5,7 @@
     "empty": "Keine aktiven Spiele im Katalog. Admins können Titel im Admin-Bereich hinzufügen.",
     "modsCount": "{count} Mods",
     "creatorsCount": "{count} Creators",
-    "featured": "Highlights",
+    "featured": "Empfohlen",
     "trending": "Trending",
     "premiumSection": "Premium-Auswahl",
     "allCategories": "Alle",
@@ -17,7 +17,16 @@
     "premiumMods": "Premium Mods",
     "trendingMods": "Trending Mods",
     "results": "Ergebnisse",
-    "noModsYet": "Für dieses Spiel gibt es noch keine Mods. Schau bald wieder vorbei."
+    "noModsYet": "Für dieses Spiel gibt es noch keine Mods. Schau bald wieder vorbei.",
+    "new": "Neu",
+    "popular": "Beliebt",
+    "modesAvailable": "{count, plural, one {# Bereich} other {# Bereiche}}",
+    "statMods": "Mods",
+    "statDownloads": "Downloads",
+    "statCreators": "Creator",
+    "modsCountShort": "{count} Mods",
+    "downloadsCount": "{count} Downloads",
+    "creatorsCountShort": "{count} Creator"
   },
   "mods": {
     "title": "Mod-Katalog",
@@ -35,6 +44,13 @@
     "versions": "Versionsverlauf",
     "signInPremium": "Anmelden für Premium-Mods",
     "noReviews": "Noch keine Bewertungen — sei der Erste.",
-    "leaveReview": "Bewertung schreiben"
+    "leaveReview": "Bewertung schreiben",
+    "like": "Zu Favoriten hinzufügen",
+    "unlike": "Aus Favoriten entfernen",
+    "signInToLike": "Melde dich an, um Mods zu speichern",
+    "video": "Video",
+    "sound": "Sound",
+    "downloadsLabel": "{count} Downloads",
+    "ratingLabel": "Bewertung {rating} von 5"
   }
 }

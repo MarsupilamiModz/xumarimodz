@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
 import { Heart } from "lucide-react";
 import { toggleFavorite } from "@/actions/favorites";
 import { cn } from "@/lib/utils";
@@ -15,42 +16,38 @@ export function ModCardLikeButton({
   initialFavorited?: boolean;
   className?: string;
 }) {
+  const t = useTranslations("mods");
   const [favorited, setFavorited] = useState(initialFavorited);
   const [pending, startTransition] = useTransition();
-  const [bump, setBump] = useState(false);
 
   return (
     <button
       type="button"
-      aria-label={favorited ? "Unlike mod" : "Like mod"}
+      aria-label={favorited ? t("unlike") : t("like")}
+      aria-pressed={favorited}
       disabled={pending}
       className={cn(
-        "absolute bottom-2.5 right-2.5 z-10 flex h-8 w-8 items-center justify-center rounded-full",
-        "border border-line bg-background/70 backdrop-blur-md transition-all duration-200",
-        "hover:scale-110 hover:border-neon-purple/50 hover:bg-neon-purple/20",
-        bump && "scale-125",
+        "relative z-10 flex h-9 w-9 items-center justify-center rounded-md border border-line bg-canvas/80",
+        "transition-colors duration-fast hover:border-line-control hover:bg-hover disabled:opacity-60",
         className
       )}
-      onClick={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
+      onClick={() => {
         startTransition(async () => {
           const r = await toggleFavorite(modId);
           if (r.success) {
             setFavorited(r.data.favorited);
-            setBump(true);
-            setTimeout(() => setBump(false), 200);
           } else if (r.error === "Unauthorized") {
-            toast({ title: "Sign in to like mods", variant: "destructive" });
+            toast({ title: t("signInToLike"), variant: "destructive" });
           }
         });
       }}
     >
       <Heart
         className={cn(
-          "h-4 w-4 transition-colors",
-          favorited ? "fill-neon-purple text-neon-purple" : "text-muted-foreground"
+          "h-4 w-4 transition-colors duration-fast",
+          favorited ? "fill-violet-bright text-violet-bright" : "text-ink-muted"
         )}
+        aria-hidden
       />
     </button>
   );

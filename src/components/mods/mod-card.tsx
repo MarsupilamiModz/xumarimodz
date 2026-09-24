@@ -1,16 +1,17 @@
 import Link from "next/link";
 import { memo } from "react";
-import { Download, Play, Star, Music } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { Download, Music, PlayCircle, Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
 import { SafeImage } from "@/components/ui/safe-image";
+import { CoverPlaceholder } from "@/components/ui/cover-placeholder";
 import { getFeaturedMediaUrl, type ModMediaItem } from "@/lib/mod-media";
-import { formatNumber } from "@/lib/format-locale";
+import { formatCompactNumber } from "@/lib/format-locale";
 import { formatModRating, hasModRatings } from "@/lib/rating-display";
+import { formatDisplayName } from "@/lib/display-name";
 import { SecurityBadge } from "@/components/security/security-badge";
 import { isSecurityVerified } from "@/lib/security/status";
 import type { FileScanStatus } from "@prisma/client";
-
 import { ModCardLikeButton } from "@/components/mods/mod-card-like-button";
 
 type ModCardProps = {
@@ -26,6 +27,8 @@ type ModCardProps = {
     reviewCount?: number;
     favoriteCount?: number;
     game?: { name: string; slug: string };
+    category?: { name: string } | null;
+    author?: { username: string; displayName?: string | null } | null;
     media?: ModMediaItem[];
     screenshots?: { url: string }[];
     productType?: "MOD" | "SOUND";
@@ -46,95 +49,98 @@ type ModCardProps = {
   showLike?: boolean;
 };
 
+/**
+ * Mod-Karte: Bild (oder flache Spielfarbe mit Name), Name, Premium-Badge,
+ * „Spiel · Kategorie · Autor“, Downloads. Der Titel-Link deckt die ganze Karte ab,
+ * der Like-Button liegt darüber und ist ein eigenes, fokussierbares Element.
+ */
 export const ModCard = memo(function ModCard({ locale, mod, pricingLabel, isFavorited, showLike = true }: ModCardProps) {
+  const t = useTranslations("mods");
   const media = mod.media ?? [];
   const cover = getFeaturedMediaUrl(
     media,
     mod.screenshots?.map((s, i) => ({ url: s.url, sortOrder: i }))
   );
   const hasVideo = media.some((m) => m.mediaType === "YOUTUBE" && m.youtubeVideoId);
-  const label = pricingLabel ?? mod.pricing;
+  const isPaid = mod.pricing !== "FREE";
   const primaryVersion = mod.versions?.[0];
   const scanStatus = primaryVersion?.scanStatus;
-  const showSecurityBadge =
-    scanStatus && isSecurityVerified(scanStatus, !!primaryVersion?.trustedFile);
+  const showSecurityBadge = scanStatus && isSecurityVerified(scanStatus, !!primaryVersion?.trustedFile);
+  const reviewCount = mod.reviewCount ?? 0;
+  const meta = [
+    mod.game?.name,
+    mod.category?.name,
+    mod.author ? formatDisplayName(mod.author) : mod.soundProfile?.artist,
+  ].filter(Boolean);
 
   return (
-    <Link href={`/${locale}/mods/${mod.slug}`} prefetch className="group block h-full">
-      <Card className="h-full overflow-hidden border-border/50 transition-all duration-300 hover:-translate-y-0.5 hover:border-neon-purple/40">
-        <div className="relative aspect-[16/10] overflow-hidden bg-gradient-to-br from-neon-purple/20 via-background to-neon-blue/10">
-          {cover && (
-            <SafeImage
-              src={cover}
-              alt={mod.title}
-              fill
-              className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-              loading="lazy"
-            />
-          )}
-          {hasVideo && (
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="rounded-full bg-background/60 p-2 backdrop-blur-sm border border-line-control opacity-80 group-hover:opacity-100 transition-opacity">
-                <Play className="h-5 w-5 fill-ink text-ink" />
-              </div>
-            </div>
-          )}
-          <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
-          <Badge
-            variant={mod.pricing === "FREE" ? "free" : "premium"}
-            className="absolute right-2.5 top-2.5 backdrop-blur-sm"
-          >
-            {label}
-          </Badge>
+    <article className="group relative flex h-full flex-col overflow-hidden rounded-lg border border-line bg-raised transition-colors duration-fast hover:border-line-control focus-within:border-line-control">
+      <div className="relative aspect-[16/10] overflow-hidden bg-elevated">
+        {cover ? (
+          <SafeImage
+            src={cover}
+            alt=""
+            fill
+            className="object-cover"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+            loading="lazy"
+          />
+        ) : (
+          <CoverPlaceholder name={mod.title} gameSlug={mod.game?.slug} />
+        )}
+        <div className="absolute left-3 top-3 flex flex-wrap gap-1.5">
+          {isPaid && <Badge variant="premium">{pricingLabel ?? mod.pricing}</Badge>}
           {mod.productType === "SOUND" && (
-            <Badge className="absolute left-2.5 top-2.5 backdrop-blur-sm gap-1" variant="secondary">
-              <Music className="h-3 w-3" /> Sound
+            <Badge variant="secondary">
+              <Music className="h-3 w-3" aria-hidden />
+              {t("sound")}
             </Badge>
           )}
-          {showLike && mod.id && (
-            <ModCardLikeButton modId={mod.id} initialFavorited={isFavorited} />
+          {hasVideo && (
+            <Badge variant="secondary">
+              <PlayCircle className="h-3 w-3" aria-hidden />
+              {t("video")}
+            </Badge>
           )}
         </div>
-        <CardContent className="flex flex-col gap-2 p-4">
-          <p className="text-[11px] font-medium uppercase tracking-wider text-neon-blue/90">
-            {mod.game?.name ?? "Mod"}
-          </p>
-          <h3 className="font-semibold leading-snug line-clamp-1 group-hover:text-neon-purple transition-colors">
-            {mod.title}
-          </h3>
-          {mod.shortDescription && (
-            <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
-              {mod.shortDescription}
-            </p>
-          )}
-          {showSecurityBadge && scanStatus && (
-            <SecurityBadge
-              scanStatus={scanStatus}
-              isTrusted={!!primaryVersion?.trustedFile}
-              compact
-            />
-          )}
-          <div className="mt-auto flex items-center gap-4 pt-1 text-xs text-muted-foreground">
-            <span className="flex items-center gap-1">
-              <Star className="h-3.5 w-3.5 fill-neon-purple/80 text-neon-purple" />
-              {formatModRating(mod.averageRating, mod.reviewCount ?? 0)}
-              {hasModRatings(mod.reviewCount ?? 0) && (
-                <span className="opacity-70">({mod.reviewCount})</span>
-              )}
-            </span>
-            <span className="flex items-center gap-1">
-              <Download className="h-3.5 w-3.5" />
-              {formatNumber(mod.downloadCount, locale)}
-            </span>
-            {mod.favoriteCount != null && mod.favoriteCount > 0 && (
-              <span className="flex items-center gap-1 text-neon-purple">
-                ♥ {formatNumber(mod.favoriteCount, locale)}
-              </span>
-            )}
+        {showLike && mod.id && (
+          <div className="absolute bottom-3 right-3 z-10">
+            <ModCardLikeButton modId={mod.id} initialFavorited={isFavorited} />
           </div>
-        </CardContent>
-      </Card>
-    </Link>
+        )}
+      </div>
+
+      <div className="flex flex-1 flex-col gap-1.5 p-4">
+        <h3 className="text-[15px] font-semibold leading-snug text-ink">
+          <Link
+            href={`/${locale}/mods/${mod.slug}`}
+            prefetch
+            className="line-clamp-1 outline-none after:absolute after:inset-0 after:content-[''] focus-visible:after:rounded-lg focus-visible:after:outline focus-visible:after:outline-2 focus-visible:after:outline-offset-2 focus-visible:after:outline-violet-bright"
+          >
+            {mod.title}
+          </Link>
+        </h3>
+        {meta.length > 0 && <p className="meta truncate">{meta.join(" · ")}</p>}
+        {showSecurityBadge && scanStatus && (
+          <SecurityBadge scanStatus={scanStatus} isTrusted={!!primaryVersion?.trustedFile} compact />
+        )}
+        <div className="mt-auto flex items-center gap-4 pt-2 text-[13px] text-ink-muted tabular-nums">
+          <span className="flex items-center gap-1.5" aria-label={t("downloadsLabel", { count: mod.downloadCount })}>
+            <Download className="h-3.5 w-3.5" aria-hidden />
+            {formatCompactNumber(mod.downloadCount, locale)}
+          </span>
+          {hasModRatings(reviewCount) && (
+            <span
+              className="flex items-center gap-1.5"
+              aria-label={t("ratingLabel", { rating: formatModRating(mod.averageRating, reviewCount) })}
+            >
+              <Star className="h-3.5 w-3.5" aria-hidden />
+              {formatModRating(mod.averageRating, reviewCount)}
+              <span className="text-ink-faint">({formatCompactNumber(reviewCount, locale)})</span>
+            </span>
+          )}
+        </div>
+      </div>
+    </article>
   );
 });

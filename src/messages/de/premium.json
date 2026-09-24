@@ -10,6 +10,7 @@
     "perkExclusive": "Früher Zugang zu ausgewählten Releases",
     "perkDiscord": "Premium-Discord-Rolle & Kanäle",
     "perkSupport": "Priorisierter Support",
-    "perkCreator": "Direkte Unterstützung für unabhängige Creator"
+    "perkCreator": "Direkte Unterstützung für unabhängige Creator",
+    "campaignRemaining": "Noch {remaining} von {total} frei"
   }
 }
