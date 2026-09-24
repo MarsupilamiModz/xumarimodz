@@ -99,7 +99,13 @@
     "adminErrorHint": "Les autres sections fonctionnent toujours. Réessaie ou consulte le journal système.",
     "backToOverview": "Retour à l'aperçu",
     "systemLog": "Journal système",
-    "reference": "Référence"
+    "reference": "Référence",
+    "pagination": "Pages",
+    "previousPage": "Page précédente",
+    "nextPage": "Page suivante",
+    "pageN": "Page {page}",
+    "previous": "Précédent",
+    "next": "Suivant"
   },
   "ui": {
     "close": "Fermer",

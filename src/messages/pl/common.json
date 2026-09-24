@@ -99,7 +99,13 @@
     "adminErrorHint": "Pozostałe sekcje działają. Spróbuj ponownie lub sprawdź dziennik systemu.",
     "backToOverview": "Wróć do przeglądu",
     "systemLog": "Dziennik systemu",
-    "reference": "Identyfikator"
+    "reference": "Identyfikator",
+    "pagination": "Strony",
+    "previousPage": "Poprzednia strona",
+    "nextPage": "Następna strona",
+    "pageN": "Strona {page}",
+    "previous": "Wstecz",
+    "next": "Dalej"
   },
   "ui": {
     "close": "Zamknij",

@@ -48,6 +48,26 @@
     "video": "Wideo",
     "sound": "Dźwięk",
     "downloadsLabel": "Pobrania: {count}",
-    "ratingLabel": "Ocena {rating} na 5"
+    "ratingLabel": "Ocena {rating} na 5",
+    "searchLabel": "Szukaj modów",
+    "sortLabel": "Sortuj",
+    "sortPopular": "Najpopularniejsze",
+    "sortNewest": "Ostatnio zaktualizowane",
+    "sortLikes": "Najczęściej ulubione",
+    "gameLabel": "Gra",
+    "allGames": "Wszystkie gry",
+    "categoryLabel": "Kategoria",
+    "allCategories": "Wszystkie kategorie",
+    "chooseGameFirst": "Najpierw wybierz grę",
+    "typeLabel": "Typ",
+    "pricingLabel": "Cena",
+    "allPricing": "Wszystkie ceny",
+    "premiumOnly": "Tylko Premium",
+    "resetFilters": "Wyczyść filtry",
+    "showFilters": "Filtry",
+    "resultsCount": "{count, plural, one {# mod} few {# mody} other {# modów}}",
+    "noResultsTitle": "Nie znaleziono modów",
+    "noResultsText": "Spróbuj innych słów lub mniej filtrów.",
+    "genreLabel": "Gatunek"
   }
 }

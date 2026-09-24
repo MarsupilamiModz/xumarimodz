@@ -48,6 +48,26 @@
     "video": "Video",
     "sound": "Ses",
     "downloadsLabel": "{count} indirme",
-    "ratingLabel": "5 üzerinden {rating} puan"
+    "ratingLabel": "5 üzerinden {rating} puan",
+    "searchLabel": "Mod ara",
+    "sortLabel": "Sırala",
+    "sortPopular": "En popüler",
+    "sortNewest": "Son güncellenen",
+    "sortLikes": "En çok favorilenen",
+    "gameLabel": "Oyun",
+    "allGames": "Tüm oyunlar",
+    "categoryLabel": "Kategori",
+    "allCategories": "Tüm kategoriler",
+    "chooseGameFirst": "Önce bir oyun seç",
+    "typeLabel": "Tür",
+    "pricingLabel": "Fiyat",
+    "allPricing": "Tüm fiyatlar",
+    "premiumOnly": "Yalnızca Premium",
+    "resetFilters": "Filtreleri sıfırla",
+    "showFilters": "Filtreler",
+    "resultsCount": "{count} mod",
+    "noResultsTitle": "Mod bulunamadı",
+    "noResultsText": "Başka arama terimleri veya daha az filtre dene.",
+    "genreLabel": "Tür"
   }
 }

@@ -51,6 +51,26 @@
     "video": "Video",
     "sound": "Sound",
     "downloadsLabel": "{count} Downloads",
-    "ratingLabel": "Bewertung {rating} von 5"
+    "ratingLabel": "Bewertung {rating} von 5",
+    "searchLabel": "Mods durchsuchen",
+    "sortLabel": "Sortieren",
+    "sortPopular": "Beliebteste",
+    "sortNewest": "Zuletzt aktualisiert",
+    "sortLikes": "Meiste Favoriten",
+    "gameLabel": "Spiel",
+    "allGames": "Alle Spiele",
+    "categoryLabel": "Kategorie",
+    "allCategories": "Alle Kategorien",
+    "chooseGameFirst": "Wähl zuerst ein Spiel",
+    "typeLabel": "Typ",
+    "pricingLabel": "Preis",
+    "allPricing": "Alle Preise",
+    "premiumOnly": "Nur Premium",
+    "resetFilters": "Filter zurücksetzen",
+    "showFilters": "Filter",
+    "resultsCount": "{count, plural, one {# Mod} other {# Mods}}",
+    "noResultsTitle": "Keine Mods gefunden",
+    "noResultsText": "Probier andere Suchbegriffe oder weniger Filter.",
+    "genreLabel": "Genre"
   }
 }

@@ -99,7 +99,13 @@
     "adminErrorHint": "Diğer bölümler çalışmaya devam ediyor. Tekrar dene veya sistem günlüğüne bak.",
     "backToOverview": "Genel bakışa dön",
     "systemLog": "Sistem günlüğü",
-    "reference": "Referans"
+    "reference": "Referans",
+    "pagination": "Sayfalar",
+    "previousPage": "Önceki sayfa",
+    "nextPage": "Sonraki sayfa",
+    "pageN": "Sayfa {page}",
+    "previous": "Önceki",
+    "next": "Sonraki"
   },
   "ui": {
     "close": "Kapat",

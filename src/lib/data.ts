@@ -203,6 +203,20 @@ export const getAllGames = unstable_cache(
   { revalidate: REVALIDATE.catalog, tags: [CACHE_TAGS.games] }
 );
 
+/** Oberste sichtbare Kategorien eines Spiels für den Katalogfilter. */
+export function getCatalogCategories(gameSlug: string) {
+  return unstable_cache(
+    async () =>
+      prisma.gameCategory.findMany({
+        where: { parentId: null, isVisible: true, game: { slug: gameSlug, isActive: true } },
+        orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
+        select: { id: true, name: true, slug: true },
+      }),
+    ["catalog-categories", gameSlug],
+    { revalidate: REVALIDATE.catalog, tags: [CACHE_TAGS.games] }
+  )();
+}
+
 export async function getTrendingMods(limit = 8, gameId?: string, modeId?: string) {
   return unstable_cache(
     async () =>

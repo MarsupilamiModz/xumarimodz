@@ -118,7 +118,13 @@
     "adminErrorHint": "Other sections still work. Try again or check the system log.",
     "backToOverview": "Back to overview",
     "systemLog": "System log",
-    "reference": "Reference"
+    "reference": "Reference",
+    "pagination": "Pages",
+    "previousPage": "Previous page",
+    "nextPage": "Next page",
+    "pageN": "Page {page}",
+    "previous": "Previous",
+    "next": "Next"
   },
   "ui": {
     "close": "Close",

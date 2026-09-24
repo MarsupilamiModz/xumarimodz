@@ -99,7 +99,13 @@
     "adminErrorHint": "Las demás secciones siguen funcionando. Inténtalo de nuevo o revisa el registro del sistema.",
     "backToOverview": "Volver al resumen",
     "systemLog": "Registro del sistema",
-    "reference": "Referencia"
+    "reference": "Referencia",
+    "pagination": "Páginas",
+    "previousPage": "Página anterior",
+    "nextPage": "Página siguiente",
+    "pageN": "Página {page}",
+    "previous": "Anterior",
+    "next": "Siguiente"
   },
   "ui": {
     "close": "Cerrar",

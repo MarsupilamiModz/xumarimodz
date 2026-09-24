@@ -117,7 +117,13 @@
     "adminErrorHint": "Die anderen Bereiche funktionieren weiter. Versuch es erneut oder sieh im System-Log nach.",
     "backToOverview": "Zur Übersicht",
     "systemLog": "System-Log",
-    "reference": "Referenz"
+    "reference": "Referenz",
+    "pagination": "Seiten",
+    "previousPage": "Vorherige Seite",
+    "nextPage": "Nächste Seite",
+    "pageN": "Seite {page}",
+    "previous": "Zurück",
+    "next": "Weiter"
   },
   "ui": {
     "close": "Schließen",
