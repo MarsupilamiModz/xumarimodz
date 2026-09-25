@@ -58,10 +58,11 @@ export async function createCoupon(input: {
 }
 
 export async function toggleCoupon(id: string, isActive: boolean) {
-  const { error } = await requireActionPermission("coupons.write");
+  const { user, error } = await requireActionPermission("coupons.write");
   if (error) return error;
 
   await prisma.coupon.update({ where: { id }, data: { isActive } });
+  await createAuditLog({ actorId: user.id, action: isActive ? "coupon.activate" : "coupon.deactivate", entityType: "Coupon", entityId: id });
   revalidatePath("/admin/coupons");
   return ok(undefined);
 }
