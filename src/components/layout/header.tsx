@@ -11,6 +11,7 @@ import { Logo, type LogoBranding } from "@/components/brand/logo";
 import { AuthButtons } from "@/components/layout/auth-buttons";
 import { GamesHoverMenu } from "@/components/layout/games-hover-menu";
 import { LanguageSwitcher } from "@/components/layout/language-switcher";
+import { CartLink } from "@/components/shop/cart-controls";
 import type { NavLabels } from "@/components/layout/nav-labels";
 import type { NavUser } from "@/components/layout/user-nav";
 import { DEFAULT_HEADER_MENU, type HeaderSettings } from "@/lib/branding-defaults";
@@ -137,7 +138,7 @@ export function Header({
           <HeaderSearch locale={locale} />
           <LanguageSwitcher locale={locale} languages={languages} />
           <AuthButtons locale={locale} user={user} />
-          {/* TODO(backend): Warenkorb mit Zähler folgt mit der Kasse – bisher gibt es keinen Warenkorb. */}
+          <CartLink locale={locale} />
           <Button size="sm" className="hidden lg:inline-flex" asChild>
             <Link href={`/${locale}/download`}>{t("downloadApp")}</Link>
           </Button>

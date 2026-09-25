@@ -146,6 +146,31 @@ export async function POST(req: Request) {
           });
         }
 
+        // Shop-Direktkauf und Warenkorb: Bestellungen erst nach bestätigter Zahlung als bezahlt markieren.
+        if (userId && (type === "shop_product_order" || type === "cart_order") && session.payment_status === "paid") {
+          const paymentId =
+            typeof session.payment_intent === "string" ? session.payment_intent : session.payment_intent?.id;
+          const ids =
+            type === "cart_order"
+              ? (session.metadata?.orderIds ?? "").split(",").filter(Boolean)
+              : [session.metadata?.orderId].filter((v): v is string => !!v);
+          if (ids.length) {
+            // Idempotent: nur noch unbezahlte Bestellungen dieses Kunden; wiederholte Events ändern nichts.
+            const updated = await prisma.customOrder.updateMany({
+              where: { id: { in: ids }, clientId: userId, paymentStatus: { not: "PAID" } },
+              data: { paymentStatus: "PAID", paymentMethod: "STRIPE", stripePaymentId: paymentId ?? undefined, status: "PAID" },
+            });
+            if (updated.count > 0) {
+              void sendPaymentNotification({
+                type: type === "cart_order" ? "Cart order" : "Shop order",
+                amountCents: session.amount_total ?? 0,
+                userId,
+                reference: ids.join(", "),
+              });
+            }
+          }
+        }
+
         const orderId = session.metadata?.orderId;
         if (orderId && userId && type === "custom_order_payment") {
           const paymentId =

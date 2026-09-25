@@ -43,3 +43,6 @@ CREATE INDEX CONCURRENTLY IF NOT EXISTS "UserMembership_isLifetime_status_renewa
 -- Bereits auf Live vorhanden (jetzt auch in schema.prisma dokumentiert):
 --   Mod(gameId, status, updatedAt), Mod(gameId, status, updatedAt DESC) [Name *_uploadedAt_idx],
 --   SupportTicket(status, updatedAt DESC), User(role), User(role, isBanned), Mod(authorId), AuditLog(createdAt)
+
+-- 5) Fortlaufende Rechnungsnummern (MM-JJJJ-NNNNN); Start oberhalb der bisherigen Zufallsnummern
+CREATE SEQUENCE IF NOT EXISTS "invoice_number_seq" START WITH 10000 INCREMENT BY 1;

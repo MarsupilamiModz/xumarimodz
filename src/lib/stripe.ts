@@ -452,6 +452,42 @@ export async function createShopProductCheckout(
   });
 }
 
+/**
+ * Warenkorb-Kasse: eine Stripe-Session für mehrere Bestellungen (je Produkt eine CustomOrder).
+ * Preise kommen ausschließlich vom Server; freigeschaltet wird erst über den signierten Webhook.
+ */
+export async function createCartCheckout(
+  userId: string,
+  email: string,
+  orders: { id: string; name: string; amountCents: number; invoiceNumber: string }[],
+  locale: string = "en",
+  options?: CheckoutOriginOptions
+) {
+  const stripe = getStripe();
+  const customerId = await getOrCreateStripeCustomer(userId, email);
+  const origin = resolveOrigin(options);
+  const orderIds = orders.map((o) => o.id).join(",");
+  const meta = { userId, orderIds, type: "cart_order" };
+
+  return stripe.checkout.sessions.create({
+    customer: customerId,
+    mode: "payment",
+    line_items: orders.map((o) => ({
+      price_data: {
+        currency: "eur",
+        product_data: { name: o.name, description: `Rechnung ${o.invoiceNumber}` },
+        unit_amount: o.amountCents,
+      },
+      quantity: 1,
+    })),
+    success_url: `${checkoutPath(origin, locale, "/checkout/success")}?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: checkoutPath(origin, locale, "/cart"),
+    invoice_creation: { enabled: true },
+    metadata: meta,
+    payment_intent_data: { metadata: meta },
+  });
+}
+
 export async function createBillingPortalSession(
   userId: string,
   email: string,

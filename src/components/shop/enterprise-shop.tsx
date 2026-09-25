@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Loader2, Upload } from "lucide-react";
 import { submitShopProductOrder, startShopProductCheckout } from "@/actions/shop";
+import { AddToCartButton } from "@/components/shop/cart-controls";
 import { useAppToast } from "@/hooks/use-app-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -276,6 +277,11 @@ export function ShopProductOrderPage({
                 {pending ? tp("sending") : isQuoteProduct ? tp("requestQuote") : tp("orderPaid")}
               </Button>
             </form>
+          )}
+          {!isQuoteProduct && (
+            <div className="mt-3">
+              <AddToCartButton slug={product.slug} locale={locale} />
+            </div>
           )}
         </aside>
       </div>

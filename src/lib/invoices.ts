@@ -1,19 +1,13 @@
 import { prisma } from "@/lib/db";
 
-/** Generate unique invoice reference e.g. MM-2026-4832 */
+/**
+ * Fortlaufende Rechnungsnummer, z. B. MM-2026-10042 (Postgres-Sequenz „invoice_number_seq“,
+ * lückenlos aufsteigend und ohne Kollisionen auch bei parallelen Bestellungen).
+ */
 export async function generateInvoiceNumber(): Promise<string> {
   const year = new Date().getFullYear();
-  const prefix = `MM-${year}-`;
-
-  for (let attempt = 0; attempt < 10; attempt++) {
-    const seq = Math.floor(1000 + Math.random() * 8999);
-    const invoiceNumber = `${prefix}${seq}`;
-    const exists = await prisma.customOrder.findUnique({ where: { invoiceNumber } });
-    if (!exists) return invoiceNumber;
-  }
-
-  const fallback = `${prefix}${Date.now().toString().slice(-6)}`;
-  return fallback;
+  const rows = await prisma.$queryRaw<{ n: bigint }[]>`SELECT nextval('invoice_number_seq') AS n`;
+  return `MM-${year}-${String(rows[0]!.n).padStart(5, "0")}`;
 }
 
 export { formatPaymentReference } from "@/lib/invoice-format";
