@@ -114,6 +114,15 @@
     "relatedTitle": "Similar mods",
     "viewLabel": "View",
     "viewGrid": "Grid view",
-    "viewList": "List view"
+    "viewList": "List view",
+    "gallery": "Gallery",
+    "screenshots": "{count, plural, one {# screenshot} other {# screenshots}}",
+    "screenshotAlt": "{title} – screenshot {n}",
+    "openScreenshot": "Show screenshot {n} large",
+    "zoom": "Zoom",
+    "closeGallery": "Close gallery",
+    "prevImage": "Previous image",
+    "nextImage": "Next image",
+    "lightboxHint": "Arrow keys · Swipe · Click to zoom"
   }
 }

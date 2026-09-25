@@ -114,6 +114,15 @@
     "relatedTitle": "Ähnliche Mods",
     "viewLabel": "Ansicht",
     "viewGrid": "Rasteransicht",
-    "viewList": "Listenansicht"
+    "viewList": "Listenansicht",
+    "gallery": "Galerie",
+    "screenshots": "{count, plural, one {# Bild} other {# Bilder}}",
+    "screenshotAlt": "{title} – Bild {n}",
+    "openScreenshot": "Bild {n} groß anzeigen",
+    "zoom": "Vergrößern",
+    "closeGallery": "Galerie schließen",
+    "prevImage": "Vorheriges Bild",
+    "nextImage": "Nächstes Bild",
+    "lightboxHint": "Pfeiltasten · Wischen · Klick zum Vergrößern"
   }
 }
