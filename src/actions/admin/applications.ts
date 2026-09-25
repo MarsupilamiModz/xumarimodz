@@ -7,6 +7,7 @@ import { fail, ok, requireActionPermission } from "@/lib/action-utils";
 import { sendCreatorApprovalEmail, sendPartnerApprovalEmail } from "@/lib/email/send";
 import { slugify } from "@/lib/utils";
 import { invalidateUserSessionCache } from "@/lib/auth-cache";
+import { createAuditLog } from "@/lib/audit";
 import { savePartnerFormFields, getPartnerFormFields, type PartnerFormField } from "@/lib/partner-form-config";
 
 export async function listCreatorApplicationsAdmin(status?: ApplicationStatus) {
@@ -95,7 +96,7 @@ export async function reviewCreatorApplicationAdmin(
         update: { isVerified: true, isPublic: true },
       });
 
-      if (app.user.role === "USER") {
+      if (app.user.role === "USER" || app.user.role === "PREMIUM") {
         await tx.user.update({
           where: { id: app.userId },
           data: { role: "CREATOR" },
@@ -127,6 +128,13 @@ export async function reviewCreatorApplicationAdmin(
     });
   }
 
+  await createAuditLog({
+    actorId: user.id,
+    action: `application.creator_${action}`,
+    entityType: "Application",
+    entityId: id,
+    metadata: { userId: app.userId, notes: adminNotes ?? null },
+  });
   revalidatePath("/admin/applications");
   return ok(undefined);
 }
@@ -206,7 +214,7 @@ export async function reviewPartnerApplicationAdmin(
         },
       });
 
-      if (app.user.role === "USER") {
+      if (app.user.role === "USER" || app.user.role === "PREMIUM") {
         await tx.user.update({
           where: { id: app.userId },
           data: { role: "PARTNER" },
@@ -248,6 +256,13 @@ export async function reviewPartnerApplicationAdmin(
     });
   }
 
+  await createAuditLog({
+    actorId: user.id,
+    action: `application.partner_${action}`,
+    entityType: "Application",
+    entityId: id,
+    metadata: { userId: app.userId, notes: input?.adminNotes ?? input?.requiredChanges ?? null, commissionRuleId: input?.commissionRuleId ?? null },
+  });
   revalidatePath("/admin/applications");
   return ok(undefined);
 }
