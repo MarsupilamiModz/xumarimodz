@@ -593,6 +593,10 @@ model User {
   @@index([banExpiresAt])
   @@index([deletedAt])
   @@index([createdAt])
+  newsletterConsent   Boolean   @default(false)
+  newsletterConsentAt DateTime?
+  @@index([role, isBanned])
+  emailCampaigns      EmailCampaign[] @relation("EmailCampaignAuthor")
 }
 
 model Permission {
@@ -676,6 +680,7 @@ model GameMode {
   @@unique([gameId, slug])
   @@index([gameId, sortOrder])
   @@index([gameId, isActive])
+  @@index([gameId, isActive, sortOrder])
 }
 
 model GameCategory {
@@ -761,6 +766,7 @@ model CreatorProfile {
   @@index([level])
   @@index([creatorCode])
   @@index([rankTier, rankScore])
+  @@index([isPublic, isSuspended])
 }
 
 model PartnerProfile {
@@ -808,6 +814,7 @@ model PartnerProfile {
   @@index([isPublic, sortOrder])
   @@index([level])
   @@index([affiliateCode])
+  @@index([isPublic, isSuspended, isBanned])
 }
 
 model SocialLink {
@@ -914,7 +921,10 @@ model Mod {
   @@index([authorId])
   @@index([publishedAt])
   @@index([productType, status])
-  @@index([gameId, status, updatedAt(sort: Desc)])
+  @@index([gameId, status, updatedAt])
+  @@index([gameId, status, updatedAt(sort: Desc)], map: "Mod_gameId_status_uploadedAt_idx")
+  @@index([categoryId, status, productType])
+  @@index([gameId, status, visibility, updatedAt(sort: Desc)])
 }
 
 model ModVersion {
@@ -1123,12 +1133,13 @@ model ModPurchase {
 
   @@unique([modId, userId])
   @@index([createdAt(sort: Desc)])
+  refundedAt      DateTime?
 }
 
 model Download {
   id           String      @id @default(cuid())
   modId        String
-  mod          Mod         @relation(fields: [modId], references: [id])
+  mod          Mod         @relation(fields: [modId], references: [id], onDelete: Cascade, onUpdate: NoAction)
   versionId    String
   version      ModVersion  @relation(fields: [versionId], references: [id])
   userId       String?
@@ -1407,6 +1418,7 @@ model CustomOrder {
   @@index([assigneeId, status])
   @@index([clientId, createdAt])
   @@index([shopProductId])
+  @@index([paymentStatus, requirementsSubmittedAt])
 }
 
 model OrderMessage {
@@ -1494,6 +1506,7 @@ model Notification {
   @@index([userId, read])
   @@index([userId, createdAt])
   @@index([userId, type])
+  @@index([userId, read, createdAt(sort: Desc)])
 }
 
 model AuditLog {
@@ -1740,6 +1753,9 @@ model EmailLog {
   @@index([templateKey])
   @@index([userId, createdAt])
   @@index([to])
+  campaignId  String?
+  campaign    EmailCampaign? @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+  @@index([campaignId])
 }
 
 model Announcement {
@@ -1851,6 +1867,7 @@ model MembershipPurchase {
   @@index([userId])
   @@index([planId])
   @@index([createdAt(sort: Desc)])
+  refundedAt      DateTime?
 }
 
 model AdPlacement {
@@ -2006,6 +2023,7 @@ model TranslationJob {
 
   @@index([entityType, entityId])
   @@index([status, targetLocale])
+  @@index([status, createdAt])
 }
 
 model Achievement {
@@ -2445,6 +2463,7 @@ model ModCollection {
   @@index([visibility, isFeatured])
   @@index([moderationStatus, sortOrder])
   @@index([ownerId])
+  @@index([visibility, sortOrder])
 }
 
 model ModCollectionItem {
@@ -2603,6 +2622,7 @@ model MediaFile {
   @@index([entityType, entityId])
   @@index([uploadedById])
   @@map("media_files")
+  altText      String?
 }
 
 enum TeamVisibility {
@@ -2801,6 +2821,7 @@ model ContentReport {
   @@index([status, createdAt])
   @@index([targetType, targetId])
   @@index([reporterId])
+  @@index([priority, status])
 }
 
 enum DMCAStatus {
@@ -2904,7 +2925,7 @@ model PlatformLanguage {
   isActive  Boolean  @default(true)
   sortOrder Int      @default(0)
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@index([isActive, sortOrder])
 }
@@ -3227,4 +3248,20 @@ model TutorialView {
   createdAt  DateTime @default(now())
 
   @@index([tutorialId, createdAt(sort: Desc)])
+}
+
+/// Rundmail aus dem ACP. Empfänger nur mit Newsletter-Einwilligung; Versand über EmailLog (Queue).
+model EmailCampaign {
+  id             String     @id @default(cuid())
+  subject        String
+  html           String     @db.Text
+  audience       String
+  recipientCount Int        @default(0)
+  createdById    String?
+  createdBy      User?      @relation("EmailCampaignAuthor", fields: [createdById], references: [id], onDelete: SetNull)
+  createdAt      DateTime   @default(now())
+
+  logs EmailLog[]
+
+  @@index([createdAt])
 }

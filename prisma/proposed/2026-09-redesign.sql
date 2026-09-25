@@ -1,47 +1,45 @@
--- Xumari Modz Redesign – Datenbank-Änderungen (NICHT automatisch ausgeführt)
+-- Xumari Modz Redesign – Datenbank-Änderungen (nur hinzufügen, nichts löschen)
 --
--- Teil A: Indizes. Sie stehen bereits in prisma/schema.prisma und ändern keine Abfragen.
---         Auf der Live-Datenbank ohne Tabellensperre anlegen (jede Anweisung einzeln,
---         nicht in einer Transaktion – CONCURRENTLY erlaubt das nicht):
+-- Angewendet auf die Live-Datenbank am 26.09.2026 über den Supabase-Session-Pooler.
+-- Idempotent: kann erneut ausgeführt werden. Jede Anweisung einzeln ausführen (nicht in einer Transaktion),
+-- weil CREATE INDEX CONCURRENTLY keine Transaktion erlaubt.
 --
---   psql "$DIRECT_URL" -f prisma/proposed/2026-09-redesign.sql
---
--- Alternativ legt `npx prisma db push` sie an (dann aber mit kurzer Sperre je Tabelle).
+-- WICHTIG: Nicht `prisma db push` verwenden, solange nicht sicher ist, dass schema.prisma alle Live-Indizes
+-- enthält – push löscht Indizes, die nur in der Datenbank existieren. Der Stand wurde mit
+-- `prisma migrate diff` geprüft: danach keine Unterschiede mehr.
 
-CREATE INDEX CONCURRENTLY IF NOT EXISTS "Mod_gameId_status_updatedAt_idx"
-  ON "Mod" ("gameId", "status", "updatedAt" DESC);
+-- 1) Neue Spalten (kurze Sperre, bricht nach 5 s ab statt Anfragen zu blockieren)
+DO $$ BEGIN SET LOCAL lock_timeout = '5s'; ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "newsletterConsent" BOOLEAN NOT NULL DEFAULT false; ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "newsletterConsentAt" TIMESTAMP(3); END $$;
+DO $$ BEGIN SET LOCAL lock_timeout = '5s'; ALTER TABLE "ModPurchase" ADD COLUMN IF NOT EXISTS "refundedAt" TIMESTAMP(3); END $$;
+DO $$ BEGIN SET LOCAL lock_timeout = '5s'; ALTER TABLE "MembershipPurchase" ADD COLUMN IF NOT EXISTS "refundedAt" TIMESTAMP(3); END $$;
+DO $$ BEGIN SET LOCAL lock_timeout = '5s'; ALTER TABLE "media_files" ADD COLUMN IF NOT EXISTS "altText" TEXT; END $$;
+DO $$ BEGIN SET LOCAL lock_timeout = '5s'; ALTER TABLE "EmailLog" ADD COLUMN IF NOT EXISTS "campaignId" TEXT; END $$;
 
-CREATE INDEX CONCURRENTLY IF NOT EXISTS "SupportTicket_status_updatedAt_idx"
-  ON "SupportTicket" ("status", "updatedAt" DESC);
+-- 2) Neue Tabelle für Rundmails
+CREATE TABLE IF NOT EXISTS "EmailCampaign" (
+    "id" TEXT NOT NULL,
+    "subject" TEXT NOT NULL,
+    "html" TEXT NOT NULL,
+    "audience" TEXT NOT NULL,
+    "recipientCount" INTEGER NOT NULL DEFAULT 0,
+    "createdById" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "EmailCampaign_pkey" PRIMARY KEY ("id")
+);
 
-CREATE INDEX CONCURRENTLY IF NOT EXISTS "MembershipPurchase_createdAt_idx"
-  ON "MembershipPurchase" ("createdAt" DESC);
+-- 3) Fremdschlüssel (nur anlegen, wenn nicht vorhanden)
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'EmailCampaign_createdById_fkey') THEN SET LOCAL lock_timeout = '5s'; ALTER TABLE "EmailCampaign" ADD CONSTRAINT "EmailCampaign_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE; END IF; END $$;
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'EmailLog_campaignId_fkey') THEN SET LOCAL lock_timeout = '5s'; ALTER TABLE "EmailLog" ADD CONSTRAINT "EmailLog_campaignId_fkey" FOREIGN KEY ("campaignId") REFERENCES "EmailCampaign"("id") ON DELETE SET NULL ON UPDATE CASCADE; END IF; END $$;
 
-CREATE INDEX CONCURRENTLY IF NOT EXISTS "ModPurchase_createdAt_idx"
-  ON "ModPurchase" ("createdAt" DESC);
+-- 4) Indizes ohne Tabellensperre
+CREATE INDEX CONCURRENTLY IF NOT EXISTS "EmailCampaign_createdAt_idx" ON "EmailCampaign" ("createdAt");
+CREATE INDEX CONCURRENTLY IF NOT EXISTS "EmailLog_campaignId_idx" ON "EmailLog" ("campaignId");
+CREATE INDEX CONCURRENTLY IF NOT EXISTS "AuditLog_entityType_createdAt_idx" ON "AuditLog" ("entityType", "createdAt" DESC);
+CREATE INDEX CONCURRENTLY IF NOT EXISTS "AuditLog_action_entityId_idx" ON "AuditLog" ("action", "entityId");
+CREATE INDEX CONCURRENTLY IF NOT EXISTS "MembershipPurchase_createdAt_idx" ON "MembershipPurchase" ("createdAt" DESC);
+CREATE INDEX CONCURRENTLY IF NOT EXISTS "ModPurchase_createdAt_idx" ON "ModPurchase" ("createdAt" DESC);
+CREATE INDEX CONCURRENTLY IF NOT EXISTS "UserMembership_isLifetime_status_renewalDate_idx" ON "UserMembership" ("isLifetime", "status", "renewalDate");
 
-CREATE INDEX CONCURRENTLY IF NOT EXISTS "AuditLog_entityType_createdAt_idx"
-  ON "AuditLog" ("entityType", "createdAt" DESC);
-
-CREATE INDEX CONCURRENTLY IF NOT EXISTS "AuditLog_action_entityId_idx"
-  ON "AuditLog" ("action", "entityId");
-
-CREATE INDEX CONCURRENTLY IF NOT EXISTS "UserMembership_isLifetime_status_renewalDate_idx"
-  ON "UserMembership" ("isLifetime", "status", "renewalDate");
-
--- Bereits vorhanden (laut Spezifikation gefordert, keine Änderung nötig):
---   Mod(authorId), User(role), AuditLog(createdAt), Mod(gameId, status)
-
--- Teil B: Vorschläge für neue Spalten (auskommentiert).
--- Erst ausführen, wenn der zugehörige Code umgestellt wird – Prisma würde die Felder sonst
--- in jeder Abfrage erwarten. Reihenfolge: SQL ausführen → Felder in schema.prisma ergänzen
--- → `npx prisma generate` → Code nutzt die Felder.
---
--- B1: Newsletter-Einwilligung (ACP → E-Mail: Empfängerzahl nur mit Zustimmung)
--- ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "newsletterConsent" BOOLEAN NOT NULL DEFAULT false;
--- ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "newsletterConsentAt" TIMESTAMP(3);
--- CREATE INDEX CONCURRENTLY IF NOT EXISTS "User_newsletterConsent_idx" ON "User" ("newsletterConsent") WHERE "newsletterConsent";
---
--- B2: Erstattete Käufe (ACP → Käufe: Zugang bei Mod-Käufen nach Erstattung entziehen)
--- ALTER TABLE "ModPurchase" ADD COLUMN IF NOT EXISTS "refundedAt" TIMESTAMP(3);
--- ALTER TABLE "MembershipPurchase" ADD COLUMN IF NOT EXISTS "refundedAt" TIMESTAMP(3);
+-- Bereits auf Live vorhanden (jetzt auch in schema.prisma dokumentiert):
+--   Mod(gameId, status, updatedAt), Mod(gameId, status, updatedAt DESC) [Name *_uploadedAt_idx],
+--   SupportTicket(status, updatedAt DESC), User(role), User(role, isBanned), Mod(authorId), AuditLog(createdAt)
