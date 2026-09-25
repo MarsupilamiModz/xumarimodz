@@ -992,6 +992,36 @@
       "templates": "Vorlagen bearbeiten",
       "newsletterBlocked": "Rundmails an Nutzer sind noch nicht verfügbar: Es fehlt die gespeicherte Newsletter-Einwilligung. Ohne sie darf nicht versendet werden. Die nötige Datenbank-Spalte ist in prisma/proposed/2026-09-redesign.sql vorbereitet.",
       "logsUnavailable": "Das E-Mail-Protokoll ist nicht verfügbar – fehlt die Tabelle EmailLog? Dann „npx prisma db push“ ausführen."
+    },
+    "lo": {
+      "title": "Lokalisierung",
+      "subtitle": "Texte der Oberfläche je Sprache. Änderungen gelten sofort, ohne Deploy.",
+      "tabs": "Bereich",
+      "tabUi": "Oberfläche",
+      "tabContent": "Inhalte (KI-Übersetzung)",
+      "progress": "{translated} von {total} übersetzt",
+      "progressLabel": "Fortschritt {language}",
+      "overrides": "{count, plural, =0 {keine ACP-Änderungen} one {# ACP-Änderung} other {# ACP-Änderungen}}",
+      "language": "Sprache",
+      "search": "Schlüssel oder Text suchen",
+      "missingOnly": "Nur fehlende",
+      "all": "Alle",
+      "filter": "Anzeige",
+      "export": "JSON exportieren",
+      "import": "JSON importieren",
+      "imported": "{imported} übernommen, {skipped} übersprungen",
+      "colKey": "Schlüssel",
+      "colSource": "Englisch",
+      "colValue": "Übersetzung",
+      "missing": "Fehlt",
+      "edited": "Im ACP geändert",
+      "saved": "Gespeichert",
+      "valueFor": "Übersetzung für {key}",
+      "saveHint": "Speichern mit Enter oder beim Verlassen des Feldes.",
+      "count": "{count, plural, one {# Eintrag} other {# Einträge}}",
+      "emptyTitle": "Nichts gefunden",
+      "emptyMissing": "Für diese Sprache fehlen keine Texte.",
+      "chooseLanguage": "Englisch ist die Ausgangssprache. Wähle eine Zielsprache."
     }
   }
 }

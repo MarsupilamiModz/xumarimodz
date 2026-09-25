@@ -1003,6 +1003,36 @@
       "templates": "Edit templates",
       "newsletterBlocked": "Newsletters to users are not available yet: the stored newsletter consent is missing, and sending without it is not allowed. The required database column is prepared in prisma/proposed/2026-09-redesign.sql.",
       "logsUnavailable": "The email log is unavailable – is the EmailLog table missing? Then run “npx prisma db push”."
+    },
+    "lo": {
+      "title": "Localization",
+      "subtitle": "Interface texts per language. Changes apply immediately, without a deploy.",
+      "tabs": "Area",
+      "tabUi": "Interface",
+      "tabContent": "Content (AI translation)",
+      "progress": "{translated} of {total} translated",
+      "progressLabel": "Progress {language}",
+      "overrides": "{count, plural, =0 {no ACP changes} one {# ACP change} other {# ACP changes}}",
+      "language": "Language",
+      "search": "Search key or text",
+      "missingOnly": "Missing only",
+      "all": "All",
+      "filter": "Show",
+      "export": "Export JSON",
+      "import": "Import JSON",
+      "imported": "{imported} imported, {skipped} skipped",
+      "colKey": "Key",
+      "colSource": "English",
+      "colValue": "Translation",
+      "missing": "Missing",
+      "edited": "Changed in ACP",
+      "saved": "Saved",
+      "valueFor": "Translation for {key}",
+      "saveHint": "Saves on Enter or when leaving the field.",
+      "count": "{count, plural, one {# entry} other {# entries}}",
+      "emptyTitle": "Nothing found",
+      "emptyMissing": "No texts are missing for this language.",
+      "chooseLanguage": "English is the source language. Pick a target language."
     }
   }
 }
