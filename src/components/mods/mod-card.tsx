@@ -17,6 +17,8 @@ import { cn } from "@/lib/utils";
 
 type ModCardProps = {
   locale: string;
+  /** Für die ersten Karten über dem Falz: Bild sofort laden (LCP). */
+  priority?: boolean;
   mod: {
     id?: string;
     slug: string;
@@ -57,7 +59,7 @@ type ModCardProps = {
  * „Spiel · Kategorie · Autor“, Downloads. Der Titel-Link deckt die ganze Karte ab,
  * der Like-Button liegt darüber und ist ein eigenes, fokussierbares Element.
  */
-export const ModCard = memo(function ModCard({ locale, mod, pricingLabel, isFavorited, showLike = true, layout = "grid" }: ModCardProps) {
+export const ModCard = memo(function ModCard({ locale, mod, pricingLabel, isFavorited, showLike = true, layout = "grid", priority = false }: ModCardProps) {
   const t = useTranslations("mods");
   const media = mod.media ?? [];
   const cover = getFeaturedMediaUrl(
@@ -92,7 +94,7 @@ export const ModCard = memo(function ModCard({ locale, mod, pricingLabel, isFavo
             fill
             className="object-cover"
             sizes={list ? "(max-width: 640px) 128px, 192px" : "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"}
-            loading="lazy"
+            priority={priority}
           />
         ) : (
           <CoverPlaceholder name={mod.title} gameSlug={mod.game?.slug} />

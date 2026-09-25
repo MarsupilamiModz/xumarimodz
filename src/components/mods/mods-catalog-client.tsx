@@ -332,7 +332,7 @@ export function ModsCatalogClient({
           >
             {initialMods.map((mod, index) => (
               <Fragment key={mod.slug}>
-                <ModCard locale={locale} mod={mod} pricingLabel={pricingLabels[mod.pricing] ?? mod.pricing} layout={listView ? "list" : "grid"} />
+                <ModCard locale={locale} mod={mod} pricingLabel={pricingLabels[mod.pricing] ?? mod.pricing} layout={listView ? "list" : "grid"} priority={index < 2} />
                 {listingAdBreak && index === 5 && <div className="col-span-full">{listingAdBreak}</div>}
               </Fragment>
             ))}

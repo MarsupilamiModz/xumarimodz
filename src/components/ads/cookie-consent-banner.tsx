@@ -22,6 +22,13 @@ function readConsent(): ConsentChoice {
   }
 }
 
+/**
+ * Läuft vor dem ersten Paint: Wer schon entschieden hat, bekommt die Klasse und sieht den
+ * serverseitig gerenderten Banner nie (kein Aufblitzen). Neue Besucher sehen ihn sofort mit
+ * dem ersten Paint statt erst nach der Hydration – sonst wird er auf Mobilgeräten zum späten LCP.
+ */
+const PRE_PAINT_SCRIPT = `try{var v=localStorage.getItem("${STORAGE_KEY}");if(v==="accepted"||v==="rejected")document.documentElement.classList.add("cookie-decided")}catch(e){}`;
+
 export function openCookieSettings() {
   window.dispatchEvent(new Event(OPEN_COOKIE_SETTINGS_EVENT));
 }
@@ -29,15 +36,19 @@ export function openCookieSettings() {
 export function CookieConsentBanner() {
   const t = useTranslations("cookie");
   const locale = useLocale();
-  const [visible, setVisible] = useState(false);
+  // Startet sichtbar, damit Server und Client gleich rendern; ausgeblendet wird per Klasse bzw. nach dem Lesen.
+  const [visible, setVisible] = useState(true);
 
   useEffect(() => {
     const stored = readConsent();
     if (stored === "accepted") updateGoogleConsent(true);
     else if (stored === "rejected") updateGoogleConsent(false);
-    else setVisible(true);
+    if (stored) setVisible(false);
 
-    const open = () => setVisible(true);
+    const open = () => {
+      document.documentElement.classList.remove("cookie-decided");
+      setVisible(true);
+    };
     window.addEventListener(OPEN_COOKIE_SETTINGS_EVENT, open);
     return () => window.removeEventListener(OPEN_COOKIE_SETTINGS_EVENT, open);
   }, []);
@@ -55,7 +66,10 @@ export function CookieConsentBanner() {
   };
 
   return (
+    <>
+    <script dangerouslySetInnerHTML={{ __html: PRE_PAINT_SCRIPT }} />
     <div
+      id="cookie-consent"
       role="dialog"
       aria-modal="false"
       aria-labelledby="cookie-consent-title"
@@ -81,5 +95,6 @@ export function CookieConsentBanner() {
         </Button>
       </div>
     </div>
+    </>
   );
 }

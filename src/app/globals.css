@@ -185,3 +185,8 @@
     contain: layout style paint;
   }
 }
+
+/* Cookie-Banner: vor dem ersten Paint ausgeblendet, wenn schon entschieden (siehe cookie-consent-banner.tsx). */
+html.cookie-decided #cookie-consent {
+  display: none;
+}

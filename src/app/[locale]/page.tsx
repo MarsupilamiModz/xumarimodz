@@ -181,8 +181,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
           <EmptyState icon={Layers} title={t("noModsYet")} />
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
-            {mods.map((mod) => (
-              <ModCard key={mod.id} locale={locale} mod={mod} pricingLabel={pricingLabels[mod.pricing] ?? mod.pricing} />
+            {mods.map((mod, index) => (
+              <ModCard key={mod.id} locale={locale} mod={mod} pricingLabel={pricingLabels[mod.pricing] ?? mod.pricing} priority={index === 0} />
             ))}
           </div>
         )}
