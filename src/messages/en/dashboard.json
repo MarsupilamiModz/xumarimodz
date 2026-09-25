@@ -48,6 +48,10 @@
     "categoriesSupport": "Support",
     "categoriesOrders": "Orders",
     "categoriesPremium": "Premium",
-    "categoriesSystem": "System"
+    "categoriesSystem": "System",
+    "newsletterTitle": "Newsletter",
+    "newsletterText": "News about mods, updates and offers by email. Unsubscribe any time.",
+    "newsletterOn": "Subscribed to the newsletter",
+    "newsletterOff": "Unsubscribed from the newsletter"
   }
 }

@@ -48,6 +48,10 @@
     "categoriesSupport": "Support",
     "categoriesOrders": "Bestellungen",
     "categoriesPremium": "Premium",
-    "categoriesSystem": "System"
+    "categoriesSystem": "System",
+    "newsletterTitle": "Newsletter",
+    "newsletterText": "Neuigkeiten zu Mods, Updates und Angeboten per E-Mail. Jederzeit abbestellbar.",
+    "newsletterOn": "Newsletter abonniert",
+    "newsletterOff": "Newsletter abbestellt"
   }
 }

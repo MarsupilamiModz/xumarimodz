@@ -4,6 +4,8 @@ import { requirePagePermission } from "@/lib/auth";
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { Button } from "@/components/ui/button";
 import { getAdminEmailSettings, listAdminEmailLogs } from "@/actions/admin/email";
+import { listNewsletterCampaigns } from "@/actions/admin/newsletter";
+import { NewsletterComposer } from "@/components/admin/newsletter-composer";
 import { EmailSettingsPanel } from "@/components/admin/email-settings-panel";
 import type { Locale } from "@/i18n/config";
 import type { EmailSettingsPublic } from "@/lib/email/settings";
@@ -46,7 +48,7 @@ export default async function AdminEmailPage({ params: { locale } }: { params: {
   setRequestLocale(locale);
   await requirePagePermission("settings.write");
 
-  const [t, settingsResult, logsResult] = await Promise.all([getTranslations("admin.em"), getAdminEmailSettings(), listAdminEmailLogs()]);
+  const [t, settingsResult, logsResult, campaignsResult] = await Promise.all([getTranslations("admin.em"), getAdminEmailSettings(), listAdminEmailLogs(), listNewsletterCampaigns()]);
 
   const settings = settingsResult.success ? settingsResult.data : EMPTY_SETTINGS;
   const logs = logsResult.success ? logsResult.data : [];
@@ -66,7 +68,24 @@ export default async function AdminEmailPage({ params: { locale } }: { params: {
           </Button>
         }
       />
-      <p className="rounded-lg border border-line bg-raised px-4 py-3 text-sm text-ink-muted">{t("newsletterBlocked")}</p>
+      <NewsletterComposer
+        locale={locale}
+        campaigns={
+          campaignsResult.success
+            ? campaignsResult.data.map((c) => ({
+                id: c.id,
+                subject: c.subject,
+                audience: c.audience,
+                recipientCount: c.recipientCount,
+                createdAt: c.createdAt.toISOString(),
+                author: c.createdBy?.username ?? null,
+                sent: c.sent,
+                failed: c.failed,
+                pending: c.pending,
+              }))
+            : []
+        }
+      />
 
       {errors.length > 0 && (
         <div role="alert" className="space-y-1 rounded-lg border border-danger/40 bg-danger-soft px-4 py-3 text-sm">

@@ -7,6 +7,7 @@ import { Loader2, MailCheck } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { sendRegistrationWelcomeEmail } from "@/actions/auth";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { AuthCard, AuthError, authLabelClass, useAuthErrorMessage } from "@/components/auth/auth-card";
 
@@ -21,6 +22,7 @@ export default function RegisterPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [checkInbox, setCheckInbox] = useState(false);
+  const [newsletter, setNewsletter] = useState(false);
 
   async function handleRegister(e: React.FormEvent) {
     e.preventDefault();
@@ -30,7 +32,11 @@ export default function RegisterPage() {
     const { data, error: err } = await supabase.auth.signUp({
       email,
       password,
-      options: { emailRedirectTo: `${window.location.origin}/${locale}/dashboard` },
+      options: {
+        emailRedirectTo: `${window.location.origin}/${locale}/dashboard`,
+        // Freiwillige Newsletter-Einwilligung; wird beim Anlegen des Kontos übernommen.
+        data: newsletter ? { newsletter: true } : undefined,
+      },
     });
     setLoading(false);
     if (err) {
@@ -81,6 +87,7 @@ export default function RegisterPage() {
             />
             <p id="register-password-hint" className="meta mt-1">{t("passwordHint")}</p>
           </div>
+          <Checkbox checked={newsletter} onCheckedChange={setNewsletter} label={t("newsletterOptIn")} />
           <AuthError message={error} />
           <Button className="w-full" size="lg" type="submit" disabled={loading} aria-busy={loading}>
             {loading && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}

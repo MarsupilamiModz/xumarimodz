@@ -1460,6 +1460,38 @@
       "emptyTitle": "No orders",
       "emptyText": "There are no orders for this filter.",
       "loadError": "Orders could not be loaded."
+    },
+    "nl": {
+      "title": "Newsletter",
+      "subtitle": "Only goes to users with newsletter consent. Every email contains an unsubscribe link; sending runs through the queue.",
+      "audience": "Audience",
+      "aud": {
+        "all": "Everyone who consented",
+        "premium": "Premium",
+        "free": "Without Premium",
+        "creators": "Creators",
+        "partners": "Partners"
+      },
+      "recipients": "{count, plural, =0 {No recipients with consent} one {# recipient} other {# recipients}}",
+      "counting": "Counting recipients",
+      "subject": "Subject",
+      "body": "Body (HTML)",
+      "bodyHint": "Placeholder: %username%. The unsubscribe link is added automatically.",
+      "preview": "Preview",
+      "sendTest": "Send test to me",
+      "testSent": "Test email sent",
+      "send": "Send",
+      "confirmTitle": "Send newsletter to {count, plural, one {# recipient} other {# recipients}}?",
+      "confirmText": "The emails are queued and sent gradually. This cannot be recalled.",
+      "queued": "{count} emails queued",
+      "history": "History",
+      "processQueue": "Process queue now",
+      "processed": "{sent} of {processed} sent",
+      "empty": "No newsletters sent yet.",
+      "colSubject": "Subject",
+      "colStatus": "Delivery",
+      "colDate": "Date",
+      "stats": "{sent}/{total} sent · {pending} pending · {failed} failed"
     }
   }
 }

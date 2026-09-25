@@ -17,6 +17,8 @@ export type SendEmailParams = {
   templateKey?: string;
   queueOnFailure?: boolean;
   userId?: string;
+  /** Vorhandenen Protokolleintrag (Queue) verwenden statt einen neuen anzulegen. */
+  existingLogId?: string;
 };
 
 function buildTransportFromConfig(config: {
@@ -94,9 +96,9 @@ async function sendViaResend(params: SendEmailParams): Promise<boolean> {
 
 export async function sendEmail(params: SendEmailParams): Promise<boolean> {
   const recipients = Array.isArray(params.to) ? params.to.join(",") : params.to;
-  let logId: string | null = null;
+  let logId: string | null = params.existingLogId ?? null;
 
-  try {
+  if (!logId) try {
     const log = await prisma.emailLog.create({
       data: {
         to: recipients,

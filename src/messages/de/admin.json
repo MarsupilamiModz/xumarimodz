@@ -1449,6 +1449,38 @@
       "emptyTitle": "Keine Bestellungen",
       "emptyText": "Für diesen Filter gibt es keine Bestellungen.",
       "loadError": "Die Bestellungen konnten nicht geladen werden."
+    },
+    "nl": {
+      "title": "Rundmail",
+      "subtitle": "Geht nur an Nutzer mit Newsletter-Einwilligung. Jede Mail enthält einen Abmelde-Link; der Versand läuft über die Queue.",
+      "audience": "Empfängergruppe",
+      "aud": {
+        "all": "Alle mit Einwilligung",
+        "premium": "Premium",
+        "free": "Ohne Premium",
+        "creators": "Creator",
+        "partners": "Partner"
+      },
+      "recipients": "{count, plural, =0 {Keine Empfänger mit Einwilligung} one {# Empfänger} other {# Empfänger}}",
+      "counting": "Empfänger werden gezählt",
+      "subject": "Betreff",
+      "body": "Text (HTML)",
+      "bodyHint": "Platzhalter: %username%. Der Abmelde-Link wird automatisch angehängt.",
+      "preview": "Vorschau",
+      "sendTest": "Test an mich senden",
+      "testSent": "Test-E-Mail gesendet",
+      "send": "Versenden",
+      "confirmTitle": "Rundmail an {count, plural, one {# Empfänger} other {# Empfänger}} senden?",
+      "confirmText": "Die E-Mails werden in die Queue gestellt und nach und nach verschickt. Das lässt sich nicht zurückholen.",
+      "queued": "{count} E-Mails in der Queue",
+      "history": "Verlauf",
+      "processQueue": "Queue jetzt abarbeiten",
+      "processed": "{sent} von {processed} verschickt",
+      "empty": "Noch keine Rundmails verschickt.",
+      "colSubject": "Betreff",
+      "colStatus": "Zustellung",
+      "colDate": "Datum",
+      "stats": "{sent}/{total} gesendet · {pending} offen · {failed} Fehler"
     }
   }
 }

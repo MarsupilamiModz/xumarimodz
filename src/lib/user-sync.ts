@@ -216,6 +216,8 @@ async function createAppUser(session: User) {
         : null,
       discordId,
       discordUsername,
+      // Einwilligung aus dem Registrierungsformular (Supabase-Metadaten), sonst aus.
+      ...(session.user_metadata?.newsletter === true ? { newsletterConsent: true, newsletterConsentAt: new Date() } : {}),
     },
     include: userInclude,
   });

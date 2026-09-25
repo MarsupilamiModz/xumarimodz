@@ -1,6 +1,7 @@
 import { requireAuth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { SettingsForm } from "@/components/dashboard/settings-form";
+import { NewsletterToggle } from "@/components/dashboard/newsletter-toggle";
 import { AchievementShowcasePanel } from "@/components/dashboard/achievement-showcase-panel";
 import { evaluateUserAchievements, getUserAchievements, getUserProgress } from "@/lib/achievements";
 import type { Locale } from "@/i18n/config";
@@ -37,6 +38,7 @@ export default async function SettingsPage({ params: { locale } }: { params: { l
           />
         </div>
       </div>
+      <NewsletterToggle initial={user.newsletterConsent} />
       <AchievementShowcasePanel
         achievements={achievements.map((a) => ({
           id: a.id,
