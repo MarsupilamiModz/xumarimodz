@@ -116,6 +116,11 @@
     @apply text-violet-bright underline-offset-4 hover:underline;
   }
 
+  /* Links im Fließtext brauchen neben der Farbe ein zweites Merkmal (WCAG 1.4.1). */
+  p .link {
+    @apply underline;
+  }
+
   /* Rechtstexte (ohne Typography-Plugin) */
   .legal-body {
     @apply text-[15px] leading-7 text-ink-muted;

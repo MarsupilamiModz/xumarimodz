@@ -330,6 +330,8 @@ export function ModsCatalogClient({
               pending && "opacity-60"
             )}
           >
+            {/* Unsichtbare Zwischenüberschrift: Karten nutzen h3, die Seite hat nur h1. */}
+            <h2 className="sr-only">{t("resultsHeading")}</h2>
             {initialMods.map((mod, index) => (
               <Fragment key={mod.slug}>
                 <ModCard locale={locale} mod={mod} pricingLabel={pricingLabels[mod.pricing] ?? mod.pricing} layout={listView ? "list" : "grid"} priority={index < 2} />

@@ -21,6 +21,7 @@ export function LanguageFlagLabel({ language, showCountry, compact, className }:
       >
         {language.code}
       </span>
+      {compact && <span className="sr-only">{label}</span>}
       {!compact && (
         <span className="flex flex-col leading-tight">
           <span>{label}</span>

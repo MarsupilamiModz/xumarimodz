@@ -123,6 +123,9 @@
     "closeGallery": "Close gallery",
     "prevImage": "Previous image",
     "nextImage": "Next image",
-    "lightboxHint": "Arrow keys · Swipe · Click to zoom"
+    "lightboxHint": "Arrow keys · Swipe · Click to zoom",
+    "favoriteAdded": "Added to favorites",
+    "favoriteRemoved": "Removed from favorites",
+    "resultsHeading": "Results"
   }
 }

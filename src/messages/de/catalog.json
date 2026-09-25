@@ -123,6 +123,9 @@
     "closeGallery": "Galerie schließen",
     "prevImage": "Vorheriges Bild",
     "nextImage": "Nächstes Bild",
-    "lightboxHint": "Pfeiltasten · Wischen · Klick zum Vergrößern"
+    "lightboxHint": "Pfeiltasten · Wischen · Klick zum Vergrößern",
+    "favoriteAdded": "Zu Favoriten hinzugefügt",
+    "favoriteRemoved": "Aus Favoriten entfernt",
+    "resultsHeading": "Ergebnisse"
   }
 }
