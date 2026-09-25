@@ -1183,6 +1183,64 @@
       "selectTitle": "No achievement selected",
       "selectText": "Pick an achievement on the left or create a new one.",
       "ruleSummary": "{rule}: from {threshold}"
+    },
+    "lb": {
+      "title": "Leaderboards",
+      "subtitle": "Review rankings, pin or hide creators, set the weighting.",
+      "tabs": "Area",
+      "tabRanking": "Ranking",
+      "tabSettings": "Settings",
+      "metric": "List",
+      "period": "Period",
+      "m": {
+        "DOWNLOADS": "Downloads",
+        "LIKES": "Likes",
+        "GROWTH": "Growth",
+        "ACTIVE": "Most active",
+        "REVIEWED": "Most reviewed",
+        "TRENDING": "Trending",
+        "RATED": "Top rated",
+        "REVENUE": "Revenue"
+      },
+      "p": {
+        "DAILY": "Today",
+        "WEEKLY": "Week",
+        "MONTHLY": "Month",
+        "ALL_TIME": "All time"
+      },
+      "colRank": "Rank",
+      "colCreator": "Creator",
+      "colTier": "Tier",
+      "colScore": "Score",
+      "pinned": "Pinned",
+      "pin": "Pin",
+      "unpin": "Unpin",
+      "hide": "Hide",
+      "unhide": "Show",
+      "pinDays": "Pin for how many days?",
+      "days": "{count} days",
+      "pinTitle": "Pin {name}",
+      "pinText": "Pinned creators appear at the top of all lists until the time runs out.",
+      "hideTitle": "Hide {name}?",
+      "hideText": "The creator no longer appears in any public ranking until shown again.",
+      "hiddenList": "Hidden creators",
+      "noHidden": "Nobody is hidden.",
+      "done": "Leaderboard updated",
+      "empty": "There are no creators for this list yet.",
+      "weights": "Weighting of rank tiers",
+      "weightsText": "Points per unit. They determine each creator's score and tier (Bronze to Legendary).",
+      "w": {
+        "downloads": "per download",
+        "revenue": "per cent of revenue",
+        "likes": "per follower",
+        "reviews": "per review",
+        "rating": "per average star",
+        "growth": "per published mod"
+      },
+      "save": "Save",
+      "saved": "Weighting saved",
+      "recalc": "Recalculate tiers now",
+      "recalculated": "Tiers recalculated"
     }
   }
 }

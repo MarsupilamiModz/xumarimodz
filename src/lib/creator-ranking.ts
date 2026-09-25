@@ -30,19 +30,31 @@ export function scoreToRankTier(score: number): CreatorRankTier {
   return tier;
 }
 
-export function computeCreatorRankScore(stats: {
-  totalDownloads: number;
-  totalRevenueCents: number;
-  followerCount: number;
-  reviewCount?: number;
-  averageRating?: number;
-  modCount?: number;
-}) {
-  const downloadScore = stats.totalDownloads * 1;
-  const revenueScore = stats.totalRevenueCents / 100;
-  const followerScore = stats.followerCount * 5;
-  const reviewScore = (stats.reviewCount ?? 0) * 10;
-  const ratingBonus = (stats.averageRating ?? 0) * 50;
-  const modBonus = (stats.modCount ?? 0) * 25;
-  return downloadScore + revenueScore + followerScore + reviewScore + ratingBonus + modBonus;
+/**
+ * Punkte je Einheit (im ACP unter Bestenlisten → Einstellungen änderbar).
+ * downloads: je Download · revenue: je Cent Umsatz · likes: je Follower · reviews: je Bewertung ·
+ * rating: je Stern Durchschnitt · growth: je veröffentlichtem Mod.
+ */
+export type RankWeights = { downloads: number; revenue: number; likes: number; growth: number; reviews: number; rating: number };
+export const RANK_WEIGHT_DEFAULTS: RankWeights = { downloads: 1, revenue: 0.01, likes: 5, growth: 25, reviews: 10, rating: 50 };
+
+export function computeCreatorRankScore(
+  stats: {
+    totalDownloads: number;
+    totalRevenueCents: number;
+    followerCount: number;
+    reviewCount?: number;
+    averageRating?: number;
+    modCount?: number;
+  },
+  weights: RankWeights = RANK_WEIGHT_DEFAULTS
+) {
+  return (
+    stats.totalDownloads * weights.downloads +
+    stats.totalRevenueCents * weights.revenue +
+    stats.followerCount * weights.likes +
+    (stats.reviewCount ?? 0) * weights.reviews +
+    (stats.averageRating ?? 0) * weights.rating +
+    (stats.modCount ?? 0) * weights.growth
+  );
 }

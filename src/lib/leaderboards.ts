@@ -2,28 +2,13 @@ import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/db";
 import { getSiteSetting, setSiteSetting } from "@/lib/site-settings";
 import type { CreatorRankTier, LeaderboardMetric, LeaderboardPeriod, PublisherLevel } from "@prisma/client";
-import { computeCreatorRankScore, scoreToRankTier } from "@/lib/creator-ranking";
+import { RANK_WEIGHT_DEFAULTS, computeCreatorRankScore, scoreToRankTier, type RankWeights } from "@/lib/creator-ranking";
 import { METRIC_LABELS, PERIOD_LABELS, PUBLIC_LEADERBOARD_METRICS, type LeaderboardEntry } from "@/lib/leaderboard-labels";
 
 export { METRIC_LABELS, PERIOD_LABELS, PUBLIC_LEADERBOARD_METRICS, type LeaderboardEntry };
 
-export type LeaderboardWeights = {
-  downloads: number;
-  revenue: number;
-  likes: number;
-  growth: number;
-  reviews: number;
-  rating: number;
-};
-
-export const DEFAULT_LEADERBOARD_WEIGHTS: LeaderboardWeights = {
-  downloads: 1,
-  revenue: 0.01,
-  likes: 2,
-  growth: 3,
-  reviews: 5,
-  rating: 10,
-};
+export type LeaderboardWeights = RankWeights;
+export const DEFAULT_LEADERBOARD_WEIGHTS = RANK_WEIGHT_DEFAULTS;
 
 export type LeaderboardFilters = {
   metric: LeaderboardMetric;
@@ -59,6 +44,16 @@ export async function saveLeaderboardWeights(weights: LeaderboardWeights) {
   await setSiteSetting("leaderboard_weights", weights);
 }
 
+/** Im ACP ausgeblendete Creator (Profil-IDs); sie erscheinen in keiner öffentlichen Rangliste. */
+export async function getHiddenLeaderboardCreators(): Promise<string[]> {
+  const value = await getSiteSetting<{ ids: string[] }>("leaderboard_hidden", { ids: [] });
+  return Array.isArray(value.ids) ? value.ids : [];
+}
+
+export async function setHiddenLeaderboardCreators(ids: string[]) {
+  await setSiteSetting("leaderboard_hidden", { ids: Array.from(new Set(ids)) });
+}
+
 async function fetchLeaderboard(filters: LeaderboardFilters): Promise<LeaderboardEntry[]> {
   const limit = filters.limit ?? 50;
   const since = periodStart(filters.period);
@@ -67,22 +62,25 @@ async function fetchLeaderboard(filters: LeaderboardFilters): Promise<Leaderboar
     ? await prisma.game.findUnique({ where: { slug: filters.gameSlug }, select: { id: true } })
     : null;
 
+  // Downloads im Zeitraum je Autor: eine gruppierte Abfrage statt bis zu 50 000 Zeilen in den Speicher zu laden.
   const periodDownloadsByAuthor: Record<string, number> = {};
   if (since) {
-    const downloads = await prisma.download.findMany({
-      where: { createdAt: { gte: since } },
-      select: { mod: { select: { authorId: true } } },
-      take: 50000,
-    });
-    for (const d of downloads) {
-      periodDownloadsByAuthor[d.mod.authorId] = (periodDownloadsByAuthor[d.mod.authorId] ?? 0) + 1;
-    }
+    const rows = await prisma.$queryRaw<{ author: string; n: number }[]>`
+      SELECT m."authorId" AS author, COUNT(*)::int AS n
+      FROM "Download" d
+      JOIN "Mod" m ON m.id = d."modId"
+      WHERE d."createdAt" >= ${since}
+      GROUP BY m."authorId"
+    `;
+    for (const r of rows) periodDownloadsByAuthor[r.author] = r.n;
   }
+  const [hidden, weights] = await Promise.all([getHiddenLeaderboardCreators(), getLeaderboardWeights()]);
 
   const creators = await prisma.creatorProfile.findMany({
     where: {
       isPublic: true,
       isSuspended: false,
+      ...(hidden.length ? { id: { notIn: hidden } } : {}),
       ...(filters.level && { level: filters.level }),
       ...(filters.search && {
         OR: [
@@ -167,7 +165,7 @@ async function fetchLeaderboard(filters: LeaderboardFilters): Promise<Leaderboar
       reviewCount: totalReviews,
       averageRating: avgRating,
       modCount: mods.length,
-    });
+    }, weights);
 
     return {
       creatorId: c.id,
@@ -215,6 +213,7 @@ export async function syncCreatorRanksIfStale(maxAgeMs = 60 * 60 * 1000) {
 }
 
 export async function syncCreatorRanks() {
+  const weights = await getLeaderboardWeights();
   const creators = await prisma.creatorProfile.findMany({
     include: {
       user: {
@@ -241,7 +240,7 @@ export async function syncCreatorRanks() {
       reviewCount,
       averageRating: avgRating,
       modCount: c.user.mods.length,
-    });
+    }, weights);
     const rankTier = scoreToRankTier(rankScore);
     await prisma.creatorProfile.update({
       where: { id: c.id },

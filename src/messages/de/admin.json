@@ -1172,6 +1172,64 @@
       "selectTitle": "Kein Erfolg ausgewählt",
       "selectText": "Wähle links einen Erfolg oder lege einen neuen an.",
       "ruleSummary": "{rule}: ab {threshold}"
+    },
+    "lb": {
+      "title": "Bestenlisten",
+      "subtitle": "Ranglisten prüfen, Creator anheften oder ausblenden, Gewichtung festlegen.",
+      "tabs": "Bereich",
+      "tabRanking": "Rangliste",
+      "tabSettings": "Einstellungen",
+      "metric": "Liste",
+      "period": "Zeitraum",
+      "m": {
+        "DOWNLOADS": "Downloads",
+        "LIKES": "Likes",
+        "GROWTH": "Wachstum",
+        "ACTIVE": "Aktivste",
+        "REVIEWED": "Meistbewertet",
+        "TRENDING": "Im Trend",
+        "RATED": "Bestbewertet",
+        "REVENUE": "Umsatz"
+      },
+      "p": {
+        "DAILY": "Heute",
+        "WEEKLY": "Woche",
+        "MONTHLY": "Monat",
+        "ALL_TIME": "Gesamt"
+      },
+      "colRank": "Platz",
+      "colCreator": "Creator",
+      "colTier": "Stufe",
+      "colScore": "Wert",
+      "pinned": "Angeheftet",
+      "pin": "Anheften",
+      "unpin": "Lösen",
+      "hide": "Ausblenden",
+      "unhide": "Einblenden",
+      "pinDays": "Für wie viele Tage anheften?",
+      "days": "{count} Tage",
+      "pinTitle": "{name} anheften",
+      "pinText": "Angeheftete Creator stehen in allen Listen oben, bis die Zeit abläuft.",
+      "hideTitle": "{name} ausblenden?",
+      "hideText": "Der Creator erscheint in keiner öffentlichen Rangliste mehr, bis er wieder eingeblendet wird.",
+      "hiddenList": "Ausgeblendete Creator",
+      "noHidden": "Niemand ist ausgeblendet.",
+      "done": "Bestenliste aktualisiert",
+      "empty": "Für diese Liste gibt es noch keine Creator.",
+      "weights": "Gewichtung der Rangstufen",
+      "weightsText": "Punkte je Einheit. Daraus ergeben sich Punktzahl und Stufe (Bronze bis Legendär) jedes Creators.",
+      "w": {
+        "downloads": "je Download",
+        "revenue": "je Cent Umsatz",
+        "likes": "je Follower",
+        "reviews": "je Bewertung",
+        "rating": "je Stern Durchschnitt",
+        "growth": "je veröffentlichtem Mod"
+      },
+      "save": "Speichern",
+      "saved": "Gewichtung gespeichert",
+      "recalc": "Stufen jetzt neu berechnen",
+      "recalculated": "Stufen neu berechnet"
     }
   }
 }
