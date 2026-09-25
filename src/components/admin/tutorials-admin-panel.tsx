@@ -108,7 +108,7 @@ export function TutorialsAdminPanel({ data }: { data: AdminData }) {
                           videoFileKey: r.data.fileKey,
                           type: f.type === "ARTICLE" ? "MIXED" : f.type === "YOUTUBE" ? "VIDEO" : f.type,
                         }));
-                        toast({ title: "Video hochgeladen" });
+                        toast({ title: "toast.videoUploaded" });
                       } else toast({ title: r.error, variant: "destructive" });
                     })
                     .finally(() => setUploading(false));
@@ -133,7 +133,7 @@ export function TutorialsAdminPanel({ data }: { data: AdminData }) {
                 startTransition(async () => {
                   const r = await saveTutorial(form);
                   if (r.success) {
-                    toast({ title: "Tutorial gespeichert" });
+                    toast({ title: "toast.tutorialSaved" });
                     router.refresh();
                   } else toast({ title: r.error, variant: "destructive" });
                 })

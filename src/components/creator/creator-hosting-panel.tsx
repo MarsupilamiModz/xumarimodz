@@ -90,7 +90,7 @@ export function CreatorHostingPanel({ profile, platformSettings }: Props) {
             startTransition(async () => {
               const r = await saveCreatorHostingSettings(form);
               if (r.success) {
-                toast({ title: "Gespeichert" });
+                toast({ title: "toast.saved" });
                 router.refresh();
               } else toast({ title: r.error, variant: "destructive" });
             })

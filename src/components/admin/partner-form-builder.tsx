@@ -55,7 +55,7 @@ function PartnerFormBuilderInner({ initialFields }: { initialFields: PartnerForm
     startTransition(async () => {
       const r = await savePartnerFormFieldsAdmin(fields);
       if (r.success) {
-        toast({ title: "Form saved" });
+        toast({ title: "toast.formSaved" });
         router.refresh();
       } else toast({ title: r.error, variant: "destructive" });
     });

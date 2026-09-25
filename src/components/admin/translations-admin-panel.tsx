@@ -46,7 +46,7 @@ function TranslationsAdminPanelInner() {
     startTransition(async () => {
       const r = await updateAdminMessage(locale, key, value);
       if (r.success) {
-        toast({ title: "Translation saved" });
+        toast({ title: "toast.translationSaved" });
         router.refresh();
       } else toast({ title: r.error, variant: "destructive" });
     });
@@ -57,7 +57,7 @@ function TranslationsAdminPanelInner() {
     startTransition(async () => {
       const r = await updateAdminMessage(locale, newKey.trim(), newValue);
       if (r.success) {
-        toast({ title: "Key added" });
+        toast({ title: "toast.keyAdded" });
         setNewKey("");
         setNewValue("");
         load();
@@ -90,12 +90,12 @@ function TranslationsAdminPanelInner() {
         const payload = JSON.parse(text) as Record<string, string>;
         const r = await importAdminMessages(locale, payload, "merge");
         if (r.success) {
-          toast({ title: "Import complete" });
+          toast({ title: "toast.importComplete" });
           load();
           router.refresh();
         } else toast({ title: r.error, variant: "destructive" });
       } catch {
-        toast({ title: "Invalid JSON file", variant: "destructive" });
+        toast({ title: "toast.invalidJson", variant: "destructive" });
       }
     });
   }

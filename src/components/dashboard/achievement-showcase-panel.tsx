@@ -112,7 +112,7 @@ export function AchievementShowcasePanel({
               if (r.success) {
                 appToast.saved();
                 if (r.data?.unlocked?.length) {
-                  appToast.raw({ title: "New achievements", description: r.data.unlocked.join(", ") });
+                  appToast.raw({ title: "toast.newAchievements", description: r.data.unlocked.join(", ") });
                 }
                 router.refresh();
               } else appToast.error(r.error);

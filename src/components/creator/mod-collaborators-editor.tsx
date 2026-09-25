@@ -54,7 +54,7 @@ export function ModCollaboratorsEditor({
     startTransition(async () => {
       const r = await saveModCollaborator({ modId, ...form });
       if (r.success) {
-        toast({ title: "Co-Creator hinzugefügt" });
+        toast({ title: "toast.coCreatorAdded" });
         router.refresh();
       } else toast({ title: r.error, variant: "destructive" });
     });
@@ -65,7 +65,7 @@ export function ModCollaboratorsEditor({
       const r = await removeModCollaborator(modId, userId);
       if (r.success) {
         setItems((list) => list.filter((c) => c.userId !== userId));
-        toast({ title: "Entfernt" });
+        toast({ title: "toast.removed" });
       } else toast({ title: r.error, variant: "destructive" });
     });
   };

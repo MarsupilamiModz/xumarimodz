@@ -108,7 +108,7 @@ export function TutorialDetail({ tutorial }: { locale: string; tutorial: Tutoria
               const r = await postTutorialComment(tutorial.id, comment);
               if (r.success) {
                 setComment("");
-                toast({ title: "Kommentar gesendet" });
+                toast({ title: "toast.commentSent" });
               } else toast({ title: r.error, variant: "destructive" });
             })
           }

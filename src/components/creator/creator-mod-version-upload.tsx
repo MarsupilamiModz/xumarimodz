@@ -42,7 +42,7 @@ export function CreatorModVersionUpload({ modId }: { modId: string }) {
           const file = selectedFile ?? (fd.get("file") as File | null);
           const version = String(fd.get("version") ?? "").trim();
           if (!file || !version) {
-            toast({ title: "File and version required", variant: "destructive" });
+            toast({ title: "toast.fileVersionRequired", variant: "destructive" });
             return;
           }
           if (file.size > MAX_UPLOAD_BYTES) {
@@ -84,7 +84,7 @@ export function CreatorModVersionUpload({ modId }: { modId: string }) {
                 setSessionId(null);
                 router.refresh();
               } else {
-                toast({ title: "Error", description: r.error, variant: "destructive" });
+                toast({ title: "toast.error", description: r.error, variant: "destructive" });
               }
             } catch (err) {
               logUploadDiagnostic("upload_failed", {
@@ -92,7 +92,7 @@ export function CreatorModVersionUpload({ modId }: { modId: string }) {
                 error: err instanceof Error ? err.message : String(err),
               });
               toast({
-                title: "Upload failed",
+                title: "toast.uploadFailed",
                 description: formatUploadErrorMessage(err),
                 variant: "destructive",
               });

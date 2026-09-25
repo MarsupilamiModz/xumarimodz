@@ -55,7 +55,7 @@ export function ModDependenciesPanel({ locale, required, optional, conflicts = [
         body: JSON.stringify({ modIds: ids }),
       });
 
-      toast({ title: "Dependencies added to library" });
+      toast({ title: "toast.dependenciesAdded" });
       setShowMissing(false);
     });
   }

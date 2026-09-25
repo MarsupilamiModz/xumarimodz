@@ -75,14 +75,14 @@ export function GameForm({ locale, game }: { locale: string; game?: GameData }) 
         router.push(`/${locale}/admin/games`);
         router.refresh();
       } else {
-        toast({ title: "Error", description: result.error, variant: "destructive" });
+        toast({ title: "toast.error", description: result.error, variant: "destructive" });
       }
     });
   }
 
   async function uploadAsset(type: "icon" | "banner" | "cover" | "logo" | "background", file: File) {
     if (!game?.id) {
-      toast({ title: "Save game first", variant: "destructive" });
+      toast({ title: "toast.saveGameFirst", variant: "destructive" });
       return;
     }
     try {
@@ -97,7 +97,7 @@ export function GameForm({ locale, game }: { locale: string; game?: GameData }) 
       router.refresh();
     } catch (err) {
       toast({
-        title: "Upload failed",
+        title: "toast.uploadFailed",
         description: formatUploadErrorMessage(err),
         variant: "destructive",
       });

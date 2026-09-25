@@ -35,9 +35,9 @@ export function DMCAAdminPanel({ claims }: { claims: Claim[] }) {
     startTransition(async () => {
       const r = await updateDMCAStatus(id, status);
       if (r.success) {
-        toast({ title: "DMCA status updated" });
+        toast({ title: "toast.dmcaUpdated" });
         window.location.reload();
-      } else toast({ title: "Error", description: r.error, variant: "destructive" });
+      } else toast({ title: "toast.error", description: r.error, variant: "destructive" });
     });
   }
 

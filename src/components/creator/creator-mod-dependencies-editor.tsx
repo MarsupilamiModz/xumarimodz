@@ -68,7 +68,7 @@ export function CreatorModDependenciesEditor({
         relation
       );
       if (r.success) {
-        toast({ title: "Dependency added" });
+        toast({ title: "toast.dependencyAdded" });
         window.location.reload();
       } else toast({ title: r.error, variant: "destructive" });
     });
@@ -79,7 +79,7 @@ export function CreatorModDependenciesEditor({
       const r = await removeModDependency(modId, dependencyId);
       if (r.success) {
         setDeps((d) => d.filter((x) => x.dependencyId !== dependencyId));
-        toast({ title: "Removed" });
+        toast({ title: "toast.removed" });
       }
     });
   }

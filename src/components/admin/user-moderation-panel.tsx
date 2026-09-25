@@ -68,7 +68,7 @@ export function UserModerationPanel({
     startTransition(async () => {
       const result = await action();
       if (!result.success) {
-        toast({ title: "Action failed", description: result.error, variant: "destructive" });
+        toast({ title: "toast.error", description: result.error, variant: "destructive" });
         return;
       }
       toast({ title: successMsg });

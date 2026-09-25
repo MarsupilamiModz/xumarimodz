@@ -54,12 +54,12 @@ export function SettingsForm({ locale, user }: { locale: string; user: User }) {
                       const resolved = bustAvatarUrl(r.data.url);
                       setAvatarUrl(resolved);
                       dispatchProfileAvatarUpdated({ avatarUrl: resolved });
-                      toast({ title: "Avatar updated" });
+                      toast({ title: "toast.avatarUpdated" });
                       router.refresh();
                     } catch (err) {
                       toast({
-                        title: "Error",
-                        description: err instanceof Error ? err.message : "Upload failed",
+                        title: "toast.error",
+                        description: err instanceof Error ? err.message : "toast.uploadFailed",
                         variant: "destructive",
                       });
                     }
@@ -78,8 +78,8 @@ export function SettingsForm({ locale, user }: { locale: string; user: User }) {
                   bio: fd.get("bio") as string,
                   locale: fd.get("locale") as "en" | "de",
                 });
-                if (r.success) toast({ title: "Profile saved" });
-                else toast({ title: "Error", description: r.error, variant: "destructive" });
+                if (r.success) toast({ title: "toast.profileSaved" });
+                else toast({ title: "toast.error", description: r.error, variant: "destructive" });
               });
             }}
             className="space-y-3"
@@ -131,9 +131,9 @@ export function SettingsForm({ locale, user }: { locale: string; user: User }) {
               startTransition(async () => {
                 const r = await updatePassword(password);
                 if (r.success) {
-                  toast({ title: "Password updated" });
+                  toast({ title: "toast.passwordUpdated" });
                   setPassword("");
-                } else toast({ title: "Error", description: r.error, variant: "destructive" });
+                } else toast({ title: "toast.error", description: r.error, variant: "destructive" });
               })
             }
           >
@@ -166,10 +166,10 @@ export function SettingsForm({ locale, user }: { locale: string; user: User }) {
                 startTransition(async () => {
                   const r = await applyForCreator();
                   if (r.success) {
-                    toast({ title: "Creator profile created" });
+                    toast({ title: "toast.creatorProfileCreated" });
                     router.push(`/${locale}/creator`);
                     router.refresh();
-                  } else toast({ title: "Error", description: r.error, variant: "destructive" });
+                  } else toast({ title: "toast.error", description: r.error, variant: "destructive" });
                 })
               }
             >

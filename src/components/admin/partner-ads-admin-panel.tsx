@@ -57,7 +57,7 @@ export function PartnerAdsAdminPanel({
         isGlobal: partners.length === 0,
       });
       if (r.success) {
-        toast({ title: "Partner gespeichert" });
+        toast({ title: "toast.partnerSaved" });
         setForm({ id: "", name: "", description: "", affiliateUrl: "", websiteUrl: "", bannerUrl: "" });
         router.refresh();
       } else toast({ title: r.error, variant: "destructive" });

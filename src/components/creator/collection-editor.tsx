@@ -57,7 +57,7 @@ export function CollectionCreateForm({ locale }: { locale: Locale }) {
                 coverUrl: (fd.get("coverUrl") as string) || undefined,
               });
               if (r.success) {
-                toast({ title: "Collection created" });
+                toast({ title: "toast.collectionCreated" });
                 router.push(`/${locale}/creator/collections/${r.data.id}`);
               } else toast({ title: r.error, variant: "destructive" });
             });
@@ -104,7 +104,7 @@ export function CollectionEditForm({ locale, collection }: { locale: Locale; col
                   coverUrl: (fd.get("coverUrl") as string) || undefined,
                 });
                 if (r.success) {
-                  toast({ title: "Saved" });
+                  toast({ title: "toast.saved" });
                   refresh();
                 } else toast({ title: r.error, variant: "destructive" });
               });
@@ -199,7 +199,7 @@ export function CollectionEditForm({ locale, collection }: { locale: Locale; col
                 startTransition(async () => {
                   const r = await addModToCollection(collection.id, modQuery.trim());
                   if (r.success) {
-                    toast({ title: "Mod added" });
+                    toast({ title: "toast.modAdded" });
                     setModQuery("");
                     refresh();
                   } else toast({ title: r.error, variant: "destructive" });

@@ -119,7 +119,7 @@ export function SecurityCenterPanel({ settings, stats }: Props) {
   function saveSettings() {
     startTransition(async () => {
       const r = await updateMalwareSettingsAdmin(form);
-      if (r.success) toast({ title: "Security settings saved" });
+      if (r.success) toast({ title: "toast.securitySaved" });
       else toast({ title: r.error, variant: "destructive" });
     });
   }
@@ -175,7 +175,7 @@ export function SecurityCenterPanel({ settings, stats }: Props) {
           r = await removeVersionScan(versionId);
           break;
       }
-      if (r?.success) toast({ title: "Action completed" });
+      if (r?.success) toast({ title: "toast.actionCompleted" });
       else if (r) toast({ title: r.error, variant: "destructive" });
     });
   }
@@ -217,7 +217,7 @@ export function SecurityCenterPanel({ settings, stats }: Props) {
           r = await rescanSoundPreview(modId);
           break;
       }
-      if (r?.success) toast({ title: "Sound review updated" });
+      if (r?.success) toast({ title: "toast.soundReviewUpdated" });
       else if (r) toast({ title: r.error, variant: "destructive" });
     });
   }

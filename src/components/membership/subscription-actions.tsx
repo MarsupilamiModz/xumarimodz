@@ -19,7 +19,7 @@ export function SubscriptionActions({
       const res = await fetch("/api/stripe/portal", { method: "POST" });
       const data = await res.json();
       if (data.url) window.location.href = data.url;
-      else toast({ title: "Portal unavailable", description: data.error, variant: "destructive" });
+      else toast({ title: "toast.portalUnavailable", description: data.error, variant: "destructive" });
     } finally {
       setLoading(false);
     }

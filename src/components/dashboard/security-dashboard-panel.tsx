@@ -49,7 +49,7 @@ export function SecurityDashboardPanel({
       const r = await enrollMfa();
       if (r.success) {
         setEnrollData({ factorId: r.data.factorId, qrCode: r.data.qrCode, secret: r.data.secret });
-      } else toast({ title: "Error", description: r.error, variant: "destructive" });
+      } else toast({ title: "toast.error", description: r.error, variant: "destructive" });
     });
   }
 
@@ -60,9 +60,9 @@ export function SecurityDashboardPanel({
       if (r.success) {
         setBackupCodes(r.data.backupCodes);
         setEnrollData(null);
-        toast({ title: "2FA enabled" });
+        toast({ title: "toast.twoFaEnabled" });
         window.location.reload();
-      } else toast({ title: "Error", description: r.error, variant: "destructive" });
+      } else toast({ title: "toast.error", description: r.error, variant: "destructive" });
     });
   }
 
@@ -83,9 +83,9 @@ export function SecurityDashboardPanel({
     startTransition(async () => {
       const r = await disableMfa(factorId);
       if (r.success) {
-        toast({ title: "2FA disabled" });
+        toast({ title: "toast.twoFaDisabled" });
         window.location.reload();
-      } else toast({ title: "Error", description: r.error, variant: "destructive" });
+      } else toast({ title: "toast.error", description: r.error, variant: "destructive" });
     });
   }
 
@@ -94,8 +94,8 @@ export function SecurityDashboardPanel({
       const r = await regenerateBackupCodes();
       if (r.success) {
         setBackupCodes(r.data.backupCodes);
-        toast({ title: "Backup codes regenerated" });
-      } else toast({ title: "Error", description: r.error, variant: "destructive" });
+        toast({ title: "toast.backupCodesRegenerated" });
+      } else toast({ title: "toast.error", description: r.error, variant: "destructive" });
     });
   }
 

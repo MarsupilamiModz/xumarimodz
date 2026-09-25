@@ -47,7 +47,7 @@ export function SoundPreviewUpload({ modId, hasPreview, hasCover }: Props) {
     setLocalError(null);
     try {
       if (!isAudioFileName(file.name)) {
-        toast({ title: "Invalid audio format", description: "Use mp3, wav, ogg, flac, or m4a.", variant: "destructive" });
+        toast({ title: "toast.invalidAudio", description: "toast.audioFormats", variant: "destructive" });
         return;
       }
 
@@ -98,7 +98,7 @@ export function SoundPreviewUpload({ modId, hasPreview, hasCover }: Props) {
       startTransition(async () => {
         const r = await attachSoundCoverFromSession(modId, result.sessionId);
         if (r.success) {
-          toast({ title: "Cover uploaded" });
+          toast({ title: "toast.coverUploaded" });
           router.refresh();
         } else {
           setLocalError(r.error);

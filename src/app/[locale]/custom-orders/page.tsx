@@ -55,7 +55,7 @@ export default function CustomOrdersPage() {
                   router.push(`/${locale}/dashboard/orders/${res.data.id}`);
                 } else {
                   toast({
-                    title: res.error === "Unauthorized" ? t("signInHint") : "Error",
+                    title: res.error === "Unauthorized" ? t("signInHint") : "toast.error",
                     description: res.error,
                     variant: "destructive",
                   });

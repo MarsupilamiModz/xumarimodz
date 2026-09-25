@@ -91,7 +91,7 @@ export function AdminOrderDetail() {
               if (r.success) {
                 setContent("");
                 load();
-                toast({ title: "Sent" });
+                toast({ title: "toast.sent" });
               }
             })
           }

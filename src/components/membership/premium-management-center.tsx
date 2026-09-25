@@ -87,7 +87,7 @@ export function PremiumManagementCenter({
       });
       const data = await res.json();
       if (data.url) window.location.href = data.url;
-      else toast({ title: "Portal unavailable", description: data.error, variant: "destructive" });
+      else toast({ title: "toast.portalUnavailable", description: data.error, variant: "destructive" });
     } finally {
       setPortalLoading(false);
     }

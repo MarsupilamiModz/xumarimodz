@@ -53,7 +53,7 @@ export function OwnerControlCenter({ data }: { data: OwnerData }) {
       isActive: true,
     });
     if (r.success) {
-      toast({ title: "Campaign created" });
+      toast({ title: "toast.campaignCreated" });
       router.refresh();
     } else {
       toast({ title: r.error, variant: "destructive" });

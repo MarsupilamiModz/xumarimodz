@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { AlertCircle, CheckCircle2, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -8,6 +9,13 @@ import { cn } from "@/lib/utils";
 export function Toaster() {
   const { toasts, dismiss } = useToast();
   const t = useTranslations("ui");
+  const tt = useTranslations("toast");
+  // Aufrufer dürfen statt Text einen Schlüssel „toast.<key>“ übergeben; übersetzt wird erst hier.
+  const text = (value: ReactNode) => {
+    if (typeof value !== "string" || !value.startsWith("toast.")) return value;
+    const key = value.slice(6);
+    return tt.has(key) ? tt(key) : value;
+  };
 
   return (
     <section
@@ -29,9 +37,9 @@ export function Toaster() {
               aria-hidden
             />
             <div className="min-w-0 flex-1">
-              {toast.title && <p className="text-sm font-semibold text-ink">{toast.title}</p>}
+              {toast.title && <p className="text-sm font-semibold text-ink">{text(toast.title)}</p>}
               {toast.description && (
-                <p className="mt-1 break-words text-[13px] text-ink-muted">{toast.description}</p>
+                <p className="mt-1 break-words text-[13px] text-ink-muted">{text(toast.description)}</p>
               )}
             </div>
             <button

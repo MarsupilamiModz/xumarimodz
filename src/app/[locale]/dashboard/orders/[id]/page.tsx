@@ -85,7 +85,7 @@ export default function OrderDetailPage() {
               if (r.success) {
                 setContent("");
                 load();
-                toast({ title: "Message sent" });
+                toast({ title: "toast.messageSent" });
               }
             })
           }

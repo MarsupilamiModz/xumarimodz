@@ -66,7 +66,7 @@ function TicketAttachmentButton({ attachment }: { attachment: Attachment }) {
       if (result.success) {
         window.open(result.data.url, "_blank", "noopener,noreferrer");
       } else {
-        toast({ title: "Error", description: result.error, variant: "destructive" });
+        toast({ title: "toast.error", description: result.error, variant: "destructive" });
       }
     });
   }
@@ -108,7 +108,7 @@ export function TicketThread({
       if (messageId) formData.set("messageId", messageId);
       const result = await uploadTicketAttachment(formData);
       if (!result.success) {
-        toast({ title: "Upload failed", description: result.error, variant: "destructive" });
+        toast({ title: "toast.uploadFailed", description: result.error, variant: "destructive" });
       }
     }
   }
@@ -120,7 +120,7 @@ export function TicketThread({
       if (content.trim()) {
         const result = await replyToTicket(ticket.id, content, isStaff);
         if (!result.success) {
-          toast({ title: "Error", description: result.error, variant: "destructive" });
+          toast({ title: "toast.error", description: result.error, variant: "destructive" });
           return;
         }
         messageId = result.data?.messageId;
@@ -130,7 +130,7 @@ export function TicketThread({
       }
       setContent("");
       setFiles([]);
-      toast({ title: "Reply sent" });
+      toast({ title: "toast.replySent" });
       window.location.reload();
     });
   }
@@ -141,10 +141,10 @@ export function TicketThread({
       const result = await addInternalNote(ticket.id, internalNote);
       if (result.success) {
         setInternalNote("");
-        toast({ title: "Internal note added" });
+        toast({ title: "toast.internalNoteAdded" });
         window.location.reload();
       } else {
-        toast({ title: "Error", description: result.error, variant: "destructive" });
+        toast({ title: "toast.error", description: result.error, variant: "destructive" });
       }
     });
   }
@@ -153,7 +153,7 @@ export function TicketThread({
     startTransition(async () => {
       const result = await closeTicket(ticket.id, !isStaff);
       if (result.success) {
-        toast({ title: "Ticket closed" });
+        toast({ title: "toast.ticketClosed" });
         window.location.reload();
       }
     });
@@ -163,7 +163,7 @@ export function TicketThread({
     startTransition(async () => {
       const result = await reopenTicket(ticket.id);
       if (result.success) {
-        toast({ title: "Ticket reopened" });
+        toast({ title: "toast.ticketReopened" });
         window.location.reload();
       }
     });

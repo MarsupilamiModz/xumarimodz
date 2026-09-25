@@ -60,7 +60,7 @@ export function SoundProfileEditor({ modId, profile }: { modId: string; profile:
             ? Number(form.previewCustomSeconds)
             : undefined,
       });
-      if (r.success) toast({ title: "Sound metadata saved" });
+      if (r.success) toast({ title: "toast.soundMetaSaved" });
       else toast({ title: r.error, variant: "destructive" });
     });
   }

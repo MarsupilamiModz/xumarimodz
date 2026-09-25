@@ -76,7 +76,7 @@ export function EmailSettingsCard({
                 startTransition(async () => {
                   const r = await resendVerificationEmail(locale);
                   if (r.success) toast({ title: t("verificationSent") });
-                  else toast({ title: "Error", description: r.error, variant: "destructive" });
+                  else toast({ title: "toast.error", description: r.error, variant: "destructive" });
                 })
               }
             >
@@ -98,7 +98,7 @@ export function EmailSettingsCard({
                   if (r.success) {
                     toast({ title: t("changeRequested") });
                     setNewEmail("");
-                  } else toast({ title: "Error", description: r.error, variant: "destructive" });
+                  } else toast({ title: "toast.error", description: r.error, variant: "destructive" });
                 });
               }}
             >

@@ -22,7 +22,7 @@ export function CreatorApplicationForm({ userEmail }: { userEmail: string }) {
       const result = await upload({ file, purpose: "creator-portfolio" });
       if (result.url) setPortfolioImages((prev) => [...prev, result.url as string]);
     } catch (err) {
-      toast({ title: "Upload failed", description: formatUploadErrorMessage(err), variant: "destructive" });
+      toast({ title: "toast.uploadFailed", description: formatUploadErrorMessage(err), variant: "destructive" });
     }
   }
 
@@ -53,7 +53,7 @@ export function CreatorApplicationForm({ userEmail }: { userEmail: string }) {
                 portfolioImages,
               });
               if (r.success) {
-                toast({ title: "Application submitted" });
+                toast({ title: "toast.applicationSubmitted" });
                 router.refresh();
               } else toast({ title: r.error, variant: "destructive" });
             });

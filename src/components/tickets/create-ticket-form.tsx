@@ -33,10 +33,10 @@ export function CreateTicketForm({ locale }: { locale: string }) {
         message: form.get("message") as string,
       });
       if (result.success) {
-        toast({ title: "Ticket created", description: result.data.ticketNumber });
+        toast({ title: "toast.ticketCreated", description: result.data.ticketNumber });
         router.push(`/${locale}/dashboard/support/${result.data.ticketId}`);
       } else {
-        toast({ title: "Error", description: result.error, variant: "destructive" });
+        toast({ title: "toast.error", description: result.error, variant: "destructive" });
       }
     });
   }

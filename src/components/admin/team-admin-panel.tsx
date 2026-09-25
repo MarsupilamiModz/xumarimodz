@@ -49,7 +49,7 @@ function TeamAdminPanelInner({
     startTransition(async () => {
       const r = await updateTeamMemberAdmin(id, patch);
       if (r.success) {
-        toast({ title: "Team member updated" });
+        toast({ title: "toast.teamMemberUpdated" });
         router.refresh();
       } else toast({ title: r.error, variant: "destructive" });
     });
@@ -92,7 +92,7 @@ function TeamAdminPanelInner({
                   startTransition(async () => {
                     const r = await addTeamMemberAdmin({ userId: u.id, role: "SUPPORT" });
                     if (r.success) {
-                      toast({ title: "Added to team" });
+                      toast({ title: "toast.addedToTeam" });
                       setSearchResults([]);
                       router.refresh();
                     } else toast({ title: r.error, variant: "destructive" });

@@ -69,22 +69,22 @@ export function ReportsAdminPanel({ reports }: { reports: Report[] }) {
             row.id === id ? { ...row, status, priority: priority ?? row.priority } : row
           )
         );
-        toast({ title: "Report updated" });
-      } else toast({ title: "Error", description: r.error, variant: "destructive" });
+        toast({ title: "toast.reportUpdated" });
+      } else toast({ title: "toast.error", description: r.error, variant: "destructive" });
     });
   }
 
   function assign(id: string, role: "MODERATOR" | "ADMIN" | "OWNER") {
     const assigneeId = assigneeIds[id]?.trim();
     if (!assigneeId) {
-      toast({ title: "Enter a staff user ID", variant: "destructive" });
+      toast({ title: "toast.staffIdRequired", variant: "destructive" });
       return;
     }
     startTransition(async () => {
       const r = await assignReport(id, assigneeId, role);
       if (r.success) {
-        toast({ title: "Report assigned" });
-      } else toast({ title: "Error", description: r.error, variant: "destructive" });
+        toast({ title: "toast.reportAssigned" });
+      } else toast({ title: "toast.error", description: r.error, variant: "destructive" });
     });
   }
 
