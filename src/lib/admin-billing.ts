@@ -110,3 +110,34 @@ export async function getAdminPurchasesPage({ q, page, limit = 25 }: { q?: strin
     pages: Math.max(1, Math.ceil(total / limit)),
   };
 }
+
+/**
+ * Manuell vergebene Mitgliedschaften: ACP-Vergaben als Kauf-Datensatz (stripePaymentId „admin_…“)
+ * sowie zeitlich begrenzte Mitgliedschaften ohne Stripe-Bezug. Pro Nutzer ein Eintrag.
+ */
+export async function getManualMemberships(limit = 100) {
+  const now = new Date();
+  const [grants, timed] = await Promise.all([
+    prisma.membershipPurchase.findMany({
+      where: { stripePaymentId: { startsWith: "admin_" }, OR: [{ expiresAt: null }, { expiresAt: { gt: now } }] },
+      orderBy: { createdAt: "desc" },
+      take: limit,
+      select: { createdAt: true, expiresAt: true, plan: { select: { name: true } }, user: { select: USER_SELECT } },
+    }),
+    prisma.userMembership.findMany({
+      where: { stripeSubscriptionId: null, isLifetime: false, membershipType: { not: "FREE" }, status: "ACTIVE" },
+      orderBy: { updatedAt: "desc" },
+      take: limit,
+      select: { createdAt: true, renewalDate: true, membershipType: true, plan: { select: { name: true } }, user: { select: USER_SELECT } },
+    }),
+  ]);
+
+  const byUser = new Map<string, { user: (typeof grants)[number]["user"]; plan: string; until: Date | null; grantedAt: Date }>();
+  for (const g of grants) {
+    if (!byUser.has(g.user.id)) byUser.set(g.user.id, { user: g.user, plan: g.plan.name, until: g.expiresAt, grantedAt: g.createdAt });
+  }
+  for (const m of timed) {
+    if (!byUser.has(m.user.id)) byUser.set(m.user.id, { user: m.user, plan: m.plan?.name ?? m.membershipType, until: m.renewalDate, grantedAt: m.createdAt });
+  }
+  return Array.from(byUser.values()).sort((a, b) => b.grantedAt.getTime() - a.grantedAt.getTime());
+}

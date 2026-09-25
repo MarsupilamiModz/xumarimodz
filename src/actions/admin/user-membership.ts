@@ -316,3 +316,46 @@ export async function adminRefundPurchase(kind: "membership" | "mod", purchaseId
   revalidateBilling(purchase.userId);
   return ok(undefined);
 }
+
+/** „Mitgliedschaft vergeben“ aus dem ACP: Nutzer per Benutzername, Plan und Dauer in Tagen (leer = unbegrenzt). */
+export async function adminGrantMembershipByUsername(username: string, planId: string, days: number | null) {
+  const { error } = await requireActionPermission("users.write");
+  if (error) return error;
+
+  const name = username.trim().replace(/^@/, "");
+  if (!name) return fail("Username required");
+  const target = await prisma.user.findFirst({
+    where: { username: { equals: name, mode: "insensitive" }, deletedAt: null },
+    select: { id: true },
+  });
+  if (!target) return fail("User not found");
+  if (days !== null && (!Number.isInteger(days) || days < 1 || days > 3650)) return fail("Invalid number of days");
+
+  return adminAssignMembership(target.id, planId, days === null ? { lifetime: true } : { extendDays: days });
+}
+
+/** Entzieht manuell vergebene Mitgliedschaften sofort; bezahlte Stripe-Käufe bleiben unberührt. */
+export async function adminRevokeManualMembership(userId: string) {
+  const { user, error } = await requireActionPermission("users.write");
+  if (error) return error;
+
+  const now = new Date();
+  const expired = await prisma.membershipPurchase.updateMany({
+    where: { userId, stripePaymentId: { startsWith: "admin_" }, OR: [{ expiresAt: null }, { expiresAt: { gt: now } }] },
+    data: { expiresAt: now },
+  });
+
+  const state = await getUserMembershipState(userId);
+  const paidPurchase = await prisma.membershipPurchase.findFirst({
+    where: { userId, stripePaymentId: { startsWith: "pi_" }, OR: [{ expiresAt: null }, { expiresAt: { gt: now } }] },
+    select: { id: true },
+  });
+  if (!state.stripeSubscriptionId && !paidPurchase && state.membershipType !== "FREE") {
+    await upsertUserMembership({ userId, membershipType: "FREE", status: "CANCELED", cancelDate: now });
+  }
+  await syncUserRoleFromMembership(userId);
+
+  await audit(user.id, "membership.revoke", userId, { expiredGrants: expired.count });
+  revalidateBilling(userId);
+  return ok(undefined);
+}

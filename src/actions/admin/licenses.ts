@@ -128,28 +128,31 @@ export async function bulkGenerateLicenses(input: {
   const { user, error } = await requireActionPermission("licenses.write");
   if (error) return error;
 
-  const count = Math.min(Math.max(input.count, 1), 500);
-  const batchId = `batch_${Date.now()}`;
-  const keys: string[] = [];
-
-  for (let i = 0; i < count; i++) {
-    const key = normalizeLicenseKey(generateLicenseKey());
-    const keyHash = hashLicenseKey(key);
-    await prisma.licenseKey.create({
-      data: {
-        key,
-        keyHash,
-        batchId,
-        productType: input.productType,
-        modId: input.modId,
-        label: input.label,
-        maxActivations: input.maxActivations ?? 1,
-        expiresAt: input.expiresAt ? new Date(input.expiresAt) : null,
-        createdById: user.id,
-      },
-    });
-    keys.push(key);
+  const count = Math.min(Math.max(Math.round(Number(input.count) || 1), 1), 500);
+  if (!["premium", "mod", "bundle"].includes(input.productType)) return fail("Invalid product");
+  if (input.productType === "mod") {
+    if (!input.modId) return fail("Mod product requires modId");
+    const mod = await prisma.mod.findUnique({ where: { id: input.modId }, select: { id: true } });
+    if (!mod) return fail("Mod not found");
   }
+  const maxActivations = Math.min(Math.max(Math.round(Number(input.maxActivations) || 1), 1), 100);
+  const batchId = `batch_${Date.now()}`;
+  const keys = Array.from(new Set(Array.from({ length: count }, () => normalizeLicenseKey(generateLicenseKey()))));
+
+  // Ein Insert für den ganzen Stapel statt einer Abfrage pro Schlüssel.
+  await prisma.licenseKey.createMany({
+    data: keys.map((key) => ({
+      key,
+      keyHash: hashLicenseKey(key),
+      batchId,
+      productType: input.productType,
+      modId: input.productType === "mod" ? input.modId : undefined,
+      label: input.label,
+      maxActivations,
+      expiresAt: input.expiresAt ? new Date(input.expiresAt) : null,
+      createdById: user.id,
+    })),
+  });
 
   await createAuditLog({
     actorId: user.id,
