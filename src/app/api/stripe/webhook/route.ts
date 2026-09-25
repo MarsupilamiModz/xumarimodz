@@ -196,6 +196,22 @@ export async function POST(req: Request) {
           where: { stripeSubscriptionId: sub.id },
           data: { status: "CANCELED" },
         });
+        // Zum Laufzeitende gekündigte Mitgliedschaften enden erst hier (idempotent: erneute Events ändern nichts mehr).
+        const membership = await prisma.userMembership.findFirst({
+          where: { stripeSubscriptionId: sub.id, isLifetime: false, membershipType: { not: "FREE" } },
+          select: { userId: true },
+        });
+        if (membership) {
+          const { upsertUserMembership, syncUserRoleFromMembership } = await import("@/lib/user-membership");
+          await upsertUserMembership({
+            userId: membership.userId,
+            membershipType: "FREE",
+            status: "CANCELED",
+            cancelDate: new Date(),
+            stripeSubscriptionId: sub.id,
+          });
+          await syncUserRoleFromMembership(membership.userId);
+        }
         break;
       }
     }

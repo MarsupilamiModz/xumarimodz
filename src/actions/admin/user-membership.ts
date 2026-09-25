@@ -6,8 +6,11 @@ import { fail, ok, requireActionPermission } from "@/lib/action-utils";
 import {
   cancelStripeSubscription,
   changeStripeSubscriptionPlan,
+  extendStripeSubscription,
+  refundStripePayment,
   resumeStripeSubscription,
 } from "@/lib/stripe";
+import { createAuditLog } from "@/lib/audit";
 import {
   getUserMembershipState,
   planSlugToTier,
@@ -16,6 +19,16 @@ import {
 } from "@/lib/user-membership";
 import { grantMembershipPurchase } from "@/lib/membership";
 import type { MembershipTier, UserMembershipStatus } from "@prisma/client";
+
+function audit(actorId: string, action: string, userId: string, metadata?: Record<string, unknown>) {
+  return createAuditLog({ actorId, action, entityType: "UserMembership", entityId: userId, metadata });
+}
+
+function revalidateBilling(userId: string) {
+  revalidatePath(`/admin/users/${userId}`);
+  revalidatePath("/admin/subscriptions");
+  revalidatePath("/admin/memberships");
+}
 
 export async function getAdminUserMembership(userId: string) {
   const { error } = await requireActionPermission("users.read");
@@ -80,32 +93,40 @@ export async function adminAssignMembership(
     await syncUserRoleFromMembership(userId);
   }
 
-  revalidatePath(`/admin/users/${userId}`);
+  await audit(user.id, "membership.grant", userId, { planId, lifetime: !!options?.lifetime, days: options?.extendDays });
+  revalidateBilling(userId);
   return ok(undefined);
 }
 
+/**
+ * Kündigen: Stripe-Abos laufen bis zum Ende des bezahlten Zeitraums weiter (cancel_at_period_end),
+ * manuell vergebene Mitgliedschaften enden sofort.
+ */
 export async function adminCancelMembership(userId: string) {
-  const { error } = await requireActionPermission("users.write");
+  const { user, error } = await requireActionPermission("users.write");
   if (error) return error;
 
   const state = await getUserMembershipState(userId);
-  if (state.stripeSubscriptionId) {
+  if (state.membershipType === "FREE") return fail("No active membership");
+
+  const atPeriodEnd = !!state.stripeSubscriptionId && !state.isLifetime;
+  if (atPeriodEnd && state.stripeSubscriptionId) {
     try {
       await cancelStripeSubscription(state.stripeSubscriptionId);
-    } catch {
-      /* stripe may already be canceled */
+    } catch (err) {
+      return fail(err instanceof Error ? err.message : "Stripe cancellation failed");
     }
-  }
-
-  await upsertUserMembership({
-    userId,
-    membershipType: state.isLifetime ? state.membershipType : "FREE",
-    status: state.isLifetime ? "ACTIVE" : "CANCELED",
-    cancelDate: new Date(),
-    stripeSubscriptionId: state.stripeSubscriptionId,
-  });
-
-  if (!state.isLifetime) {
+    await upsertUserMembership({
+      userId,
+      membershipType: state.membershipType,
+      status: "ACTIVE",
+      planId: state.planId,
+      renewalDate: state.renewalDate,
+      cancelDate: state.renewalDate ?? new Date(),
+      stripeSubscriptionId: state.stripeSubscriptionId,
+      isLifetime: false,
+    });
+  } else {
     await upsertUserMembership({
       userId,
       membershipType: "FREE",
@@ -115,18 +136,31 @@ export async function adminCancelMembership(userId: string) {
   }
 
   await syncUserRoleFromMembership(userId);
-  revalidatePath(`/admin/users/${userId}`);
+  await audit(user.id, "membership.cancel", userId, { tier: state.membershipType, atPeriodEnd });
+  revalidateBilling(userId);
   return ok(undefined);
 }
 
 export async function adminExtendMembership(userId: string, days: number) {
-  const { error } = await requireActionPermission("users.write");
+  const { user, error } = await requireActionPermission("users.write");
   if (error) return error;
+  if (!Number.isInteger(days) || days < 1 || days > 3650) return fail("Invalid number of days");
 
   const state = await getUserMembershipState(userId);
+  if (state.membershipType === "FREE") return fail("No active membership");
+  if (state.isLifetime) return fail("Lifetime memberships cannot be extended");
+
   const base = state.renewalDate && state.renewalDate > new Date() ? state.renewalDate : new Date();
   const renewal = new Date(base);
   renewal.setDate(renewal.getDate() + days);
+
+  if (state.stripeSubscriptionId) {
+    try {
+      await extendStripeSubscription(state.stripeSubscriptionId, renewal);
+    } catch (err) {
+      return fail(err instanceof Error ? err.message : "Stripe extension failed");
+    }
+  }
 
   await upsertUserMembership({
     userId,
@@ -134,11 +168,15 @@ export async function adminExtendMembership(userId: string, days: number) {
     status: "ACTIVE",
     planId: state.planId,
     renewalDate: renewal,
+    // Eine vorgemerkte Kündigung verschiebt sich mit dem neuen Laufzeitende.
+    cancelDate: state.cancelDate ? renewal : null,
     stripeSubscriptionId: state.stripeSubscriptionId,
-    isLifetime: state.isLifetime,
+    isLifetime: false,
   });
+  await syncUserRoleFromMembership(userId);
 
-  revalidatePath(`/admin/users/${userId}`);
+  await audit(user.id, "membership.extend", userId, { days, until: renewal.toISOString() });
+  revalidateBilling(userId);
   return ok(undefined);
 }
 
@@ -147,7 +185,7 @@ export async function adminSetMembershipTier(
   tier: MembershipTier,
   status: UserMembershipStatus = "ACTIVE"
 ) {
-  const { error } = await requireActionPermission("users.write");
+  const { user, error } = await requireActionPermission("users.write");
   if (error) return error;
 
   const slug =
@@ -164,12 +202,13 @@ export async function adminSetMembershipTier(
     isLifetime: tier !== "FREE",
   });
   await syncUserRoleFromMembership(userId);
-  revalidatePath(`/admin/users/${userId}`);
+  await audit(user.id, "membership.set_tier", userId, { tier, status });
+  revalidateBilling(userId);
   return ok(undefined);
 }
 
 export async function adminChangeMembershipPlan(userId: string, newPlanId: string) {
-  const { error } = await requireActionPermission("users.write");
+  const { user, error } = await requireActionPermission("users.write");
   if (error) return error;
 
   const plan = await prisma.membershipPlan.findUnique({ where: { id: newPlanId } });
@@ -194,12 +233,13 @@ export async function adminChangeMembershipPlan(userId: string, newPlanId: strin
     isLifetime: false,
   });
   await syncUserRoleFromMembership(userId);
-  revalidatePath(`/admin/users/${userId}`);
+  await audit(user.id, "membership.change_plan", userId, { planId: plan.id });
+  revalidateBilling(userId);
   return ok(undefined);
 }
 
 export async function adminResumeMembership(userId: string) {
-  const { error } = await requireActionPermission("users.write");
+  const { user, error } = await requireActionPermission("users.write");
   if (error) return error;
 
   const state = await getUserMembershipState(userId);
@@ -218,6 +258,61 @@ export async function adminResumeMembership(userId: string) {
     isLifetime: state.isLifetime,
   });
   await syncUserRoleFromMembership(userId);
-  revalidatePath(`/admin/users/${userId}`);
+  await audit(user.id, "membership.resume", userId);
+  revalidateBilling(userId);
+  return ok(undefined);
+}
+
+/**
+ * Erstattet einen Einzelkauf vollständig über Stripe.
+ * Mitgliedschaftskäufe enden sofort (expiresAt = jetzt). Bei Mod-Käufen bleibt der Datensatz bestehen,
+ * weil das Schema noch kein Feld für erstattete Käufe hat (siehe docs/REDESIGN.md).
+ */
+export async function adminRefundPurchase(kind: "membership" | "mod", purchaseId: string) {
+  const { user, error } = await requireActionPermission("settings.write");
+  if (error) return error;
+
+  const purchase =
+    kind === "membership"
+      ? await prisma.membershipPurchase.findUnique({
+          where: { id: purchaseId },
+          select: { id: true, userId: true, planId: true, stripePaymentId: true, amountCents: true },
+        })
+      : await prisma.modPurchase.findUnique({
+          where: { id: purchaseId },
+          select: { id: true, userId: true, modId: true, stripePaymentId: true, amountCents: true },
+        });
+  if (!purchase) return fail("Purchase not found");
+  if (!purchase.stripePaymentId?.startsWith("pi_")) return fail("This purchase has no Stripe payment to refund");
+
+  const already = await prisma.auditLog.findFirst({
+    where: { action: "purchase.refund", entityId: purchase.id },
+    select: { id: true },
+  });
+  if (already) return fail("This purchase has already been refunded");
+
+  try {
+    await refundStripePayment(purchase.stripePaymentId, `refund_${kind}_${purchase.id}`);
+  } catch (err) {
+    return fail(err instanceof Error ? err.message : "Stripe refund failed");
+  }
+
+  if (kind === "membership" && "planId" in purchase) {
+    await prisma.membershipPurchase.update({ where: { id: purchase.id }, data: { expiresAt: new Date() } });
+    const state = await getUserMembershipState(purchase.userId);
+    if (state.planId === purchase.planId && state.isLifetime) {
+      await upsertUserMembership({ userId: purchase.userId, membershipType: "FREE", status: "CANCELED", cancelDate: new Date() });
+    }
+    await syncUserRoleFromMembership(purchase.userId);
+  }
+
+  await createAuditLog({
+    actorId: user.id,
+    action: "purchase.refund",
+    entityType: kind === "membership" ? "MembershipPurchase" : "Purchase",
+    entityId: purchase.id,
+    metadata: { userId: purchase.userId, amountCents: purchase.amountCents, paymentIntent: purchase.stripePaymentId },
+  });
+  revalidateBilling(purchase.userId);
   return ok(undefined);
 }

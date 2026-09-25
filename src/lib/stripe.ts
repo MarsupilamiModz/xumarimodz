@@ -298,6 +298,21 @@ export async function cancelStripeSubscription(stripeSubscriptionId: string) {
   return stripe.subscriptions.update(stripeSubscriptionId, { cancel_at_period_end: true });
 }
 
+/** Schiebt die nächste Abbuchung auf `until` (kostenlose Verlängerung über trial_end, ohne Anteilsberechnung). */
+export async function extendStripeSubscription(stripeSubscriptionId: string, until: Date) {
+  const stripe = getStripe();
+  return stripe.subscriptions.update(stripeSubscriptionId, {
+    trial_end: Math.floor(until.getTime() / 1000),
+    proration_behavior: "none",
+  });
+}
+
+/** Vollständige Erstattung einer Zahlung; der Idempotenz-Schlüssel verhindert doppelte Erstattungen. */
+export async function refundStripePayment(paymentIntentId: string, idempotencyKey: string) {
+  const stripe = getStripe();
+  return stripe.refunds.create({ payment_intent: paymentIntentId }, { idempotencyKey });
+}
+
 export async function resumeStripeSubscription(stripeSubscriptionId: string) {
   const stripe = getStripe();
   return stripe.subscriptions.update(stripeSubscriptionId, { cancel_at_period_end: false });

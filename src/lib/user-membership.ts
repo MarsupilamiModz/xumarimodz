@@ -106,7 +106,8 @@ export async function upsertUserMembership(params: {
 export async function syncUserRoleFromMembership(userId: string) {
   const state = await getUserMembershipState(userId);
   const user = await prisma.user.findUnique({ where: { id: userId }, select: { role: true } });
-  if (!user || ["OWNER", "ADMIN", "MODERATOR"].includes(user.role)) return;
+  // Nur zwischen USER und PREMIUM wechseln; Team-, Creator- und Partner-Rollen bleiben unverändert.
+  if (!user || (user.role !== "USER" && user.role !== "PREMIUM")) return;
 
   const hasPremium =
     state.status === "ACTIVE" &&
