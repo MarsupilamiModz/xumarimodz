@@ -131,7 +131,7 @@ export const ModCard = memo(function ModCard({ locale, mod, pricingLabel, isFavo
         {meta.length > 0 && <p className="meta truncate">{meta.join(" · ")}</p>}
         {list && mod.shortDescription && <p className="hidden text-[13px] text-ink-muted sm:line-clamp-2">{mod.shortDescription}</p>}
         {showSecurityBadge && scanStatus && (
-          <SecurityBadge scanStatus={scanStatus} isTrusted={!!primaryVersion?.trustedFile} compact />
+          <SecurityBadge scanStatus={scanStatus} isTrusted={!!primaryVersion?.trustedFile} className="self-start" />
         )}
         <div className="mt-auto flex items-center gap-4 pt-2 text-[13px] text-ink-muted tabular-nums">
           <span className="flex items-center gap-1.5" aria-label={t("downloadsLabel", { count: mod.downloadCount })}>

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { ImageOff } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { getMediaUrl, getMediaProxyFallback } from "@/lib/media-url";
 
@@ -41,8 +42,12 @@ export function SafeImage({
   sizes,
   priority,
   loading = "lazy",
-  fallbackLabel = "No image available",
+  fallbackLabel,
 }: SafeImageProps) {
+  const t = useTranslations("common");
+  // Kleine Bilder (Logo, Avatare, Thumbnails) zeigen im Fehlerfall nur das Symbol, keinen gequetschten Text.
+  const sizePx = Number(/^(\d+)px$/.exec(sizes ?? "")?.[1] ?? NaN);
+  const small = (width !== undefined && width < 96) || (!Number.isNaN(sizePx) && sizePx < 96);
   const [failed, setFailed] = useState(false);
   const [useProxy, setUseProxy] = useState(false);
 
@@ -52,7 +57,9 @@ export function SafeImage({
   }, [src]);
 
   const primary = getMediaUrl(src);
-  const proxy = useProxy ? getMediaProxyFallback(src) : null;
+  // Proxy immer relativ (gleiche Herkunft): funktioniert lokal, in Vorschauen und live gleich.
+  const proxyAbsolute = useProxy ? getMediaProxyFallback(src) : null;
+  const proxy = proxyAbsolute ? proxyAbsolute.replace(/^https?:\/\/[^/]+/, "") : null;
   const resolved = proxy ?? primary;
 
   if (!resolved || failed) {
@@ -67,8 +74,8 @@ export function SafeImage({
         aria-hidden={!alt}
       >
         <ImageOff className="h-8 w-8" aria-hidden />
-        {fallbackLabel && (
-          <span className="px-2 text-center text-xs">{fallbackLabel}</span>
+        {fallbackLabel !== "" && !small && (
+          <span className="px-2 text-center text-xs">{fallbackLabel ?? t("noImage")}</span>
         )}
       </div>
     );

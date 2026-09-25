@@ -27,6 +27,7 @@ const protectedPrefixes = [
   "/partner",
   "/team-chat",
   "/banned",
+  "/checkout",
 ];
 
 function isPublicPath(path: string): boolean {

@@ -138,7 +138,21 @@
       "update": "Update",
       "maintenance": "Wartung",
       "warning": "Warnung"
-    }
+    },
+    "tutorialsPage": {
+      "title": "Tutorials",
+      "subtitle": "Anleitungen zum Installieren und Erstellen von Mods.",
+      "search": "Tutorials durchsuchen",
+      "emptyTitle": "Noch keine Tutorials",
+      "emptyText": "Sobald Anleitungen veröffentlicht sind, erscheinen sie hier.",
+      "video": "Video",
+      "level": {
+        "BEGINNER": "Einsteiger",
+        "INTERMEDIATE": "Fortgeschritten",
+        "ADVANCED": "Profi"
+      }
+    },
+    "noImage": "Kein Bild verfügbar"
   },
   "ui": {
     "close": "Schließen",

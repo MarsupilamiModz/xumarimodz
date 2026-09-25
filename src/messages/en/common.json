@@ -138,7 +138,21 @@
       "update": "Update",
       "maintenance": "Maintenance",
       "warning": "Warning"
-    }
+    },
+    "tutorialsPage": {
+      "title": "Tutorials",
+      "subtitle": "Guides for installing and creating mods.",
+      "search": "Search tutorials",
+      "emptyTitle": "No tutorials yet",
+      "emptyText": "Guides appear here as soon as they are published.",
+      "video": "Video",
+      "level": {
+        "BEGINNER": "Beginner",
+        "INTERMEDIATE": "Intermediate",
+        "ADVANCED": "Advanced"
+      }
+    },
+    "noImage": "No image available"
   },
   "ui": {
     "close": "Close",
