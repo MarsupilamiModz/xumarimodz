@@ -31,6 +31,8 @@ export type AdProviderSettings = {
   rolesWithAds?: string[];
   /** Membership plan slugs that hide ads (premium-lite, premium, premium-max) */
   membershipSlugsWithoutAds?: string[];
+  /** „Keine Werbung für Premium-Mitglieder“: jede bezahlte Mitgliedschaft blendet Werbung aus, unabhängig von der Rolle. */
+  premiumAdFree?: boolean;
 };
 
 export const DEFAULT_AD_SETTINGS: AdProviderSettings = {
@@ -82,6 +84,7 @@ export const DEFAULT_AD_SETTINGS: AdProviderSettings = {
   ],
   rolesWithAds: ["USER"],
   membershipSlugsWithoutAds: ["premium-lite", "premium", "premium-max"],
+  premiumAdFree: true,
 };
 
 export type AdLocation =

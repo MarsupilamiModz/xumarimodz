@@ -17,12 +17,14 @@ export const getUserAdExperience = cache(async function getUserAdExperience(
 
   if (!userId) return levels.GUEST ?? "full";
 
+  // Zuerst die Mitgliedschaft: Premium-Mitglieder sind werbefrei, auch wenn sie z. B. Creator sind.
+  const tier = await getUserMembershipTier(userId);
+  if (settings.premiumAdFree !== false && tier) return "none";
+  if (tier?.perks.adFree === true) return "none";
+  if (tier?.slug && levels[tier.slug]) return levels[tier.slug];
+
   const roleKey = role ?? "USER";
   if (levels[roleKey]) return levels[roleKey];
-
-  const tier = await getUserMembershipTier(userId);
-  if (tier?.slug && levels[tier.slug]) return levels[tier.slug];
-  if (tier?.perks.adFree === true) return "none";
 
   if (settings.rolesWithoutAds?.includes(roleKey)) return "none";
   if (settings.rolesWithAds?.length && !settings.rolesWithAds.includes(roleKey)) return "none";

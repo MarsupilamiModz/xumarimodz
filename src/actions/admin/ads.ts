@@ -1,5 +1,7 @@
 "use server";
 
+import { createAuditLog } from "@/lib/audit";
+
 import { revalidatePath, revalidateTag } from "next/cache";
 import { prisma } from "@/lib/db";
 import { fail, ok, requireActionPermission } from "@/lib/action-utils";
@@ -68,10 +70,11 @@ export async function getAdminAdDashboard() {
 }
 
 export async function saveAdminAdSettings(settings: AdProviderSettings) {
-  const { error } = await requireActionPermission("settings.write");
+  const { user, error } = await requireActionPermission("settings.write");
   if (error) return error;
   const merged = { ...DEFAULT_AD_SETTINGS, ...settings };
   await saveAdSettings(merged);
+  await createAuditLog({ actorId: user.id, action: "ads.settings", entityType: "SiteSetting", entityId: "ad_settings", metadata: { globalAdsEnabled: merged.globalAdsEnabled, premiumAdFree: merged.premiumAdFree } });
   try {
     writeAdsTxtFile(merged);
   } catch (err) {
@@ -193,18 +196,20 @@ export async function saveAdPlacement(input: {
 }
 
 export async function deleteAdPlacement(id: string) {
-  const { error } = await requireActionPermission("settings.write");
+  const { user, error } = await requireActionPermission("settings.write");
   if (error) return error;
   await prisma.adPlacement.delete({ where: { id } });
+  await createAuditLog({ actorId: user.id, action: "ads.campaign_delete", entityType: "SiteSetting", entityId: `ad:${id}` });
   revalidateTag(ADS_CACHE_TAG);
   revalidatePath("/admin/ads");
   return ok(undefined);
 }
 
 export async function toggleAdPlacement(id: string, isEnabled: boolean) {
-  const { error } = await requireActionPermission("settings.write");
+  const { user, error } = await requireActionPermission("settings.write");
   if (error) return error;
   await prisma.adPlacement.update({ where: { id }, data: { isEnabled } });
+  await createAuditLog({ actorId: user.id, action: isEnabled ? "ads.campaign_on" : "ads.campaign_off", entityType: "SiteSetting", entityId: `ad:${id}` });
   revalidateTag(ADS_CACHE_TAG);
   revalidatePath("/admin/ads");
   return ok(undefined);
