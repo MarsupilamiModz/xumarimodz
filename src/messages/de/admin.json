@@ -1351,6 +1351,34 @@
       "create": "Regel anlegen",
       "created": "Regel angelegt",
       "updated": "Gespeichert"
+    },
+    "pc": {
+      "creators": "Creator",
+      "creatorsSub": "Creator-Profile mit Verifizierung, Umsatzanteil und offenen Auszahlungen.",
+      "partners": "Partner",
+      "partnersSub": "Partner-Profile mit Provision, Umsatz und offenen Auszahlungen.",
+      "count": "{count, plural, one {# Profil} other {# Profile}}",
+      "search": "Name, Slug oder Code suchen",
+      "visibility": "Sichtbarkeit",
+      "all": "Alle",
+      "public": "Öffentlich",
+      "hidden": "Versteckt",
+      "create": "Profil anlegen",
+      "visibleOrder": "Sichtbare Creator sortieren",
+      "colName": "Name",
+      "colLevel": "Verifizierung",
+      "colShare": "Anteil",
+      "colRevenue": "Umsatz",
+      "colOpen": "Offen",
+      "colStatus": "Status",
+      "colConversions": "Abschlüsse",
+      "verified": "Verifiziert",
+      "unverified": "Nicht verifiziert",
+      "suspended": "Gesperrt",
+      "override": "individuell",
+      "manage": "Verwalten",
+      "emptyTitle": "Keine Profile gefunden",
+      "emptyText": "Profile entstehen über angenommene Bewerbungen oder „Profil anlegen“."
     }
   }
 }

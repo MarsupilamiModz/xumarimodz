@@ -1362,6 +1362,34 @@
       "create": "Create rule",
       "created": "Rule created",
       "updated": "Saved"
+    },
+    "pc": {
+      "creators": "Creators",
+      "creatorsSub": "Creator profiles with verification, revenue share and open payouts.",
+      "partners": "Partners",
+      "partnersSub": "Partner profiles with commission, revenue and open payouts.",
+      "count": "{count, plural, one {# profile} other {# profiles}}",
+      "search": "Search name, slug or code",
+      "visibility": "Visibility",
+      "all": "All",
+      "public": "Public",
+      "hidden": "Hidden",
+      "create": "Create profile",
+      "visibleOrder": "Sort visible creators",
+      "colName": "Name",
+      "colLevel": "Verification",
+      "colShare": "Share",
+      "colRevenue": "Revenue",
+      "colOpen": "Open",
+      "colStatus": "Status",
+      "colConversions": "Conversions",
+      "verified": "Verified",
+      "unverified": "Not verified",
+      "suspended": "Suspended",
+      "override": "custom",
+      "manage": "Manage",
+      "emptyTitle": "No profiles found",
+      "emptyText": "Profiles are created from approved applications or via “Create profile”."
     }
   }
 }

@@ -1,45 +1,78 @@
-import { requirePagePermission } from "@/lib/auth";
 import Link from "next/link";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { requirePagePermission } from "@/lib/auth";
+import { prisma } from "@/lib/db";
 import { listPartners } from "@/actions/admin/partners";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { AdminPageHeader, AdminLoadError } from "@/components/admin/admin-page-header";
+import { PublisherTable } from "@/components/admin/publisher-table";
 import { Button } from "@/components/ui/button";
-import { formatDisplayName } from "@/lib/display-name";
+import { Pagination } from "@/components/ui/pagination";
+import { SearchField } from "@/components/ui/search-field";
 import type { Locale } from "@/i18n/config";
 
-export default async function AdminPartnersPage({ params: { locale } }: { params: { locale: Locale } }) {
-  await requirePagePermission("users.read");
+type Params = { q?: string; page?: string };
+
+export default async function AdminPartnersPage({ params: { locale }, searchParams }: { params: { locale: Locale }; searchParams: Params }) {
   setRequestLocale(locale);
-  const t = await getTranslations("ecosystem");
-  const result = await listPartners();
-  const partners = result.success ? result.data.partners : [];
+  await requirePagePermission("users.read");
+  const t = await getTranslations("admin.pc");
+  const q = searchParams.q?.trim().slice(0, 100) || undefined;
+  const page = Math.max(1, Number(searchParams.page) || 1);
+  const base = `/${locale}/admin/partners`;
+
+  const result = await listPartners({ search: q, page });
+  const userIds = result.success ? result.data.partners.map((p) => p.userId) : [];
+  const open = userIds.length
+    ? await prisma.commissionEntry.groupBy({ by: ["userId"], where: { userId: { in: userIds }, status: "PENDING" }, _sum: { amountCents: true } })
+    : [];
+  const openMap = new Map(open.map((o) => [o.userId, o._sum.amountCents ?? 0]));
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between gap-4">
-        <h1 className="h1-acp">{t("partnerManagement")}</h1>
-        <Button size="sm" asChild>
-          <Link href={`/${locale}/admin/partners/new`}>Create Partner</Link>
-        </Button>
-      </div>
-      <div className="space-y-2">
-        {partners.map((p) => (
-          <Card key={p.id} className="p-4 flex flex-wrap justify-between items-center gap-3">
-            <div>
-              <p className="font-medium">{formatDisplayName(p.user)}</p>
-              <p className="text-xs text-muted-foreground">/{p.slug} · {p.affiliateCode ?? "—"}</p>
-            </div>
-            <div className="flex items-center gap-2">
-              {p.isVerified && <Badge variant="premium">{t("verified")}</Badge>}
-              {p.isBanned && <Badge variant="destructive">{t("banned")}</Badge>}
-              <Button variant="outline" size="sm" asChild>
-                <Link href={`/${locale}/admin/partners/${p.id}`}>{t("manage")}</Link>
-              </Button>
-            </div>
-          </Card>
-        ))}
-      </div>
+    <div>
+      <AdminPageHeader
+        title={t("partners")}
+        description={result.success ? `${t("partnersSub")} ${t("count", { count: result.data.total })}` : t("partnersSub")}
+        actions={
+          <Button size="sm" asChild>
+            <Link href={`${base}/new`}>{t("create")}</Link>
+          </Button>
+        }
+      />
+      <form method="get" action={base} className="mb-4 w-full max-w-sm">
+        <SearchField label={t("search")} name="q" defaultValue={q} />
+      </form>
+      {!result.success ? (
+        <AdminLoadError message={result.error} />
+      ) : (
+        <>
+          <PublisherTable
+            kind="partner"
+            locale={locale}
+            basePath={base}
+            rows={result.data.partners.map((p) => ({
+              id: p.id,
+              name: p.user.displayName ?? p.user.username,
+              username: p.user.username,
+              slug: p.slug,
+              code: p.affiliateCode,
+              isVerified: p.isVerified,
+              isPublic: p.isPublic,
+              isSuspended: p.isBanned,
+              shareBps: p.commissionOverrideBps ?? p.commissionRateBps,
+              overridden: p.commissionOverrideBps != null,
+              revenueCents: p.totalRevenueCents,
+              openCents: openMap.get(p.userId) ?? 0,
+              conversions: p.totalConversions,
+            }))}
+          />
+          <Pagination
+            className="mt-6"
+            page={result.data.page}
+            pages={Math.max(1, result.data.pages)}
+            hrefFor={(n) => `${base}?${new URLSearchParams({ ...(q ? { q } : {}), ...(n > 1 ? { page: String(n) } : {}) }).toString()}`}
+          />
+        </>
+      )}
     </div>
   );
 }
