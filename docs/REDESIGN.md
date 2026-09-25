@@ -13,8 +13,8 @@
 
 | Route | Datei | Screen | Status | Hinweis |
 |---|---|---|---|---|
-| /admin/achievements | src/app/[locale]/admin/achievements/page.tsx | ACP Erfolge | teilweise |  |
-| /admin/ads | src/app/[locale]/admin/ads/page.tsx | ACP Werbung | teilweise |  |
+| /admin/achievements | src/app/[locale]/admin/achievements/page.tsx | ACP Erfolge | nach Spezifikation | Editor mit Badge-Vorschau, Bedingung + Schwelle, Seltenheit |
+| /admin/ads | src/app/[locale]/admin/ads/page.tsx | ACP Werbung | nach Spezifikation | Schalter, Werbeflächen, Kampagnen |
 | /admin/analytics | src/app/[locale]/admin/analytics/page.tsx | ACP Analytics | nach Spezifikation | Zeitraum-Chips, KPIs, Balkendiagramm, Top-Mods, Herkunft, nach Spiel |
 | /admin/announcements | src/app/[locale]/admin/announcements/page.tsx | ACP Ankündigungen | nach Spezifikation | Liste, Editor, Live-Vorschau, Art, Zeitraum, Ziele; App/Discord-Anbindung offen |
 | /admin/api-keys | src/app/[locale]/admin/api-keys/page.tsx | ACP API-Schlüssel | nach Spezifikation | einmalige Anzeige, Hash, Widerruf mit Bestätigung, Audit, Rate-Limit |
@@ -24,11 +24,11 @@
 | /admin/branding | src/app/[locale]/admin/branding/page.tsx | ACP Inhalte | teilweise | Live-Vorschau fehlt |
 | /admin/chat | src/app/[locale]/admin/chat/page.tsx | – | vorhanden (Design-Sweep) |  |
 | /admin/collections | src/app/[locale]/admin/collections/page.tsx | ACP Sammlungen | nach Spezifikation | Karten, Editor, Drag & Drop, Mod-Suche |
-| /admin/commissions | src/app/[locale]/admin/commissions/page.tsx | ACP Provisionen | teilweise | Auswahl-Freigabe/Regeln fehlen |
-| /admin/coupons | src/app/[locale]/admin/coupons/page.tsx | ACP Gutscheine | teilweise |  |
+| /admin/commissions | src/app/[locale]/admin/commissions/page.tsx | ACP Provisionen | nach Spezifikation | Auswahl freigeben, Regeln, Auszahlungen |
+| /admin/coupons | src/app/[locale]/admin/coupons/page.tsx | ACP Gutscheine | nach Spezifikation |  |
 | /admin/creators/[id] | src/app/[locale]/admin/creators/[id]/page.tsx | – | vorhanden (Design-Sweep) |  |
 | /admin/creators/new | src/app/[locale]/admin/creators/new/page.tsx | – | vorhanden (Design-Sweep) |  |
-| /admin/creators | src/app/[locale]/admin/creators/page.tsx | ACP Creator | teilweise |  |
+| /admin/creators | src/app/[locale]/admin/creators/page.tsx | ACP Creator | nach Spezifikation | Tabelle; Detailseite noch alt |
 | /admin/creators/visibility | src/app/[locale]/admin/creators/visibility/page.tsx | – | vorhanden (Design-Sweep) |  |
 | /admin/diagnostics/screenshots | src/app/[locale]/admin/diagnostics/screenshots/page.tsx | – | vorhanden (Design-Sweep) |  |
 | /admin/dmca | src/app/[locale]/admin/dmca/page.tsx | – | vorhanden (Design-Sweep) |  |
@@ -38,7 +38,7 @@
 | /admin/games/new | src/app/[locale]/admin/games/new/page.tsx | – | vorhanden (Design-Sweep) |  |
 | /admin/games | src/app/[locale]/admin/games/page.tsx | – | vorhanden (Design-Sweep) |  |
 | /admin/groups | src/app/[locale]/admin/groups/page.tsx | ACP Gruppen und Rechte | nach Spezifikation | Rollen-Karten, Rechte-Matrix, Owner gesperrt |
-| /admin/leaderboards | src/app/[locale]/admin/leaderboards/page.tsx | ACP Bestenlisten | teilweise |  |
+| /admin/leaderboards | src/app/[locale]/admin/leaderboards/page.tsx | ACP Bestenlisten | nach Spezifikation | Rangliste mit Anheften/Ausblenden, Gewichtung wirkt |
 | /admin/licenses | src/app/[locale]/admin/licenses/page.tsx | ACP Lizenzen | nach Spezifikation | maskiert, Filter, Erzeugen mit CSV, Widerrufen |
 | /admin/localization | src/app/[locale]/admin/localization/page.tsx | ACP Lokalisierung | nach Spezifikation | Fortschritt, „Nur fehlende“, JSON-Import/-Export |
 | /admin/media | src/app/[locale]/admin/media/page.tsx | ACP Medien | neu gebaut | Verwendet-in/Alt-Text fehlen |
@@ -48,8 +48,8 @@
 | /admin/mods/new-sound | src/app/[locale]/admin/mods/new-sound/page.tsx | – | vorhanden (Design-Sweep) |  |
 | /admin/mods/new | src/app/[locale]/admin/mods/new/page.tsx | – | nach Spezifikation |  |
 | /admin/mods | src/app/[locale]/admin/mods/page.tsx | ACP Mods | nach Spezifikation |  |
-| /admin/orders/[id] | src/app/[locale]/admin/orders/[id]/page.tsx | – | teilweise | Serverseitige Rechteprüfung ergänzt |
-| /admin/orders | src/app/[locale]/admin/orders/page.tsx | ACP Bestellungen | teilweise |  |
+| /admin/orders/[id] | src/app/[locale]/admin/orders/[id]/page.tsx | – | teilweise | Rechteprüfung ergänzt; Inhalt noch alt |
+| /admin/orders | src/app/[locale]/admin/orders/page.tsx | ACP Bestellungen | nach Spezifikation | Status-Gruppen |
 | /admin/owner/achievements | src/app/[locale]/admin/owner/achievements/page.tsx | – | vorhanden (Design-Sweep) |  |
 | /admin/owner/email | src/app/[locale]/admin/owner/email/page.tsx | – | vorhanden (Design-Sweep) |  |
 | /admin/owner/features | src/app/[locale]/admin/owner/features/page.tsx | – | vorhanden (Design-Sweep) |  |
@@ -60,7 +60,7 @@
 | /admin/partner-ads | src/app/[locale]/admin/partner-ads/page.tsx | – | vorhanden (Design-Sweep) |  |
 | /admin/partners/[id] | src/app/[locale]/admin/partners/[id]/page.tsx | – | vorhanden (Design-Sweep) |  |
 | /admin/partners/new | src/app/[locale]/admin/partners/new/page.tsx | – | vorhanden (Design-Sweep) |  |
-| /admin/partners | src/app/[locale]/admin/partners/page.tsx | ACP Partner | teilweise |  |
+| /admin/partners | src/app/[locale]/admin/partners/page.tsx | ACP Partner | nach Spezifikation | Tabelle; Detailseite noch alt |
 | /admin/payments | src/app/[locale]/admin/payments/page.tsx | ACP Shop-Übersicht | teilweise | Rechte korrigiert (settings.write); Inhalt noch nicht umgebaut |
 | /admin/payout-settings | src/app/[locale]/admin/payout-settings/page.tsx | – | vorhanden (Design-Sweep) |  |
 | /admin/referrals | src/app/[locale]/admin/referrals/page.tsx | – | vorhanden (Design-Sweep) |  |
@@ -164,3 +164,53 @@
 | /team-chat | src/app/[locale]/team-chat/page.tsx | – | vorhanden (Design-Sweep) |  |
 | /team | src/app/[locale]/team/page.tsx | – | vorhanden (Design-Sweep) |  |
 | /tutorials/[slug] | src/app/[locale]/tutorials/[slug]/page.tsx | – | vorhanden (Design-Sweep) |  |
+
+## Bericht Phase 3 (Detail-Spezifikation)
+
+### Neue Endpunkte
+| Pfad | Zweck | Schutz |
+| --- | --- | --- |
+| GET /api/admin/audit/export | Audit-Log als CSV (gleiche Filter wie ACP) | Anmeldung + audit.read, eigener Audit-Eintrag |
+| GET /api/admin/localization/export?locale= | Texte einer Sprache als JSON | Anmeldung + settings.write |
+| GET /api/security/ip-bans | Sperrliste (nur Hashes) für die Middleware | abgeleiteter interner Token |
+| GET /api/cron/health | Dienst-Prüfung für externen Cron (Verfügbarkeit) | Bearer CRON_SECRET |
+
+### Datenbank
+- Keine Migration ausgeführt (Live-Datenbank). Neue Indizes stehen in `prisma/schema.prisma` und als sperrfreies SQL in `prisma/proposed/2026-09-redesign.sql`.
+- Vorgeschlagene Spalten (auskommentiert, erst mit Code-Umstellung): Newsletter-Einwilligung, `refundedAt` für Käufe. Alt-Text für Medien fehlt ebenfalls.
+- Ohne Schemaänderung über SiteSetting gelöst: IP-Sperren, Passwort-Regeln, Auszahlungsregeln, ausgeblendete Bestenlisten-Creator, Monitoring-Historie; Art/Kanäle von Ankündigungen als Präfix-Einträge in `visibilityTargets`.
+
+### Behobene Fehler (Auswahl)
+- Rollen-Sync nach Mitgliedschaft setzte Creator/Partner/Support auf USER/PREMIUM zurück.
+- Kündigen im ACP beendete bezahlte Stripe-Laufzeit sofort; jetzt zum Laufzeitende, Webhook beendet die Mitgliedschaft.
+- Premium-Creator sahen Werbung (Rollen-Stufe wurde vor der Mitgliedschaft geprüft).
+- Bestenlisten-Gewichtung wurde gespeichert, aber nie verwendet.
+- API-Schlüssel-Hash wurde an den Browser geschickt; Owner-Rolle war serverseitig editierbar.
+- 16 ACP-Seiten prüften Rechte nur im Layout; Zahlungseinstellungen waren für jedes Team-Mitglied offen.
+- `getModSecurityInfo` ohne Rechteprüfung; DMCA-Formular ohne Begrenzung.
+
+### Performance (Start-JS gzip, inkl. Layouts)
+| Seite | vorher | nachher |
+| --- | --- | --- |
+| Startseite | 258,6 KB | 161,0 KB |
+| Mods | 265,2 KB | 167,7 KB |
+| Mod-Seite | 272,2 KB | 175,4 KB |
+| Premium | 259,0 KB | 161,6 KB |
+| ACP-Dashboard | 254,2 KB | 153,4 KB |
+
+Hinweis: Frühere Angaben (136 KB Startseite) zählten nur die Seiten-Chunks ohne Layout-Chunks und waren daher zu niedrig.
+Maßnahmen: Supabase-Client, Konto-Menü, Suchdialog, Galerie-Vollbild und Meldedialog laden bei Bedarf; Sprachwahl ohne Radix;
+Bestenlisten zählen Zeitraum-Downloads per SQL-Gruppierung statt bis zu 50 000 Zeilen; Provisionen/Partner ohne N+1.
+Lighthouse/LCP/INP nicht gemessen: kein Testserver ohne Live-Daten verfügbar.
+
+### Tests
+`npm test` (Node-Testrunner, keine neuen Pakete): Rechteprüfung jeder ACP-Seite, Menü-Recht = Seiten-Recht, jede ACP-Action und /api/admin-Route prüft Rechte, Hilfsfunktionen (IP-Maskierung, Audit-Kategorien, Ankündigungs-Ziele, „Angemeldet bleiben“). Checkout-, Ticket- und API-Schlüssel-Abläufe brauchen eine Test-Datenbank und sind nicht automatisiert.
+
+### Offen
+- Warenkorb und Kasse (W6) – Backend fehlt.
+- Newsletter-Versand – Einwilligung fehlt im Schema.
+- Alt-Texte, Zugang nach Mod-Erstattung entziehen – Schemafelder fehlen.
+- App/Discord-Anbindung für Ankündigungen.
+- Noch nicht umgebaut/teilweise englisch: Nutzer-Detailkarten, Mitgliedschafts-Plan-Editor, Spiele, Produkte, Shop-Übersicht, Inhalte (Branding), Creator-/Partner-Detailseiten, Bestellungs-Detail.
+- Header liest Cookies → Seiten rendern dynamisch (ISR wirkungslos); Umbau auf clientseitige Personalisierung empfohlen.
+- Lighthouse-Messung, ESLint-Konfiguration.
