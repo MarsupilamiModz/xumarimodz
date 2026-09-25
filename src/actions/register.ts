@@ -109,6 +109,12 @@ export async function registerUser(
   const { email: rawEmail, password, locale, turnstileToken, website, fingerprint, promoCode } =
     parsed.data;
 
+  // Passwort-Regeln aus ACP → Sicherheit (Mindestlänge, Ziffer, Sonderzeichen, Groß/Klein).
+  const { checkPassword, getSecurityPolicy } = await import("@/lib/security-policy");
+  if (checkPassword(password, await getSecurityPolicy())) {
+    return fail(userFriendlyAuthCodeMessage("weak_password", locale ?? "en"));
+  }
+
   if (website?.trim()) {
     return ok({ status: "pending_verification" });
   }

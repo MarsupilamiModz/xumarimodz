@@ -137,6 +137,13 @@ export async function updatePassword(password: string) {
   if (authError) return authError;
 
   if (password.length < 8) return fail("Password must be at least 8 characters");
+  const { checkPassword, getSecurityPolicy } = await import("@/lib/security-policy");
+  const policy = await getSecurityPolicy();
+  const problem = checkPassword(password, policy);
+  if (problem === "tooShort") return fail(`Password must be at least ${policy.passwordMinLength} characters`);
+  if (problem === "needsNumber") return fail("Password must contain a number");
+  if (problem === "needsSymbol") return fail("Password must contain a special character");
+  if (problem === "needsMixedCase") return fail("Password must contain upper and lower case letters");
 
   const supabase = await createClient();
   const { error } = await supabase.auth.updateUser({ password });

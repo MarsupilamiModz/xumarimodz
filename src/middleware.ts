@@ -61,6 +61,57 @@ function isStatelessApi(pathname: string): boolean {
   );
 }
 
+// ---- IP-Sperren (ACP → Sicherheit). Liste nur als Hashes, 60 s pro Instanz gecacht; bei Fehlern offen. ----
+const BAN_TTL_MS = 60_000;
+let banCache: { hashes: Set<string>; at: number } | null = null;
+let banLoad: Promise<void> | null = null;
+
+function ipBanSalt() {
+  return process.env.IP_BAN_SALT ?? process.env.SUPABASE_SERVICE_ROLE_KEY ?? "xumari";
+}
+
+async function sha256Hex(value: string) {
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
+  return Array.from(new Uint8Array(digest), (b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+async function loadBans(origin: string) {
+  try {
+    const token = await sha256Hex(`ip-ban-list:${ipBanSalt()}`);
+    const res = await fetch(new URL("/api/security/ip-bans", origin), {
+      headers: { "x-internal-token": token },
+      cache: "no-store",
+      signal: AbortSignal.timeout(1500),
+    });
+    if (!res.ok) throw new Error(`status ${res.status}`);
+    const data = (await res.json()) as { hashes?: string[] };
+    banCache = { hashes: new Set(data.hashes ?? []), at: Date.now() };
+  } catch {
+    // Fail-open: ohne Liste niemanden aussperren; nächster Versuch nach der TTL.
+    banCache = { hashes: banCache?.hashes ?? new Set(), at: Date.now() };
+  }
+}
+
+async function isIpBanned(request: NextRequest) {
+  const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? request.headers.get("x-real-ip");
+  if (!ip) return false;
+  if (!banCache || Date.now() - banCache.at > BAN_TTL_MS) {
+    banLoad ??= loadBans(request.nextUrl.origin).finally(() => {
+      banLoad = null;
+    });
+    if (!banCache) await banLoad;
+  }
+  if (!banCache?.hashes.size) return false;
+  return banCache.hashes.has(await sha256Hex(`${ipBanSalt()}:${ip.toLowerCase()}`));
+}
+
+function bannedResponse() {
+  return new NextResponse(
+    "<!doctype html><html lang=\"de\"><meta charset=\"utf-8\"><title>403</title><body style=\"font-family:system-ui;padding:40px\"><h1>Zugriff gesperrt</h1><p>Von dieser IP-Adresse ist kein Zugriff möglich. / Access from this IP address is blocked.</p></body></html>",
+    { status: 403, headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } }
+  );
+}
+
 function mergeSessionCookies(target: NextResponse, sessionResponse: NextResponse | null) {
   sessionResponse?.cookies.getAll().forEach((cookie) => {
     target.cookies.set(cookie.name, cookie.value, cookie);
@@ -75,6 +126,13 @@ function withPathnameHeader(request: NextRequest, pathname: string) {
 
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
+
+  // Webhooks, Health-Check und die Sperrliste selbst nie sperren.
+  const banExempt =
+    pathname === "/api/health" || pathname.startsWith("/api/stripe/webhook") || pathname === "/api/security/ip-bans";
+  if (!banExempt && (await isIpBanned(request))) {
+    return bannedResponse();
+  }
 
   if (
     pathname === "/ads.txt" ||

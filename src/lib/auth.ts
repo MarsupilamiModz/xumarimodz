@@ -204,6 +204,8 @@ export async function requireDesigner() {
 export async function requirePagePermission(permission: PermissionKey) {
   const locale = await resolveAuthLocale();
   const user = await requireAuth();
+  // Layout und Seite rendern parallel: 2FA-Pflicht deshalb auch hier prüfen, nicht nur im ACP-Layout.
+  await redirectIfMfaRequired(user);
   if (user.role === "OWNER") return user;
   const allowed = await userHasPermission(
     { id: user.id, role: user.role, permissionGroupId: user.permissionGroupId },
