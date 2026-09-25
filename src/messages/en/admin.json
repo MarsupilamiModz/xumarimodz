@@ -852,6 +852,46 @@
       "statusOn": "Active",
       "statusOff": "Not configured",
       "otherMissing": "{count, plural, =0 {All creators, partners and designers have 2FA enabled.} one {# creator, partner or designer account without 2FA (sent to setup on the next studio visit).} other {# creator, partner or designer accounts without 2FA (sent to setup on the next studio visit).}}"
+    },
+    "st": {
+      "title": "System status",
+      "subtitle": "Live service checks, availability over the last 30 days, server and versions.",
+      "tabs": "Area",
+      "tabStatus": "Status",
+      "tabLogs": "Logs and audits",
+      "svc": {
+        "database": "Database",
+        "auth": "Sign-in (Supabase Auth)",
+        "storage": "File storage (R2)",
+        "payments": "Payments (Stripe)",
+        "email": "Email delivery"
+      },
+      "up": "Operational",
+      "down": "Down",
+      "unconfigured": "Not configured",
+      "responseTime": "Response time",
+      "uptime30": "30-day availability",
+      "noData": "No data",
+      "dayTip": "{date}: {pct} available ({ok}/{total} checks)",
+      "dayNoData": "{date}: no check",
+      "legend": "Each square is one day. Grey means no check ran that day.",
+      "cronHint": "For a gap-free history, have a cron call /api/cron/health every 5 minutes with “Authorization: Bearer $CRON_SECRET”. Without it, checks only run when this page is opened.",
+      "incident": "Current incident: {services}",
+      "incidentSince": "since {time}",
+      "allUp": "All configured services are operational.",
+      "server": "Server",
+      "cpu": "CPU load",
+      "memory": "Memory",
+      "process": "App process",
+      "processUptime": "Uptime",
+      "loadUnavailable": "Not measurable on this OS",
+      "versions": "Versions",
+      "app": "App",
+      "commit": "Commit",
+      "recentIncidents": "Recent incidents",
+      "noIncidents": "No incidents recorded.",
+      "ongoing": "ongoing",
+      "lastCheck": "Last check: {time}"
     }
   }
 }

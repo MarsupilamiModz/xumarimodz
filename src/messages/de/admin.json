@@ -841,6 +841,46 @@
       "statusOn": "Aktiv",
       "statusOff": "Nicht eingerichtet",
       "otherMissing": "{count, plural, =0 {Alle Creator, Partner und Designer haben 2FA aktiviert.} one {# Creator-, Partner- oder Designer-Konto ohne 2FA (wird beim nächsten Studio-Besuch zur Einrichtung geschickt).} other {# Creator-, Partner- oder Designer-Konten ohne 2FA (werden beim nächsten Studio-Besuch zur Einrichtung geschickt).}}"
+    },
+    "st": {
+      "title": "Systemstatus",
+      "subtitle": "Live-Prüfung der Dienste, Verfügbarkeit der letzten 30 Tage, Server und Versionen.",
+      "tabs": "Bereich",
+      "tabStatus": "Status",
+      "tabLogs": "Protokolle und Prüfungen",
+      "svc": {
+        "database": "Datenbank",
+        "auth": "Anmeldung (Supabase Auth)",
+        "storage": "Dateispeicher (R2)",
+        "payments": "Zahlungen (Stripe)",
+        "email": "E-Mail-Versand"
+      },
+      "up": "In Betrieb",
+      "down": "Gestört",
+      "unconfigured": "Nicht eingerichtet",
+      "responseTime": "Antwortzeit",
+      "uptime30": "Verfügbarkeit 30 Tage",
+      "noData": "Keine Daten",
+      "dayTip": "{date}: {pct} verfügbar ({ok}/{total} Prüfungen)",
+      "dayNoData": "{date}: keine Prüfung",
+      "legend": "Jedes Kästchen ist ein Tag. Grau heißt: an diesem Tag lief keine Prüfung.",
+      "cronHint": "Für eine lückenlose Historie ruft ein Cron alle 5 Minuten /api/cron/health mit „Authorization: Bearer $CRON_SECRET“ auf. Ohne Cron wird nur beim Öffnen dieser Seite geprüft.",
+      "incident": "Aktueller Vorfall: {services}",
+      "incidentSince": "seit {time}",
+      "allUp": "Alle eingerichteten Dienste sind in Betrieb.",
+      "server": "Server",
+      "cpu": "CPU-Last",
+      "memory": "Arbeitsspeicher",
+      "process": "App-Prozess",
+      "processUptime": "Laufzeit",
+      "loadUnavailable": "Auf diesem Betriebssystem nicht messbar",
+      "versions": "Versionen",
+      "app": "App",
+      "commit": "Commit",
+      "recentIncidents": "Letzte Vorfälle",
+      "noIncidents": "Keine Vorfälle aufgezeichnet.",
+      "ongoing": "andauernd",
+      "lastCheck": "Letzte Prüfung: {time}"
     }
   }
 }
