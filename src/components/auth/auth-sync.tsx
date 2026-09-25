@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
+import { getBrowserSupabase } from "@/lib/supabase/lazy-client";
 import { attemptSessionRecovery } from "@/lib/session-recovery";
 
 /** Refreshes server components only on meaningful auth transitions (logout). */
@@ -12,10 +12,12 @@ export function AuthSync() {
 
   useEffect(() => {
     mountedRef.current = true;
-    const supabase = createClient();
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((event) => {
+    let unsubscribe: (() => void) | undefined;
+    void getBrowserSupabase().then((supabase) => {
+      if (!mountedRef.current) return;
+      const {
+        data: { subscription },
+      } = supabase.auth.onAuthStateChange((event) => {
       if (!mountedRef.current) return;
 
       // Ignore passive/no-op events — these caused refresh loops on every page load.
@@ -42,6 +44,8 @@ export function AuthSync() {
       if (event === "SIGNED_OUT") {
         router.refresh();
       }
+      });
+      unsubscribe = () => subscription.unsubscribe();
     });
 
     const onOnline = () => {
@@ -53,7 +57,7 @@ export function AuthSync() {
     window.addEventListener("online", onOnline);
     return () => {
       mountedRef.current = false;
-      subscription.unsubscribe();
+      unsubscribe?.();
       window.removeEventListener("online", onOnline);
     };
   }, [router]);

@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { formatDateTime } from "@/lib/format-locale";
 import { getSafeLocale } from "@/lib/i18n/safe-locale";
-import { createClient } from "@/lib/supabase/client";
+import { getBrowserSupabase } from "@/lib/supabase/lazy-client";
 
 type NotificationRow = {
   id: string;
@@ -85,8 +85,11 @@ export function NotificationCenter({ locale, userId }: { locale: string; userId?
 
   useEffect(() => {
     if (!userId) return;
-    const supabase = createClient();
-    const channel = supabase
+    let active = true;
+    let cleanup: (() => void) | undefined;
+    void getBrowserSupabase().then((supabase) => {
+      if (!active) return;
+      const channel = supabase
       .channel(`notifications:${userId}`)
       .on(
         "postgres_changes",
@@ -99,9 +102,12 @@ export function NotificationCenter({ locale, userId }: { locale: string; userId?
         () => void refreshRef.current()
       )
       .subscribe();
+      cleanup = () => void supabase.removeChannel(channel);
+    });
 
     return () => {
-      void supabase.removeChannel(channel);
+      active = false;
+      cleanup?.();
     };
   }, [userId]);
 

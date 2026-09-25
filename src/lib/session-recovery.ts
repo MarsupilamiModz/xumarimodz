@@ -1,6 +1,6 @@
 "use client";
 
-import { createClient } from "@/lib/supabase/client";
+import { getBrowserSupabase } from "@/lib/supabase/lazy-client";
 
 let recoveryPromise: Promise<boolean> | null = null;
 
@@ -33,7 +33,7 @@ async function runSessionRecovery(): Promise<boolean> {
   }
 
   try {
-    const supabase = createClient();
+    const supabase = await getBrowserSupabase();
     const { data, error } = await supabase.auth.refreshSession();
     if (error || !data.session) return false;
 

@@ -14,7 +14,7 @@ import {
   Package,
   Handshake,
 } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
+import { getBrowserSupabase } from "@/lib/supabase/lazy-client";
 import { UserAvatar } from "@/components/ui/user-avatar";
 import {
   DropdownMenu,
@@ -52,7 +52,7 @@ export function UserNav({ locale, user }: { locale: string; user: NavUser }) {
   const safeLocale = getSafeLocale(locale);
 
   async function handleLogout() {
-    const supabase = createClient();
+    const supabase = await getBrowserSupabase();
     await supabase.auth.signOut();
     router.push(`/${locale}`);
   }
