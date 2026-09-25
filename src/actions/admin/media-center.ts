@@ -347,3 +347,15 @@ export async function deleteMediaFileAdmin(id: string, force = false) {
   revalidatePath("/admin/settings/media");
   return ok(undefined);
 }
+
+export async function saveMediaAltText(id: string, altText: string) {
+  const { user, error } = await requireActionPermission("settings.write");
+  if (error) return error;
+  const value = altText.trim().slice(0, 300) || null;
+  const updated = await prisma.mediaFile.updateMany({ where: { id }, data: { altText: value } });
+  if (updated.count === 0) return fail("File not found");
+  const { createAuditLog } = await import("@/lib/audit");
+  await createAuditLog({ actorId: user.id, action: "media.alt_text", entityType: "MediaAsset", entityId: id });
+  revalidatePath("/admin/settings/media");
+  return ok(undefined);
+}

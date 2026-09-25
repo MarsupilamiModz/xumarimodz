@@ -1061,7 +1061,11 @@
       "emptyTitle": "Keine Dateien",
       "emptyText": "Für diesen Filter gibt es keine Dateien.",
       "altNote": "Alt-Texte lassen sich noch nicht pflegen: Dafür fehlt ein Datenbankfeld (siehe Bericht).",
-      "loadError": "Die Medien konnten nicht geladen werden."
+      "loadError": "Die Medien konnten nicht geladen werden.",
+      "altText": "Alt-Text",
+      "altHint": "Kurze Beschreibung des Bildinhalts für Screenreader.",
+      "altSaved": "Alt-Text gespeichert",
+      "save": "Speichern"
     },
     "co": {
       "title": "Sammlungen",

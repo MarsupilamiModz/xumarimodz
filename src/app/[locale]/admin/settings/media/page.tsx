@@ -7,7 +7,7 @@ import { MEDIA_KINDS, getMediaDetail, getMediaLibrary, type MediaKind } from "@/
 import { formatDate } from "@/lib/format-locale";
 import { AdminPageHeader, AdminLoadError } from "@/components/admin/admin-page-header";
 import { MediaSettingsPanel } from "@/components/admin/media-settings-panel";
-import { MediaDeleteButton, MediaPreview } from "@/components/admin/media-library-tools";
+import { MediaAltTextForm, MediaDeleteButton, MediaPreview } from "@/components/admin/media-library-tools";
 import { Button } from "@/components/ui/button";
 import { ChipTabs } from "@/components/ui/chip-tabs";
 import { CopyButton } from "@/components/ui/copy-button";
@@ -163,7 +163,7 @@ export default async function AdminMediaLibraryPage({ params: { locale }, search
               <h2 className="section-title flex h-12 items-center border-b border-line px-4">{t("detail")}</h2>
               {detail ? (
                 <div className="space-y-4 p-4">
-                  <MediaPreview src={detail.publicUrl} alt={detail.originalName} isImage={detail.mimeType.startsWith("image/")} dimensionsLabel={t("dimensions")} />
+                  <MediaPreview src={detail.publicUrl} alt={detail.altText || detail.originalName} isImage={detail.mimeType.startsWith("image/")} dimensionsLabel={t("dimensions")} />
                   <dl className="divide-y divide-line text-[13px]">
                     {[
                       [t("size"), formatBytes(detail.fileSize)],
@@ -191,7 +191,7 @@ export default async function AdminMediaLibraryPage({ params: { locale }, search
                       </dd>
                     </div>
                   </dl>
-                  <p className="meta text-ink-faint">{t("altNote")}</p>
+                  {detail.mimeType.startsWith("image/") && <MediaAltTextForm key={detail.id} id={detail.id} initial={detail.altText ?? ""} />}
                   <div className="flex flex-wrap gap-2">
                     <CopyButton value={detail.publicUrl} label={t("copyUrl")} copiedLabel={t("copied")} />
                     <Button size="sm" variant="ghost" asChild>

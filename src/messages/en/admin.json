@@ -1072,7 +1072,11 @@
       "emptyTitle": "No files",
       "emptyText": "There are no files for this filter.",
       "altNote": "Alt texts cannot be maintained yet: a database field is missing (see report).",
-      "loadError": "Media could not be loaded."
+      "loadError": "Media could not be loaded.",
+      "altText": "Alt text",
+      "altHint": "Short description of the image for screen readers.",
+      "altSaved": "Alt text saved",
+      "save": "Save"
     },
     "co": {
       "title": "Collections",

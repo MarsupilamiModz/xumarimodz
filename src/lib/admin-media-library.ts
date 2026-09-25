@@ -100,6 +100,7 @@ export async function getMediaDetail(locale: string, id: string) {
       publicUrl: true,
       entityType: true,
       entityId: true,
+      altText: true,
       createdAt: true,
       uploadedBy: { select: { id: true, username: true } },
     },

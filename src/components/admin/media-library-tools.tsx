@@ -3,7 +3,8 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { deleteMediaFileAdmin } from "@/actions/admin/media-center";
+import { deleteMediaFileAdmin, saveMediaAltText } from "@/actions/admin/media-center";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useAppToast } from "@/hooks/use-app-toast";
@@ -62,5 +63,38 @@ export function MediaDeleteButton({ id, name, usedIn, redirectTo }: { id: string
         }
       />
     </>
+  );
+}
+
+/** Alt-Text der Datei (Beschreibung für Screenreader und Suchmaschinen). */
+export function MediaAltTextForm({ id, initial }: { id: string; initial: string }) {
+  const t = useTranslations("admin.md");
+  const router = useRouter();
+  const appToast = useAppToast();
+  const [value, setValue] = useState(initial);
+  const [pending, startTransition] = useTransition();
+  return (
+    <form
+      className="space-y-1.5"
+      onSubmit={(e) => {
+        e.preventDefault();
+        startTransition(async () => {
+          const r = await saveMediaAltText(id, value);
+          if (!r.success) {
+            appToast.error(r.error);
+            return;
+          }
+          appToast.saved(t("altSaved"));
+          router.refresh();
+        });
+      }}
+    >
+      <label htmlFor={`alt-${id}`} className="label-text block text-ink-muted">{t("altText")}</label>
+      <div className="flex gap-2">
+        <Input id={`alt-${id}`} value={value} onChange={(e) => setValue(e.target.value)} maxLength={300} />
+        <Button type="submit" size="sm" variant="outline" disabled={pending || value === initial}>{t("save")}</Button>
+      </div>
+      <p className="meta">{t("altHint")}</p>
+    </form>
   );
 }
