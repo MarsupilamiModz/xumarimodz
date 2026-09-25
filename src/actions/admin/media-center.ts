@@ -311,3 +311,39 @@ export async function bulkMediaAction(input: {
   revalidatePath("/admin/security");
   return ok(undefined);
 }
+
+/**
+ * Löscht eine Datei aus der Medienbibliothek (Speicher + Datensatz).
+ * Wird sie noch verwendet, ist `force` nötig – die UI warnt vorher mit dem Verwendungsort.
+ */
+export async function deleteMediaFileAdmin(id: string, force = false) {
+  const { user, error } = await requireActionPermission("settings.write");
+  if (error) return error;
+
+  const file = await prisma.mediaFile.findUnique({ where: { id }, select: { id: true, storagePath: true, entityType: true, entityId: true, originalName: true } });
+  if (!file) return fail("File not found");
+
+  const { resolveMediaUsage } = await import("@/lib/admin-media-library");
+  const usage = await resolveMediaUsage("en", file.entityType, file.entityId);
+  if (usage && !force) return fail("File is still in use");
+
+  try {
+    const { deleteFromR2 } = await import("@/lib/r2");
+    await deleteFromR2(file.storagePath);
+  } catch (err) {
+    console.error("[media] R2 delete failed", err);
+    return fail("File could not be removed from storage");
+  }
+  await prisma.mediaFile.delete({ where: { id } });
+
+  const { createAuditLog } = await import("@/lib/audit");
+  await createAuditLog({
+    actorId: user.id,
+    action: "media.delete",
+    entityType: "MediaAsset",
+    entityId: id,
+    metadata: { name: file.originalName, usedIn: usage?.label ?? null },
+  });
+  revalidatePath("/admin/settings/media");
+  return ok(undefined);
+}

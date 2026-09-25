@@ -1033,6 +1033,46 @@
       "emptyTitle": "Nothing found",
       "emptyMissing": "No texts are missing for this language.",
       "chooseLanguage": "English is the source language. Pick a target language."
+    },
+    "md": {
+      "title": "Media",
+      "subtitle": "Uploaded files, storage usage and where they are used.",
+      "tabs": "Area",
+      "tabLibrary": "Library",
+      "tabSettings": "Upload settings",
+      "type": "Type",
+      "all": "All",
+      "kind": {
+        "image": "Images",
+        "audio": "Audio",
+        "video": "Video",
+        "other": "Files"
+      },
+      "storage": "Storage",
+      "storageTotal": "{size} in {count, plural, one {# file} other {# files}}",
+      "search": "Search file name",
+      "detail": "Details",
+      "dimensions": "Dimensions",
+      "size": "Size",
+      "format": "Format",
+      "uploadedBy": "Uploaded by",
+      "uploadedAt": "Uploaded on",
+      "usedIn": "Used in",
+      "unused": "Not used anywhere",
+      "copyUrl": "Copy URL",
+      "copied": "Copied",
+      "open": "Open",
+      "delete": "Delete",
+      "deleteTitle": "Delete “{name}”?",
+      "deleteText": "The file is removed from storage. This cannot be undone.",
+      "deleteUsed": "Warning: the file is still used in “{place}”. It will be missing there afterwards.",
+      "deleted": "File deleted",
+      "select": "Select a file",
+      "selectText": "Pick a file to see its details.",
+      "emptyTitle": "No files",
+      "emptyText": "There are no files for this filter.",
+      "altNote": "Alt texts cannot be maintained yet: a database field is missing (see report).",
+      "loadError": "Media could not be loaded."
     }
   }
 }

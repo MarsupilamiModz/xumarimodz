@@ -1022,6 +1022,46 @@
       "emptyTitle": "Nichts gefunden",
       "emptyMissing": "Für diese Sprache fehlen keine Texte.",
       "chooseLanguage": "Englisch ist die Ausgangssprache. Wähle eine Zielsprache."
+    },
+    "md": {
+      "title": "Medien",
+      "subtitle": "Hochgeladene Dateien, Speicherbelegung und Verwendung.",
+      "tabs": "Bereich",
+      "tabLibrary": "Bibliothek",
+      "tabSettings": "Upload-Einstellungen",
+      "type": "Typ",
+      "all": "Alle",
+      "kind": {
+        "image": "Bilder",
+        "audio": "Audio",
+        "video": "Video",
+        "other": "Dateien"
+      },
+      "storage": "Speicher",
+      "storageTotal": "{size} in {count, plural, one {# Datei} other {# Dateien}}",
+      "search": "Dateiname suchen",
+      "detail": "Details",
+      "dimensions": "Maße",
+      "size": "Größe",
+      "format": "Format",
+      "uploadedBy": "Hochgeladen von",
+      "uploadedAt": "Hochgeladen am",
+      "usedIn": "Verwendet in",
+      "unused": "Nirgends verwendet",
+      "copyUrl": "URL kopieren",
+      "copied": "Kopiert",
+      "open": "Öffnen",
+      "delete": "Löschen",
+      "deleteTitle": "„{name}“ löschen?",
+      "deleteText": "Die Datei wird aus dem Speicher entfernt. Das lässt sich nicht rückgängig machen.",
+      "deleteUsed": "Achtung: Die Datei wird noch verwendet in „{place}“. Dort fehlt sie danach.",
+      "deleted": "Datei gelöscht",
+      "select": "Datei auswählen",
+      "selectText": "Wähle eine Datei, um Details zu sehen.",
+      "emptyTitle": "Keine Dateien",
+      "emptyText": "Für diesen Filter gibt es keine Dateien.",
+      "altNote": "Alt-Texte lassen sich noch nicht pflegen: Dafür fehlt ein Datenbankfeld (siehe Bericht).",
+      "loadError": "Die Medien konnten nicht geladen werden."
     }
   }
 }
