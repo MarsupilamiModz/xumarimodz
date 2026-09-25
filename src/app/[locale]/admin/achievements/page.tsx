@@ -1,19 +1,50 @@
-import { requireAdmin } from "@/lib/auth";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import { requirePagePermission } from "@/lib/auth";
+import { prisma } from "@/lib/db";
 import { getAdminAchievements } from "@/actions/admin/achievements";
+import { AdminPageHeader, AdminLoadError } from "@/components/admin/admin-page-header";
 import { AchievementsAdminPanel } from "@/components/admin/achievements-admin-panel";
+import type { Locale } from "@/i18n/config";
 
-export default async function AdminAchievementsPage() {
-  await requireAdmin();
-  const result = await getAdminAchievements();
-  if (!result.success) return <p className="text-destructive">{result.error}</p>;
+export default async function AdminAchievementsPage({ params: { locale } }: { params: { locale: Locale } }) {
+  setRequestLocale(locale);
+  await requirePagePermission("settings.write");
+  const [t, result, holders] = await Promise.all([
+    getTranslations("admin.ac"),
+    getAdminAchievements(),
+    prisma.userAchievement.groupBy({ by: ["achievementId"], _count: { _all: true } }),
+  ]);
+  const holderMap = new Map(holders.map((h) => [h.achievementId, h._count._all]));
 
   return (
     <div>
-      <h1 className="h1-acp">Achievements Management</h1>
-      <p className="mt-1 text-sm text-muted-foreground">Badges, XP rewards, unlock rules, and seasonal events.</p>
-      <div className="mt-8">
-        <AchievementsAdminPanel achievements={result.data} />
-      </div>
+      <AdminPageHeader title={t("title")} description={t("subtitle")} />
+      {result.success ? (
+        <AchievementsAdminPanel
+          achievements={result.data.map((a) => ({
+            id: a.id,
+            slug: a.slug,
+            name: a.name,
+            description: a.description,
+            title: a.title,
+            category: a.category,
+            rarity: a.rarity,
+            icon: a.icon,
+            xpReward: a.xpReward,
+            isHidden: a.isHidden,
+            isSeasonal: a.isSeasonal,
+            seasonStart: a.seasonStart?.toISOString() ?? null,
+            seasonEnd: a.seasonEnd?.toISOString() ?? null,
+            animated: a.animated,
+            glowEffect: a.glowEffect,
+            isActive: a.isActive,
+            unlockRule: a.unlockRule && typeof a.unlockRule === "object" && !Array.isArray(a.unlockRule) ? (a.unlockRule as { type: string; threshold?: number }) : null,
+            holders: holderMap.get(a.id) ?? 0,
+          }))}
+        />
+      ) : (
+        <AdminLoadError message={result.error} />
+      )}
     </div>
   );
 }

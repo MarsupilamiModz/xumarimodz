@@ -1110,6 +1110,68 @@
       "emptyTitle": "Keine Sammlungen",
       "emptyText": "Nutzer und Team können Sammlungen auf der Webseite anlegen.",
       "loadError": "Die Sammlungen konnten nicht geladen werden."
+    },
+    "ac": {
+      "title": "Erfolge",
+      "subtitle": "Abzeichen mit Bedingung, Schwelle, Seltenheit und XP.",
+      "new": "Neuer Erfolg",
+      "list": "Alle Erfolge",
+      "holders": "{count, plural, one {# Nutzer} other {# Nutzer}}",
+      "inactive": "Inaktiv",
+      "hidden": "Versteckt",
+      "editor": "Erfolg bearbeiten",
+      "preview": "Vorschau",
+      "name": "Name",
+      "description": "Beschreibung",
+      "titleReward": "Titel-Belohnung (optional)",
+      "category": "Kategorie",
+      "cat": {
+        "USER": "Nutzer",
+        "CREATOR": "Creator",
+        "PARTNER": "Partner",
+        "SEASONAL": "Saison",
+        "HIDDEN": "Geheim"
+      },
+      "rarity": "Seltenheit (Farbe)",
+      "rar": {
+        "COMMON": "Gewöhnlich",
+        "UNCOMMON": "Ungewöhnlich",
+        "RARE": "Selten",
+        "EPIC": "Episch",
+        "LEGENDARY": "Legendär"
+      },
+      "icon": "Symbol",
+      "condition": "Bedingung",
+      "rule": {
+        "account_age_days": "Konto-Alter (Tage)",
+        "membership": "Hat eine Mitgliedschaft",
+        "downloads": "Downloads (Nutzer)",
+        "mod_purchases": "Mod-Käufe",
+        "creator_downloads": "Downloads der eigenen Mods",
+        "creator_revenue": "Creator-Umsatz (Cent)",
+        "creator_featured": "Mod wurde hervorgehoben",
+        "partner_conversions": "Partner-Abschlüsse",
+        "partner_revenue": "Partner-Umsatz (Cent)",
+        "partner_referrals": "Empfehlungs-Klicks",
+        "manual": "Nur manuell vergeben"
+      },
+      "threshold": "Schwelle",
+      "xp": "XP-Belohnung",
+      "active": "Aktiv",
+      "hiddenToggle": "Bis zum Freischalten verstecken",
+      "seasonal": "Saison-Erfolg",
+      "seasonStart": "Saison-Beginn",
+      "seasonEnd": "Saison-Ende",
+      "save": "Speichern",
+      "saved": "Erfolg gespeichert",
+      "cancel": "Abbrechen",
+      "delete": "Löschen",
+      "deleteTitle": "„{name}“ löschen?",
+      "deleteText": "{count, plural, =0 {Niemand hat diesen Erfolg bisher.} one {# Nutzer verliert diesen Erfolg.} other {# Nutzer verlieren diesen Erfolg.}} Das lässt sich nicht rückgängig machen.",
+      "deleted": "Erfolg gelöscht",
+      "selectTitle": "Kein Erfolg ausgewählt",
+      "selectText": "Wähle links einen Erfolg oder lege einen neuen an.",
+      "ruleSummary": "{rule}: ab {threshold}"
     }
   }
 }

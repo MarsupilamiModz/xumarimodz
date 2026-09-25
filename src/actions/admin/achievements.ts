@@ -135,7 +135,7 @@ export async function getAchievementAnalytics() {
 }
 
 export async function saveAchievement(input: z.infer<typeof achievementSchema>) {
-  const { error } = await requireActionPermission("settings.write");
+  const { user, error } = await requireActionPermission("settings.write");
   if (error) return error;
 
   const parsed = achievementSchema.safeParse(input);
@@ -168,19 +168,27 @@ export async function saveAchievement(input: z.infer<typeof achievementSchema>) 
     translations: (parsed.data.translations ?? undefined) as Prisma.InputJsonValue | undefined,
   };
 
-  if (parsed.data.id) {
-    await prisma.achievement.update({ where: { id: parsed.data.id }, data });
-  } else {
-    await prisma.achievement.create({ data });
-  }
+  const saved = parsed.data.id
+    ? await prisma.achievement.update({ where: { id: parsed.data.id }, data })
+    : await prisma.achievement.create({ data });
+  await createAuditLog({
+    actorId: user.id,
+    action: parsed.data.id ? "achievement.update" : "achievement.create",
+    entityType: "Achievement",
+    entityId: saved.id,
+    metadata: { name: saved.name, rule: parsed.data.unlockRule ?? null },
+  });
   revalidatePath("/admin/achievements");
   return ok(undefined);
 }
 
 export async function deleteAchievement(id: string) {
-  const { error } = await requireActionPermission("settings.write");
+  const { user, error } = await requireActionPermission("settings.write");
   if (error) return error;
+  const existing = await prisma.achievement.findUnique({ where: { id }, select: { name: true, _count: { select: { userAchievements: true } } } });
+  if (!existing) return fail("Achievement not found");
   await prisma.achievement.delete({ where: { id } });
+  await createAuditLog({ actorId: user.id, action: "achievement.delete", entityType: "Achievement", entityId: id, metadata: { name: existing.name, holders: existing._count.userAchievements } });
   revalidatePath("/admin/achievements");
   return ok(undefined);
 }
