@@ -1,11 +1,12 @@
 "use server";
 
 import { revalidatePath, revalidateTag } from "next/cache";
-import type { CollectionModerationStatus, CollectionVisibility } from "@prisma/client";
+import type { CollectionModerationStatus, CollectionVisibility, Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { fail, ok, requireActionPermission } from "@/lib/action-utils";
 import { CACHE_TAGS } from "@/lib/cache";
 import { resolveSlug, ensureUniqueSlug } from "@/lib/slug";
+import { createAuditLog } from "@/lib/audit";
 
 function invalidateCollections() {
   revalidateTag(CACHE_TAGS.collections);
@@ -66,7 +67,7 @@ export async function updateCollectionAdmin(
     adminNotes: string;
   }>
 ) {
-  const { error } = await requireActionPermission("settings.write");
+  const { user, error } = await requireActionPermission("settings.write");
   if (error) return error;
 
   const existing = await prisma.modCollection.findUnique({ where: { id } });
@@ -85,15 +86,19 @@ export async function updateCollectionAdmin(
     },
   });
 
+  await createAuditLog({ actorId: user.id, action: "collection.update", entityType: "Collection", entityId: id, metadata: { fields: Object.keys(input) } });
   invalidateCollections();
   return ok(updated);
 }
 
 export async function deleteCollectionAdmin(id: string) {
-  const { error } = await requireActionPermission("settings.write");
+  const { user, error } = await requireActionPermission("settings.write");
   if (error) return error;
 
+  const existing = await prisma.modCollection.findUnique({ where: { id }, select: { title: true } });
+  if (!existing) return fail("Not found");
   await prisma.modCollection.delete({ where: { id } });
+  await createAuditLog({ actorId: user.id, action: "collection.delete", entityType: "Collection", entityId: id, metadata: { title: existing.title } });
   invalidateCollections();
   return ok(undefined);
 }
@@ -107,7 +112,7 @@ export async function createCollectionAdmin(input: {
   bannerUrl?: string;
   visibility?: CollectionVisibility;
 }) {
-  const { error } = await requireActionPermission("settings.write");
+  const { user, error } = await requireActionPermission("settings.write");
   if (error) return error;
 
   let ownerId = input.ownerId;
@@ -138,6 +143,7 @@ export async function createCollectionAdmin(input: {
     },
   });
 
+  await createAuditLog({ actorId: user.id, action: "collection.create", entityType: "Collection", entityId: collection.id, metadata: { title: collection.title } });
   invalidateCollections();
   return ok(collection);
 }
@@ -185,4 +191,63 @@ export async function getCollectionAnalyticsAdmin(id: string) {
     modCount: collection.items.length,
     conversionRate,
   });
+}
+
+const ITEM_MOD_SELECT = {
+  id: true,
+  title: true,
+  slug: true,
+  game: { select: { name: true } },
+  media: { where: { mediaType: "IMAGE" }, orderBy: [{ isFeatured: "desc" }, { orderIndex: "asc" }], take: 1, select: { imageUrl: true } },
+} satisfies Prisma.ModSelect;
+
+export async function getCollectionItemsAdmin(id: string) {
+  const { error } = await requireActionPermission("settings.write");
+  if (error) return error;
+  const items = await prisma.modCollectionItem.findMany({
+    where: { collectionId: id },
+    orderBy: { sortOrder: "asc" },
+    select: { mod: { select: ITEM_MOD_SELECT } },
+  });
+  return ok(items.map((i) => ({ id: i.mod.id, title: i.mod.title, game: i.mod.game.name, image: i.mod.media[0]?.imageUrl ?? null })));
+}
+
+export async function searchModsForCollectionAdmin(q: string) {
+  const { error } = await requireActionPermission("settings.write");
+  if (error) return error;
+  const term = q.trim().slice(0, 80);
+  if (term.length < 2) return ok([]);
+  const mods = await prisma.mod.findMany({
+    where: { status: "PUBLISHED", OR: [{ title: { contains: term, mode: "insensitive" } }, { slug: { contains: term, mode: "insensitive" } }] },
+    orderBy: { downloadCount: "desc" },
+    take: 12,
+    select: ITEM_MOD_SELECT,
+  });
+  return ok(mods.map((m) => ({ id: m.id, title: m.title, game: m.game.name, image: m.media[0]?.imageUrl ?? null })));
+}
+
+/** Setzt Inhalt und Reihenfolge einer Sammlung in einer Transaktion (Hinzufügen, Entfernen, Sortieren). */
+export async function setCollectionItemsAdmin(id: string, modIds: string[]) {
+  const { user, error } = await requireActionPermission("settings.write");
+  if (error) return error;
+  const unique = Array.from(new Set(modIds)).slice(0, 500);
+
+  const collection = await prisma.modCollection.findUnique({ where: { id }, select: { id: true } });
+  if (!collection) return fail("Not found");
+  const existingMods = await prisma.mod.count({ where: { id: { in: unique } } });
+  if (existingMods !== unique.length) return fail("Unknown mod in list");
+
+  await prisma.$transaction([
+    prisma.modCollectionItem.deleteMany({ where: { collectionId: id, modId: { notIn: unique } } }),
+    ...unique.map((modId, index) =>
+      prisma.modCollectionItem.upsert({
+        where: { collectionId_modId: { collectionId: id, modId } },
+        create: { collectionId: id, modId, sortOrder: index },
+        update: { sortOrder: index },
+      })
+    ),
+  ]);
+  await createAuditLog({ actorId: user.id, action: "collection.items_update", entityType: "Collection", entityId: id, metadata: { count: unique.length } });
+  invalidateCollections();
+  return ok(undefined);
 }

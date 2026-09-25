@@ -1062,6 +1062,54 @@
       "emptyText": "Für diesen Filter gibt es keine Dateien.",
       "altNote": "Alt-Texte lassen sich noch nicht pflegen: Dafür fehlt ein Datenbankfeld (siehe Bericht).",
       "loadError": "Die Medien konnten nicht geladen werden."
+    },
+    "co": {
+      "title": "Sammlungen",
+      "subtitle": "Kuratierte Mod-Listen: Inhalt, Reihenfolge, Sichtbarkeit und Freigabe.",
+      "search": "Sammlungen suchen",
+      "mods": "{count, plural, one {# Mod} other {# Mods}}",
+      "followers": "{count, plural, one {# Follower} other {# Follower}}",
+      "by": "von {name}",
+      "status": {
+        "PENDING": "Wartet",
+        "APPROVED": "Freigegeben",
+        "REJECTED": "Abgelehnt",
+        "ARCHIVED": "Archiviert"
+      },
+      "vis": {
+        "PUBLIC": "Öffentlich",
+        "PRIVATE": "Privat",
+        "FEATURED": "Hervorgehoben"
+      },
+      "editor": "Sammlung bearbeiten",
+      "name": "Titel",
+      "description": "Beschreibung",
+      "visibility": "Sichtbarkeit",
+      "moderation": "Freigabe",
+      "items": "Mods in der Sammlung",
+      "dragHint": "Ziehen zum Sortieren oder die Pfeile nutzen.",
+      "moveUp": "{title} nach oben",
+      "moveDown": "{title} nach unten",
+      "remove": "{title} entfernen",
+      "addMod": "Mod hinzufügen",
+      "addSearch": "Mod suchen (mind. 2 Zeichen)",
+      "add": "{title} hinzufügen",
+      "inList": "Schon enthalten",
+      "noResults": "Keine veröffentlichten Mods gefunden.",
+      "emptyItems": "Noch keine Mods. Füge unten welche hinzu.",
+      "unsaved": "Ungespeicherte Änderungen",
+      "discard": "Verwerfen",
+      "save": "Speichern",
+      "saved": "Sammlung gespeichert",
+      "delete": "Sammlung löschen",
+      "deleteTitle": "„{title}“ löschen?",
+      "deleteText": "Die Sammlung und ihre Follower-Zuordnungen werden entfernt. Die Mods selbst bleiben erhalten.",
+      "deleted": "Sammlung gelöscht",
+      "selectTitle": "Keine Sammlung ausgewählt",
+      "selectText": "Wähle links eine Sammlung zum Bearbeiten.",
+      "emptyTitle": "Keine Sammlungen",
+      "emptyText": "Nutzer und Team können Sammlungen auf der Webseite anlegen.",
+      "loadError": "Die Sammlungen konnten nicht geladen werden."
     }
   }
 }

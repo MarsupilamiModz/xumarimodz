@@ -1073,6 +1073,54 @@
       "emptyText": "There are no files for this filter.",
       "altNote": "Alt texts cannot be maintained yet: a database field is missing (see report).",
       "loadError": "Media could not be loaded."
+    },
+    "co": {
+      "title": "Collections",
+      "subtitle": "Curated mod lists: content, order, visibility and approval.",
+      "search": "Search collections",
+      "mods": "{count, plural, one {# mod} other {# mods}}",
+      "followers": "{count, plural, one {# follower} other {# followers}}",
+      "by": "by {name}",
+      "status": {
+        "PENDING": "Pending",
+        "APPROVED": "Approved",
+        "REJECTED": "Rejected",
+        "ARCHIVED": "Archived"
+      },
+      "vis": {
+        "PUBLIC": "Public",
+        "PRIVATE": "Private",
+        "FEATURED": "Featured"
+      },
+      "editor": "Edit collection",
+      "name": "Title",
+      "description": "Description",
+      "visibility": "Visibility",
+      "moderation": "Approval",
+      "items": "Mods in the collection",
+      "dragHint": "Drag to sort or use the arrows.",
+      "moveUp": "Move {title} up",
+      "moveDown": "Move {title} down",
+      "remove": "Remove {title}",
+      "addMod": "Add mod",
+      "addSearch": "Search mod (at least 2 characters)",
+      "add": "Add {title}",
+      "inList": "Already included",
+      "noResults": "No published mods found.",
+      "emptyItems": "No mods yet. Add some below.",
+      "unsaved": "Unsaved changes",
+      "discard": "Discard",
+      "save": "Save",
+      "saved": "Collection saved",
+      "delete": "Delete collection",
+      "deleteTitle": "Delete “{title}”?",
+      "deleteText": "The collection and its followers are removed. The mods themselves stay.",
+      "deleted": "Collection deleted",
+      "selectTitle": "No collection selected",
+      "selectText": "Pick a collection on the left to edit it.",
+      "emptyTitle": "No collections",
+      "emptyText": "Users and the team can create collections on the website.",
+      "loadError": "Collections could not be loaded."
     }
   }
 }
