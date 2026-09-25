@@ -929,6 +929,54 @@
       "rejectText": "The application is marked as rejected. The note is saved.",
       "done": "Application updated",
       "close": "Close"
+    },
+    "an2": {
+      "title": "Announcements",
+      "subtitle": "Notices for website, app and Discord with time range and audience.",
+      "new": "New announcement",
+      "list": "All announcements",
+      "editor": "Editor",
+      "preview": "Live preview of the bar",
+      "previewEmpty": "Enter a title and text to see the preview.",
+      "kind": "Type",
+      "titleLabel": "Title",
+      "content": "Text",
+      "link": "Link (optional)",
+      "startsAt": "Start",
+      "endsAt": "End (optional)",
+      "channels": "Targets",
+      "channel": {
+        "website": "Website",
+        "app": "App",
+        "discord": "Discord"
+      },
+      "audience": "Audience",
+      "aud": {
+        "everyone": "Everyone",
+        "users": "Signed-in users",
+        "premium": "Premium",
+        "creators": "Creators",
+        "partners": "Partners",
+        "team": "Team"
+      },
+      "active": "Active",
+      "save": "Save",
+      "create": "Publish",
+      "saved": "Announcement saved",
+      "delete": "Delete",
+      "deleteTitle": "Delete “{title}”?",
+      "deleteText": "The announcement disappears from all targets immediately.",
+      "deleted": "Announcement deleted",
+      "stLive": "Live",
+      "stScheduled": "Scheduled",
+      "stEnded": "Ended",
+      "stOff": "Off",
+      "range": "{start} – {end}",
+      "open": "open-ended",
+      "emptyTitle": "No announcements",
+      "emptyText": "Create the first announcement on the right.",
+      "more": "Learn more",
+      "appDiscordNote": "The website shows active announcements at the top of the homepage. For the app and Discord the target is stored; the integration there is still pending."
     }
   }
 }

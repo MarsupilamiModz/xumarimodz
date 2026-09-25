@@ -20,6 +20,7 @@ import { getGamesDiscoveryCards } from "@/lib/game-discovery";
 import { getTrendingMods, getGameBySlug } from "@/lib/data";
 import { primaryGameSlug } from "@/i18n/config";
 import { getActiveAnnouncements } from "@/actions/admin/announcements";
+import { AnnouncementBar } from "@/components/announcements/announcement-bar";
 import { REVALIDATE } from "@/lib/cache";
 import { AdLocationSlot } from "@/components/ads/ad-location-slot";
 import { getCachedPublicBranding } from "@/lib/branding-data";
@@ -53,6 +54,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
   setRequestLocale(locale);
   const t = await getTranslations("landing");
   const tm = await getTranslations("mods");
+  const tc = await getTranslations("common");
 
   const [games, primaryGame, announcements, cms] = await Promise.all([
     getGamesDiscoveryCards().catch(() => []),
@@ -93,19 +95,17 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
     <div>
       <MembershipCampaignBanner locale={locale} />
       {announcements.length > 0 && (
-        <div className="border-b border-line bg-raised">
-          <div className="page-container space-y-1 py-3">
-            {announcements.map((a: { id: string; title: string; content: string; link: string | null }) => (
-              <p key={a.id} className="text-sm text-ink-muted">
-                <span className="font-semibold text-ink">{a.title}</span> {a.content}
-                {a.link && (
-                  <Link href={a.link} className="link ml-2 font-semibold">
-                    {t("announcementMore")}
-                  </Link>
-                )}
-              </p>
-            ))}
-          </div>
+        <div className="page-container pt-4">
+          <AnnouncementBar
+            items={announcements.map((a) => ({ id: a.id, title: a.title, content: a.content, link: a.link, kind: a.kind }))}
+            kindLabels={{
+              news: tc("announcementKind.news"),
+              update: tc("announcementKind.update"),
+              maintenance: tc("announcementKind.maintenance"),
+              warning: tc("announcementKind.warning"),
+            }}
+            moreLabel={t("announcementMore")}
+          />
         </div>
       )}
 

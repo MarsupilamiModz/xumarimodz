@@ -132,7 +132,13 @@
     "unsavedChanges": "Unsaved changes",
     "discard": "Discard",
     "saving": "Saving…",
-    "saved": "Saved"
+    "saved": "Saved",
+    "announcementKind": {
+      "news": "News",
+      "update": "Update",
+      "maintenance": "Maintenance",
+      "warning": "Warning"
+    }
   },
   "ui": {
     "close": "Close",

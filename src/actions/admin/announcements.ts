@@ -7,17 +7,33 @@ import { prisma } from "@/lib/db";
 import { fail, ok, requireActionPermission } from "@/lib/action-utils";
 import { getCurrentUser } from "@/lib/auth";
 import {
+  ANNOUNCEMENT_CHANNELS,
+  ANNOUNCEMENT_KINDS,
+  announcementChannels,
+  announcementKind,
   announcementVisibleTo,
+  audienceTargets,
+  buildVisibilityTargets,
 } from "@/lib/announcement-targeting";
+import { createAuditLog } from "@/lib/audit";
 
 const schema = z.object({
   title: z.string().min(2).max(120),
   content: z.string().min(2).max(5000),
   link: z.string().url().optional().or(z.literal("")),
   isActive: z.boolean(),
+  startsAt: z.string().optional(),
   endsAt: z.string().optional(),
   visibilityTargets: z.array(z.string()).optional(),
+  kind: z.enum(ANNOUNCEMENT_KINDS).optional(),
+  channels: z.array(z.enum(ANNOUNCEMENT_CHANNELS)).optional(),
 });
+
+function parseDate(value: string | undefined) {
+  if (!value) return null;
+  const d = new Date(value);
+  return Number.isNaN(d.getTime()) ? null : d;
+}
 
 async function buildViewerContext() {
   const user = await getCurrentUser();
@@ -77,6 +93,8 @@ export async function getActiveAnnouncements() {
       updatedAt: new Date(item.updatedAt),
     }))
     .filter((item) => item.startsAt <= now && (!item.endsAt || item.endsAt > now))
+    .filter((item) => announcementChannels(item.visibilityTargets).includes("website"))
+    .map((item) => ({ ...item, kind: announcementKind(item.visibilityTargets) }))
     .slice(0, 10);
 
   return items.filter((item) =>
@@ -92,14 +110,19 @@ export async function listAnnouncements() {
 }
 
 export async function createAnnouncement(input: z.infer<typeof schema>) {
-  const { error } = await requireActionPermission("settings.write");
+  const { user, error } = await requireActionPermission("settings.write");
   if (error) return error;
   const parsed = schema.safeParse(input);
   if (!parsed.success) return fail(parsed.error.message);
 
-  const targets = parsed.data.visibilityTargets?.length
-    ? parsed.data.visibilityTargets
-    : ["everyone"];
+  const targets = buildVisibilityTargets(
+    parsed.data.visibilityTargets ?? ["everyone"],
+    parsed.data.kind ?? "news",
+    parsed.data.channels?.length ? parsed.data.channels : ["website"]
+  );
+  const startsAt = parseDate(parsed.data.startsAt);
+  const endsAt = parseDate(parsed.data.endsAt);
+  if (startsAt && endsAt && endsAt <= startsAt) return fail("End must be after start");
 
   const item = await prisma.announcement.create({
     data: {
@@ -107,10 +130,12 @@ export async function createAnnouncement(input: z.infer<typeof schema>) {
       content: parsed.data.content,
       link: parsed.data.link || null,
       isActive: parsed.data.isActive,
-      endsAt: parsed.data.endsAt ? new Date(parsed.data.endsAt) : null,
+      ...(startsAt ? { startsAt } : {}),
+      endsAt,
       visibilityTargets: targets,
     },
   });
+  await createAuditLog({ actorId: user.id, action: "announcement.create", entityType: "Announcement", entityId: item.id, metadata: { title: item.title } });
   revalidateTag(CACHE_TAGS.announcements);
   revalidatePath("/");
 
@@ -129,40 +154,56 @@ export async function updateAnnouncement(
   id: string,
   input: Partial<z.infer<typeof schema>>
 ) {
-  const { error } = await requireActionPermission("settings.write");
+  const { user, error } = await requireActionPermission("settings.write");
   if (error) return error;
+  const parsed = schema.partial().safeParse(input);
+  if (!parsed.success) return fail(parsed.error.message);
+  const data = parsed.data;
+
+  const current = await prisma.announcement.findUnique({ where: { id }, select: { visibilityTargets: true } });
+  if (!current) return fail("Announcement not found");
+  const targets =
+    data.visibilityTargets || data.kind || data.channels
+      ? buildVisibilityTargets(
+          data.visibilityTargets ?? audienceTargets(current.visibilityTargets),
+          data.kind ?? announcementKind(current.visibilityTargets),
+          data.channels?.length ? data.channels : announcementChannels(current.visibilityTargets)
+        )
+      : undefined;
 
   await prisma.announcement.update({
     where: { id },
     data: {
-      ...(input.title && { title: input.title }),
-      ...(input.content && { content: input.content }),
-      ...(input.link !== undefined && { link: input.link || null }),
-      ...(input.isActive !== undefined && { isActive: input.isActive }),
-      ...(input.endsAt !== undefined && {
-        endsAt: input.endsAt ? new Date(input.endsAt) : null,
-      }),
-      ...(input.visibilityTargets && { visibilityTargets: input.visibilityTargets }),
+      ...(data.title && { title: data.title }),
+      ...(data.content && { content: data.content }),
+      ...(data.link !== undefined && { link: data.link || null }),
+      ...(data.isActive !== undefined && { isActive: data.isActive }),
+      ...(data.startsAt !== undefined && { startsAt: parseDate(data.startsAt) ?? new Date() }),
+      ...(data.endsAt !== undefined && { endsAt: parseDate(data.endsAt) }),
+      ...(targets && { visibilityTargets: targets }),
     },
   });
+  await createAuditLog({ actorId: user.id, action: "announcement.update", entityType: "Announcement", entityId: id, metadata: { fields: Object.keys(data) } });
   revalidateTag(CACHE_TAGS.announcements);
   revalidatePath("/");
   return ok(undefined);
 }
 
 export async function toggleAnnouncement(id: string, isActive: boolean) {
-  const { error } = await requireActionPermission("settings.write");
+  const { user, error } = await requireActionPermission("settings.write");
   if (error) return error;
   await prisma.announcement.update({ where: { id }, data: { isActive } });
+  await createAuditLog({ actorId: user.id, action: isActive ? "announcement.activate" : "announcement.deactivate", entityType: "Announcement", entityId: id });
   revalidateTag(CACHE_TAGS.announcements);
   revalidatePath("/");
   return ok(undefined);
 }
 
 export async function deleteAnnouncement(id: string) {
-  const { error } = await requireActionPermission("settings.write");
+  const { user, error } = await requireActionPermission("settings.write");
   if (error) return error;
   await prisma.announcement.delete({ where: { id } });
+  await createAuditLog({ actorId: user.id, action: "announcement.delete", entityType: "Announcement", entityId: id });
   revalidateTag(CACHE_TAGS.announcements);
   revalidatePath("/");
   return ok(undefined);

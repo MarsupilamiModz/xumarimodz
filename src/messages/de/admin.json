@@ -918,6 +918,54 @@
       "rejectText": "Die Bewerbung wird als abgelehnt markiert. Die Notiz wird gespeichert.",
       "done": "Bewerbung aktualisiert",
       "close": "Schließen"
+    },
+    "an2": {
+      "title": "Ankündigungen",
+      "subtitle": "Hinweise für Webseite, App und Discord mit Zeitraum und Zielgruppe.",
+      "new": "Neue Ankündigung",
+      "list": "Alle Ankündigungen",
+      "editor": "Editor",
+      "preview": "Live-Vorschau der Leiste",
+      "previewEmpty": "Titel und Text eingeben, um die Vorschau zu sehen.",
+      "kind": "Art",
+      "titleLabel": "Titel",
+      "content": "Text",
+      "link": "Link (optional)",
+      "startsAt": "Beginn",
+      "endsAt": "Ende (optional)",
+      "channels": "Ziele",
+      "channel": {
+        "website": "Webseite",
+        "app": "App",
+        "discord": "Discord"
+      },
+      "audience": "Zielgruppe",
+      "aud": {
+        "everyone": "Alle",
+        "users": "Angemeldete Nutzer",
+        "premium": "Premium",
+        "creators": "Creator",
+        "partners": "Partner",
+        "team": "Team"
+      },
+      "active": "Aktiv",
+      "save": "Speichern",
+      "create": "Veröffentlichen",
+      "saved": "Ankündigung gespeichert",
+      "delete": "Löschen",
+      "deleteTitle": "„{title}“ löschen?",
+      "deleteText": "Die Ankündigung verschwindet sofort von allen Zielen.",
+      "deleted": "Ankündigung gelöscht",
+      "stLive": "Live",
+      "stScheduled": "Geplant",
+      "stEnded": "Beendet",
+      "stOff": "Aus",
+      "range": "{start} – {end}",
+      "open": "offen",
+      "emptyTitle": "Keine Ankündigungen",
+      "emptyText": "Lege rechts die erste Ankündigung an.",
+      "more": "Mehr erfahren",
+      "appDiscordNote": "Die Webseite zeigt aktive Ankündigungen oben auf der Startseite. Für App und Discord wird das Ziel gespeichert; die Anbindung dort steht noch aus."
     }
   }
 }

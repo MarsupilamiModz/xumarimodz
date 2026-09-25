@@ -132,7 +132,13 @@
     "unsavedChanges": "Ungespeicherte Änderungen",
     "discard": "Verwerfen",
     "saving": "Wird gespeichert…",
-    "saved": "Gespeichert"
+    "saved": "Gespeichert",
+    "announcementKind": {
+      "news": "Neuigkeit",
+      "update": "Update",
+      "maintenance": "Wartung",
+      "warning": "Warnung"
+    }
   },
   "ui": {
     "close": "Schließen",

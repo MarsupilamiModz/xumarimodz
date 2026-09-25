@@ -58,3 +58,38 @@ export function announcementVisibleTo(
 
   return false;
 }
+
+/**
+ * Art und Kanäle einer Ankündigung werden als Präfix-Einträge in `visibilityTargets` gespeichert
+ * („kind:maintenance“, „channel:website“) – ohne Schemaänderung. Zielgruppen bleiben die übrigen Einträge.
+ */
+export const ANNOUNCEMENT_KINDS = ["news", "update", "maintenance", "warning"] as const;
+export type AnnouncementKind = (typeof ANNOUNCEMENT_KINDS)[number];
+export const ANNOUNCEMENT_CHANNELS = ["website", "app", "discord"] as const;
+export type AnnouncementChannel = (typeof ANNOUNCEMENT_CHANNELS)[number];
+
+export function announcementKind(targets: unknown): AnnouncementKind {
+  const entry = parseVisibilityTargets(targets).find((t) => t.startsWith("kind:"));
+  const kind = entry?.slice(5) as AnnouncementKind | undefined;
+  return kind && ANNOUNCEMENT_KINDS.includes(kind) ? kind : "news";
+}
+
+/** Ohne Kanal-Eintrag (ältere Ankündigungen) gilt: nur Webseite. */
+export function announcementChannels(targets: unknown): AnnouncementChannel[] {
+  const list = parseVisibilityTargets(targets)
+    .filter((t) => t.startsWith("channel:"))
+    .map((t) => t.slice(8) as AnnouncementChannel)
+    .filter((c) => ANNOUNCEMENT_CHANNELS.includes(c));
+  return list.length ? list : ["website"];
+}
+
+export function audienceTargets(targets: unknown): string[] {
+  const list = parseVisibilityTargets(targets).filter((t) => !t.includes(":"));
+  return list.length ? list : ["everyone"];
+}
+
+export function buildVisibilityTargets(audience: string[], kind: AnnouncementKind, channels: AnnouncementChannel[]) {
+  const valid = new Set<string>(ANNOUNCEMENT_TARGETS.map((t) => t.id));
+  const aud = audience.filter((a) => valid.has(a));
+  return [...(aud.length ? aud : ["everyone"]), `kind:${kind}`, ...channels.map((c) => `channel:${c}`)];
+}
