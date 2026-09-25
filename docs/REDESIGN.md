@@ -15,15 +15,15 @@
 |---|---|---|---|---|
 | /admin/achievements | src/app/[locale]/admin/achievements/page.tsx | ACP Erfolge | teilweise |  |
 | /admin/ads | src/app/[locale]/admin/ads/page.tsx | ACP Werbung | teilweise |  |
-| /admin/analytics | src/app/[locale]/admin/analytics/page.tsx | ACP Analytics | teilweise | Zeitraum-Chips fehlen |
-| /admin/announcements | src/app/[locale]/admin/announcements/page.tsx | ACP Ankündigungen | teilweise | Art/Vorschau fehlen |
-| /admin/api-keys | src/app/[locale]/admin/api-keys/page.tsx | ACP API-Schlüssel | teilweise |  |
-| /admin/applications | src/app/[locale]/admin/applications/page.tsx | ACP Bewerbungen | teilweise | Kanban fehlt |
-| /admin/audit | src/app/[locale]/admin/audit/page.tsx | ACP Audit-Log | teilweise | Filter/CSV fehlen |
+| /admin/analytics | src/app/[locale]/admin/analytics/page.tsx | ACP Analytics | nach Spezifikation | Zeitraum-Chips, KPIs, Balkendiagramm, Top-Mods, Herkunft, nach Spiel |
+| /admin/announcements | src/app/[locale]/admin/announcements/page.tsx | ACP Ankündigungen | nach Spezifikation | Liste, Editor, Live-Vorschau, Art, Zeitraum, Ziele; App/Discord-Anbindung offen |
+| /admin/api-keys | src/app/[locale]/admin/api-keys/page.tsx | ACP API-Schlüssel | nach Spezifikation | einmalige Anzeige, Hash, Widerruf mit Bestätigung, Audit, Rate-Limit |
+| /admin/applications | src/app/[locale]/admin/applications/page.tsx | ACP Bewerbungen | nach Spezifikation | Kanban mit Detaildialog |
+| /admin/audit | src/app/[locale]/admin/audit/page.tsx | ACP Audit-Log | nach Spezifikation | Kategorien, Freitext, maskierte IP, CSV |
 | /admin/banners | src/app/[locale]/admin/banners/page.tsx | – | vorhanden (Design-Sweep) |  |
 | /admin/branding | src/app/[locale]/admin/branding/page.tsx | ACP Inhalte | teilweise | Live-Vorschau fehlt |
 | /admin/chat | src/app/[locale]/admin/chat/page.tsx | – | vorhanden (Design-Sweep) |  |
-| /admin/collections | src/app/[locale]/admin/collections/page.tsx | ACP Sammlungen | teilweise | Drag & Drop fehlt |
+| /admin/collections | src/app/[locale]/admin/collections/page.tsx | ACP Sammlungen | nach Spezifikation | Karten, Editor, Drag & Drop, Mod-Suche |
 | /admin/commissions | src/app/[locale]/admin/commissions/page.tsx | ACP Provisionen | teilweise | Auswahl-Freigabe/Regeln fehlen |
 | /admin/coupons | src/app/[locale]/admin/coupons/page.tsx | ACP Gutscheine | teilweise |  |
 | /admin/creators/[id] | src/app/[locale]/admin/creators/[id]/page.tsx | – | vorhanden (Design-Sweep) |  |
@@ -32,23 +32,23 @@
 | /admin/creators/visibility | src/app/[locale]/admin/creators/visibility/page.tsx | – | vorhanden (Design-Sweep) |  |
 | /admin/diagnostics/screenshots | src/app/[locale]/admin/diagnostics/screenshots/page.tsx | – | vorhanden (Design-Sweep) |  |
 | /admin/dmca | src/app/[locale]/admin/dmca/page.tsx | – | vorhanden (Design-Sweep) |  |
-| /admin/email | src/app/[locale]/admin/email/page.tsx | ACP E-Mail | teilweise | Newsletter-Zustimmung fehlt im Schema |
-| /admin/email/templates | src/app/[locale]/admin/email/templates/page.tsx | ACP E-Mail-Vorlagen | teilweise | Vorschau fehlt |
+| /admin/email | src/app/[locale]/admin/email/page.tsx | ACP E-Mail | teilweise | Newsletter blockiert: Einwilligung fehlt im Schema (Migration B1 vorbereitet) |
+| /admin/email/templates | src/app/[locale]/admin/email/templates/page.tsx | ACP E-Mail-Vorlagen | nach Spezifikation | Platzhalter %…%, helle Vorschau |
 | /admin/games/[id] | src/app/[locale]/admin/games/[id]/page.tsx | – | vorhanden (Design-Sweep) |  |
 | /admin/games/new | src/app/[locale]/admin/games/new/page.tsx | – | vorhanden (Design-Sweep) |  |
 | /admin/games | src/app/[locale]/admin/games/page.tsx | – | vorhanden (Design-Sweep) |  |
-| /admin/groups | src/app/[locale]/admin/groups/page.tsx | ACP Gruppen und Rechte | teilweise |  |
+| /admin/groups | src/app/[locale]/admin/groups/page.tsx | ACP Gruppen und Rechte | nach Spezifikation | Rollen-Karten, Rechte-Matrix, Owner gesperrt |
 | /admin/leaderboards | src/app/[locale]/admin/leaderboards/page.tsx | ACP Bestenlisten | teilweise |  |
-| /admin/licenses | src/app/[locale]/admin/licenses/page.tsx | ACP Lizenzen | teilweise | CSV/Maskierung prüfen |
-| /admin/localization | src/app/[locale]/admin/localization/page.tsx | ACP Lokalisierung | teilweise |  |
+| /admin/licenses | src/app/[locale]/admin/licenses/page.tsx | ACP Lizenzen | nach Spezifikation | maskiert, Filter, Erzeugen mit CSV, Widerrufen |
+| /admin/localization | src/app/[locale]/admin/localization/page.tsx | ACP Lokalisierung | nach Spezifikation | Fortschritt, „Nur fehlende“, JSON-Import/-Export |
 | /admin/media | src/app/[locale]/admin/media/page.tsx | ACP Medien | neu gebaut | Verwendet-in/Alt-Text fehlen |
-| /admin/memberships | src/app/[locale]/admin/memberships/page.tsx | ACP Mitgliedschaften | teilweise | Entziehen fehlt |
+| /admin/memberships | src/app/[locale]/admin/memberships/page.tsx | ACP Mitgliedschaften | nach Spezifikation | manuelle Mitgliedschaften vergeben/entziehen; Plan-Editor noch englisch |
 | /admin/moderation | src/app/[locale]/admin/moderation/page.tsx | – | vorhanden (Design-Sweep) |  |
-| /admin/mods/[id] | src/app/[locale]/admin/mods/[id]/page.tsx | ACP Mod bearbeiten | teilweise | „Ungespeicherte Änderungen“ fehlt |
+| /admin/mods/[id] | src/app/[locale]/admin/mods/[id]/page.tsx | ACP Mod bearbeiten | nach Spezifikation | Ungespeicherte Änderungen, Versionen, Bestätigungen |
 | /admin/mods/new-sound | src/app/[locale]/admin/mods/new-sound/page.tsx | – | vorhanden (Design-Sweep) |  |
-| /admin/mods/new | src/app/[locale]/admin/mods/new/page.tsx | – | vorhanden (Design-Sweep) |  |
-| /admin/mods | src/app/[locale]/admin/mods/page.tsx | ACP Mods | teilweise | Spiel-Chips/Status-Filter prüfen |
-| /admin/orders/[id] | src/app/[locale]/admin/orders/[id]/page.tsx | – | vorhanden (Design-Sweep) |  |
+| /admin/mods/new | src/app/[locale]/admin/mods/new/page.tsx | – | nach Spezifikation |  |
+| /admin/mods | src/app/[locale]/admin/mods/page.tsx | ACP Mods | nach Spezifikation |  |
+| /admin/orders/[id] | src/app/[locale]/admin/orders/[id]/page.tsx | – | teilweise | Serverseitige Rechteprüfung ergänzt |
 | /admin/orders | src/app/[locale]/admin/orders/page.tsx | ACP Bestellungen | teilweise |  |
 | /admin/owner/achievements | src/app/[locale]/admin/owner/achievements/page.tsx | – | vorhanden (Design-Sweep) |  |
 | /admin/owner/email | src/app/[locale]/admin/owner/email/page.tsx | – | vorhanden (Design-Sweep) |  |
@@ -56,28 +56,28 @@
 | /admin/owner/health | src/app/[locale]/admin/owner/health/page.tsx | – | vorhanden (Design-Sweep) |  |
 | /admin/owner/translations | src/app/[locale]/admin/owner/translations/page.tsx | – | vorhanden (Design-Sweep) |  |
 | /admin/owner/users/[id] | src/app/[locale]/admin/owner/users/[id]/page.tsx | – | vorhanden (Design-Sweep) |  |
-| /admin | src/app/[locale]/admin/page.tsx | ACP Dashboard | teilweise | Texte EN, € fehlt, kein Cache |
+| /admin | src/app/[locale]/admin/page.tsx | ACP Dashboard | nach Spezifikation | 6 KPIs, 4 Karten, gecacht |
 | /admin/partner-ads | src/app/[locale]/admin/partner-ads/page.tsx | – | vorhanden (Design-Sweep) |  |
 | /admin/partners/[id] | src/app/[locale]/admin/partners/[id]/page.tsx | – | vorhanden (Design-Sweep) |  |
 | /admin/partners/new | src/app/[locale]/admin/partners/new/page.tsx | – | vorhanden (Design-Sweep) |  |
 | /admin/partners | src/app/[locale]/admin/partners/page.tsx | ACP Partner | teilweise |  |
-| /admin/payments | src/app/[locale]/admin/payments/page.tsx | ACP Shop-Übersicht | teilweise |  |
+| /admin/payments | src/app/[locale]/admin/payments/page.tsx | ACP Shop-Übersicht | teilweise | Rechte korrigiert (settings.write); Inhalt noch nicht umgebaut |
 | /admin/payout-settings | src/app/[locale]/admin/payout-settings/page.tsx | – | vorhanden (Design-Sweep) |  |
 | /admin/referrals | src/app/[locale]/admin/referrals/page.tsx | – | vorhanden (Design-Sweep) |  |
 | /admin/reports | src/app/[locale]/admin/reports/page.tsx | ACP Meldungen | neu gebaut |  |
-| /admin/security | src/app/[locale]/admin/security/page.tsx | ACP Sicherheit | teilweise | Sitzungen/IP-Sperren fehlen im Schema |
-| /admin/settings/media | src/app/[locale]/admin/settings/media/page.tsx | – | vorhanden (Design-Sweep) |  |
+| /admin/security | src/app/[locale]/admin/security/page.tsx | ACP Sicherheit | nach Spezifikation | 2FA-Status, Sitzungen, IP-Sperren (SiteSetting + Middleware), Passwort-Regeln, Captcha-Status |
+| /admin/settings/media | src/app/[locale]/admin/settings/media/page.tsx | – | nach Spezifikation | Bibliothek; Alt-Text fehlt im Schema |
 | /admin/settings | src/app/[locale]/admin/settings/page.tsx | ACP Einstellungen | neu gebaut | Übersicht |
 | /admin/shop | src/app/[locale]/admin/shop/page.tsx | ACP Produkte | teilweise |  |
-| /admin/subscriptions | src/app/[locale]/admin/subscriptions/page.tsx | ACP Käufe und Abos | teilweise | Tabs/Erstatten/Verlängern fehlen |
-| /admin/system | src/app/[locale]/admin/system/page.tsx | ACP Systemstatus | teilweise | Monitoring-Quelle offen |
+| /admin/subscriptions | src/app/[locale]/admin/subscriptions/page.tsx | ACP Käufe und Abos | nach Spezifikation | Tabs, Verlängern/Kündigen/Erstatten mit Audit |
+| /admin/system | src/app/[locale]/admin/system/page.tsx | ACP Systemstatus | nach Spezifikation | echte Checks, 30-Tage-Verfügbarkeit (Cron empfohlen) |
 | /admin/team | src/app/[locale]/admin/team/page.tsx | – | vorhanden (Design-Sweep) |  |
-| /admin/tickets/[id] | src/app/[locale]/admin/tickets/[id]/page.tsx | ACP Ticket-Detail | teilweise | Textbausteine fehlen |
-| /admin/tickets | src/app/[locale]/admin/tickets/page.tsx | ACP Tickets | teilweise |  |
+| /admin/tickets/[id] | src/app/[locale]/admin/tickets/[id]/page.tsx | ACP Ticket-Detail | nach Spezifikation | Verlauf, Systemzeilen, Antwort/Notiz, Textbausteine, SLA, Seitenpanel |
+| /admin/tickets | src/app/[locale]/admin/tickets/page.tsx | ACP Tickets | nach Spezifikation | Filter, Vorschau, Vollansicht |
 | /admin/trust | src/app/[locale]/admin/trust/page.tsx | – | vorhanden (Design-Sweep) |  |
 | /admin/tutorials | src/app/[locale]/admin/tutorials/page.tsx | – | vorhanden (Design-Sweep) |  |
-| /admin/users/[id] | src/app/[locale]/admin/users/[id]/page.tsx | – | vorhanden (Design-Sweep) |  |
-| /admin/users | src/app/[locale]/admin/users/page.tsx | ACP Nutzer | teilweise |  |
+| /admin/users/[id] | src/app/[locale]/admin/users/[id]/page.tsx | – | teilweise | Kopf und Aktionen übersetzt; Detailkarten noch englisch |
+| /admin/users | src/app/[locale]/admin/users/page.tsx | ACP Nutzer | nach Spezifikation | Suche, Rollen-/Status-Filter, Sperren mit Grund |
 | /auth/sync-error | src/app/[locale]/auth/sync-error/page.tsx | – | vorhanden (Design-Sweep) |  |
 | /banned | src/app/[locale]/banned/page.tsx | – | vorhanden (Design-Sweep) |  |
 | /become-creator | src/app/[locale]/become-creator/page.tsx | W12 Creator-Bewerbung | teilweise |  |
@@ -142,10 +142,10 @@
 | /legal/privacy | src/app/[locale]/legal/privacy/page.tsx | – | vorhanden (Design-Sweep) |  |
 | /legal/terms | src/app/[locale]/legal/terms/page.tsx | – | vorhanden (Design-Sweep) |  |
 | /legal/withdrawal | src/app/[locale]/legal/withdrawal/page.tsx | – | vorhanden (Design-Sweep) |  |
-| /login | src/app/[locale]/login/page.tsx | W8 Anmelden | teilweise | „Angemeldet bleiben“ fehlt |
+| /login | src/app/[locale]/login/page.tsx | W8 Anmelden | nach Spezifikation | „Angemeldet bleiben“ |
 | /maintenance | src/app/[locale]/maintenance/page.tsx | – | vorhanden (Design-Sweep) |  |
 | /mods/[slug] | src/app/[locale]/mods/[slug]/page.tsx | W3 Mod-Seite | umgesetzt | Kompatibilität nur als Spielversion |
-| /mods | src/app/[locale]/mods/page.tsx | W2 Mods | teilweise | Filter/Suche/Sortierung/Pagination da; Grid/Liste-Umschalter fehlt |
+| /mods | src/app/[locale]/mods/page.tsx | W2 Mods | nach Spezifikation | Raster/Liste umschaltbar |
 | /owner | src/app/[locale]/owner/page.tsx | – | vorhanden (Design-Sweep) |  |
 | / | src/app/[locale]/page.tsx | W1 Startseite | umgesetzt | Hero, Spiele, Funktionen, beliebte Mods, Premium, FAQ |
 | /partner/analytics | src/app/[locale]/partner/analytics/page.tsx | – | vorhanden (Design-Sweep) |  |
