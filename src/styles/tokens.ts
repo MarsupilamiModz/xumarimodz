@@ -35,6 +35,12 @@ export const colors = {
   gameLs25: "#6b5412",
 
   qrBackground: "#ffffff",
+
+  emailBg: "#f4f3f7",
+  emailSurface: "#ffffff",
+  emailInk: "#1a191f",
+  emailMuted: "#5e5c68",
+  emailLine: "#e2e0e8",
 } as const;
 
 export type ColorToken = keyof typeof colors;

@@ -1,27 +1,19 @@
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { requirePagePermission } from "@/lib/auth";
 import { getAdminEmailTemplates } from "@/actions/admin/email";
+import { AdminPageHeader, AdminLoadError } from "@/components/admin/admin-page-header";
 import { EmailTemplatesPanel } from "@/components/admin/email-templates-panel";
 import type { Locale } from "@/i18n/config";
 
 export default async function AdminEmailTemplatesPage({ params: { locale } }: { params: { locale: Locale } }) {
+  setRequestLocale(locale);
   await requirePagePermission("settings.write");
-  const result = await getAdminEmailTemplates();
-  const templates = result.success ? result.data : [];
+  const [t, result] = await Promise.all([getTranslations("admin.et"), getAdminEmailTemplates()]);
 
   return (
-    <div className="space-y-4">
-      <Link href={`/${locale}/admin/email`} className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
-        <ArrowLeft className="h-4 w-4" /> Back to email settings
-      </Link>
-      <h1 className="h1-acp">Email Templates</h1>
-      {!result.success && (
-        <div className="rounded-lg border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-          {result.error}
-        </div>
-      )}
-      <EmailTemplatesPanel templates={templates} />
+    <div>
+      <AdminPageHeader title={t("title")} description={t("subtitle")} parent={{ label: t("back"), href: `/${locale}/admin/email` }} />
+      {result.success ? <EmailTemplatesPanel templates={result.data} /> : <AdminLoadError message={t("loadError")} />}
     </div>
   );
 }

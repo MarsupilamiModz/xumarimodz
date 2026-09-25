@@ -966,6 +966,32 @@
       "emptyText": "Lege rechts die erste Ankündigung an.",
       "more": "Mehr erfahren",
       "appDiscordNote": "Die Webseite zeigt aktive Ankündigungen oben auf der Startseite. Für App und Discord wird das Ziel gespeichert; die Anbindung dort steht noch aus."
+    },
+    "et": {
+      "title": "E-Mail-Vorlagen",
+      "subtitle": "Texte der automatischen E-Mails. Die Vorschau zeigt Beispielwerte.",
+      "back": "E-Mail",
+      "list": "Vorlagen",
+      "name": "Name",
+      "subject": "Betreff",
+      "body": "Inhalt (HTML)",
+      "placeholders": "Platzhalter einfügen",
+      "insert": "{placeholder} einfügen",
+      "preview": "Vorschau",
+      "previewSubject": "Betreff: {subject}",
+      "previewFrame": "E-Mail-Vorschau",
+      "unsaved": "Ungespeicherte Änderungen",
+      "discard": "Verwerfen",
+      "save": "Speichern",
+      "saved": "Vorlage gespeichert",
+      "loadError": "Die Vorlagen konnten nicht geladen werden."
+    },
+    "em": {
+      "title": "E-Mail",
+      "subtitle": "Versand (SMTP), Benachrichtigungs-Adressen, Protokoll und Test-Versand.",
+      "templates": "Vorlagen bearbeiten",
+      "newsletterBlocked": "Rundmails an Nutzer sind noch nicht verfügbar: Es fehlt die gespeicherte Newsletter-Einwilligung. Ohne sie darf nicht versendet werden. Die nötige Datenbank-Spalte ist in prisma/proposed/2026-09-redesign.sql vorbereitet.",
+      "logsUnavailable": "Das E-Mail-Protokoll ist nicht verfügbar – fehlt die Tabelle EmailLog? Dann „npx prisma db push“ ausführen."
     }
   }
 }

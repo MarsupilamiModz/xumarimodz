@@ -47,6 +47,13 @@
   /* Funktional: QR-Codes brauchen reinen weißen Hintergrund zum Scannen */
   --qr-background: 255 255 255; /* #ffffff */
 
+  /* Funktional: E-Mails sind hell (Mail-Programme stellen dunkle Mails oft falsch dar) */
+  --email-bg: 244 243 247; /* #f4f3f7 */
+  --email-surface: 255 255 255; /* #ffffff */
+  --email-ink: 26 25 31; /* #1a191f */
+  --email-muted: 94 92 104; /* #5e5c68 */
+  --email-line: 226 224 232; /* #e2e0e8 */
+
   /* Form */
   --radius-badge: 6px;
   --radius-control: 8px;

@@ -977,6 +977,32 @@
       "emptyText": "Create the first announcement on the right.",
       "more": "Learn more",
       "appDiscordNote": "The website shows active announcements at the top of the homepage. For the app and Discord the target is stored; the integration there is still pending."
+    },
+    "et": {
+      "title": "Email templates",
+      "subtitle": "Texts of the automatic emails. The preview uses sample values.",
+      "back": "Email",
+      "list": "Templates",
+      "name": "Name",
+      "subject": "Subject",
+      "body": "Body (HTML)",
+      "placeholders": "Insert placeholder",
+      "insert": "Insert {placeholder}",
+      "preview": "Preview",
+      "previewSubject": "Subject: {subject}",
+      "previewFrame": "Email preview",
+      "unsaved": "Unsaved changes",
+      "discard": "Discard",
+      "save": "Save",
+      "saved": "Template saved",
+      "loadError": "Templates could not be loaded."
+    },
+    "em": {
+      "title": "Email",
+      "subtitle": "Delivery (SMTP), notification addresses, log and test sending.",
+      "templates": "Edit templates",
+      "newsletterBlocked": "Newsletters to users are not available yet: the stored newsletter consent is missing, and sending without it is not allowed. The required database column is prepared in prisma/proposed/2026-09-redesign.sql.",
+      "logsUnavailable": "The email log is unavailable – is the EmailLog table missing? Then run “npx prisma db push”."
     }
   }
 }

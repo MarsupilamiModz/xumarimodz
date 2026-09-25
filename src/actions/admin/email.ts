@@ -1,5 +1,7 @@
 "use server";
 
+import { createAuditLog } from "@/lib/audit";
+
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
@@ -173,7 +175,7 @@ export async function updateAdminEmailTemplate(
   key: EmailTemplateKey,
   input: z.infer<typeof templateSchema>
 ) {
-  const { error } = await requireActionPermission("settings.write");
+  const { user, error } = await requireActionPermission("settings.write");
   if (error) return error;
 
   const parsed = templateSchema.safeParse(input);
@@ -181,6 +183,7 @@ export async function updateAdminEmailTemplate(
 
   return actionTry(async () => {
     await saveEmailTemplate(key, parsed.data);
+    await createAuditLog({ actorId: user.id, action: "email.template_update", entityType: "SiteSetting", entityId: `email_template:${key}` });
     revalidatePath("/admin/email/templates");
   }, "email:save-template");
 }
