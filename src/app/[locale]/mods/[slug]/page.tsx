@@ -96,7 +96,7 @@ export default async function ModDetailPage({ params: { locale, slug } }: { para
     getTrendingMods(5, mod.gameId),
     getInlineBadgesForUsers([authorId, ...reviewUserIds], locale),
     user
-      ? prisma.modPurchase.findUnique({ where: { modId_userId: { modId: mod.id, userId: user.id } } }).catch(() => null)
+      ? prisma.modPurchase.findFirst({ where: { modId: mod.id, userId: user.id, refundedAt: null } }).catch(() => null)
       : null,
     checkMissingDependencies(mod.id, user?.id ?? null),
   ]);

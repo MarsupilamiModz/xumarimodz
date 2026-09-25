@@ -32,7 +32,7 @@ export async function startModPurchaseCheckout(modId: string, locale: string, cl
   const existing = await prisma.modPurchase.findUnique({
     where: { modId_userId: { modId, userId: user.id } },
   });
-  if (existing) return fail("Already owned");
+  if (existing && !existing.refundedAt) return fail("Already owned");
 
   try {
     const session =
@@ -60,7 +60,7 @@ export async function startModPurchaseCheckout(modId: string, locale: string, cl
 
 export async function getUserLibrary(userId: string) {
   const modPurchases = await prisma.modPurchase.findMany({
-    where: { userId },
+    where: { userId, refundedAt: null },
     orderBy: { createdAt: "desc" },
     include: {
       mod: {

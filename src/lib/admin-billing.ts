@@ -72,13 +72,13 @@ export async function getAdminPurchasesPage({ q, page, limit = 25 }: { q?: strin
       where: userWhere,
       orderBy: { createdAt: "desc" },
       take,
-      select: { id: true, amountCents: true, stripePaymentId: true, createdAt: true, expiresAt: true, plan: { select: { name: true } }, user: { select: USER_SELECT } },
+      select: { id: true, amountCents: true, stripePaymentId: true, createdAt: true, expiresAt: true, refundedAt: true, plan: { select: { name: true } }, user: { select: USER_SELECT } },
     }),
     prisma.modPurchase.findMany({
       where: userWhere,
       orderBy: { createdAt: "desc" },
       take,
-      select: { id: true, amountCents: true, stripePaymentId: true, createdAt: true, mod: { select: { title: true } }, user: { select: USER_SELECT } },
+      select: { id: true, amountCents: true, stripePaymentId: true, createdAt: true, refundedAt: true, mod: { select: { title: true } }, user: { select: USER_SELECT } },
     }),
     prisma.membershipPurchase.count({ where: userWhere }),
     prisma.modPurchase.count({ where: userWhere }),
@@ -87,23 +87,15 @@ export async function getAdminPurchasesPage({ q, page, limit = 25 }: { q?: strin
   ]);
 
   const merged = [
-    ...memberships.map((p) => ({ id: p.id, kind: "membership" as const, product: p.plan.name, amountCents: p.amountCents, stripePaymentId: p.stripePaymentId, createdAt: p.createdAt, expiresAt: p.expiresAt, user: p.user })),
-    ...mods.map((p) => ({ id: p.id, kind: "mod" as const, product: p.mod.title, amountCents: p.amountCents, stripePaymentId: p.stripePaymentId, createdAt: p.createdAt, expiresAt: null, user: p.user })),
+    ...memberships.map((p) => ({ id: p.id, kind: "membership" as const, product: p.plan.name, amountCents: p.amountCents, stripePaymentId: p.stripePaymentId, createdAt: p.createdAt, expiresAt: p.expiresAt, refundedAt: p.refundedAt, user: p.user })),
+    ...mods.map((p) => ({ id: p.id, kind: "mod" as const, product: p.mod.title, amountCents: p.amountCents, stripePaymentId: p.stripePaymentId, createdAt: p.createdAt, expiresAt: null, refundedAt: p.refundedAt, user: p.user })),
   ]
     .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
     .slice((page - 1) * limit, page * limit);
 
-  const refunds = merged.length
-    ? await prisma.auditLog.findMany({
-        where: { action: "purchase.refund", entityId: { in: merged.map((m) => m.id) } },
-        select: { entityId: true },
-      })
-    : [];
-  const refunded = new Set(refunds.map((r) => r.entityId));
-
   const total = membershipCount + modCount;
   return {
-    rows: merged.map((m): PurchaseRow => ({ ...m, refunded: refunded.has(m.id) })),
+    rows: merged.map(({ refundedAt, ...m }): PurchaseRow => ({ ...m, refunded: refundedAt != null })),
     total,
     revenueCents: (membershipSum._sum.amountCents ?? 0) + (modSum._sum.amountCents ?? 0),
     page,

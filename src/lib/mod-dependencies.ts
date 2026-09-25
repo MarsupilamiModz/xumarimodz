@@ -58,7 +58,7 @@ export async function checkMissingDependencies(modId: string, userId: string | n
         orderBy: { createdAt: "desc" },
       }),
       prisma.modPurchase.findMany({
-        where: { userId, modId: { in: depIds } },
+        where: { userId, modId: { in: depIds }, refundedAt: null },
         select: { modId: true },
       }),
       prisma.modVersion.findMany({

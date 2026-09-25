@@ -624,7 +624,7 @@
       "refund": "Erstatten",
       "refundTitle": "{amount} erstatten?",
       "refundTextMembership": "Der volle Betrag geht über Stripe an @{username} zurück und die Mitgliedschaft aus diesem Kauf endet sofort.",
-      "refundTextMod": "Der volle Betrag geht über Stripe an @{username} zurück. Der Zugang zum Mod bleibt bestehen, bis das Schema erstattete Käufe kennt.",
+      "refundTextMod": "Der volle Betrag geht über Stripe an @{username} zurück und der Zugang zum Mod endet sofort.",
       "refunded": "Erstattung ausgelöst",
       "noRefund": "Ohne Stripe-Zahlung (manuell vergeben) – keine Erstattung möglich.",
       "auditNote": "Jede Aktion wird im Audit-Log gespeichert.",

@@ -29,8 +29,9 @@ export async function canDownloadMod(
   }
 
   if (mod.pricing === "PAID") {
-    const purchase = await prisma.modPurchase.findUnique({
-      where: { modId_userId: { modId: mod.id, userId } },
+    const purchase = await prisma.modPurchase.findFirst({
+      where: { modId: mod.id, userId, refundedAt: null },
+      select: { id: true },
     });
     if (purchase) return true;
     return userHasModLicense(userId, mod.id);

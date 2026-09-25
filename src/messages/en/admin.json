@@ -635,7 +635,7 @@
       "refund": "Refund",
       "refundTitle": "Refund {amount}?",
       "refundTextMembership": "The full amount goes back to @{username} via Stripe and the membership from this purchase ends immediately.",
-      "refundTextMod": "The full amount goes back to @{username} via Stripe. Access to the mod stays until the schema supports refunded purchases.",
+      "refundTextMod": "The full amount goes back to @{username} via Stripe and access to the mod ends immediately.",
       "refunded": "Refund issued",
       "noRefund": "No Stripe payment (granted manually) – cannot be refunded.",
       "auditNote": "Every action is recorded in the audit log.",

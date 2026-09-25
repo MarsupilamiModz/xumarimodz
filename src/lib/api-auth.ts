@@ -220,11 +220,11 @@ export async function userOwnsStripePayment(
 
   const [modPurchase, membershipPurchase] = await Promise.all([
     prisma.modPurchase.findFirst({
-      where: { stripePaymentId: paymentIntentId, userId },
+      where: { stripePaymentId: paymentIntentId, userId, refundedAt: null },
       select: { id: true },
     }),
     prisma.membershipPurchase.findFirst({
-      where: { stripePaymentId: paymentIntentId, userId },
+      where: { stripePaymentId: paymentIntentId, userId, refundedAt: null },
       select: { id: true },
     }),
   ]);

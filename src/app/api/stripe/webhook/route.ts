@@ -95,7 +95,8 @@ export async function POST(req: Request) {
               stripePaymentId: paymentId ?? undefined,
               amountCents: session.amount_total ?? 0,
             },
-            update: {},
+            // Erneuter Kauf nach einer Erstattung: Datensatz wieder gültig machen.
+            update: { refundedAt: null, stripePaymentId: paymentId ?? undefined, amountCents: session.amount_total ?? 0 },
           });
 
           const { evaluateUserAchievements } = await import("@/lib/achievements");

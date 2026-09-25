@@ -265,8 +265,8 @@ export async function adminResumeMembership(userId: string) {
 
 /**
  * Erstattet einen Einzelkauf vollständig über Stripe.
- * Mitgliedschaftskäufe enden sofort (expiresAt = jetzt). Bei Mod-Käufen bleibt der Datensatz bestehen,
- * weil das Schema noch kein Feld für erstattete Käufe hat (siehe docs/REDESIGN.md).
+ * Der Kauf wird mit refundedAt markiert (Datensatz bleibt für die Buchhaltung erhalten); Mitgliedschaften
+ * enden sofort (expiresAt = jetzt), der Zugang zu Mods ebenfalls, da alle Prüfungen refundedAt = null verlangen.
  */
 export async function adminRefundPurchase(kind: "membership" | "mod", purchaseId: string) {
   const { user, error } = await requireActionPermission("settings.write");
@@ -276,20 +276,16 @@ export async function adminRefundPurchase(kind: "membership" | "mod", purchaseId
     kind === "membership"
       ? await prisma.membershipPurchase.findUnique({
           where: { id: purchaseId },
-          select: { id: true, userId: true, planId: true, stripePaymentId: true, amountCents: true },
+          select: { id: true, userId: true, planId: true, stripePaymentId: true, amountCents: true, refundedAt: true },
         })
       : await prisma.modPurchase.findUnique({
           where: { id: purchaseId },
-          select: { id: true, userId: true, modId: true, stripePaymentId: true, amountCents: true },
+          select: { id: true, userId: true, modId: true, stripePaymentId: true, amountCents: true, refundedAt: true },
         });
   if (!purchase) return fail("Purchase not found");
   if (!purchase.stripePaymentId?.startsWith("pi_")) return fail("This purchase has no Stripe payment to refund");
 
-  const already = await prisma.auditLog.findFirst({
-    where: { action: "purchase.refund", entityId: purchase.id },
-    select: { id: true },
-  });
-  if (already) return fail("This purchase has already been refunded");
+  if (purchase.refundedAt) return fail("This purchase has already been refunded");
 
   try {
     await refundStripePayment(purchase.stripePaymentId, `refund_${kind}_${purchase.id}`);
@@ -297,8 +293,13 @@ export async function adminRefundPurchase(kind: "membership" | "mod", purchaseId
     return fail(err instanceof Error ? err.message : "Stripe refund failed");
   }
 
+  const refundedAt = new Date();
+  if (kind === "mod") {
+    // Zugang zum Mod endet mit der Erstattung (alle Zugriffsprüfungen filtern auf refundedAt = null).
+    await prisma.modPurchase.update({ where: { id: purchase.id }, data: { refundedAt } });
+  }
   if (kind === "membership" && "planId" in purchase) {
-    await prisma.membershipPurchase.update({ where: { id: purchase.id }, data: { expiresAt: new Date() } });
+    await prisma.membershipPurchase.update({ where: { id: purchase.id }, data: { expiresAt: refundedAt, refundedAt } });
     const state = await getUserMembershipState(purchase.userId);
     if (state.planId === purchase.planId && state.isLifetime) {
       await upsertUserMembership({ userId: purchase.userId, membershipType: "FREE", status: "CANCELED", cancelDate: new Date() });
