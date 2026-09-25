@@ -111,6 +111,9 @@
     "signIn": "Sign in",
     "tagsTitle": "Tags",
     "reviewCount": "{count, plural, one {# review} other {# reviews}}",
-    "relatedTitle": "Similar mods"
+    "relatedTitle": "Similar mods",
+    "viewLabel": "View",
+    "viewGrid": "Grid view",
+    "viewList": "List view"
   }
 }

@@ -103,7 +103,7 @@ export function Header({
           <Logo size="sm" branding={branding} />
         </Link>
 
-        <nav aria-label={t("mainNav")} className="hidden h-full items-stretch gap-5 md:flex">
+        <nav aria-label={t("mainNav")} className="hidden h-full items-stretch gap-4 xl:flex">
           {links.map((l) =>
             l.href === `/${locale}/games` && navGames.length > 0 ? (
               <div key={l.href} className="flex items-center">
@@ -144,7 +144,7 @@ export function Header({
           <Button
             variant="ghost"
             size="icon"
-            className="md:hidden"
+            className="xl:hidden"
             onClick={() => setOpen((v) => !v)}
             aria-expanded={open}
             aria-controls={mobileNavId}
@@ -159,7 +159,7 @@ export function Header({
         id={mobileNavId}
         aria-label={t("mainNav")}
         hidden={!open}
-        className="border-t border-line bg-canvas md:hidden"
+        className="border-t border-line bg-canvas xl:hidden"
       >
         <ul className="page-container flex flex-col py-3">
           {links.map((l) => (

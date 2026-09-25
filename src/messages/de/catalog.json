@@ -111,6 +111,9 @@
     "signIn": "Anmelden",
     "tagsTitle": "Tags",
     "reviewCount": "{count, plural, one {# Bewertung} other {# Bewertungen}}",
-    "relatedTitle": "Ähnliche Mods"
+    "relatedTitle": "Ähnliche Mods",
+    "viewLabel": "Ansicht",
+    "viewGrid": "Rasteransicht",
+    "viewList": "Listenansicht"
   }
 }

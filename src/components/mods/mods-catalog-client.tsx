@@ -3,7 +3,7 @@
 import { Fragment, useCallback, useEffect, useId, useState, useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Search, SearchX, SlidersHorizontal } from "lucide-react";
+import { LayoutGrid, List, Search, SearchX, SlidersHorizontal } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -25,6 +25,8 @@ export type CatalogFilters = {
   type?: string;
   audioCategory?: string;
   genre?: string;
+  /** Darstellung: "list" oder Standard-Raster. */
+  view?: string;
 };
 
 const selectClass =
@@ -94,9 +96,17 @@ export function ModsCatalogClient({
   );
   const showSoundFilters = filters.type === "SOUND";
 
+  const listView = filters.view === "list";
   const resetFilters = () => {
     setQ("");
-    startTransition(() => router.push(`/${locale}/mods`, { scroll: false }));
+    startTransition(() => router.push(`/${locale}/mods${listView ? "?view=list" : ""}`, { scroll: false }));
+  };
+  const setView = (view: "grid" | "list") => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (view === "list") params.set("view", "list");
+    else params.delete("view");
+    const qs = params.toString();
+    startTransition(() => router.replace(`/${locale}/mods${qs ? `?${qs}` : ""}`, { scroll: false }));
   };
 
   return (
@@ -268,6 +278,28 @@ export function ModsCatalogClient({
               <option value="date">{t("sortNewest")}</option>
               <option value="likes">{t("sortLikes")}</option>
             </select>
+            <div role="group" aria-label={t("viewLabel")} className="inline-flex rounded-md border border-line-control bg-elevated p-0.5">
+              {(["grid", "list"] as const).map((v) => {
+                const active = (v === "list") === listView;
+                const Icon = v === "grid" ? LayoutGrid : List;
+                return (
+                  <button
+                    key={v}
+                    type="button"
+                    aria-pressed={active}
+                    aria-label={v === "grid" ? t("viewGrid") : t("viewList")}
+                    title={v === "grid" ? t("viewGrid") : t("viewList")}
+                    onClick={() => setView(v)}
+                    className={cn(
+                      "flex h-8 w-8 items-center justify-center rounded transition-colors duration-fast",
+                      active ? "bg-hover text-ink" : "text-ink-muted hover:text-ink"
+                    )}
+                  >
+                    <Icon className="h-4 w-4" aria-hidden />
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
 
@@ -293,13 +325,14 @@ export function ModsCatalogClient({
           <div
             aria-busy={pending}
             className={cn(
-              "mt-6 grid gap-4 transition-opacity duration-fast sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 lg:gap-6",
+              "mt-6 grid transition-opacity duration-fast",
+              listView ? "grid-cols-1 gap-3" : "gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 lg:gap-6",
               pending && "opacity-60"
             )}
           >
             {initialMods.map((mod, index) => (
               <Fragment key={mod.slug}>
-                <ModCard locale={locale} mod={mod} pricingLabel={pricingLabels[mod.pricing] ?? mod.pricing} />
+                <ModCard locale={locale} mod={mod} pricingLabel={pricingLabels[mod.pricing] ?? mod.pricing} layout={listView ? "list" : "grid"} />
                 {listingAdBreak && index === 5 && <div className="col-span-full">{listingAdBreak}</div>}
               </Fragment>
             ))}

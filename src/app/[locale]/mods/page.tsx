@@ -9,7 +9,7 @@ import type { Locale } from "@/i18n/config";
 
 type SearchParams = CatalogFilters & { page?: string };
 
-const FILTER_KEYS = ["q", "game", "category", "pricing", "sort", "type", "audioCategory", "genre"] as const;
+const FILTER_KEYS = ["q", "game", "category", "pricing", "sort", "type", "audioCategory", "genre", "view"] as const;
 
 export async function generateMetadata({ params: { locale } }: { params: { locale: Locale } }) {
   const t = await getTranslations({ locale, namespace: "mods" });

@@ -5,7 +5,8 @@ import { useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Loader2 } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
+import { createClient, setRememberMe } from "@/lib/supabase/client";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AuthCard, AuthError, authLabelClass, useAuthErrorMessage } from "@/components/auth/auth-card";
@@ -22,6 +23,7 @@ export function LoginForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [remember, setRemember] = useState(true);
 
   // Nur interne Ziele (Schutz vor Open Redirect).
   const target = safeRedirectPath(searchParams.get("redirect"), `/${locale}/dashboard`);
@@ -40,6 +42,7 @@ export function LoginForm() {
     e.preventDefault();
     setLoading(true);
     setError("");
+    setRememberMe(remember);
     const supabase = createClient();
     const { error: err } = await supabase.auth.signInWithPassword({ email, password });
     if (err) {
@@ -54,6 +57,7 @@ export function LoginForm() {
   async function loginWithDiscord() {
     setLoading(true);
     setError("");
+    setRememberMe(remember);
     const supabase = createClient();
     const callbackUrl = new URL("/api/auth/callback", window.location.origin);
     callbackUrl.searchParams.set("next", target);
@@ -99,6 +103,7 @@ export function LoginForm() {
             required
           />
         </div>
+        <Checkbox checked={remember} onCheckedChange={setRemember} label={t("rememberMe")} name="remember" />
         <AuthError message={error || authErrorMessage} />
         <Button className="w-full" size="lg" type="submit" disabled={loading} aria-busy={loading}>
           {loading && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}

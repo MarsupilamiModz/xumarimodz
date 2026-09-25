@@ -1,5 +1,6 @@
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { SESSION_ONLY_COOKIE, applySessionOnly } from "@/lib/supabase/session-cookie";
 
 export type SessionRefreshResult = {
   response: NextResponse;
@@ -20,8 +21,9 @@ export async function updateSession(request: NextRequest): Promise<SessionRefres
         setAll(cookiesToSet: { name: string; value: string; options: CookieOptions }[]) {
           cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
           supabaseResponse = NextResponse.next({ request });
+          const sessionOnly = request.cookies.get(SESSION_ONLY_COOKIE)?.value === "1";
           cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
+            supabaseResponse.cookies.set(name, value, applySessionOnly(options, sessionOnly))
           );
         },
       },

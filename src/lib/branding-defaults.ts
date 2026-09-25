@@ -39,18 +39,19 @@ export type FooterSettings = {
   socialLinks: { discord?: string; twitter?: string; youtube?: string; tiktok?: string };
 };
 
-// Sichtbar laut Design: Mods, Premium, Shop, Partner, Creator. Die übrigen Punkte bleiben
-// ausgeblendet erhalten und lassen sich im ACP (Branding → Header) wieder einschalten.
+// Reihenfolge laut Design: Mods · Spiele · Sammlungen · Bestenliste · Premium · Shop · Partner · Creator.
+// Tutorials und Aufträge bleiben ausgeblendet und lassen sich im ACP (Branding → Header) einschalten.
+// Hinweis: Ist im ACP bereits ein eigenes Menü gespeichert, gilt dieses statt der Standardwerte.
 export const DEFAULT_HEADER_MENU: HeaderMenuItem[] = [
   { id: "mods", label: "Mods", href: "/mods", hidden: false, order: 0 },
-  { id: "premium", label: "Premium", href: "/premium", hidden: false, order: 1 },
-  { id: "shop", label: "Shop", href: "/shop", hidden: false, order: 2 },
-  { id: "partners", label: "Partners", href: "/partners", hidden: false, order: 3 },
-  { id: "creators", label: "Creators", href: "/creators", hidden: false, order: 4 },
-  { id: "games", label: "Games", href: "/games", hidden: true, order: 5 },
-  { id: "collections", label: "Collections", href: "/collections", hidden: true, order: 6 },
-  { id: "tutorials", label: "Tutorials", href: "/tutorials", hidden: true, order: 7 },
-  { id: "leaderboards", label: "Leaderboards", href: "/leaderboards", hidden: true, order: 8 },
+  { id: "games", label: "Games", href: "/games", hidden: false, order: 1 },
+  { id: "collections", label: "Collections", href: "/collections", hidden: false, order: 2 },
+  { id: "leaderboards", label: "Leaderboards", href: "/leaderboards", hidden: false, order: 3 },
+  { id: "premium", label: "Premium", href: "/premium", hidden: false, order: 4 },
+  { id: "shop", label: "Shop", href: "/shop", hidden: false, order: 5 },
+  { id: "partners", label: "Partners", href: "/partners", hidden: false, order: 6 },
+  { id: "creators", label: "Creators", href: "/creators", hidden: false, order: 7 },
+  { id: "tutorials", label: "Tutorials", href: "/tutorials", hidden: true, order: 8 },
   { id: "custom-orders", label: "Custom Orders", href: "/custom-orders", hidden: true, order: 9 },
 ];
 

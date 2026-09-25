@@ -13,6 +13,7 @@ import { SecurityBadge } from "@/components/security/security-badge";
 import { isSecurityVerified } from "@/lib/security/status";
 import type { FileScanStatus } from "@prisma/client";
 import { ModCardLikeButton } from "@/components/mods/mod-card-like-button";
+import { cn } from "@/lib/utils";
 
 type ModCardProps = {
   locale: string;
@@ -47,6 +48,8 @@ type ModCardProps = {
   pricingLabel?: string;
   isFavorited?: boolean;
   showLike?: boolean;
+  /** "list": Bild links, Text rechts mit Kurzbeschreibung (Katalog-Listenansicht). */
+  layout?: "grid" | "list";
 };
 
 /**
@@ -54,7 +57,7 @@ type ModCardProps = {
  * „Spiel · Kategorie · Autor“, Downloads. Der Titel-Link deckt die ganze Karte ab,
  * der Like-Button liegt darüber und ist ein eigenes, fokussierbares Element.
  */
-export const ModCard = memo(function ModCard({ locale, mod, pricingLabel, isFavorited, showLike = true }: ModCardProps) {
+export const ModCard = memo(function ModCard({ locale, mod, pricingLabel, isFavorited, showLike = true, layout = "grid" }: ModCardProps) {
   const t = useTranslations("mods");
   const media = mod.media ?? [];
   const cover = getFeaturedMediaUrl(
@@ -67,6 +70,7 @@ export const ModCard = memo(function ModCard({ locale, mod, pricingLabel, isFavo
   const scanStatus = primaryVersion?.scanStatus;
   const showSecurityBadge = scanStatus && isSecurityVerified(scanStatus, !!primaryVersion?.trustedFile);
   const reviewCount = mod.reviewCount ?? 0;
+  const list = layout === "list";
   const meta = [
     mod.game?.name,
     mod.category?.name,
@@ -74,21 +78,26 @@ export const ModCard = memo(function ModCard({ locale, mod, pricingLabel, isFavo
   ].filter(Boolean);
 
   return (
-    <article className="group relative flex h-full flex-col overflow-hidden rounded-lg border border-line bg-raised transition-colors duration-fast hover:border-line-control focus-within:border-line-control">
-      <div className="relative aspect-[16/10] overflow-hidden bg-elevated">
+    <article
+      className={cn(
+        "group relative flex overflow-hidden rounded-lg border border-line bg-raised transition-colors duration-fast hover:border-line-control focus-within:border-line-control",
+        list ? "flex-row" : "h-full flex-col"
+      )}
+    >
+      <div className={cn("relative overflow-hidden bg-elevated", list ? "aspect-[16/10] w-32 shrink-0 sm:w-48" : "aspect-[16/10]")}>
         {cover ? (
           <SafeImage
             src={cover}
             alt=""
             fill
             className="object-cover"
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+            sizes={list ? "(max-width: 640px) 128px, 192px" : "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"}
             loading="lazy"
           />
         ) : (
           <CoverPlaceholder name={mod.title} gameSlug={mod.game?.slug} />
         )}
-        <div className="absolute left-3 top-3 flex flex-wrap gap-1.5">
+        <div className={cn("absolute flex flex-wrap gap-1.5", list ? "left-2 top-2" : "left-3 top-3")}>
           {isPaid && <Badge variant="premium">{pricingLabel ?? mod.pricing}</Badge>}
           {mod.productType === "SOUND" && (
             <Badge variant="secondary">
@@ -103,14 +112,14 @@ export const ModCard = memo(function ModCard({ locale, mod, pricingLabel, isFavo
             </Badge>
           )}
         </div>
-        {showLike && mod.id && (
+        {showLike && mod.id && !list && (
           <div className="absolute bottom-3 right-3 z-10">
             <ModCardLikeButton modId={mod.id} initialFavorited={isFavorited} />
           </div>
         )}
       </div>
 
-      <div className="flex flex-1 flex-col gap-1.5 p-4">
+      <div className={cn("flex min-w-0 flex-1 flex-col gap-1.5", list ? "p-3 sm:p-4" : "p-4")}>
         <h3 className="text-[15px] font-semibold leading-snug text-ink">
           <Link
             href={`/${locale}/mods/${mod.slug}`}
@@ -120,6 +129,7 @@ export const ModCard = memo(function ModCard({ locale, mod, pricingLabel, isFavo
           </Link>
         </h3>
         {meta.length > 0 && <p className="meta truncate">{meta.join(" · ")}</p>}
+        {list && mod.shortDescription && <p className="hidden text-[13px] text-ink-muted sm:line-clamp-2">{mod.shortDescription}</p>}
         {showSecurityBadge && scanStatus && (
           <SecurityBadge scanStatus={scanStatus} isTrusted={!!primaryVersion?.trustedFile} compact />
         )}
@@ -136,6 +146,11 @@ export const ModCard = memo(function ModCard({ locale, mod, pricingLabel, isFavo
               <Star className="h-3.5 w-3.5" aria-hidden />
               {formatModRating(mod.averageRating, reviewCount)}
               <span className="text-ink-faint">({formatCompactNumber(reviewCount, locale)})</span>
+            </span>
+          )}
+          {list && showLike && mod.id && (
+            <span className="relative z-10 ml-auto">
+              <ModCardLikeButton modId={mod.id} initialFavorited={isFavorited} />
             </span>
           )}
         </div>

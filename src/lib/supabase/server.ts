@@ -1,5 +1,6 @@
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { SESSION_ONLY_COOKIE, applySessionOnly } from "@/lib/supabase/session-cookie";
 
 export async function createClient() {
   const cookieStore = await cookies();
@@ -14,8 +15,9 @@ export async function createClient() {
         },
         setAll(cookiesToSet: { name: string; value: string; options: CookieOptions }[]) {
           try {
+            const sessionOnly = cookieStore.get(SESSION_ONLY_COOKIE)?.value === "1";
             cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
+              cookieStore.set(name, value, applySessionOnly(options, sessionOnly))
             );
           } catch {
             // Called from Server Component
