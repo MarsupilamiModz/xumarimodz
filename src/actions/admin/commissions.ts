@@ -56,10 +56,11 @@ export async function createCommissionRule(input: z.infer<typeof ruleSchema>) {
 }
 
 export async function toggleCommissionRule(id: string, isActive: boolean) {
-  const { error } = await requireActionPermission("settings.write");
+  const { user, error } = await requireActionPermission("settings.write");
   if (error) return error;
 
   await prisma.commissionRule.update({ where: { id }, data: { isActive } });
+  await createAuditLog({ actorId: user.id, action: isActive ? "commission.rule_on" : "commission.rule_off", entityType: "CommissionRule", entityId: id });
   revalidatePath("/admin/commissions");
   return ok(undefined);
 }
@@ -134,10 +135,14 @@ export async function markPayoutPaid(id: string, reference?: string) {
   const { user, error } = await requireActionPermission("settings.write");
   if (error) return error;
 
-  await prisma.payout.update({
-    where: { id },
-    data: { status: "PAID", paidAt: new Date(), reference },
-  });
+  await prisma.$transaction([
+    prisma.payout.update({
+      where: { id },
+      data: { status: "PAID", paidAt: new Date(), reference },
+    }),
+    // Zugehörige Provisionen gelten erst mit der Auszahlung als bezahlt.
+    prisma.commissionEntry.updateMany({ where: { payoutId: id }, data: { status: "PAID" } }),
+  ]);
 
   await createAuditLog({
     actorId: user.id,
@@ -146,6 +151,68 @@ export async function markPayoutPaid(id: string, reference?: string) {
     entityId: id,
   });
 
+  revalidatePath("/admin/commissions");
+  return ok(undefined);
+}
+
+/**
+ * „Auswahl freigeben“: offene Provisionen nach Empfänger bündeln und je Empfänger eine Auszahlung anlegen.
+ * Berücksichtigt Rückbehalt (nur ältere Einträge) und Mindestbetrag (kleinere Summen bleiben offen).
+ */
+export async function approveCommissionEntries(entryIds: string[]) {
+  const { user, error } = await requireActionPermission("settings.write");
+  if (error) return error;
+  const ids = Array.from(new Set(entryIds)).slice(0, 1000);
+  if (ids.length === 0) return fail("Nothing selected");
+
+  const { getPayoutRules, holdbackCutoff } = await import("@/lib/payout-rules");
+  const rules = await getPayoutRules();
+  const cutoff = holdbackCutoff(rules);
+
+  const entries = await prisma.commissionEntry.findMany({
+    where: { id: { in: ids }, status: "PENDING", payoutId: null },
+    select: { id: true, userId: true, amountCents: true, createdAt: true },
+  });
+  const eligible = entries.filter((e) => e.createdAt <= cutoff);
+  const byUser = new Map<string, { ids: string[]; total: number }>();
+  for (const e of eligible) {
+    const g = byUser.get(e.userId) ?? { ids: [], total: 0 };
+    g.ids.push(e.id);
+    g.total += e.amountCents;
+    byUser.set(e.userId, g);
+  }
+
+  let payouts = 0;
+  let belowMinimum = 0;
+  for (const [userId, g] of Array.from(byUser.entries())) {
+    if (g.total < rules.minPayoutCents) {
+      belowMinimum++;
+      continue;
+    }
+    const payout = await prisma.$transaction(async (tx) => {
+      const p = await tx.payout.create({ data: { userId, amountCents: g.total, status: "PROCESSING" } });
+      await tx.commissionEntry.updateMany({ where: { id: { in: g.ids }, status: "PENDING" }, data: { status: "PROCESSING", payoutId: p.id } });
+      return p;
+    });
+    await createAuditLog({ actorId: user.id, action: "payout.create", entityType: "Payout", entityId: payout.id, metadata: { userId, amountCents: g.total, entries: g.ids.length } });
+    payouts++;
+  }
+
+  revalidatePath("/admin/commissions");
+  return ok({ payouts, held: entries.length - eligible.length, belowMinimum, skipped: ids.length - entries.length });
+}
+
+export async function saveAdminPayoutRules(input: { minPayoutCents: number; payoutDay: number; holdbackDays: number }) {
+  const { user, error } = await requireActionPermission("settings.write");
+  if (error) return error;
+  const rules = {
+    minPayoutCents: Math.min(1_000_000, Math.max(0, Math.round(Number(input.minPayoutCents) || 0))),
+    payoutDay: Math.min(28, Math.max(1, Math.round(Number(input.payoutDay) || 1))),
+    holdbackDays: Math.min(180, Math.max(0, Math.round(Number(input.holdbackDays) || 0))),
+  };
+  const { savePayoutRules } = await import("@/lib/payout-rules");
+  await savePayoutRules(rules);
+  await createAuditLog({ actorId: user.id, action: "commission.payout_rules", entityType: "SiteSetting", entityId: "payout_rules", metadata: rules });
   revalidatePath("/admin/commissions");
   return ok(undefined);
 }
