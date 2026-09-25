@@ -1,9 +1,11 @@
+import { requirePagePermission } from "@/lib/auth";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { listCommissionRules, listPayouts } from "@/actions/admin/commissions";
 import { CommissionsAdminPanel } from "@/components/admin/commissions-admin-panel";
 import type { Locale } from "@/i18n/config";
 
 export default async function AdminCommissionsPage({ params: { locale } }: { params: { locale: Locale } }) {
+  await requirePagePermission("settings.write");
   setRequestLocale(locale);
   await getTranslations("ecosystem");
 

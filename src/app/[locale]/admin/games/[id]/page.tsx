@@ -1,3 +1,4 @@
+import { requirePagePermission } from "@/lib/auth";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
@@ -13,6 +14,7 @@ export default async function EditGamePage({
 }: {
   params: { locale: Locale; id: string };
 }) {
+  await requirePagePermission("games.write");
   setRequestLocale(locale);
   const t = await getTranslations("admin");
   const tc = await getTranslations("common");

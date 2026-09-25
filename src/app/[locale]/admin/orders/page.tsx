@@ -1,3 +1,4 @@
+import { requirePagePermission } from "@/lib/auth";
 import Link from "next/link";
 import { getAdminOrders } from "@/actions/orders";
 import { Card } from "@/components/ui/card";
@@ -5,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import type { Locale } from "@/i18n/config";
 
 export default async function AdminOrdersPage({ params: { locale } }: { params: { locale: Locale } }) {
+  await requirePagePermission("orders.read");
   const result = await getAdminOrders();
   const orders = result.success ? result.data.orders : [];
 

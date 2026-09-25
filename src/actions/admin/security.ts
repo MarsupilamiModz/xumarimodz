@@ -439,6 +439,9 @@ export async function exportSecurityReport() {
 }
 
 export async function getModSecurityInfo(modId: string) {
+  // Enthält Prüfer-Namen und Scan-Berichte: nur für Team-Konten mit Mod-Rechten.
+  const { error } = await requireActionPermission("mods.read");
+  if (error) return null;
   const version = await prisma.modVersion.findFirst({
     where: { modId, isPrimary: true, isArchived: false },
     include: {

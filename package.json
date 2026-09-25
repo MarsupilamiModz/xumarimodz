@@ -14,7 +14,8 @@
     "db:studio": "prisma studio",
     "postinstall": "prisma generate",
     "validate:platform": "tsx scripts/platform-validation.ts",
-    "check:tokens": "node scripts/check-tokens.mjs"
+    "check:tokens": "node scripts/check-tokens.mjs",
+    "test": "node --test \"scripts/tests/*.test.mjs\""
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.750.0",

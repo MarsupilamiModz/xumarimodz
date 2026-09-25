@@ -1,10 +1,10 @@
-import { requireStaff } from "@/lib/auth";
+import { requirePagePermission } from "@/lib/auth";
 import { getAdminPaymentSettings, listRecentStripeCheckouts } from "@/actions/admin/payments";
 import { PaymentsAdminPanel } from "@/components/admin/payments-admin-panel";
 import type { Locale } from "@/i18n/config";
 
 export default async function AdminPaymentsPage({ params: { locale } }: { params: { locale: Locale } }) {
-  await requireStaff();
+  await requirePagePermission("settings.write");
   const [settingsResult, txResult] = await Promise.all([
     getAdminPaymentSettings(),
     listRecentStripeCheckouts(),

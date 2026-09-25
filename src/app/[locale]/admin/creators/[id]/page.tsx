@@ -1,3 +1,4 @@
+import { requirePagePermission } from "@/lib/auth";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -10,6 +11,7 @@ export default async function AdminCreatorDetailPage({
 }: {
   params: { locale: Locale; id: string };
 }) {
+  await requirePagePermission("users.read");
   setRequestLocale(locale);
   const t = await getTranslations("ecosystem");
   const result = await getCreatorAdmin(id);

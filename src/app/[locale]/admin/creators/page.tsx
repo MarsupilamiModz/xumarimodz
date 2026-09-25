@@ -1,3 +1,4 @@
+import { requirePagePermission } from "@/lib/auth";
 import Link from "next/link";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { listCreators } from "@/actions/admin/creators";
@@ -7,6 +8,7 @@ import { CreatorLevelBadge } from "@/components/creator/creator-level-badge";
 import type { Locale } from "@/i18n/config";
 
 export default async function AdminCreatorsPage({ params: { locale } }: { params: { locale: Locale } }) {
+  await requirePagePermission("users.read");
   setRequestLocale(locale);
   const t = await getTranslations("ecosystem");
   const result = await listCreators();

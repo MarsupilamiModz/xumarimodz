@@ -1,3 +1,4 @@
+import { requirePagePermission } from "@/lib/auth";
 import Link from "next/link";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { listVisibleCreators } from "@/actions/admin/creators";
@@ -5,6 +6,7 @@ import { CreatorVisibilityManager } from "@/components/admin/creator-visibility-
 import type { Locale } from "@/i18n/config";
 
 export default async function CreatorVisibilityPage({ params: { locale } }: { params: { locale: Locale } }) {
+  await requirePagePermission("users.write");
   setRequestLocale(locale);
   const t = await getTranslations("ecosystem");
   const result = await listVisibleCreators();

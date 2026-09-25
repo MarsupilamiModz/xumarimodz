@@ -1,9 +1,11 @@
+import { requirePagePermission } from "@/lib/auth";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { GameForm } from "@/components/admin/game-form";
 import type { Locale } from "@/i18n/config";
 
-export default function NewGamePage({ params: { locale } }: { params: { locale: Locale } }) {
+export default async function NewGamePage({ params: { locale } }: { params: { locale: Locale } }) {
+  await requirePagePermission("games.write");
   return (
     <div>
       <Link href={`/${locale}/admin/games`} className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6">
