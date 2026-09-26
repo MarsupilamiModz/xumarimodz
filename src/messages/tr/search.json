@@ -16,27 +16,25 @@
     "games": "Oyunlar",
     "categories": "Kategoriler"
   },
-  "search": {
-    "pageTitle": "Ara",
-    "pageSubtitle": "Modları ada, etikete, oyuna veya üreticiye göre bul.",
-    "searchLabel": "Arama terimi",
-    "submit": "Ara",
-    "gameLabel": "Oyun",
-    "allGames": "Tüm oyunlar",
-    "sortLabel": "Sırala",
-    "sort": {
-      "downloads": "En çok indirilen",
-      "trending": "Trend",
-      "rating": "En iyi puan",
-      "likes": "En çok favorilenen",
-      "newest": "En yeni",
-      "updated": "Son güncellenen"
-    },
-    "verifiedOnly": "Yalnızca doğrulanmış üreticiler",
-    "tagsLabel": "Popüler etiketler",
-    "resultsCount": "{count} sonuç",
-    "noResultsText": "Başka bir terim dene veya filtreleri kaldır.",
-    "trendingTitle": "Bu hafta popüler",
-    "loading": "Aranıyor…"
-  }
+  "pageTitle": "Ara",
+  "pageSubtitle": "Modları ada, etikete, oyuna veya üreticiye göre bul.",
+  "searchLabel": "Arama terimi",
+  "submit": "Ara",
+  "gameLabel": "Oyun",
+  "allGames": "Tüm oyunlar",
+  "sortLabel": "Sırala",
+  "sort": {
+    "downloads": "En çok indirilen",
+    "trending": "Trend",
+    "rating": "En iyi puan",
+    "likes": "En çok favorilenen",
+    "newest": "En yeni",
+    "updated": "Son güncellenen"
+  },
+  "verifiedOnly": "Yalnızca doğrulanmış üreticiler",
+  "tagsLabel": "Popüler etiketler",
+  "resultsCount": "{count} sonuç",
+  "noResultsText": "Başka bir terim dene veya filtreleri kaldır.",
+  "trendingTitle": "Bu hafta popüler",
+  "loading": "Aranıyor…"
 }

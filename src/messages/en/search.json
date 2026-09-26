@@ -16,27 +16,25 @@
     "games": "Games",
     "categories": "Categories"
   },
-  "search": {
-    "pageTitle": "Search",
-    "pageSubtitle": "Find mods by name, tag, game or creator.",
-    "searchLabel": "Search term",
-    "submit": "Search",
-    "gameLabel": "Game",
-    "allGames": "All games",
-    "sortLabel": "Sort",
-    "sort": {
-      "downloads": "Most downloaded",
-      "trending": "Trending",
-      "rating": "Best rated",
-      "likes": "Most favorited",
-      "newest": "Newest",
-      "updated": "Recently updated"
-    },
-    "verifiedOnly": "Verified creators only",
-    "tagsLabel": "Popular tags",
-    "resultsCount": "{count, plural, one {# result} other {# results}}",
-    "noResultsText": "Try another term or remove filters.",
-    "trendingTitle": "Popular this week",
-    "loading": "Searching…"
-  }
+  "pageTitle": "Search",
+  "pageSubtitle": "Find mods by name, tag, game or creator.",
+  "searchLabel": "Search term",
+  "submit": "Search",
+  "gameLabel": "Game",
+  "allGames": "All games",
+  "sortLabel": "Sort",
+  "sort": {
+    "downloads": "Most downloaded",
+    "trending": "Trending",
+    "rating": "Best rated",
+    "likes": "Most favorited",
+    "newest": "Newest",
+    "updated": "Recently updated"
+  },
+  "verifiedOnly": "Verified creators only",
+  "tagsLabel": "Popular tags",
+  "resultsCount": "{count, plural, one {# result} other {# results}}",
+  "noResultsText": "Try another term or remove filters.",
+  "trendingTitle": "Popular this week",
+  "loading": "Searching…"
 }

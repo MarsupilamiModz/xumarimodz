@@ -16,27 +16,25 @@
     "games": "Jeux",
     "categories": "Catégories"
   },
-  "search": {
-    "pageTitle": "Recherche",
-    "pageSubtitle": "Trouve des mods par nom, tag, jeu ou créateur.",
-    "searchLabel": "Terme de recherche",
-    "submit": "Rechercher",
-    "gameLabel": "Jeu",
-    "allGames": "Tous les jeux",
-    "sortLabel": "Trier",
-    "sort": {
-      "downloads": "Les plus téléchargés",
-      "trending": "Tendances",
-      "rating": "Les mieux notés",
-      "likes": "Les plus favoris",
-      "newest": "Les plus récents",
-      "updated": "Mis à jour récemment"
-    },
-    "verifiedOnly": "Créateurs vérifiés uniquement",
-    "tagsLabel": "Tags populaires",
-    "resultsCount": "{count, plural, one {# résultat} other {# résultats}}",
-    "noResultsText": "Essaie un autre terme ou retire des filtres.",
-    "trendingTitle": "Populaires cette semaine",
-    "loading": "Recherche…"
-  }
+  "pageTitle": "Recherche",
+  "pageSubtitle": "Trouve des mods par nom, tag, jeu ou créateur.",
+  "searchLabel": "Terme de recherche",
+  "submit": "Rechercher",
+  "gameLabel": "Jeu",
+  "allGames": "Tous les jeux",
+  "sortLabel": "Trier",
+  "sort": {
+    "downloads": "Les plus téléchargés",
+    "trending": "Tendances",
+    "rating": "Les mieux notés",
+    "likes": "Les plus favoris",
+    "newest": "Les plus récents",
+    "updated": "Mis à jour récemment"
+  },
+  "verifiedOnly": "Créateurs vérifiés uniquement",
+  "tagsLabel": "Tags populaires",
+  "resultsCount": "{count, plural, one {# résultat} other {# résultats}}",
+  "noResultsText": "Essaie un autre terme ou retire des filtres.",
+  "trendingTitle": "Populaires cette semaine",
+  "loading": "Recherche…"
 }
