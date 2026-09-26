@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
 import type { ModDependencyRelation } from "@prisma/client";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -27,11 +28,16 @@ type Dep = {
   dependency: { id: string; title: string; slug: string };
 };
 
-const RELATION_LABELS: Record<ModDependencyRelation, string> = {
-  REQUIRED: "Required",
-  OPTIONAL: "Optional",
-  CONFLICT: "Incompatible",
+const RELATION_KEYS: Record<ModDependencyRelation, string> = {
+  REQUIRED: "relationRequired",
+  OPTIONAL: "relationOptional",
+  CONFLICT: "relationIncompatible",
 };
+
+function relationLabel(relation: ModDependencyRelation, isRequired: boolean, t: (key: string) => string) {
+  const key = RELATION_KEYS[relation];
+  return key ? t(key) : t(isRequired ? "relationRequired" : "relationOptional");
+}
 
 export function CreatorModDependenciesEditor({
   modId,
@@ -42,6 +48,7 @@ export function CreatorModDependenciesEditor({
   gameId: string;
   initial: Dep[];
 }) {
+  const t = useTranslations("common.cx.modDependencies");
   const [deps, setDeps] = useState(initial);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<{ id: string; title: string; slug: string }[]>([]);
@@ -86,11 +93,11 @@ export function CreatorModDependenciesEditor({
 
   return (
     <Card>
-      <CardHeader><CardTitle>Dependencies</CardTitle></CardHeader>
+      <CardHeader><CardTitle>{t("title")}</CardTitle></CardHeader>
       <CardContent className="space-y-4">
         <ul className="space-y-2 text-sm">
           {deps.length === 0 ? (
-            <li className="text-muted-foreground">No dependencies defined.</li>
+            <li className="text-muted-foreground">{t("noDependencies")}</li>
           ) : (
             deps.map((d) => (
               <li key={d.id} className="flex justify-between items-center">
@@ -101,11 +108,11 @@ export function CreatorModDependenciesEditor({
                       d.relation === "CONFLICT" ? "text-destructive" : "text-muted-foreground"
                     }`}
                   >
-                    ({RELATION_LABELS[d.relation] ?? (d.isRequired ? "required" : "optional")})
+                    ({relationLabel(d.relation, d.isRequired, t)})
                   </span>
                 </span>
                 <Button size="sm" variant="ghost" disabled={pending} onClick={() => remove(d.dependencyId)}>
-                  Remove
+                  {t("remove")}
                 </Button>
               </li>
             ))
@@ -113,16 +120,16 @@ export function CreatorModDependenciesEditor({
         </ul>
 
         <div className="space-y-2 border-t border-border/30 pt-4">
-          <label className="text-sm font-medium">Add dependency</label>
+          <label className="text-sm font-medium">{t("addDependencyLabel")}</label>
           <div className="flex gap-2">
             <Input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search mods…"
+              placeholder={t("searchPlaceholder")}
               onKeyDown={(e) => e.key === "Enter" && search()}
             />
             <Button variant="outline" disabled={pending} onClick={search}>
-              Search
+              {t("search")}
             </Button>
           </div>
           <Select value={relation} onValueChange={(v) => setRelation(v as ModDependencyRelation)}>
@@ -130,22 +137,22 @@ export function CreatorModDependenciesEditor({
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="REQUIRED">Required dependency</SelectItem>
-              <SelectItem value="OPTIONAL">Optional dependency</SelectItem>
-              <SelectItem value="CONFLICT">Incompatible mod (conflict)</SelectItem>
+              <SelectItem value="REQUIRED">{t("selectRequired")}</SelectItem>
+              <SelectItem value="OPTIONAL">{t("selectOptional")}</SelectItem>
+              <SelectItem value="CONFLICT">{t("selectIncompatible")}</SelectItem>
             </SelectContent>
           </Select>
           {relation !== "CONFLICT" && (
             <Input
               value={minVersion}
               onChange={(e) => setMinVersion(e.target.value)}
-              placeholder="Minimum version (e.g. 2.0.0)"
+              placeholder={t("minVersionPlaceholder")}
             />
           )}
           <Input
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            placeholder="Compatibility notes (optional)"
+            placeholder={t("notesPlaceholder")}
           />
           {results.length > 0 && (
             <ul className="space-y-1 max-h-40 overflow-y-auto">

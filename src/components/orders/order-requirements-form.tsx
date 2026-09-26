@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { submitOrderRequirements } from "@/actions/orders";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,6 +19,7 @@ export function OrderRequirementsForm({
   locale: string;
   productName: string;
 }) {
+  const t = useTranslations("common.cx.orderRequirements");
   const appToast = useAppToast();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -26,9 +28,9 @@ export function OrderRequirementsForm({
   return (
     <Card className="p-6 space-y-4">
       <div>
-        <h2 className="text-xl font-bold">Project details</h2>
+        <h2 className="text-xl font-bold">{t("title")}</h2>
         <p className="text-sm text-muted-foreground mt-1">
-          Payment confirmed for <strong>{productName}</strong>. Tell us what you need so we can start.
+          {t.rich("intro", { productName, strong: (chunks) => <strong>{chunks}</strong> })}
         </p>
       </div>
 
@@ -52,30 +54,30 @@ export function OrderRequirementsForm({
         }}
       >
         <div className="space-y-1">
-          <label className="text-sm font-medium">Project description *</label>
-          <Textarea name="projectDescription" required rows={4} placeholder="Describe your project…" />
+          <label className="text-sm font-medium">{t("projectDescriptionLabel")}</label>
+          <Textarea name="projectDescription" required rows={4} placeholder={t("projectDescriptionPlaceholder")} />
         </div>
         <div className="space-y-1">
-          <label className="text-sm font-medium">Requirements</label>
-          <Textarea name="requirements" rows={4} placeholder="List specific requirements, dimensions, formats…" />
+          <label className="text-sm font-medium">{t("requirementsLabel")}</label>
+          <Textarea name="requirements" rows={4} placeholder={t("requirementsPlaceholder")} />
         </div>
         <div className="space-y-1">
-          <label className="text-sm font-medium">Preferred style</label>
-          <Input name="preferredStyle" placeholder="e.g. realistic, neon, minimal…" />
+          <label className="text-sm font-medium">{t("preferredStyleLabel")}</label>
+          <Input name="preferredStyle" placeholder={t("preferredStylePlaceholder")} />
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-1">
-            <label className="text-sm font-medium">Budget notes</label>
-            <Input name="budgetNotes" placeholder="Optional budget context" />
+            <label className="text-sm font-medium">{t("budgetNotesLabel")}</label>
+            <Input name="budgetNotes" placeholder={t("budgetNotesPlaceholder")} />
           </div>
           <div className="space-y-1">
-            <label className="text-sm font-medium">Deadline</label>
+            <label className="text-sm font-medium">{t("deadlineLabel")}</label>
             <Input name="deadline" type="date" />
           </div>
         </div>
         <div className="space-y-1">
-          <label className="text-sm font-medium">Additional notes</label>
-          <Textarea name="notes" rows={2} placeholder="Anything else we should know" />
+          <label className="text-sm font-medium">{t("notesLabel")}</label>
+          <Textarea name="notes" rows={2} placeholder={t("notesPlaceholder")} />
         </div>
 
         <div
@@ -86,7 +88,7 @@ export function OrderRequirementsForm({
             setFiles((prev) => [...prev, ...Array.from(e.dataTransfer.files)].slice(0, 10));
           }}
         >
-          <p>Upload references: images, PSD, ZIP, RAR (max 10 files, 25 MB each)</p>
+          <p>{t("uploadHint")}</p>
           <Input
             type="file"
             multiple
@@ -104,7 +106,7 @@ export function OrderRequirementsForm({
         </div>
 
         <Button type="submit" className="w-full" disabled={pending}>
-          Submit project details
+          {t("submit")}
         </Button>
       </form>
     </Card>

@@ -1,6 +1,7 @@
 "use client";
 
 import { memo, useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -39,6 +40,7 @@ function TeamAdminPanelInner({
   departments: readonly string[];
 }) {
   const router = useRouter();
+  const t = useTranslations("admin.ui.teamAdmin");
   const [pending, startTransition] = useTransition();
   const [search, setSearch] = useState("");
   const [searchResults, setSearchResults] = useState<
@@ -59,12 +61,12 @@ function TeamAdminPanelInner({
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Add team member</CardTitle>
+          <CardTitle>{t("addTeamMemberHeading")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="flex gap-2">
             <Input
-              placeholder="Search users by username or email…"
+              placeholder={t("searchUsersPlaceholder")}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -78,7 +80,7 @@ function TeamAdminPanelInner({
                 })
               }
             >
-              Search
+              {t("searchButton")}
             </Button>
           </div>
           {searchResults.map((u) => (
@@ -99,7 +101,7 @@ function TeamAdminPanelInner({
                   })
                 }
               >
-                Add
+                {t("addButton")}
               </Button>
             </div>
           ))}
@@ -108,11 +110,11 @@ function TeamAdminPanelInner({
 
       <Card>
         <CardHeader>
-          <CardTitle>Team ({members.length})</CardTitle>
+          <CardTitle>{t("teamHeading", { count: members.length })}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {members.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No team members yet.</p>
+            <p className="text-sm text-muted-foreground">{t("noTeamMembersYet")}</p>
           ) : (
             members.map((m) => (
               <div key={m.id} className="grid gap-2 border border-border/30 rounded-lg p-3 sm:grid-cols-2">
@@ -133,17 +135,17 @@ function TeamAdminPanelInner({
                     defaultValue={m.role}
                     onChange={(e) => saveMember(m.id, { role: e.target.value as UserRole })}
                   >
-                    <option value="OWNER">Owner</option>
-                    <option value="ADMIN">Admin</option>
-                    <option value="MODERATOR">Moderator</option>
-                    <option value="SUPPORT">Support</option>
+                    <option value="OWNER">{t("roleOwner")}</option>
+                    <option value="ADMIN">{t("roleAdmin")}</option>
+                    <option value="MODERATOR">{t("roleModerator")}</option>
+                    <option value="SUPPORT">{t("roleSupport")}</option>
                   </select>
                   <select
                     className="h-9 rounded-md border border-input bg-background/50 px-2 text-sm"
                     defaultValue={m.teamDepartment ?? ""}
                     onChange={(e) => saveMember(m.id, { teamDepartment: e.target.value || null })}
                   >
-                    <option value="">No department</option>
+                    <option value="">{t("noDepartmentOption")}</option>
                     {departments.map((d) => (
                       <option key={d} value={d}>{d}</option>
                     ))}
@@ -155,13 +157,13 @@ function TeamAdminPanelInner({
                       saveMember(m.id, { permissionGroupId: e.target.value || null })
                     }
                   >
-                    <option value="">No group</option>
+                    <option value="">{t("noGroupOption")}</option>
                     {groups.map((g) => (
                       <option key={g.id} value={g.id}>{g.name}</option>
                     ))}
                   </select>
                   <Input
-                    placeholder="Badge label"
+                    placeholder={t("badgeLabelPlaceholder")}
                     defaultValue={m.teamBadge ?? ""}
                     onBlur={(e) => saveMember(m.id, { teamBadge: e.target.value || null })}
                   />
@@ -171,14 +173,14 @@ function TeamAdminPanelInner({
                     disabled={pending}
                     onClick={() =>
                       startTransition(async () => {
-                        if (!confirm("Remove from team?")) return;
+                        if (!confirm(t("removeFromTeamConfirm"))) return;
                         const r = await removeFromTeamAdmin(m.id);
                         if (r.success) router.refresh();
                         else toast({ title: r.error, variant: "destructive" });
                       })
                     }
                   >
-                    Remove from team
+                    {t("removeFromTeamButton")}
                   </Button>
                 </div>
               </div>

@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,12 +38,13 @@ type Collection = {
 };
 
 export function CollectionCreateForm({ locale }: { locale: Locale }) {
+  const t = useTranslations("common.cx.collectionEditor");
   const router = useRouter();
   const [pending, startTransition] = useTransition();
 
   return (
     <Card className="max-w-xl">
-      <CardHeader><CardTitle>Create collection</CardTitle></CardHeader>
+      <CardHeader><CardTitle>{t("createTitle")}</CardTitle></CardHeader>
       <CardContent>
         <form
           className="space-y-3"
@@ -63,14 +65,14 @@ export function CollectionCreateForm({ locale }: { locale: Locale }) {
             });
           }}
         >
-          <Input name="title" placeholder="Collection title" required />
-          <Textarea name="description" placeholder="Description" rows={3} />
-          <Input name="coverUrl" placeholder="Cover image URL (optional)" />
+          <Input name="title" placeholder={t("titlePlaceholder")} required />
+          <Textarea name="description" placeholder={t("descriptionPlaceholder")} rows={3} />
+          <Input name="coverUrl" placeholder={t("coverUrlPlaceholder")} />
           <select name="visibility" className="h-10 w-full rounded-md border border-input bg-background/50 px-3 text-sm">
-            <option value="PUBLIC">Public</option>
-            <option value="PRIVATE">Private</option>
+            <option value="PUBLIC">{t("visibilityPublic")}</option>
+            <option value="PRIVATE">{t("visibilityPrivate")}</option>
           </select>
-          <Button type="submit" disabled={pending}>Create</Button>
+          <Button type="submit" disabled={pending}>{t("createSubmit")}</Button>
         </form>
       </CardContent>
     </Card>
@@ -78,6 +80,7 @@ export function CollectionCreateForm({ locale }: { locale: Locale }) {
 }
 
 export function CollectionEditForm({ locale, collection }: { locale: Locale; collection: Collection }) {
+  const t = useTranslations("common.cx.collectionEditor");
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [modQuery, setModQuery] = useState("");
@@ -112,15 +115,15 @@ export function CollectionEditForm({ locale, collection }: { locale: Locale; col
           >
             <Input name="title" defaultValue={collection.title} required />
             <Textarea name="description" defaultValue={collection.description ?? ""} rows={3} />
-            <Input name="coverUrl" defaultValue={collection.coverUrl ?? ""} placeholder="Cover URL" />
+            <Input name="coverUrl" defaultValue={collection.coverUrl ?? ""} placeholder={t("coverUrlEditPlaceholder")} />
             <select name="visibility" defaultValue={collection.visibility} className="h-10 w-full rounded-md border border-input bg-background/50 px-3 text-sm">
-              <option value="PUBLIC">Public</option>
-              <option value="PRIVATE">Private</option>
+              <option value="PUBLIC">{t("visibilityPublic")}</option>
+              <option value="PRIVATE">{t("visibilityPrivate")}</option>
             </select>
             <div className="flex gap-2">
-              <Button type="submit" disabled={pending}>Save</Button>
+              <Button type="submit" disabled={pending}>{t("save")}</Button>
               <Button type="button" variant="outline" asChild>
-                <Link href={`/${locale}/collections/${collection.slug}`}>View public</Link>
+                <Link href={`/${locale}/collections/${collection.slug}`}>{t("viewPublic")}</Link>
               </Button>
             </div>
           </form>
@@ -130,22 +133,22 @@ export function CollectionEditForm({ locale, collection }: { locale: Locale; col
             disabled={pending}
             onClick={() =>
               startTransition(async () => {
-                if (!confirm("Delete this collection?")) return;
+                if (!confirm(t("deleteConfirm"))) return;
                 const r = await deleteCollection(collection.id);
                 if (r.success) router.push(`/${locale}/creator/collections`);
               })
             }
           >
-            Delete collection
+            {t("deleteButton")}
           </Button>
         </CardContent>
       </Card>
 
       <Card>
-        <CardHeader><CardTitle>Mods in collection</CardTitle></CardHeader>
+        <CardHeader><CardTitle>{t("modsInCollectionTitle")}</CardTitle></CardHeader>
         <CardContent className="space-y-3">
           {collection.items.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No mods yet.</p>
+            <p className="text-sm text-muted-foreground">{t("noMods")}</p>
           ) : (
             collection.items.map((item, idx) => (
               <div key={item.modId} className="flex items-center justify-between gap-2 text-sm border-b border-border/30 pb-2">
@@ -179,7 +182,7 @@ export function CollectionEditForm({ locale, collection }: { locale: Locale; col
                       })
                     }
                   >
-                    Remove
+                    {t("removeMod")}
                   </Button>
                 </div>
               </div>
@@ -190,7 +193,7 @@ export function CollectionEditForm({ locale, collection }: { locale: Locale; col
             <Input
               value={modQuery}
               onChange={(e) => setModQuery(e.target.value)}
-              placeholder="Mod ID to add"
+              placeholder={t("modIdPlaceholder")}
             />
             <Button
               variant="outline"
@@ -206,7 +209,7 @@ export function CollectionEditForm({ locale, collection }: { locale: Locale; col
                 })
               }
             >
-              Add mod
+              {t("addMod")}
             </Button>
           </div>
         </CardContent>

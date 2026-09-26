@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { saveAdminRevenueShareSettings } from "@/actions/admin/revenue-sharing";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -21,6 +22,7 @@ type Dashboard = {
 };
 
 export function RevenueSharingPanel({ data }: { data: Dashboard }) {
+  const t = useTranslations("admin.ui.revenueSharing");
   const router = useRouter();
   const appToast = useAppToast();
   const [pending, startTransition] = useTransition();
@@ -40,7 +42,7 @@ export function RevenueSharingPanel({ data }: { data: Dashboard }) {
   function save(e: React.FormEvent) {
     e.preventDefault();
     if (Math.abs(total - 100) > 0.01) {
-      appToast.error("Shares must total 100%");
+      appToast.error(t("sharesMustTotal"));
       return;
     }
     startTransition(async () => {
@@ -60,42 +62,42 @@ export function RevenueSharingPanel({ data }: { data: Dashboard }) {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="h1-acp">Payout settings</h1>
+        <h1 className="h1-acp">{t("heading")}</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Global revenue split for mod sales. Per-creator overrides remain in creator profiles.
+          {t("subheading")}
         </p>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <Card className="p-4">
-          <p className="text-xs uppercase text-muted-foreground">Revenue today</p>
+          <p className="text-xs uppercase text-muted-foreground">{t("revenueToday")}</p>
           <p className="text-2xl font-bold tabular-nums">{formatCents(data.revenueTodayCents)}</p>
         </Card>
         <Card className="p-4">
-          <p className="text-xs uppercase text-muted-foreground">Revenue (30 days)</p>
+          <p className="text-xs uppercase text-muted-foreground">{t("revenue30d")}</p>
           <p className="text-2xl font-bold tabular-nums">{formatCents(data.revenue30dCents)}</p>
         </Card>
         <Card className="p-4">
-          <p className="text-xs uppercase text-muted-foreground">Open commissions</p>
+          <p className="text-xs uppercase text-muted-foreground">{t("openCommissions")}</p>
           <p className="text-2xl font-bold tabular-nums">{formatCents(data.openCommissionCents)}</p>
-          <p className="text-xs text-muted-foreground">{data.openCommissionCount} entries</p>
+          <p className="text-xs text-muted-foreground">{t("entriesCount", { count: data.openCommissionCount })}</p>
         </Card>
         <Card className="p-4">
-          <p className="text-xs uppercase text-muted-foreground">Pending payouts</p>
+          <p className="text-xs uppercase text-muted-foreground">{t("pendingPayouts")}</p>
           <p className="text-2xl font-bold tabular-nums">{formatCents(data.pendingPayoutCents)}</p>
-          <p className="text-xs text-muted-foreground">{data.pendingPayoutCount} payouts</p>
+          <p className="text-xs text-muted-foreground">{t("payoutsCount", { count: data.pendingPayoutCount })}</p>
         </Card>
       </div>
 
       <Card className="p-6 max-w-xl">
-        <h2 className="font-semibold mb-4">Global revenue split</h2>
+        <h2 className="font-semibold mb-4">{t("globalRevenueSplit")}</h2>
         <form onSubmit={save} className="space-y-4">
           {(
             [
-              ["creator", "Creator share (%)"],
-              ["designer", "Designer share (%)"],
-              ["partner", "Partner share (%)"],
-              ["platform", "Platform share (%)"],
+              ["creator", t("creatorShare")],
+              ["designer", t("designerShare")],
+              ["partner", t("partnerShare")],
+              ["platform", t("platformShare")],
             ] as const
           ).map(([key, label]) => (
             <div key={key}>
@@ -112,15 +114,18 @@ export function RevenueSharingPanel({ data }: { data: Dashboard }) {
             </div>
           ))}
           <p className={`text-sm ${Math.abs(total - 100) < 0.01 ? "text-success" : "text-destructive"}`}>
-            Total: {total.toFixed(1)}% (must equal 100%)
+            {t("totalMustEqual", { total: total.toFixed(1) })}
           </p>
           <p className="text-xs text-muted-foreground">
-            Current: Creator {bpsToPercent(data.settings.creatorShareBps)}% · Designer{" "}
-            {bpsToPercent(data.settings.designerShareBps)}% · Partner {bpsToPercent(data.settings.partnerShareBps)}%
-            · Platform {bpsToPercent(data.settings.platformShareBps)}%
+            {t("currentSplit", {
+              creator: bpsToPercent(data.settings.creatorShareBps),
+              designer: bpsToPercent(data.settings.designerShareBps),
+              partner: bpsToPercent(data.settings.partnerShareBps),
+              platform: bpsToPercent(data.settings.platformShareBps),
+            })}
           </p>
           <Button type="submit" disabled={pending}>
-            Save payout settings
+            {t("savePayoutSettings")}
           </Button>
         </form>
       </Card>

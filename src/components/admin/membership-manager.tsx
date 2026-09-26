@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
 import { getIntlLocale } from "@/lib/i18n/safe-locale";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -49,6 +50,7 @@ export function MembershipManager({
   plans: { id: string; name: string; slug: string; priceCents: number }[];
   billingHistory: BillingRow[];
 }) {
+  const t = useTranslations("admin.ui.membershipManager");
   const [pending, startTransition] = useTransition();
   const [selectedPlan, setSelectedPlan] = useState("");
 
@@ -56,7 +58,7 @@ export function MembershipManager({
     startTransition(async () => {
       const r = await action();
       if (r.success) toast({ title: msg });
-      else toast({ title: r.error ?? "Failed", variant: "destructive" });
+      else toast({ title: r.error ?? t("failed"), variant: "destructive" });
     });
   }
 
@@ -66,27 +68,27 @@ export function MembershipManager({
   return (
     <Card className="lg:col-span-2">
       <CardHeader>
-        <CardTitle>Membership Manager</CardTitle>
+        <CardTitle>{t("heading")}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <div>
-            <p className="text-xs text-muted-foreground">Current plan</p>
+            <p className="text-xs text-muted-foreground">{t("currentPlan")}</p>
             <p className="font-medium">{state.planSlug ?? state.membershipType}</p>
           </div>
           <div>
-            <p className="text-xs text-muted-foreground">Status</p>
+            <p className="text-xs text-muted-foreground">{t("status")}</p>
             <Badge variant={statusColor}>{state.status}</Badge>
-            {state.isLifetime && <Badge variant="outline" className="ml-1">Lifetime</Badge>}
+            {state.isLifetime && <Badge variant="outline" className="ml-1">{t("lifetime")}</Badge>}
           </div>
           <div>
-            <p className="text-xs text-muted-foreground">Renewal date</p>
+            <p className="text-xs text-muted-foreground">{t("renewalDate")}</p>
             <p className="text-sm">
               {state.renewalDate ? new Date(state.renewalDate).toLocaleDateString(getIntlLocale(locale)) : "—"}
             </p>
           </div>
           <div>
-            <p className="text-xs text-muted-foreground">Cancel date</p>
+            <p className="text-xs text-muted-foreground">{t("cancelDate")}</p>
             <p className="text-sm">
               {state.cancelDate ? new Date(state.cancelDate).toLocaleDateString(getIntlLocale(locale)) : "—"}
             </p>
@@ -99,10 +101,10 @@ export function MembershipManager({
             value={selectedPlan}
             onChange={(e) => setSelectedPlan(e.target.value)}
           >
-            <option value="">Select plan…</option>
+            <option value="">{t("selectPlan")}</option>
             {plans.map((p) => (
               <option key={p.id} value={p.id}>
-                {p.name} ({formatMoneyFromCents(p.priceCents, locale)}/mo)
+                {t("planOption", { name: p.name, price: formatMoneyFromCents(p.priceCents, locale) })}
               </option>
             ))}
           </select>
@@ -110,35 +112,35 @@ export function MembershipManager({
             size="sm"
             variant="outline"
             disabled={pending || !selectedPlan}
-            onClick={() => run(() => adminAssignMembership(userId, selectedPlan), "Membership assigned")}
+            onClick={() => run(() => adminAssignMembership(userId, selectedPlan), t("toast.assigned"))}
           >
-            Assign / Upgrade
+            {t("assignUpgrade")}
           </Button>
           <Button
             size="sm"
             variant="outline"
             disabled={pending}
-            onClick={() => run(() => adminExtendMembership(userId, 30), "Extended 30 days")}
+            onClick={() => run(() => adminExtendMembership(userId, 30), t("toast.extended"))}
           >
-            Extend 30 days
+            {t("extend30Days")}
           </Button>
           {state.status === "CANCELED" ? (
             <Button
               size="sm"
               variant="outline"
               disabled={pending}
-              onClick={() => run(() => adminResumeMembership(userId), "Membership resumed")}
+              onClick={() => run(() => adminResumeMembership(userId), t("toast.resumed"))}
             >
-              Resume
+              {t("resume")}
             </Button>
           ) : (
             <Button
               size="sm"
               variant="destructive"
               disabled={pending}
-              onClick={() => run(() => adminCancelMembership(userId), "Membership canceled")}
+              onClick={() => run(() => adminCancelMembership(userId), t("toast.canceled"))}
             >
-              Cancel
+              {t("cancel")}
             </Button>
           )}
         </div>
@@ -150,17 +152,17 @@ export function MembershipManager({
               size="sm"
               variant={state.membershipType === tier ? "default" : "ghost"}
               disabled={pending}
-              onClick={() => run(() => adminSetMembershipTier(userId, tier), `Set to ${tier}`)}
+              onClick={() => run(() => adminSetMembershipTier(userId, tier), t("toast.setTo", { tier: t(`tier.${tier}`) }))}
             >
-              {tier.replace("_", " ")}
+              {t(`tier.${tier}`)}
             </Button>
           ))}
         </div>
 
         <div>
-          <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2">Billing history</p>
+          <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2">{t("billingHistory")}</p>
           {billingHistory.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No billing records</p>
+            <p className="text-sm text-muted-foreground">{t("noBillingRecords")}</p>
           ) : (
             <ul className="space-y-2 text-sm max-h-48 overflow-y-auto">
               {billingHistory.map((row) => (

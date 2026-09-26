@@ -125,6 +125,7 @@ export function UserDetailPanel({
 }) {
   const router = useRouter();
   const t = useTranslations("admin.us");
+  const tUi = useTranslations("admin.ui.userDetail");
   const ts = useTranslations("status.role");
   const appToast = useAppToast();
   const reasonId = useId();
@@ -203,10 +204,10 @@ export function UserDetailPanel({
       </div>
 
       <Card className="p-5 space-y-4">
-        <h3 className="font-semibold">Access control</h3>
+        <h3 className="font-semibold">{tUi("accessControlHeading")}</h3>
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
-            <label className="text-xs text-muted-foreground">Role</label>
+            <label className="text-xs text-muted-foreground">{tUi("roleLabel")}</label>
             <select
               className="mt-1 h-10 w-full rounded-md border border-input bg-background/50 px-3 text-sm"
               value={user.role}
@@ -214,7 +215,7 @@ export function UserDetailPanel({
               onChange={(e) =>
                 run(
                   () => updateUserRole(user.id, e.target.value as UserRole),
-                  "Role updated"
+                  tUi("roleUpdatedMsg")
                 )
               }
             >
@@ -224,7 +225,7 @@ export function UserDetailPanel({
             </select>
           </div>
           <div>
-            <label className="text-xs text-muted-foreground">Permission group (optional extras)</label>
+            <label className="text-xs text-muted-foreground">{tUi("permissionGroupLabel")}</label>
             <select
               className="mt-1 h-10 w-full rounded-md border border-input bg-background/50 px-3 text-sm"
               value={user.permissionGroupId ?? ""}
@@ -232,11 +233,11 @@ export function UserDetailPanel({
               onChange={(e) =>
                 run(
                   () => assignUserPermissionGroup(user.id, e.target.value || null),
-                  "Permission group updated"
+                  tUi("permissionGroupUpdatedMsg")
                 )
               }
             >
-              <option value="">None</option>
+              <option value="">{tUi("noneOption")}</option>
               {(permissionGroups ?? []).map((g) => (
                 <option key={g.id} value={g.id}>{g.name}</option>
               ))}
@@ -246,32 +247,32 @@ export function UserDetailPanel({
       </Card>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card><CardHeader><CardTitle className="text-sm">Downloads</CardTitle></CardHeader><CardContent><p className="text-2xl font-bold">{user._count.downloads}</p></CardContent></Card>
-        <Card><CardHeader><CardTitle className="text-sm">Favorites</CardTitle></CardHeader><CardContent><p className="text-2xl font-bold">{user._count.favorites}</p></CardContent></Card>
-        <Card><CardHeader><CardTitle className="text-sm">Mods</CardTitle></CardHeader><CardContent><p className="text-2xl font-bold">{user._count.mods}</p></CardContent></Card>
-        <Card><CardHeader><CardTitle className="text-sm">Member since</CardTitle></CardHeader><CardContent><p className="text-sm">{safeToLocaleDateString(new Date(user.createdAt))}</p></CardContent></Card>
+        <Card><CardHeader><CardTitle className="text-sm">{tUi("statDownloads")}</CardTitle></CardHeader><CardContent><p className="text-2xl font-bold">{user._count.downloads}</p></CardContent></Card>
+        <Card><CardHeader><CardTitle className="text-sm">{tUi("statFavorites")}</CardTitle></CardHeader><CardContent><p className="text-2xl font-bold">{user._count.favorites}</p></CardContent></Card>
+        <Card><CardHeader><CardTitle className="text-sm">{tUi("statMods")}</CardTitle></CardHeader><CardContent><p className="text-2xl font-bold">{user._count.mods}</p></CardContent></Card>
+        <Card><CardHeader><CardTitle className="text-sm">{tUi("statMemberSince")}</CardTitle></CardHeader><CardContent><p className="text-sm">{safeToLocaleDateString(new Date(user.createdAt))}</p></CardContent></Card>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
-          <CardHeader><CardTitle>Discord</CardTitle></CardHeader>
+          <CardHeader><CardTitle>{tUi("discordHeading")}</CardTitle></CardHeader>
           <CardContent className="text-sm text-muted-foreground">
             {user.discordId ? (
               <>
-                <p>ID: {user.discordId}</p>
+                <p>{tUi("discordIdLabel", { id: user.discordId })}</p>
                 {user.discordUsername && <p>@{user.discordUsername}</p>}
               </>
             ) : (
-              <p>Not connected</p>
+              <p>{tUi("notConnected")}</p>
             )}
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader><CardTitle>Membership (legacy purchases)</CardTitle></CardHeader>
+          <CardHeader><CardTitle>{tUi("legacyMembershipHeading")}</CardTitle></CardHeader>
           <CardContent className="space-y-3">
             {user.membershipPurchases.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No legacy purchases</p>
+              <p className="text-sm text-muted-foreground">{tUi("noLegacyPurchases")}</p>
             ) : (
               <ul className="space-y-2 text-sm">
                 {user.membershipPurchases.map((p) => (
@@ -296,15 +297,15 @@ export function UserDetailPanel({
         )}
 
         <Card>
-          <CardHeader><CardTitle>Legacy subscriptions</CardTitle></CardHeader>
+          <CardHeader><CardTitle>{tUi("legacySubscriptionsHeading")}</CardTitle></CardHeader>
           <CardContent>
             {user.subscriptions.length === 0 ? (
-              <p className="text-sm text-muted-foreground">None (platform uses lifetime purchases)</p>
+              <p className="text-sm text-muted-foreground">{tUi("noSubscriptionsLifetime")}</p>
             ) : (
               <ul className="space-y-2 text-sm">
                 {user.subscriptions.map((s) => (
                   <li key={s.id}>
-                    {s.status} · {s.interval} · ends {safeToLocaleDateString(new Date(s.currentPeriodEnd))}
+                    {s.status} · {s.interval} · {tUi("endsLabel", { date: safeToLocaleDateString(new Date(s.currentPeriodEnd)) })}
                   </li>
                 ))}
               </ul>
@@ -313,10 +314,10 @@ export function UserDetailPanel({
         </Card>
 
         <Card className="lg:col-span-2">
-          <CardHeader><CardTitle>Recent Tickets</CardTitle></CardHeader>
+          <CardHeader><CardTitle>{tUi("recentTicketsHeading")}</CardTitle></CardHeader>
           <CardContent>
             {user.supportTickets.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No tickets</p>
+              <p className="text-sm text-muted-foreground">{tUi("noTickets")}</p>
             ) : (
               <ul className="space-y-2">
                 {user.supportTickets.map((t) => (
@@ -332,11 +333,11 @@ export function UserDetailPanel({
         </Card>
 
         <Card>
-          <CardHeader><CardTitle>Email</CardTitle></CardHeader>
+          <CardHeader><CardTitle>{tUi("emailHeading")}</CardTitle></CardHeader>
           <CardContent className="space-y-3 text-sm">
             {user.emailVerifiedAt && (
               <p className="text-xs text-muted-foreground">
-                Verified {safeToLocaleDateString(new Date(user.emailVerifiedAt))}
+                {tUi("verifiedOn", { date: safeToLocaleDateString(new Date(user.emailVerifiedAt)) })}
               </p>
             )}
             {!isPlaceholderEmail(user.email) && !user.emailVerified && (
@@ -346,14 +347,14 @@ export function UserDetailPanel({
                 size="sm"
                 disabled={pending}
                 onClick={() =>
-                  run(() => adminResendVerification(user.id, locale), "Verification email sent")
+                  run(() => adminResendVerification(user.id, locale), tUi("verificationEmailSentMsg"))
                 }
               >
-                Resend verification
+                {tUi("resendVerificationButton")}
               </Button>
             )}
             <div className="space-y-2 pt-2 border-t border-border/40">
-              <label className="text-xs text-muted-foreground">Admin email override</label>
+              <label className="text-xs text-muted-foreground">{tUi("adminEmailOverrideLabel")}</label>
               <Input
                 type="email"
                 value={adminEmail}
@@ -369,11 +370,11 @@ export function UserDetailPanel({
                   onClick={() =>
                     run(
                       () => adminUpdateUserEmail(user.id, adminEmail, false),
-                      "Email updated (unverified)"
+                      tUi("emailUpdatedUnverifiedMsg")
                     )
                   }
                 >
-                  Set email
+                  {tUi("setEmailButton")}
                 </Button>
                 <Button
                   type="button"
@@ -383,11 +384,11 @@ export function UserDetailPanel({
                   onClick={() =>
                     run(
                       () => adminUpdateUserEmail(user.id, adminEmail, true),
-                      "Email updated & verified"
+                      tUi("emailUpdatedVerifiedMsg")
                     )
                   }
                 >
-                  Set & verify
+                  {tUi("setAndVerifyButton")}
                 </Button>
               </div>
             </div>
@@ -395,10 +396,10 @@ export function UserDetailPanel({
         </Card>
 
         <Card className="lg:col-span-2">
-          <CardHeader><CardTitle>Email log</CardTitle></CardHeader>
+          <CardHeader><CardTitle>{tUi("emailLogHeading")}</CardTitle></CardHeader>
           <CardContent>
             {!emailLogs?.length ? (
-              <p className="text-sm text-muted-foreground">No emails logged for this user</p>
+              <p className="text-sm text-muted-foreground">{tUi("noEmailsLogged")}</p>
             ) : (
               <ul className="space-y-2 text-sm max-h-48 overflow-y-auto">
                 {emailLogs.map((log) => (
@@ -406,7 +407,7 @@ export function UserDetailPanel({
                     <div className="min-w-0">
                       <p className="truncate font-medium">{log.subject}</p>
                       <p className="text-xs text-muted-foreground">
-                        {log.templateKey ?? "custom"} · {log.status}
+                        {log.templateKey ?? tUi("customTemplateFallback")} · {log.status}
                         {log.error ? ` · ${log.error}` : ""}
                       </p>
                     </div>
@@ -429,15 +430,15 @@ export function UserDetailPanel({
         )}
 
         <Card className="lg:col-span-2">
-          <CardHeader><CardTitle>Audit Log</CardTitle></CardHeader>
+          <CardHeader><CardTitle>{tUi("auditLogHeading")}</CardTitle></CardHeader>
           <CardContent>
             {auditLogs.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No audit entries</p>
+              <p className="text-sm text-muted-foreground">{tUi("noAuditEntries")}</p>
             ) : (
               <ul className="space-y-2 text-sm max-h-64 overflow-y-auto">
                 {auditLogs.map((log) => (
                   <li key={log.id} className="flex justify-between border-b border-border/30 pb-2">
-                    <span>{log.action} {log.actor && <span className="text-muted-foreground">by @{log.actor.username}</span>}</span>
+                    <span>{log.action} {log.actor && <span className="text-muted-foreground">{tUi("byUsername", { username: log.actor.username })}</span>}</span>
                     <span className="text-muted-foreground">{new Date(log.createdAt).toLocaleString()}</span>
                   </li>
                 ))}

@@ -3,6 +3,7 @@
 import { useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { ownerProcessEmailQueue } from "@/actions/admin/email-monitor";
 import type { getOwnerEmailMonitor } from "@/actions/admin/email-monitor";
 import { Card } from "@/components/ui/card";
@@ -26,27 +27,26 @@ function StatCard({ label, value, sub }: { label: string; value: string | number
 }
 
 export function EmailMonitorPanel({ data, locale }: { data: MonitorData; locale: string }) {
+  const t = useTranslations("admin.ui.emailMonitor");
   const router = useRouter();
   const [pending, startTransition] = useTransition();
 
   return (
     <div className="space-y-6">
       <div>
-        <Badge className="mb-2 bg-violet-soft text-violet-bright border-violet-bright/40">Owner only</Badge>
-        <h1 className="h1-acp">Email Monitoring</h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          Delivery metrics, SMTP status, queue health, and auth email errors.
-        </p>
+        <Badge className="mb-2 bg-violet-soft text-violet-bright border-violet-bright/40">{t("ownerOnlyBadge")}</Badge>
+        <h1 className="h1-acp">{t("title")}</h1>
+        <p className="text-sm text-muted-foreground mt-1">{t("subtitle")}</p>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard label="Sent today" value={data.metrics.sentToday} />
-        <StatCard label="Failed today" value={data.metrics.failedToday} />
-        <StatCard label="Queue pending" value={data.metrics.pendingQueue} />
+        <StatCard label={t("sentToday")} value={data.metrics.sentToday} />
+        <StatCard label={t("failedToday")} value={data.metrics.failedToday} />
+        <StatCard label={t("queuePending")} value={data.metrics.pendingQueue} />
         <StatCard
-          label="SMTP status"
-          value={data.metrics.smtpConfigured ? "Configured" : "Fallback only"}
-          sub={data.metrics.providers.join(" → ") || "No providers"}
+          label={t("smtpStatus")}
+          value={data.metrics.smtpConfigured ? t("smtpConfigured") : t("smtpFallbackOnly")}
+          sub={data.metrics.providers.join(" → ") || t("noProviders")}
         />
       </div>
 
@@ -62,27 +62,27 @@ export function EmailMonitorPanel({ data, locale }: { data: MonitorData; locale:
             })
           }
         >
-          Process email queue
+          {t("processQueue")}
         </Button>
         <Button variant="outline" size="sm" asChild>
-          <Link href={`/${locale}/admin/email`}>Email settings</Link>
+          <Link href={`/${locale}/admin/email`}>{t("emailSettingsLink")}</Link>
         </Button>
         <Button variant="outline" size="sm" asChild>
-          <Link href={`/${locale}/admin/owner/health`}>System health</Link>
+          <Link href={`/${locale}/admin/owner/health`}>{t("systemHealthLink")}</Link>
         </Button>
       </div>
 
       <Card className="p-4">
-        <h2 className="font-semibold mb-3">Recent delivery logs</h2>
+        <h2 className="font-semibold mb-3">{t("recentLogsTitle")}</h2>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="text-left text-muted-foreground border-b border-border/40">
-                <th className="pb-2 pr-3">To</th>
-                <th className="pb-2 pr-3">Subject</th>
-                <th className="pb-2 pr-3">Status</th>
-                <th className="pb-2 pr-3">Attempts</th>
-                <th className="pb-2">Time</th>
+                <th className="pb-2 pr-3">{t("colTo")}</th>
+                <th className="pb-2 pr-3">{t("colSubject")}</th>
+                <th className="pb-2 pr-3">{t("colStatus")}</th>
+                <th className="pb-2 pr-3">{t("colAttempts")}</th>
+                <th className="pb-2">{t("colTime")}</th>
               </tr>
             </thead>
             <tbody>
@@ -108,7 +108,7 @@ export function EmailMonitorPanel({ data, locale }: { data: MonitorData; locale:
               {data.recentLogs.length === 0 && (
                 <tr>
                   <td colSpan={5} className="py-4 text-muted-foreground">
-                    No email logs yet.
+                    {t("noEmailLogs")}
                   </td>
                 </tr>
               )}
@@ -119,7 +119,7 @@ export function EmailMonitorPanel({ data, locale }: { data: MonitorData; locale:
 
       {data.authErrors.length > 0 && (
         <Card className="p-4">
-          <h2 className="font-semibold mb-3">Recent auth / email errors</h2>
+          <h2 className="font-semibold mb-3">{t("authErrorsTitle")}</h2>
           <ul className="space-y-2 text-sm">
             {data.authErrors.map((entry) => (
               <li key={entry.id} className="rounded-md border border-border/40 p-2">
@@ -132,7 +132,7 @@ export function EmailMonitorPanel({ data, locale }: { data: MonitorData; locale:
         </Card>
       )}
 
-      <p className="text-xs text-muted-foreground">Last checked: {formatDateTime(data.checkedAt, locale)}</p>
+      <p className="text-xs text-muted-foreground">{t("lastChecked", { time: formatDateTime(data.checkedAt, locale) })}</p>
     </div>
   );
 }

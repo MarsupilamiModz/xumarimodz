@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -41,6 +42,7 @@ export function OwnerAchievementsPanel({
   soundAnalytics: SoundAnalytics | null;
 }) {
   const router = useRouter();
+  const t = useTranslations("admin.ui.ownerAchievements");
   const appToast = useAppToast();
   const [pending, startTransition] = useTransition();
   const [achievementId, setAchievementId] = useState(achievements[0]?.id ?? "");
@@ -61,21 +63,21 @@ export function OwnerAchievementsPanel({
     <div className="space-y-8">
       <div>
         <Link href="/admin/owner" className="text-sm text-muted-foreground hover:text-foreground">
-          ← Owner Control Center
+          ← {t("ownerControlCenterLink")}
         </Link>
-        <h1 className="h1-acp mt-2">Achievements management</h1>
+        <h1 className="h1-acp mt-2">{t("pageTitle")}</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Grant badges from user profiles or mass-assign to roles and groups.
+          {t("pageSubtitle")}
         </p>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <Card className="p-4">
-          <p className="text-xs text-muted-foreground uppercase">Total grants</p>
+          <p className="text-xs text-muted-foreground uppercase">{t("totalGrantsLabel")}</p>
           <p className="text-2xl font-bold tabular-nums">{analytics.totalGrants}</p>
         </Card>
         <Card className="p-4 sm:col-span-3">
-          <p className="text-xs text-muted-foreground uppercase mb-2">Most granted</p>
+          <p className="text-xs text-muted-foreground uppercase mb-2">{t("mostGrantedLabel")}</p>
           <div className="flex flex-wrap gap-2">
             {analytics.mostGranted.slice(0, 5).map((g) => (
               <Badge key={g.achievement.id} variant="outline">
@@ -88,41 +90,41 @@ export function OwnerAchievementsPanel({
 
       {soundAnalytics && (
         <section className="space-y-3">
-          <h2 className="text-lg font-semibold">Audio analytics</h2>
+          <h2 className="text-lg font-semibold">{t("audioAnalyticsHeading")}</h2>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <Card className="p-4">
-              <p className="text-xs text-muted-foreground uppercase">Total plays</p>
+              <p className="text-xs text-muted-foreground uppercase">{t("totalPlaysLabel")}</p>
               <p className="text-2xl font-bold tabular-nums">{soundAnalytics.totalPlays}</p>
             </Card>
             <Card className="p-4">
-              <p className="text-xs text-muted-foreground uppercase">Plays (7 days)</p>
+              <p className="text-xs text-muted-foreground uppercase">{t("plays7DaysLabel")}</p>
               <p className="text-2xl font-bold tabular-nums">{soundAnalytics.playsLast7Days}</p>
             </Card>
             <Card className="p-4">
-              <p className="text-xs text-muted-foreground uppercase">Avg plays / sound</p>
+              <p className="text-xs text-muted-foreground uppercase">{t("avgPlaysPerSoundLabel")}</p>
               <p className="text-2xl font-bold tabular-nums">{soundAnalytics.avgPlaysPerSound}</p>
             </Card>
             <Card className="p-4">
-              <p className="text-xs text-muted-foreground uppercase">Pending review</p>
+              <p className="text-xs text-muted-foreground uppercase">{t("pendingReviewLabel")}</p>
               <p className="text-2xl font-bold tabular-nums">{soundAnalytics.pendingReview}</p>
             </Card>
           </div>
           <div className="grid gap-4 lg:grid-cols-2">
             <Card className="p-4">
-              <h3 className="font-semibold mb-3">Most played sounds</h3>
+              <h3 className="font-semibold mb-3">{t("mostPlayedSoundsHeading")}</h3>
               <ul className="text-sm space-y-1">
                 {soundAnalytics.topPlayed.map((s) => (
                   <li key={s.id} className="flex justify-between gap-2">
                     <Link href={`/mods/${s.slug}`} className="text-violet-bright hover:underline truncate">
                       {s.title}
                     </Link>
-                    <span className="text-muted-foreground tabular-nums shrink-0">{s.plays} plays</span>
+                    <span className="text-muted-foreground tabular-nums shrink-0">{t("playsCount", { count: s.plays })}</span>
                   </li>
                 ))}
               </ul>
             </Card>
             <Card className="p-4">
-              <h3 className="font-semibold mb-3">Top downloads</h3>
+              <h3 className="font-semibold mb-3">{t("topDownloadsHeading")}</h3>
               <ul className="text-sm space-y-1">
                 {soundAnalytics.topDownloads.map((s) => (
                   <li key={s.slug} className="flex justify-between gap-2">
@@ -140,7 +142,7 @@ export function OwnerAchievementsPanel({
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Card className="p-4">
-          <h3 className="font-semibold mb-3">Rarest badges</h3>
+          <h3 className="font-semibold mb-3">{t("rarestBadgesHeading")}</h3>
           <ul className="text-sm space-y-1">
             {analytics.rarest.slice(0, 8).map((g) => (
               <li key={g.achievement.id} className="flex justify-between">
@@ -151,7 +153,7 @@ export function OwnerAchievementsPanel({
           </ul>
         </Card>
         <Card className="p-4">
-          <h3 className="font-semibold mb-3">Top badge collectors</h3>
+          <h3 className="font-semibold mb-3">{t("topBadgeCollectorsHeading")}</h3>
           <ul className="text-sm space-y-1">
             {analytics.topUsers.map((u) => (
               <li key={u.user.id} className="flex justify-between">
@@ -166,7 +168,7 @@ export function OwnerAchievementsPanel({
       </div>
 
       <Card className="p-6 space-y-4">
-        <h3 className="font-semibold">Mass assignment</h3>
+        <h3 className="font-semibold">{t("massAssignmentHeading")}</h3>
         <select
           value={achievementId}
           onChange={(e) => setAchievementId(e.target.value)}
@@ -180,27 +182,27 @@ export function OwnerAchievementsPanel({
         </select>
         <div className="flex flex-wrap gap-2">
           <Button variant="outline" size="sm" disabled={pending} onClick={() => massGrant({ role: "CREATOR" })}>
-            All creators
+            {t("allCreatorsButton")}
           </Button>
           <Button variant="outline" size="sm" disabled={pending} onClick={() => massGrant({ role: "PARTNER" })}>
-            All partners
+            {t("allPartnersButton")}
           </Button>
           <Button variant="outline" size="sm" disabled={pending} onClick={() => massGrant({ role: "ADMIN" })}>
-            Team / admins
+            {t("teamAdminsButton")}
           </Button>
           <Button variant="outline" size="sm" disabled={pending} onClick={() => massGrant({ premiumOnly: true })}>
-            Premium users
+            {t("premiumUsersButton")}
           </Button>
         </div>
         <div className="flex flex-wrap gap-2 items-end">
           <Input
-            placeholder="User IDs (comma-separated)"
+            placeholder={t("userIdsPlaceholder")}
             value={userIds}
             onChange={(e) => setUserIds(e.target.value)}
             className="flex-1 min-w-[200px] font-mono text-xs"
           />
           <Button
-           
+
             size="sm"
             disabled={pending || !userIds.trim()}
             onClick={() =>
@@ -215,7 +217,7 @@ export function OwnerAchievementsPanel({
               })
             }
           >
-            Grant to users
+            {t("grantToUsersButton")}
           </Button>
         </div>
       </Card>

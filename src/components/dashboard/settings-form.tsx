@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
 import { uploadAvatar, updateProfile, applyForCreator, updatePassword } from "@/actions/profile";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,6 +30,7 @@ type User = {
 };
 
 export function SettingsForm({ locale, user }: { locale: string; user: User }) {
+  const t = useTranslations("common.cx.settingsForm");
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [password, setPassword] = useState("");
@@ -37,13 +39,13 @@ export function SettingsForm({ locale, user }: { locale: string; user: User }) {
   return (
     <div className="space-y-6 max-w-lg">
       <Card>
-        <CardHeader><CardTitle>Profile</CardTitle></CardHeader>
+        <CardHeader><CardTitle>{t("profileTitle")}</CardTitle></CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center gap-4">
             <UserAvatar src={avatarUrl} name={formatDisplayName(user)} className="h-16 w-16" />
             <div>
               <AvatarCropUpload
-                label="Upload avatar"
+                label={t("uploadAvatar")}
                 onCropped={async (file) => {
                   startTransition(async () => {
                     try {
@@ -85,41 +87,41 @@ export function SettingsForm({ locale, user }: { locale: string; user: User }) {
             className="space-y-3"
           >
             <div>
-              <label className="text-sm">Display name</label>
+              <label className="text-sm">{t("displayNameLabel")}</label>
               <Input name="displayName" defaultValue={user.displayName ?? ""} className="mt-1" />
             </div>
             <div>
-              <label className="text-sm">Bio</label>
+              <label className="text-sm">{t("bioLabel")}</label>
               <Textarea name="bio" defaultValue={user.bio ?? ""} rows={3} className="mt-1" />
             </div>
             <div>
-              <label className="text-sm">Language</label>
+              <label className="text-sm">{t("languageLabel")}</label>
               <select name="locale" defaultValue={user.locale} className="mt-1 flex h-10 w-full rounded-md border border-input bg-background/50 px-3 text-sm">
-                <option value="en">English</option>
-                <option value="de">Deutsch</option>
+                <option value="en">{t("languageEnglish")}</option>
+                <option value="de">{t("languageGerman")}</option>
               </select>
             </div>
             <p className="text-xs text-muted-foreground">{formatDisplayName(user)}</p>
-            <Button type="submit" disabled={pending}>Save profile</Button>
+            <Button type="submit" disabled={pending}>{t("saveProfile")}</Button>
           </form>
         </CardContent>
       </Card>
 
       <Card>
-        <CardHeader><CardTitle>Security</CardTitle></CardHeader>
+        <CardHeader><CardTitle>{t("securityTitle")}</CardTitle></CardHeader>
         <CardContent>
           <Link href={`/${locale}/dashboard/security`} className="text-sm text-violet-bright hover:underline">
-            Security & 2FA →
+            {t("securityLink")}
           </Link>
         </CardContent>
       </Card>
 
       <Card>
-        <CardHeader><CardTitle>Password</CardTitle></CardHeader>
+        <CardHeader><CardTitle>{t("passwordTitle")}</CardTitle></CardHeader>
         <CardContent className="space-y-3">
           <Input
             type="password"
-            placeholder="New password"
+            placeholder={t("newPasswordPlaceholder")}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             minLength={8}
@@ -137,19 +139,19 @@ export function SettingsForm({ locale, user }: { locale: string; user: User }) {
               })
             }
           >
-            Update password
+            {t("updatePassword")}
           </Button>
         </CardContent>
       </Card>
 
       <Card>
-        <CardHeader><CardTitle>Discord</CardTitle></CardHeader>
+        <CardHeader><CardTitle>{t("discordTitle")}</CardTitle></CardHeader>
         <CardContent>
           {user.discordId ? (
-            <p className="text-sm text-ink-muted">Discord connected</p>
+            <p className="text-sm text-ink-muted">{t("discordConnected")}</p>
           ) : (
             <Button variant="outline" asChild>
-              <a href={`/api/auth/discord?locale=${locale}`}>Connect Discord</a>
+              <a href={`/api/auth/discord?locale=${locale}`}>{t("connectDiscord")}</a>
             </Button>
           )}
         </CardContent>
@@ -157,10 +159,10 @@ export function SettingsForm({ locale, user }: { locale: string; user: User }) {
 
       {!user.hasCreatorProfile && user.role === "USER" && (
         <Card>
-          <CardHeader><CardTitle>Become a Creator</CardTitle></CardHeader>
+          <CardHeader><CardTitle>{t("becomeCreatorTitle")}</CardTitle></CardHeader>
           <CardContent>
             <Button
-             
+
               disabled={pending}
               onClick={() =>
                 startTransition(async () => {
@@ -173,7 +175,7 @@ export function SettingsForm({ locale, user }: { locale: string; user: User }) {
                 })
               }
             >
-              Apply as Creator
+              {t("applyAsCreator")}
             </Button>
           </CardContent>
         </Card>

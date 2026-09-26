@@ -3,6 +3,7 @@
 import { colors } from "@/styles/tokens";
 import { useState, useTransition, type Dispatch, type SetStateAction } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { ArrowDown, ArrowUp, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -42,6 +43,7 @@ type Props = {
 type StartTransition = ReturnType<typeof useTransition>[1];
 
 export function MembershipsAdminPanel({ plans: initial, pageSettings: initialPage, locale }: Props) {
+  const t = useTranslations("admin.ui.membershipsAdmin");
   const router = useRouter();
   const appToast = useAppToast();
   const [pending, startTransition] = useTransition();
@@ -98,31 +100,32 @@ export function MembershipsAdminPanel({ plans: initial, pageSettings: initialPag
   return (
     <div className="space-y-8">
       <Card className="p-6 space-y-4">
-        <h3 className="font-semibold">Premium Page Content</h3>
+        <h3 className="font-semibold">{t("pageContent.heading")}</h3>
         <Input value={pageSettings.heroTitle} onChange={(e) => setPageSettings((p) => ({ ...p, heroTitle: e.target.value }))} />
         <Textarea value={pageSettings.heroSubtitle} onChange={(e) => setPageSettings((p) => ({ ...p, heroSubtitle: e.target.value }))} rows={2} />
         <Input value={pageSettings.ctaText} onChange={(e) => setPageSettings((p) => ({ ...p, ctaText: e.target.value }))} />
         <label className="flex items-center gap-2 text-sm">
           <Switch checked={pageSettings.showComparison} onCheckedChange={(v) => setPageSettings((p) => ({ ...p, showComparison: v }))} />
-          Show plan comparison on premium page
+          {t("pageContent.showComparison")}
         </label>
         <Button disabled={pending} onClick={() => startTransition(async () => {
           const r = await savePremiumPageSettings(pageSettings);
           if (r.success) appToast.saved();
           else appToast.error(r.error);
-        })}>Save page content</Button>
+        })}>{t("pageContent.save")}</Button>
       </Card>
 
       <div className="flex items-center justify-between">
-        <h3 className="font-semibold">Lifetime membership plans</h3>
-        <Button variant="outline" size="sm" onClick={openCreate}><Plus className="h-4 w-4 mr-1" /> New plan</Button>
+        <h3 className="font-semibold">{t("plans.heading")}</h3>
+        <Button variant="outline" size="sm" onClick={openCreate}><Plus className="h-4 w-4 mr-1" /> {t("plans.newPlan")}</Button>
       </div>
 
       {(creating || editing) && (
         <div className="grid gap-6 lg:grid-cols-2">
           <Card className="p-6">
-            <h3 className="font-semibold mb-4">{creating ? "Create plan" : `Edit ${editing?.name}`}</h3>
+            <h3 className="font-semibold mb-4">{creating ? t("plans.createPlan") : t("plans.editPlan", { name: editing?.name ?? "" })}</h3>
             <PlanForm
+              t={t}
               plan={editing ?? undefined}
               isNew={creating}
               perks={perks}
@@ -137,7 +140,7 @@ export function MembershipsAdminPanel({ plans: initial, pageSettings: initialPag
             />
           </Card>
           <div>
-            <p className="text-sm text-muted-foreground mb-3">Live preview</p>
+            <p className="text-sm text-muted-foreground mb-3">{t("plans.livePreview")}</p>
             <MembershipPlanPreview
               locale={locale}
               plan={{
@@ -170,23 +173,23 @@ export function MembershipsAdminPanel({ plans: initial, pageSettings: initialPag
                 <p className="text-2xl font-bold" style={{ color: plan.perks.accentColor ?? undefined }}>
                   {formatPlanPrice(plan.priceCents, plan.currency, locale)}
                 </p>
-                <p className="text-xs text-muted-foreground">Lifetime · one-time</p>
+                <p className="text-xs text-muted-foreground">{t("plans.lifetimeOneTime")}</p>
               </div>
               <div className="flex flex-col gap-1">
-                {plan.isFeatured && <Badge variant="premium">Featured</Badge>}
-                {!plan.isActive && <Badge variant="outline">Inactive</Badge>}
+                {plan.isFeatured && <Badge variant="premium">{t("plans.featured")}</Badge>}
+                {!plan.isActive && <Badge variant="outline">{t("plans.inactive")}</Badge>}
               </div>
             </div>
             <ul className="text-xs text-muted-foreground space-y-1">
               {plan.features.slice(0, 4).map((f) => <li key={f}>• {f}</li>)}
             </ul>
-            <p className="text-xs font-mono text-muted-foreground truncate">{plan.stripePriceId ?? "No Stripe price"}</p>
+            <p className="text-xs font-mono text-muted-foreground truncate">{plan.stripePriceId ?? t("plans.noStripePrice")}</p>
             <div className="flex flex-wrap gap-1">
-              <Button size="sm" variant="outline" onClick={() => openEdit(plan)}>Edit</Button>
+              <Button size="sm" variant="outline" onClick={() => openEdit(plan)}>{t("plans.edit")}</Button>
               <Button size="sm" variant="ghost" onClick={() => movePlan(index, -1)} disabled={index === 0}><ArrowUp className="h-4 w-4" /></Button>
               <Button size="sm" variant="ghost" onClick={() => movePlan(index, 1)} disabled={index === plans.length - 1}><ArrowDown className="h-4 w-4" /></Button>
               <Button size="sm" variant="ghost" className="text-destructive" disabled={pending} onClick={() => startTransition(async () => {
-                if (!confirm(`Delete ${plan.name}?`)) return;
+                if (!confirm(t("plans.confirmDelete", { name: plan.name }))) return;
                 const r = await deleteMembershipPlan(plan.id);
                 if (r.success) { appToast.saved(); router.refresh(); }
                 else appToast.error(r.error);
@@ -200,6 +203,7 @@ export function MembershipsAdminPanel({ plans: initial, pageSettings: initialPag
 }
 
 function PlanForm({
+  t,
   plan,
   isNew,
   perks,
@@ -212,6 +216,7 @@ function PlanForm({
   router,
   onClose,
 }: {
+  t: ReturnType<typeof useTranslations>;
   plan?: MembershipPlanData;
   isNew?: boolean;
   perks: MembershipPerks;
@@ -284,102 +289,102 @@ function PlanForm({
     >
       <div className="grid gap-3 sm:grid-cols-2">
         <div>
-          <label className="text-sm font-medium">Slug</label>
+          <label className="text-sm font-medium">{t("form.slug")}</label>
           <Input
             name="slug"
             defaultValue={plan?.slug}
             disabled={!isNew}
             className="mt-1 font-mono"
-            placeholder={isNew ? "auto-generated from plan name" : undefined}
+            placeholder={isNew ? t("form.slugAutoGenerated") : undefined}
           />
         </div>
         <div>
-          <label className="text-sm font-medium">Badge slug</label>
+          <label className="text-sm font-medium">{t("form.badgeSlug")}</label>
           <Input name="badgeSlug" defaultValue={plan?.badgeSlug ?? ""} className="mt-1" />
         </div>
       </div>
-      <Input name="name" defaultValue={plan?.name} placeholder="Plan name" required />
+      <Input name="name" defaultValue={plan?.name} placeholder={t("form.planName")} required />
       <Textarea name="description" defaultValue={plan?.description ?? ""} rows={2} />
       <div className="grid gap-3 sm:grid-cols-2">
         <div>
-          <label className="text-sm font-medium">Price (EUR)</label>
+          <label className="text-sm font-medium">{t("form.priceEur")}</label>
           <Input name="price" type="number" step="0.01" defaultValue={plan ? (plan.priceCents / 100).toFixed(2) : "9.99"} required className="mt-1" />
         </div>
         <div>
-          <label className="text-sm font-medium">Currency</label>
+          <label className="text-sm font-medium">{t("form.currency")}</label>
           <Input name="currency" defaultValue={plan?.currency ?? "EUR"} className="mt-1 w-24" />
         </div>
       </div>
       <div className="grid gap-3 sm:grid-cols-2 rounded-lg border border-border/40 p-4">
         <div>
-          <label className="text-sm font-medium">Billing</label>
+          <label className="text-sm font-medium">{t("form.billing")}</label>
           <select name="billingType" defaultValue={plan?.billingType ?? "RECURRING"} className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
-            <option value="RECURRING">Recurring</option>
-            <option value="ONE_TIME">One-time / Lifetime</option>
+            <option value="RECURRING">{t("form.billingRecurring")}</option>
+            <option value="ONE_TIME">{t("form.billingOneTime")}</option>
           </select>
         </div>
         <div>
-          <label className="text-sm font-medium">Plan type</label>
+          <label className="text-sm font-medium">{t("form.planType")}</label>
           <select name="planKind" defaultValue={plan?.planKind ?? "STANDARD"} className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
-            <option value="STANDARD">Standard</option>
-            <option value="LIFETIME">Lifetime</option>
-            <option value="LIMITED">Limited stock</option>
-            <option value="EVENT">Event</option>
-            <option value="CREATOR">Creator</option>
-            <option value="PARTNER">Partner</option>
+            <option value="STANDARD">{t("form.planKindStandard")}</option>
+            <option value="LIFETIME">{t("form.planKindLifetime")}</option>
+            <option value="LIMITED">{t("form.planKindLimited")}</option>
+            <option value="EVENT">{t("form.planKindEvent")}</option>
+            <option value="CREATOR">{t("form.planKindCreator")}</option>
+            <option value="PARTNER">{t("form.planKindPartner")}</option>
           </select>
         </div>
         <div>
-          <label className="text-sm font-medium">Stock limit</label>
-          <Input name="stockLimit" type="number" placeholder="e.g. 150" defaultValue={plan?.stockLimit ?? ""} className="mt-1" />
+          <label className="text-sm font-medium">{t("form.stockLimit")}</label>
+          <Input name="stockLimit" type="number" placeholder={t("form.stockLimitPlaceholder")} defaultValue={plan?.stockLimit ?? ""} className="mt-1" />
           {plan?.stockLimit ? (
             <p className="text-xs text-muted-foreground mt-1">
-              Verbleibend: {Math.max(0, plan.stockLimit - (plan.soldCount ?? 0))}
+              {t("form.remaining", { count: Math.max(0, plan.stockLimit - (plan.soldCount ?? 0)) })}
             </p>
           ) : null}
         </div>
         <div>
-          <label className="text-sm font-medium">Duration (days)</label>
-          <Input name="durationDays" type="number" placeholder="Optional" defaultValue={plan?.durationDays ?? ""} className="mt-1" />
+          <label className="text-sm font-medium">{t("form.durationDays")}</label>
+          <Input name="durationDays" type="number" placeholder={t("form.optional")} defaultValue={plan?.durationDays ?? ""} className="mt-1" />
         </div>
       </div>
       <div className="grid gap-3 sm:grid-cols-3 rounded-lg border border-border/40 p-4">
-        <p className="sm:col-span-3 text-sm font-medium">Limited offer / sale</p>
-        <Input name="originalPrice" type="number" step="0.01" placeholder="Original price" defaultValue={plan?.originalPriceCents ? plan.originalPriceCents / 100 : ""} />
-        <Input name="saleDiscount" type="number" placeholder="Discount %" defaultValue={plan?.saleDiscountPercent ?? ""} />
+        <p className="sm:col-span-3 text-sm font-medium">{t("form.limitedOfferSale")}</p>
+        <Input name="originalPrice" type="number" step="0.01" placeholder={t("form.originalPrice")} defaultValue={plan?.originalPriceCents ? plan.originalPriceCents / 100 : ""} />
+        <Input name="saleDiscount" type="number" placeholder={t("form.discountPercent")} defaultValue={plan?.saleDiscountPercent ?? ""} />
         <Input name="saleEndsAt" type="datetime-local" defaultValue={plan?.saleEndsAt ? new Date(plan.saleEndsAt).toISOString().slice(0, 16) : ""} />
       </div>
       <div className="grid gap-3 sm:grid-cols-2 rounded-lg border border-border/40 p-4">
-        <p className="sm:col-span-2 text-sm font-medium">Card styling</p>
-        <Input name="iconKey" placeholder="Icon, z. B. crown, gem, zap" defaultValue={plan?.iconKey ?? "crown"} />
-        <Input name="ctaText" placeholder="CTA button text" defaultValue={plan?.cardStyle?.ctaText ?? ""} />
-        <label className="flex gap-2 text-sm sm:col-span-2"><input type="checkbox" name="borderGlow" defaultChecked={plan?.cardStyle?.borderGlow ?? true} /> Neon border glow <span className="text-xs text-ink-muted">(Im neuen Design ohne Wirkung – Wert bleibt gespeichert.)</span></label>
+        <p className="sm:col-span-2 text-sm font-medium">{t("form.cardStyling")}</p>
+        <Input name="iconKey" placeholder={t("form.iconPlaceholder")} defaultValue={plan?.iconKey ?? "crown"} />
+        <Input name="ctaText" placeholder={t("form.ctaButtonText")} defaultValue={plan?.cardStyle?.ctaText ?? ""} />
+        <label className="flex gap-2 text-sm sm:col-span-2"><input type="checkbox" name="borderGlow" defaultChecked={plan?.cardStyle?.borderGlow ?? true} /> {t("form.neonBorderGlow")} <span className="text-xs text-ink-muted">({t("form.neonBorderGlowHint")})</span></label>
       </div>
       <div>
-        <label className="text-sm font-medium">Stripe one-time Price ID</label>
+        <label className="text-sm font-medium">{t("form.stripePriceId")}</label>
         <Input name="stripePriceId" placeholder="price_..." defaultValue={plan?.stripePriceId ?? ""} className="mt-1 font-mono text-xs" />
       </div>
-      <Textarea name="features" defaultValue={plan?.features.join("\n") ?? ""} rows={5} placeholder="One feature per line" />
+      <Textarea name="features" defaultValue={plan?.features.join("\n") ?? ""} rows={5} placeholder={t("form.featuresPlaceholder")} />
 
       <div className="rounded-lg border border-border/40 p-4 space-y-3">
-        <p className="text-sm font-medium">Perks & limits</p>
+        <p className="text-sm font-medium">{t("form.perksLimits")}</p>
         <div className="grid gap-3 sm:grid-cols-2">
-          <Input name="downloadLimit" type="number" placeholder="Download limit (empty = unlimited)" defaultValue={plan?.perks.downloadLimit ?? ""} />
-          <Input name="storageLimitMb" type="number" placeholder="Storage MB" defaultValue={plan?.perks.storageLimitMb ?? ""} />
-          <Input name="marketplaceFeeBps" type="number" placeholder="Marketplace fee (bps)" defaultValue={plan?.perks.marketplaceFeeBps ?? ""} />
-          <Input name="customBadge" placeholder="Custom badge ID" defaultValue={plan?.perks.customBadge ?? ""} />
+          <Input name="downloadLimit" type="number" placeholder={t("form.downloadLimit")} defaultValue={plan?.perks.downloadLimit ?? ""} />
+          <Input name="storageLimitMb" type="number" placeholder={t("form.storageLimitMb")} defaultValue={plan?.perks.storageLimitMb ?? ""} />
+          <Input name="marketplaceFeeBps" type="number" placeholder={t("form.marketplaceFeeBps")} defaultValue={plan?.perks.marketplaceFeeBps ?? ""} />
+          <Input name="customBadge" placeholder={t("form.customBadgeId")} defaultValue={plan?.perks.customBadge ?? ""} />
           <Input name="accentColor" type="color" defaultValue={plan?.perks.accentColor ?? colors.violet} className="h-10" />
         </div>
         <div className="flex flex-wrap gap-4 text-sm">
           {(
             [
-              ["adFree", "Ad-free"],
-              ["exclusiveMods", "Exclusive mods"],
-              ["creatorContent", "Creator content"],
-              ["betaAccess", "Beta access"],
-              ["earlyAccess", "Early access"],
-              ["discordPerks", "Discord perks"],
-              ["prioritySupport", "Priority support"],
+              ["adFree", t("form.perks.adFree")],
+              ["exclusiveMods", t("form.perks.exclusiveMods")],
+              ["creatorContent", t("form.perks.creatorContent")],
+              ["betaAccess", t("form.perks.betaAccess")],
+              ["earlyAccess", t("form.perks.earlyAccess")],
+              ["discordPerks", t("form.perks.discordPerks")],
+              ["prioritySupport", t("form.perks.prioritySupport")],
             ] as const
           ).map(([key, label]) => (
             <label key={key} className="flex items-center gap-2">
@@ -392,16 +397,16 @@ function PlanForm({
 
       <div className="flex flex-wrap gap-4 text-sm">
         <label className="flex items-center gap-2">
-          <input type="checkbox" name="isActive" defaultChecked={plan?.isActive ?? true} /> Active
+          <input type="checkbox" name="isActive" defaultChecked={plan?.isActive ?? true} /> {t("form.active")}
         </label>
         <label className="flex items-center gap-2">
-          <input type="checkbox" name="isFeatured" defaultChecked={plan?.isFeatured ?? false} /> Featured
+          <input type="checkbox" name="isFeatured" defaultChecked={plan?.isFeatured ?? false} /> {t("plans.featured")}
         </label>
       </div>
 
       <div className="flex gap-2">
-        <Button type="submit" disabled={pending}>{isNew ? "Create plan" : "Save plan"}</Button>
-        <Button type="button" variant="ghost" onClick={onClose}>Cancel</Button>
+        <Button type="submit" disabled={pending}>{isNew ? t("plans.createPlan") : t("form.savePlan")}</Button>
+        <Button type="button" variant="ghost" onClick={onClose}>{t("form.cancel")}</Button>
       </div>
     </form>
   );

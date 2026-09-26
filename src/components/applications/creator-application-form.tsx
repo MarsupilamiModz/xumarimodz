@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { formatUploadErrorMessage } from "@/lib/upload-errors";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -12,6 +13,7 @@ import { useR2MultipartUpload } from "@/hooks/use-r2-multipart-upload";
 import { submitCreatorApplication } from "@/actions/applications";
 
 export function CreatorApplicationForm({ userEmail }: { userEmail: string }) {
+  const t = useTranslations("common.cx.creatorApplication");
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const { upload, progress, uploading } = useR2MultipartUpload();
@@ -29,7 +31,7 @@ export function CreatorApplicationForm({ userEmail }: { userEmail: string }) {
   return (
     <Card className="max-w-2xl">
       <CardHeader>
-        <CardTitle>Become a Creator</CardTitle>
+        <CardTitle>{t("title")}</CardTitle>
       </CardHeader>
       <CardContent>
         <form
@@ -59,21 +61,21 @@ export function CreatorApplicationForm({ userEmail }: { userEmail: string }) {
             });
           }}
         >
-          <Input name="displayName" placeholder="Display name" required />
+          <Input name="displayName" placeholder={t("displayNamePlaceholder")} required />
           <Input name="email" type="email" defaultValue={userEmail} required />
-          <Input name="discord" placeholder="Discord username" />
+          <Input name="discord" placeholder={t("discordPlaceholder")} />
           <div className="grid gap-2 sm:grid-cols-2">
-            <Input name="youtubeUrl" placeholder="YouTube URL" />
-            <Input name="twitchUrl" placeholder="Twitch URL" />
-            <Input name="tiktokUrl" placeholder="TikTok URL" />
-            <Input name="instagramUrl" placeholder="Instagram URL" />
-            <Input name="xUrl" placeholder="X / Twitter URL" />
-            <Input name="websiteUrl" placeholder="Website" />
+            <Input name="youtubeUrl" placeholder={t("youtubePlaceholder")} />
+            <Input name="twitchUrl" placeholder={t("twitchPlaceholder")} />
+            <Input name="tiktokUrl" placeholder={t("tiktokPlaceholder")} />
+            <Input name="instagramUrl" placeholder={t("instagramPlaceholder")} />
+            <Input name="xUrl" placeholder={t("xPlaceholder")} />
+            <Input name="websiteUrl" placeholder={t("websitePlaceholder")} />
           </div>
-          <Input name="portfolioUrl" placeholder="Portfolio URL" />
-          <Textarea name="message" placeholder="Tell us about your work" rows={4} />
+          <Input name="portfolioUrl" placeholder={t("portfolioUrlPlaceholder")} />
+          <Textarea name="message" placeholder={t("messagePlaceholder")} rows={4} />
           <div>
-            <label className="text-sm font-medium">Portfolio screenshots</label>
+            <label className="text-sm font-medium">{t("portfolioScreenshotsLabel")}</label>
             <Input
               type="file"
               accept="image/*"
@@ -83,13 +85,13 @@ export function CreatorApplicationForm({ userEmail }: { userEmail: string }) {
                 if (f) void handlePortfolioUpload(f);
               }}
             />
-            {uploading && <p className="text-xs text-muted-foreground mt-1">Uploading {progress}%</p>}
+            {uploading && <p className="text-xs text-muted-foreground mt-1">{t("uploadingProgress", { progress })}</p>}
             {portfolioImages.length > 0 && (
-              <p className="text-xs text-muted-foreground mt-1">{portfolioImages.length} file(s) attached</p>
+              <p className="text-xs text-muted-foreground mt-1">{t("filesAttached", { count: portfolioImages.length })}</p>
             )}
           </div>
           <Button type="submit" disabled={pending || uploading}>
-            Submit application
+            {t("submit")}
           </Button>
         </form>
       </CardContent>

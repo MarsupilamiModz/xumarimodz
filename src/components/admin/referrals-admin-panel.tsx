@@ -2,6 +2,7 @@
 
 import { useRef, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import {
   createReferralLink,
   toggleReferralLink,
@@ -24,6 +25,7 @@ type ReferralData = Extract<
 >["data"];
 
 export function ReferralsAdminPanel({ data, locale }: { data: ReferralData; locale: string }) {
+  const t = useTranslations("admin.ui.referrals");
   const router = useRouter();
   const appToast = useAppToast();
   const formRef = useRef<HTMLFormElement>(null);
@@ -33,25 +35,25 @@ export function ReferralsAdminPanel({ data, locale }: { data: ReferralData; loca
     <div className="space-y-6">
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <Card className="p-4">
-          <p className="text-xs text-muted-foreground uppercase">Clicks</p>
+          <p className="text-xs text-muted-foreground uppercase">{t("clicksLabel")}</p>
           <p className="text-2xl font-bold tabular-nums">{data.totals.clicks}</p>
         </Card>
         <Card className="p-4">
-          <p className="text-xs text-muted-foreground uppercase">Registrations</p>
+          <p className="text-xs text-muted-foreground uppercase">{t("registrationsLabel")}</p>
           <p className="text-2xl font-bold tabular-nums">{data.totals.registrations}</p>
         </Card>
         <Card className="p-4">
-          <p className="text-xs text-muted-foreground uppercase">Premium grants</p>
+          <p className="text-xs text-muted-foreground uppercase">{t("premiumGrantsLabel")}</p>
           <p className="text-2xl font-bold tabular-nums">{data.totals.signups}</p>
         </Card>
         <Card className="p-4">
-          <p className="text-xs text-muted-foreground uppercase">Conversion</p>
+          <p className="text-xs text-muted-foreground uppercase">{t("conversionLabel")}</p>
           <p className="text-2xl font-bold tabular-nums">{data.conversionRate}%</p>
         </Card>
       </div>
 
       <Card className="p-6 space-y-4">
-        <h3 className="font-semibold">Create referral link</h3>
+        <h3 className="font-semibold">{t("createReferralTitle")}</h3>
         <form
           ref={formRef}
           className="grid gap-3 sm:grid-cols-2"
@@ -75,10 +77,10 @@ export function ReferralsAdminPanel({ data, locale }: { data: ReferralData; loca
             });
           }}
         >
-          <Input name="code" placeholder="Code (e.g. DISCORD2025)" required />
-          <Input name="name" placeholder="Campaign name" required />
-          <Input name="premiumDays" type="number" defaultValue={3} min={1} placeholder="Premium days" />
-          <Input name="maxUses" type="number" min={1} placeholder="Max uses (optional)" />
+          <Input name="code" placeholder={t("codePlaceholder")} required />
+          <Input name="name" placeholder={t("campaignNamePlaceholder")} required />
+          <Input name="premiumDays" type="number" defaultValue={3} min={1} placeholder={t("premiumDaysPlaceholder")} />
+          <Input name="maxUses" type="number" min={1} placeholder={t("maxUsesPlaceholder")} />
           <select
             name="premiumType"
             defaultValue="PREMIUM_LITE"
@@ -89,16 +91,16 @@ export function ReferralsAdminPanel({ data, locale }: { data: ReferralData; loca
             <option value="PREMIUM_MAX">Premium Max</option>
           </select>
           <label className="flex items-center gap-2 text-sm sm:col-span-2">
-            <input type="checkbox" name="trackingEnabled" defaultChecked /> Enable click tracking
+            <input type="checkbox" name="trackingEnabled" defaultChecked /> {t("enableClickTracking")}
           </label>
           <Button type="submit" disabled={pending} className="sm:col-span-2">
-            Create link
+            {t("createLink")}
           </Button>
         </form>
       </Card>
 
       <Card className="p-6">
-        <h3 className="font-semibold mb-4">Referral links</h3>
+        <h3 className="font-semibold mb-4">{t("referralLinksTitle")}</h3>
         <div className="space-y-3">
           {data.links.map((link) => (
             <div key={link.id} className="rounded-lg border border-border/40 p-4 space-y-2">
@@ -108,18 +110,18 @@ export function ReferralsAdminPanel({ data, locale }: { data: ReferralData; loca
                   <p className="font-mono text-sm text-violet-bright">{link.code}</p>
                 </div>
                 <Badge variant={link.active ? "premium" : "outline"}>
-                  {link.active ? "Active" : "Inactive"}
+                  {link.active ? t("statusActive") : t("statusInactive")}
                 </Badge>
               </div>
               <p className="text-xs text-muted-foreground break-all">
                 {buildReferralRegisterUrl(locale, link.code)}
               </p>
               <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
-                <span>{link.premiumDays}d {link.premiumType}</span>
-                <span>{link.clickCount} clicks</span>
-                <span>{link.currentUses} uses</span>
-                {link.maxUses != null && <span>max {link.maxUses}</span>}
-                {link.expiresAt && <span>expires {formatDateTime(link.expiresAt, locale)}</span>}
+                <span>{t("daysShort", { days: link.premiumDays })} {link.premiumType}</span>
+                <span>{t("clicksCount", { count: link.clickCount })}</span>
+                <span>{t("usesCount", { count: link.currentUses })}</span>
+                {link.maxUses != null && <span>{t("maxUsesLabel", { max: link.maxUses })}</span>}
+                {link.expiresAt && <span>{t("expiresLabel", { date: formatDateTime(link.expiresAt, locale) })}</span>}
               </div>
               <div className="flex flex-wrap gap-2">
                 <Button
@@ -134,14 +136,14 @@ export function ReferralsAdminPanel({ data, locale }: { data: ReferralData; loca
                     })
                   }
                 >
-                  {link.active ? "Deactivate" : "Activate"}
+                  {link.active ? t("deactivate") : t("activate")}
                 </Button>
                 <Button
                   size="sm"
                   variant="outline"
                   disabled={pending}
                   onClick={() => {
-                    const days = prompt("Premium days", String(link.premiumDays));
+                    const days = prompt(t("editDaysPrompt"), String(link.premiumDays));
                     if (!days) return;
                     startTransition(async () => {
                       const r = await updateReferralLink(link.id, { premiumDays: Number(days) });
@@ -150,14 +152,14 @@ export function ReferralsAdminPanel({ data, locale }: { data: ReferralData; loca
                     });
                   }}
                 >
-                  Edit days
+                  {t("editDays")}
                 </Button>
                 <Button
                   size="sm"
                   variant="destructive"
                   disabled={pending}
                   onClick={() => {
-                    if (!confirm(`Delete referral "${link.code}"?`)) return;
+                    if (!confirm(t("deleteReferralConfirm", { code: link.code }))) return;
                     startTransition(async () => {
                       const r = await deleteReferralLink(link.id);
                       if (r.success) {
@@ -167,12 +169,12 @@ export function ReferralsAdminPanel({ data, locale }: { data: ReferralData; loca
                     });
                   }}
                 >
-                  Delete
+                  {t("delete")}
                 </Button>
               </div>
               {link.signups.length > 0 && (
                 <div className="pt-2 border-t border-border/30">
-                  <p className="text-xs font-medium text-muted-foreground mb-1">Recent registrations</p>
+                  <p className="text-xs font-medium text-muted-foreground mb-1">{t("recentRegistrations")}</p>
                   <ul className="space-y-1 text-xs text-muted-foreground">
                     {link.signups.map((signup) => (
                       <li key={signup.id}>
@@ -186,7 +188,7 @@ export function ReferralsAdminPanel({ data, locale }: { data: ReferralData; loca
             </div>
           ))}
           {data.links.length === 0 && (
-            <p className="text-sm text-muted-foreground">No referral links yet.</p>
+            <p className="text-sm text-muted-foreground">{t("noReferralLinks")}</p>
           )}
         </div>
       </Card>

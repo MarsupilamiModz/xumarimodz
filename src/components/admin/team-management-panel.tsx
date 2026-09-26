@@ -2,6 +2,7 @@
 
 import { colors } from "@/styles/tokens";
 import { useMemo, useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import {
   ChevronDown,
@@ -175,6 +176,7 @@ export function TeamManagementPanel({
   profiles: Profile[];
 }) {
   const router = useRouter();
+  const t = useTranslations("admin.ui.teamManagement");
   const appToast = useAppToast();
   const [pending, startTransition] = useTransition();
   const [deptName, setDeptName] = useState("");
@@ -240,7 +242,7 @@ export function TeamManagementPanel({
 
   function saveProfile() {
     if (!form.name.trim() || !form.position.trim()) {
-      appToast.error("Name and position are required");
+      appToast.error(t("nameAndPositionRequired"));
       return;
     }
 
@@ -280,7 +282,7 @@ export function TeamManagementPanel({
   }
 
   function removeProfile(id: string, name: string) {
-    if (!window.confirm(`Remove ${name} from the team page?`)) return;
+    if (!window.confirm(t("removeMemberConfirm", { name }))) return;
     startTransition(async () => {
       const r = await deleteTeamProfile(id);
       if (r.success) {
@@ -336,24 +338,24 @@ export function TeamManagementPanel({
   return (
     <Tabs defaultValue="members">
       <TabsList>
-        <TabsTrigger value="members">Team members</TabsTrigger>
-        <TabsTrigger value="departments">Categories</TabsTrigger>
+        <TabsTrigger value="members">{t("teamMembersTab")}</TabsTrigger>
+        <TabsTrigger value="departments">{t("categoriesTab")}</TabsTrigger>
       </TabsList>
 
       <TabsContent value="departments" className="mt-4 space-y-4">
         <Card className="grid gap-3 p-4 sm:grid-cols-3">
           <Input
-            placeholder="Category name"
+            placeholder={t("categoryNamePlaceholder")}
             value={deptName}
             onChange={(e) => setDeptName(e.target.value)}
           />
           <Input
-            placeholder="Slug (optional)"
+            placeholder={t("slugOptionalPlaceholder")}
             value={deptSlug}
             onChange={(e) => setDeptSlug(e.target.value)}
           />
           <Button disabled={pending} onClick={saveDept}>
-            <Plus className="mr-1 h-4 w-4" /> Add category
+            <Plus className="mr-1 h-4 w-4" /> {t("addCategoryButton")}
           </Button>
         </Card>
         <div className="space-y-2">
@@ -365,7 +367,7 @@ export function TeamManagementPanel({
               <div>
                 <p className="font-medium">{dept.name}</p>
                 <p className="text-xs text-muted-foreground">
-                  {dept._count.members} members · {dept.slug}
+                  {t("memberCountLabel", { count: dept._count.members })} · {dept.slug}
                 </p>
               </div>
               <Button
@@ -373,7 +375,7 @@ export function TeamManagementPanel({
                 variant="ghost"
                 disabled={pending}
                 onClick={() => {
-                  if (!window.confirm(`Delete category ${dept.name}?`)) return;
+                  if (!window.confirm(t("deleteCategoryConfirm", { name: dept.name }))) return;
                   startTransition(async () => {
                     const r = await deleteTeamDepartment(dept.id);
                     if (r.success) router.refresh();
@@ -392,13 +394,13 @@ export function TeamManagementPanel({
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="text-sm text-muted-foreground">
-              Manage public team profiles, roles, media, and contact details.
+              {t("managePublicProfilesHint")}
             </p>
           </div>
           {!isEditing && (
             <Button onClick={startCreate}>
               <UserPlus className="mr-2 h-4 w-4" />
-              Add team member
+              {t("addTeamMemberButton")}
             </Button>
           )}
         </div>
@@ -407,7 +409,7 @@ export function TeamManagementPanel({
           <Card className="space-y-6 p-6">
             <div className="flex items-center justify-between gap-3">
               <h3 className="text-lg font-semibold">
-                {editingId === "new" ? "Add team member" : `Edit ${form.name}`}
+                {editingId === "new" ? t("addTeamMemberHeading") : t("editMemberHeading", { name: form.name })}
               </h3>
               <Button type="button" variant="ghost" size="icon" onClick={cancelEdit}>
                 <X className="h-4 w-4" />
@@ -416,23 +418,23 @@ export function TeamManagementPanel({
 
             <section className="space-y-3">
               <h4 className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
-                Identity
+                {t("identityHeading")}
               </h4>
               <div className="grid gap-3 sm:grid-cols-2">
                 <Input
-                  placeholder="Display name"
+                  placeholder={t("displayNamePlaceholder")}
                   value={form.name}
                   onChange={(e) => patchForm({ name: e.target.value })}
                 />
                 <Input
-                  placeholder="Position title"
+                  placeholder={t("positionTitlePlaceholder")}
                   value={form.position}
                   onChange={(e) => patchForm({ position: e.target.value })}
                 />
               </div>
 
               <div className="space-y-2 rounded-lg border border-border/40 p-3">
-                <p className="text-sm font-medium">Link platform user (optional)</p>
+                <p className="text-sm font-medium">{t("linkPlatformUserLabel")}</p>
                 {linkedUser ? (
                   <div className="flex items-center justify-between gap-2 rounded-md bg-muted/30 px-3 py-2">
                     <div>
@@ -440,13 +442,13 @@ export function TeamManagementPanel({
                       <p className="text-xs text-muted-foreground">{linkedUser.email}</p>
                     </div>
                     <Button type="button" size="sm" variant="outline" onClick={unlinkUser}>
-                      Unlink
+                      {t("unlinkButton")}
                     </Button>
                   </div>
                 ) : (
                   <div className="flex gap-2">
                     <Input
-                      placeholder="Search username or email…"
+                      placeholder={t("searchUsernameEmailPlaceholder")}
                       value={userSearch}
                       onChange={(e) => setUserSearch(e.target.value)}
                     />
@@ -485,7 +487,7 @@ export function TeamManagementPanel({
 
             <section className="space-y-3">
               <h4 className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
-                Role & category
+                {t("roleAndCategoryHeading")}
               </h4>
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 <select
@@ -505,7 +507,7 @@ export function TeamManagementPanel({
                   ))}
                 </select>
                 <Input
-                  placeholder="Role badge"
+                  placeholder={t("roleBadgePlaceholder")}
                   value={form.roleBadge}
                   onChange={(e) => patchForm({ roleBadge: e.target.value })}
                 />
@@ -519,7 +521,7 @@ export function TeamManagementPanel({
                   value={form.departmentId}
                   onChange={(e) => patchForm({ departmentId: e.target.value })}
                 >
-                  <option value="">No category</option>
+                  <option value="">{t("noCategoryOption")}</option>
                   {departments.map((dept) => (
                     <option key={dept.id} value={dept.id}>
                       {dept.name}
@@ -531,7 +533,7 @@ export function TeamManagementPanel({
 
             <section className="space-y-3">
               <h4 className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
-                Media
+                {t("mediaHeading")}
               </h4>
               <TeamMemberMediaUpload
                 avatarUrl={form.avatarUrl || null}
@@ -545,22 +547,22 @@ export function TeamManagementPanel({
 
             <section className="space-y-3">
               <h4 className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
-                Contact
+                {t("contactHeading")}
               </h4>
               <div className="grid gap-3 sm:grid-cols-2">
                 <Input
                   type="email"
-                  placeholder="Email"
+                  placeholder={t("emailPlaceholder")}
                   value={form.email}
                   onChange={(e) => patchForm({ email: e.target.value })}
                 />
                 <Input
-                  placeholder="Discord invite or profile URL"
+                  placeholder={t("discordUrlPlaceholder")}
                   value={form.discordUrl}
                   onChange={(e) => patchForm({ discordUrl: e.target.value })}
                 />
                 <Input
-                  placeholder="Website"
+                  placeholder={t("websitePlaceholder")}
                   value={form.websiteUrl}
                   onChange={(e) => patchForm({ websiteUrl: e.target.value })}
                   className="sm:col-span-2"
@@ -570,31 +572,31 @@ export function TeamManagementPanel({
 
             <section className="space-y-3">
               <h4 className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
-                Social links
+                {t("socialLinksHeading")}
               </h4>
               <div className="grid gap-3 sm:grid-cols-2">
                 <Input
-                  placeholder="YouTube"
+                  placeholder={t("youtubePlaceholder")}
                   value={form.youtubeUrl}
                   onChange={(e) => patchForm({ youtubeUrl: e.target.value })}
                 />
                 <Input
-                  placeholder="Twitch"
+                  placeholder={t("twitchPlaceholder")}
                   value={form.twitchUrl}
                   onChange={(e) => patchForm({ twitchUrl: e.target.value })}
                 />
                 <Input
-                  placeholder="TikTok"
+                  placeholder={t("tiktokPlaceholder")}
                   value={form.tiktokUrl}
                   onChange={(e) => patchForm({ tiktokUrl: e.target.value })}
                 />
                 <Input
-                  placeholder="Instagram"
+                  placeholder={t("instagramPlaceholder")}
                   value={form.instagramUrl}
                   onChange={(e) => patchForm({ instagramUrl: e.target.value })}
                 />
                 <Input
-                  placeholder="X / Twitter"
+                  placeholder={t("xTwitterPlaceholder")}
                   value={form.xUrl}
                   onChange={(e) => patchForm({ xUrl: e.target.value })}
                 />
@@ -604,7 +606,7 @@ export function TeamManagementPanel({
             <section className="space-y-3">
               <div className="flex items-center justify-between">
                 <h4 className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
-                  Custom links
+                  {t("customLinksHeading")}
                 </h4>
                 <Button
                   type="button"
@@ -614,17 +616,17 @@ export function TeamManagementPanel({
                     patchForm({ customLinks: [...form.customLinks, { label: "", url: "" }] })
                   }
                 >
-                  <Link2 className="mr-1 h-4 w-4" /> Add link
+                  <Link2 className="mr-1 h-4 w-4" /> {t("addLinkButton")}
                 </Button>
               </div>
               {form.customLinks.length === 0 ? (
-                <p className="text-sm text-muted-foreground">No custom links yet.</p>
+                <p className="text-sm text-muted-foreground">{t("noCustomLinksYet")}</p>
               ) : (
                 <div className="space-y-2">
                   {form.customLinks.map((link, index) => (
                     <div key={index} className="grid gap-2 sm:grid-cols-[1fr_1fr_auto]">
                       <Input
-                        placeholder="Label"
+                        placeholder={t("labelPlaceholder")}
                         value={link.label}
                         onChange={(e) => {
                           const next = [...form.customLinks];
@@ -633,7 +635,7 @@ export function TeamManagementPanel({
                         }}
                       />
                       <Input
-                        placeholder="URL"
+                        placeholder={t("urlPlaceholder")}
                         value={link.url}
                         onChange={(e) => {
                           const next = [...form.customLinks];
@@ -661,10 +663,10 @@ export function TeamManagementPanel({
 
             <section className="space-y-3">
               <h4 className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
-                Biography
+                {t("biographyHeading")}
               </h4>
               <Textarea
-                placeholder="Public biography shown on the team page"
+                placeholder={t("biographyPlaceholder")}
                 rows={4}
                 value={form.description}
                 onChange={(e) => patchForm({ description: e.target.value })}
@@ -677,13 +679,13 @@ export function TeamManagementPanel({
                 value={form.visibility}
                 onChange={(e) => patchForm({ visibility: e.target.value as TeamVisibility })}
               >
-                <option value="PUBLIC">Public</option>
-                <option value="INTERNAL">Internal only</option>
-                <option value="HIDDEN">Hidden</option>
+                <option value="PUBLIC">{t("visibilityPublic")}</option>
+                <option value="INTERNAL">{t("visibilityInternal")}</option>
+                <option value="HIDDEN">{t("visibilityHidden")}</option>
               </select>
               <Input
                 type="number"
-                placeholder="Sort order"
+                placeholder={t("sortOrderPlaceholder")}
                 value={form.sortOrder}
                 onChange={(e) => patchForm({ sortOrder: Number(e.target.value) || 0 })}
               />
@@ -693,16 +695,16 @@ export function TeamManagementPanel({
                   checked={form.isActive}
                   onChange={(e) => patchForm({ isActive: e.target.checked })}
                 />
-                Active on team page
+                {t("activeOnTeamPageLabel")}
               </label>
             </section>
 
             <div className="flex flex-wrap gap-2">
               <Button disabled={pending} onClick={saveProfile}>
-                {editingId === "new" ? "Create member" : "Save changes"}
+                {editingId === "new" ? t("createMemberButton") : t("saveChangesButton")}
               </Button>
               <Button type="button" variant="outline" disabled={pending} onClick={cancelEdit}>
-                Cancel
+                {t("cancelButton")}
               </Button>
             </div>
           </Card>
@@ -711,7 +713,7 @@ export function TeamManagementPanel({
         <div className="space-y-2">
           {profiles.length === 0 ? (
             <Card className="p-8 text-center text-muted-foreground">
-              No team members yet. Add your first profile to populate the public team page.
+              {t("noTeamMembersYet")}
             </Card>
           ) : (
             profiles.map((profile, index) => (
@@ -731,7 +733,7 @@ export function TeamManagementPanel({
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <p className="font-medium">{profile.name}</p>
-                    {!profile.isActive && <Badge variant="destructive">Inactive</Badge>}
+                    {!profile.isActive && <Badge variant="destructive">{t("inactiveBadge")}</Badge>}
                     {profile.user && (
                       <Badge variant="outline">@{profile.user.username}</Badge>
                     )}
@@ -746,7 +748,13 @@ export function TeamManagementPanel({
                     {profile.roleBadge}
                   </Badge>
                 )}
-                <Badge variant="outline">{profile.visibility}</Badge>
+                <Badge variant="outline">
+                  {profile.visibility === "PUBLIC"
+                    ? t("visibilityPublic")
+                    : profile.visibility === "INTERNAL"
+                      ? t("visibilityInternal")
+                      : t("visibilityHidden")}
+                </Badge>
                 <div className="flex gap-1">
                   <Button
                     size="icon"
@@ -765,7 +773,7 @@ export function TeamManagementPanel({
                     <ChevronDown className="h-4 w-4" />
                   </Button>
                   <Button size="sm" variant="outline" onClick={() => startEdit(profile)}>
-                    Edit
+                    {t("editButton")}
                   </Button>
                   <Button
                     size="sm"

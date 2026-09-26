@@ -2,6 +2,7 @@
 
 import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { finalizeModVersionUpload } from "@/actions/mods";
 import {
   useR2MultipartUpload,
@@ -17,6 +18,7 @@ import { toast } from "@/hooks/use-toast";
 import { MAX_UPLOAD_BYTES, MOD_VERSION_FILE_ACCEPT, uploadLimitLabel, logUploadDiagnostic } from "@/lib/upload-limits";
 
 export function CreatorModVersionUpload({ modId }: { modId: string }) {
+  const t = useTranslations("common.cx.modVersionUpload");
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [diagnostics, setDiagnostics] = useState<string | null>(null);
@@ -30,9 +32,9 @@ export function CreatorModVersionUpload({ modId }: { modId: string }) {
 
   return (
     <Card className="space-y-4 p-6">
-      <h3 className="font-medium">Upload version</h3>
+      <h3 className="font-medium">{t("title")}</h3>
       <p className="text-xs text-muted-foreground">
-        Direct-to-storage multipart upload — up to {uploadLimitLabel()}. Files never pass through the app server.
+        {t("uploadHint", { limit: uploadLimitLabel() })}
       </p>
       <form
         ref={formRef}
@@ -46,7 +48,7 @@ export function CreatorModVersionUpload({ modId }: { modId: string }) {
             return;
           }
           if (file.size > MAX_UPLOAD_BYTES) {
-            toast({ title: `Max ${uploadLimitLabel()}`, variant: "destructive" });
+            toast({ title: t("maxSizeExceeded", { limit: uploadLimitLabel() }), variant: "destructive" });
             return;
           }
 
@@ -77,7 +79,7 @@ export function CreatorModVersionUpload({ modId }: { modId: string }) {
                 const msg =
                   r.data && "message" in r.data && r.data.message
                     ? String(r.data.message)
-                    : "Version uploaded";
+                    : t("versionUploadedDefault");
                 toast({ title: msg });
                 formRef.current?.reset();
                 setSelectedFile(null);
@@ -102,15 +104,15 @@ export function CreatorModVersionUpload({ modId }: { modId: string }) {
         className="space-y-3"
       >
         <Input name="version" placeholder="1.0.0" required />
-        <Input name="gameVersion" placeholder="Game version (optional)" />
+        <Input name="gameVersion" placeholder={t("gameVersionPlaceholder")} />
         <select
           name="channel"
           className="h-10 w-full rounded-md border border-input bg-background/50 px-3 text-sm"
         >
-          <option value="STABLE">Stable release</option>
-          <option value="BETA">Beta release</option>
+          <option value="STABLE">{t("channelStable")}</option>
+          <option value="BETA">{t("channelBeta")}</option>
         </select>
-        <Textarea name="changelog" placeholder="Changelog" rows={3} />
+        <Textarea name="changelog" placeholder={t("changelogPlaceholder")} rows={3} />
         <Input
           name="file"
           type="file"
@@ -128,9 +130,14 @@ export function CreatorModVersionUpload({ modId }: { modId: string }) {
             </div>
             <div className="flex justify-between text-xs text-muted-foreground">
               <span>
-                {progress}% · {formatUploadSpeed(speedBps)} · chunks {chunkStatus.completed}/{chunkStatus.total || "—"}
+                {t("progressLine", {
+                  progress,
+                  speed: formatUploadSpeed(speedBps),
+                  completed: chunkStatus.completed,
+                  total: chunkStatus.total || "—",
+                })}
               </span>
-              <span>ETA {formatEta(etaSeconds)}</span>
+              <span>{t("etaLabel", { eta: formatEta(etaSeconds) })}</span>
             </div>
           </div>
         )}
@@ -139,7 +146,7 @@ export function CreatorModVersionUpload({ modId }: { modId: string }) {
             <p className="text-xs text-destructive">{error}</p>
             {!uploading && (
               <Button type="button" variant="outline" size="sm" onClick={() => void retry()}>
-                Retry upload
+                {t("retryUpload")}
               </Button>
             )}
           </div>
@@ -152,13 +159,13 @@ export function CreatorModVersionUpload({ modId }: { modId: string }) {
           onClick={() => {
             try {
               const raw = sessionStorage.getItem("xumari-upload-diagnostics");
-              setDiagnostics(raw ? JSON.stringify(JSON.parse(raw), null, 2) : "No upload logs yet.");
+              setDiagnostics(raw ? JSON.stringify(JSON.parse(raw), null, 2) : t("noUploadLogs"));
             } catch {
-              setDiagnostics("Could not read upload logs.");
+              setDiagnostics(t("couldNotReadLogs"));
             }
           }}
         >
-          Show upload diagnostics
+          {t("showDiagnostics")}
         </Button>
         {diagnostics && (
           <pre className="text-[10px] max-h-40 overflow-auto rounded border border-border/40 p-2 bg-background/50">
@@ -167,16 +174,16 @@ export function CreatorModVersionUpload({ modId }: { modId: string }) {
         )}
         <div className="flex flex-wrap gap-2">
           <Button type="submit" disabled={busy}>
-            {uploading ? (paused ? "Paused…" : "Uploading…") : pending ? "Processing…" : "Upload version"}
+            {uploading ? (paused ? t("statusPaused") : t("statusUploading")) : pending ? t("statusProcessing") : t("uploadVersionButton")}
           </Button>
           {uploading && !paused && (
             <Button type="button" variant="outline" onClick={() => pause()}>
-              Pause
+              {t("pause")}
             </Button>
           )}
           {uploading && paused && (
             <Button type="button" variant="outline" onClick={() => resume()}>
-              Resume
+              {t("resume")}
             </Button>
           )}
           {(uploading || sessionId) && (
@@ -185,7 +192,7 @@ export function CreatorModVersionUpload({ modId }: { modId: string }) {
               variant="destructive"
               onClick={() => void abort(sessionId ?? undefined)}
             >
-              Cancel
+              {t("cancel")}
             </Button>
           )}
         </div>

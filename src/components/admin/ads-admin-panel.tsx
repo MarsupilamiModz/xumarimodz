@@ -2,6 +2,7 @@
 
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
 import { safeToLocaleString } from "@/lib/i18n/safe-locale";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -38,15 +39,31 @@ const ROLE_LEVELS = [
 ] as const;
 
 const PLACEMENT_PAGES = [
-  { key: "homepage", label: "Homepage" },
-  { key: "listing", label: "Marketplace" },
-  { key: "mod-detail", label: "Mod / Sound pages" },
-  { key: "dashboard", label: "Dashboard" },
-  { key: "sidebar", label: "Sidebar" },
-  { key: "footer", label: "Footer" },
-  { key: "search", label: "Search" },
-  { key: "creator", label: "Creator pages" },
-  { key: "category", label: "Collections" },
+  { key: "homepage", labelKey: "placementHomepage" },
+  { key: "listing", labelKey: "placementListing" },
+  { key: "mod-detail", labelKey: "placementModDetail" },
+  { key: "dashboard", labelKey: "placementDashboard" },
+  { key: "sidebar", labelKey: "placementSidebar" },
+  { key: "footer", labelKey: "placementFooter" },
+  { key: "search", labelKey: "placementSearch" },
+  { key: "creator", labelKey: "placementCreator" },
+  { key: "category", labelKey: "placementCategory" },
+] as const;
+
+const ROLE_LEVEL_KEYS = {
+  full: "roleLevelFull",
+  reduced: "roleLevelReduced",
+  none: "roleLevelNone",
+} as const;
+
+const TABS = [
+  ["status", "tabStatus"],
+  ["adsense", "tabAdsense"],
+  ["microsoft", "tabMicrosoft"],
+  ["verification", "tabVerification"],
+  ["analytics", "tabAnalytics"],
+  ["roles", "tabRoles"],
+  ["placements", "tabPlacements"],
 ] as const;
 
 type Props = {
@@ -82,6 +99,7 @@ type Tab =
   | "placements";
 
 export function AdsAdminPanel({ data }: Props) {
+  const t = useTranslations("admin.ui.adsAdmin");
   const appToast = useAppToast();
   const [pending, startTransition] = useTransition();
   const [settings, setSettings] = useState(data.settings);
@@ -104,28 +122,18 @@ export function AdsAdminPanel({ data }: Props) {
   return (
     <div className="space-y-8">
       <div className="flex flex-wrap gap-2">
-        {(
-          [
-            ["status", "AdSense Status"],
-            ["adsense", "Google AdSense"],
-            ["microsoft", "Microsoft Ads"],
-            ["verification", "Verification"],
-            ["analytics", "Analytics"],
-            ["roles", "Role visibility"],
-            ["placements", "Placements"],
-          ] as const
-        ).map(([id, label]) => (
+        {TABS.map(([id, labelKey]) => (
           <Button key={id} variant={tab === id ? "default" : "outline"} size="sm" onClick={() => setTab(id)}>
-            {label}
+            {t(labelKey)}
           </Button>
         ))}
       </div>
 
       {tab === "status" && (
         <Card className="p-6 space-y-4">
-          <h3 className="font-semibold">AdSense readiness</h3>
+          <h3 className="font-semibold">{t("readinessTitle")}</h3>
           <p className="text-xs text-muted-foreground">
-            Publisher: {data.readiness.publisherId || DEFAULT_ADSENSE_CLIENT_ID}
+            {t("publisherLabel", { id: data.readiness.publisherId || DEFAULT_ADSENSE_CLIENT_ID })}
           </p>
           <div className="grid gap-3 sm:grid-cols-2">
             {data.readiness.checks.map((check) => (
@@ -137,7 +145,7 @@ export function AdsAdminPanel({ data }: Props) {
                   <p className="text-sm font-medium">{check.label}</p>
                   <p className="text-xs text-muted-foreground mt-1">{check.detail}</p>
                 </div>
-                <StatusBadge tone={check.ok ? "success" : "danger"} label={check.ok ? "OK" : "Fehler"} />
+                <StatusBadge tone={check.ok ? "success" : "danger"} label={check.ok ? t("checkOk") : t("checkError")} />
               </div>
             ))}
           </div>
@@ -149,32 +157,32 @@ export function AdsAdminPanel({ data }: Props) {
             </div>
           )}
           <p className="text-xs text-muted-foreground">
-            Last check: {new Date(data.readiness.lastCheckedAt).toLocaleString()} ·{" "}
+            {t("lastCheckLabel")} {new Date(data.readiness.lastCheckedAt).toLocaleString()} ·{" "}
             <a className="underline" href={data.readiness.adsTxtUrl} target="_blank" rel="noreferrer">
               {data.readiness.adsTxtUrl}
             </a>
-            {data.readiness.adsTxtReachable ? " · erreichbar" : " · nicht erreichbar"}
+            {data.readiness.adsTxtReachable ? t("reachableSuffix") : t("notReachableSuffix")}
           </p>
           <p className="text-xs text-muted-foreground">
-            Static file: <a className="underline" href="/ads.txt" target="_blank" rel="noreferrer">/ads.txt</a>
+            {t("staticFileLabel")} <a className="underline" href="/ads.txt" target="_blank" rel="noreferrer">/ads.txt</a>
           </p>
         </Card>
       )}
 
       {tab === "analytics" && (
         <Card className="p-6 space-y-3">
-          <h3 className="font-semibold">Analytics</h3>
+          <h3 className="font-semibold">{t("analyticsTitle")}</h3>
           <div className="grid gap-4 sm:grid-cols-4">
             <Card className="p-4">
-              <p className="text-xs text-muted-foreground">Impressions</p>
+              <p className="text-xs text-muted-foreground">{t("impressions")}</p>
               <p className="text-2xl font-bold">{safeToLocaleString(data.totalImpressions)}</p>
             </Card>
             <Card className="p-4">
-              <p className="text-xs text-muted-foreground">Clicks</p>
+              <p className="text-xs text-muted-foreground">{t("clicks")}</p>
               <p className="text-2xl font-bold">{safeToLocaleString(data.totalClicks)}</p>
             </Card>
             <Card className="p-4">
-              <p className="text-xs text-muted-foreground">CTR</p>
+              <p className="text-xs text-muted-foreground">{t("ctr")}</p>
               <p className="text-2xl font-bold">
                 {data.totalImpressions > 0
                   ? `${((data.totalClicks / data.totalImpressions) * 100).toFixed(2)}%`
@@ -182,55 +190,51 @@ export function AdsAdminPanel({ data }: Props) {
               </p>
             </Card>
             <Card className="p-4">
-              <p className="text-xs text-muted-foreground">RPM (proxy)</p>
+              <p className="text-xs text-muted-foreground">{t("rpmProxy")}</p>
               <p className="text-2xl font-bold">{rpm}</p>
             </Card>
           </div>
-          <p className="text-xs text-muted-foreground">
-            Connect Google Analytics via Branding → Head Scripts or Verification meta tags.
-          </p>
+          <p className="text-xs text-muted-foreground">{t("analyticsHint")}</p>
         </Card>
       )}
 
       {tab === "verification" && (
         <Card className="p-6 space-y-4">
-          <h3 className="font-semibold">Site verification</h3>
+          <h3 className="font-semibold">{t("verificationTitle")}</h3>
           <Input
-            placeholder="Google Search Console verification code"
+            placeholder={t("googleSearchConsolePlaceholder")}
             value={verification.googleSiteVerification ?? ""}
             onChange={(e) => setVerification((v) => ({ ...v, googleSiteVerification: e.target.value }))}
           />
           <Input
-            placeholder="Google AdSense verification meta (optional)"
+            placeholder={t("googleAdsensePlaceholder")}
             value={verification.googleAdsenseVerification ?? ""}
             onChange={(e) => setVerification((v) => ({ ...v, googleAdsenseVerification: e.target.value }))}
           />
           <Input
-            placeholder="Bing Webmaster verification code"
+            placeholder={t("bingPlaceholder")}
             value={verification.bingSiteVerification ?? ""}
             onChange={(e) => setVerification((v) => ({ ...v, bingSiteVerification: e.target.value }))}
           />
           <Button
-           
+
             disabled={pending}
             onClick={() =>
               startTransition(async () => {
                 const r = await saveAdminSiteVerification(verification);
-                if (r.success) appToast.saved("Verification saved");
+                if (r.success) appToast.saved(t("verificationSavedToast"));
                 else appToast.error(r.error);
               })
             }
           >
-            Save verification tags
+            {t("saveVerificationTags")}
           </Button>
 
           <hr className="border-border/40" />
-          <h4 className="font-medium text-sm">Head scripts (Analytics / tracking)</h4>
-          <p className="text-xs text-muted-foreground">
-            Injected via next/script — no duplicate AdSense loader. Manage full list under Branding → Head Scripts.
-          </p>
+          <h4 className="font-medium text-sm">{t("headScriptsTitle")}</h4>
+          <p className="text-xs text-muted-foreground">{t("headScriptsHint")}</p>
           <Textarea
-            placeholder="Optional inline script snippet (without &lt;script&gt; tags)"
+            placeholder={t("scriptSnippetPlaceholder")}
             rows={4}
             value={headScripts.scriptSnippets[0]?.html ?? ""}
             onChange={(e) =>
@@ -254,49 +258,49 @@ export function AdsAdminPanel({ data }: Props) {
             onClick={() =>
               startTransition(async () => {
                 const r = await saveAdminHeadScripts(headScripts);
-                if (r.success) appToast.saved("Head scripts saved");
+                if (r.success) appToast.saved(t("headScriptsSavedToast"));
                 else appToast.error(r.error);
               })
             }
           >
-            Save head scripts
+            {t("saveHeadScripts")}
           </Button>
         </Card>
       )}
 
       {tab === "adsense" && (
         <Card className="p-6 space-y-4">
-          <h3 className="font-semibold">Google AdSense</h3>
+          <h3 className="font-semibold">{t("adsenseTitle")}</h3>
           <label className="flex items-center justify-between gap-4 text-sm">
-            Global verification script (all pages)
+            {t("globalScriptLabel")}
             <Switch
               checked={settings.adsenseGlobalScriptEnabled !== false}
               onCheckedChange={(v) => setSettings((s) => ({ ...s, adsenseGlobalScriptEnabled: v }))}
             />
           </label>
           <label className="flex items-center justify-between gap-4 text-sm">
-            Google Consent Mode v2
+            {t("consentModeLabel")}
             <Switch
               checked={settings.consentModeEnabled !== false}
               onCheckedChange={(v) => setSettings((s) => ({ ...s, consentModeEnabled: v }))}
             />
           </label>
           <label className="flex items-center justify-between gap-4 text-sm">
-            Enable ad slots
+            {t("enableAdSlots")}
             <Switch
               checked={settings.adsenseEnabled ?? false}
               onCheckedChange={(v) => setSettings((s) => ({ ...s, adsenseEnabled: v }))}
             />
           </label>
           <label className="flex items-center justify-between gap-4 text-sm">
-            Auto Ads
+            {t("autoAds")}
             <Switch
               checked={settings.adsenseAutoAds ?? false}
               onCheckedChange={(v) => setSettings((s) => ({ ...s, adsenseAutoAds: v }))}
             />
           </label>
           <Input
-            placeholder="Publisher ID (ca-pub-...)"
+            placeholder={t("publisherIdPlaceholder")}
             value={settings.adsenseClientId ?? ""}
             onChange={(e) => setSettings((s) => ({ ...s, adsenseClientId: e.target.value }))}
           />
@@ -304,7 +308,7 @@ export function AdsAdminPanel({ data }: Props) {
             {PLACEMENT_PAGES.map((p) => (
               <Input
                 key={p.key}
-                placeholder={`Slot ID — ${p.label}`}
+                placeholder={t("slotIdPlaceholder", { page: t(p.labelKey) })}
                 value={settings.adsenseSlotIds?.[p.key] ?? ""}
                 onChange={(e) =>
                   setSettings((s) => ({
@@ -316,39 +320,39 @@ export function AdsAdminPanel({ data }: Props) {
             ))}
           </div>
           <Button disabled={pending} onClick={save}>
-            Save AdSense settings
+            {t("saveAdsenseSettings")}
           </Button>
         </Card>
       )}
 
       {tab === "microsoft" && (
         <Card className="p-6 space-y-4">
-          <h3 className="font-semibold">Microsoft Advertising</h3>
+          <h3 className="font-semibold">{t("microsoftTitle")}</h3>
           <label className="flex items-center justify-between gap-4 text-sm">
-            Enable Microsoft Ads
+            {t("enableMicrosoftAds")}
             <Switch
               checked={settings.microsoftEnabled ?? false}
               onCheckedChange={(v) => setSettings((s) => ({ ...s, microsoftEnabled: v }))}
             />
           </label>
           <Input
-            placeholder="Account ID"
+            placeholder={t("accountIdPlaceholder")}
             value={settings.microsoftAccountId ?? ""}
             onChange={(e) => setSettings((s) => ({ ...s, microsoftAccountId: e.target.value }))}
           />
           <Input
-            placeholder="UET Tracking ID"
+            placeholder={t("uetTrackingPlaceholder")}
             value={settings.microsoftTrackingId ?? ""}
             onChange={(e) => setSettings((s) => ({ ...s, microsoftTrackingId: e.target.value }))}
           />
           <Input
-            placeholder="Conversion ID"
+            placeholder={t("conversionIdPlaceholder")}
             value={settings.microsoftConversionId ?? ""}
             onChange={(e) => setSettings((s) => ({ ...s, microsoftConversionId: e.target.value }))}
           />
           {tab === "microsoft" && (
             <Button disabled={pending} onClick={save}>
-              Save Microsoft settings
+              {t("saveMicrosoftSettings")}
             </Button>
           )}
         </Card>
@@ -356,36 +360,34 @@ export function AdsAdminPanel({ data }: Props) {
 
       {tab === "placements" && (
         <Card className="p-6 space-y-4">
-          <h3 className="font-semibold">Multi-network manager</h3>
+          <h3 className="font-semibold">{t("multiNetworkTitle")}</h3>
           <label className="flex items-center justify-between gap-4 text-sm">
-            Enable ads globally
+            {t("enableAdsGlobally")}
             <Switch
               checked={settings.globalAdsEnabled}
               onCheckedChange={(v) => setSettings((s) => ({ ...s, globalAdsEnabled: v }))}
             />
           </label>
           <label className="flex items-center justify-between gap-4 text-sm">
-            Popup ads
+            {t("popupAds")}
             <Switch
               checked={settings.popupAdsEnabled}
               onCheckedChange={(v) => setSettings((s) => ({ ...s, popupAdsEnabled: v }))}
             />
           </label>
           <p className="text-xs text-muted-foreground">
-            Provider priority: {(settings.adProviderPriority ?? ["ADSENSE", "MICROSOFT"]).join(" → ")}
+            {t("providerPriority", { list: (settings.adProviderPriority ?? ["ADSENSE", "MICROSOFT"]).join(" → ") })}
           </p>
           <Button disabled={pending} onClick={save}>
-            Save all settings
+            {t("saveAllSettings")}
           </Button>
         </Card>
       )}
 
       {tab === "roles" && (
         <Card className="p-6 space-y-4">
-          <h3 className="font-semibold">Role-based ad control</h3>
-          <p className="text-xs text-muted-foreground">
-            full = all placements · reduced = fewer ads · none = ad-free
-          </p>
+          <h3 className="font-semibold">{t("roleControlTitle")}</h3>
+          <p className="text-xs text-muted-foreground">{t("roleLevelsHint")}</p>
           <div className="space-y-3">
             {ROLE_LEVELS.map((role) => (
               <div key={role} className="flex flex-wrap items-center gap-3 text-sm">
@@ -403,25 +405,25 @@ export function AdsAdminPanel({ data }: Props) {
                         }))
                       }
                     />
-                    {level}
+                    {t(ROLE_LEVEL_KEYS[level])}
                   </label>
                 ))}
               </div>
             ))}
           </div>
           <Button disabled={pending} onClick={save}>
-            Save role settings
+            {t("saveRoleSettings")}
           </Button>
         </Card>
       )}
 
       {(tab === "placements") && (
         <Card className="p-6 space-y-4">
-          <h3 className="font-semibold">Page placement controls</h3>
+          <h3 className="font-semibold">{t("placementControlsTitle")}</h3>
           <div className="grid gap-2 sm:grid-cols-2">
             {PLACEMENT_PAGES.map((p) => (
               <label key={p.key} className="flex items-center justify-between gap-4 text-sm rounded-lg border border-border/40 p-3">
-                {p.label}
+                {t(p.labelKey)}
                 <Switch
                   checked={settings.placementEnabled?.[p.key] !== false}
                   onCheckedChange={(v) =>
@@ -436,7 +438,7 @@ export function AdsAdminPanel({ data }: Props) {
           </div>
           {tab === "placements" && (
             <Button disabled={pending} onClick={save}>
-              Save placement toggles
+              {t("savePlacementToggles")}
             </Button>
           )}
         </Card>
@@ -444,7 +446,7 @@ export function AdsAdminPanel({ data }: Props) {
 
       {(tab === "placements") && (
         <Card className="p-6 space-y-4">
-          <h3 className="font-semibold">Ad slot inventory</h3>
+          <h3 className="font-semibold">{t("adSlotInventoryTitle")}</h3>
           <div className="space-y-2">
             {data.placements.map((ad) => (
               <div key={ad.id} className="flex flex-wrap items-center gap-3 rounded-lg border border-border/40 p-3 text-sm">
@@ -454,8 +456,8 @@ export function AdsAdminPanel({ data }: Props) {
                     {ad.location} · {ad.format} · {ad.provider}
                   </p>
                 </div>
-                <Badge variant="outline">{ad.impressions} views</Badge>
-                <Badge variant="outline">{ad.clicks} clicks</Badge>
+                <Badge variant="outline">{t("viewsCount", { count: ad.impressions })}</Badge>
+                <Badge variant="outline">{t("clicksCount", { count: ad.clicks })}</Badge>
                 <Switch
                   checked={ad.isEnabled}
                   onCheckedChange={(v) =>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useTransition } from "react";
+import { useTranslations } from "next-intl";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -29,20 +30,21 @@ export function PaymentStatusOverview({
   locale?: string;
   compact?: boolean;
 }) {
+  const t = useTranslations("admin.ui.paymentStatus");
   const appToast = useAppToast();
   const [pending, startTransition] = useTransition();
 
   const stripeReady = settings.stripeSecretKeySet && settings.stripeWebhookSecretSet;
-  const activeProvider = stripeReady ? "Stripe" : "Not configured";
+  const activeProvider = stripeReady ? "Stripe" : t("notConfigured");
 
   return (
     <div className={compact ? "space-y-4" : "space-y-6"}>
       <Card className="p-6 space-y-4">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <h3 className="font-semibold">Payment status</h3>
+            <h3 className="font-semibold">{t("heading")}</h3>
             <p className="text-xs text-muted-foreground mt-1">
-              Providers are configured via environment variables (Vercel). No secrets are stored in the admin panel.
+              {t("hint")}
             </p>
           </div>
           <Button
@@ -58,29 +60,29 @@ export function PaymentStatusOverview({
               })
             }
           >
-            Test Stripe connection
+            {t("testStripeConnection")}
           </Button>
         </div>
 
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <StatusTile label="Active provider" value={activeProvider} ok={stripeReady} />
-          <StatusTile label="Stripe secret" value={settings.stripeSecretKeySet ? "Configured" : "Missing"} ok={settings.stripeSecretKeySet} />
-          <StatusTile label="Webhook secret" value={settings.stripeWebhookSecretSet ? "Configured" : "Missing"} ok={settings.stripeWebhookSecretSet} />
-          <StatusTile label="Currency" value={settings.currency} ok />
+          <StatusTile label={t("activeProvider")} value={activeProvider} ok={stripeReady} />
+          <StatusTile label={t("stripeSecret")} value={settings.stripeSecretKeySet ? t("configured") : t("missing")} ok={settings.stripeSecretKeySet} />
+          <StatusTile label={t("webhookSecret")} value={settings.stripeWebhookSecretSet ? t("configured") : t("missing")} ok={settings.stripeWebhookSecretSet} />
+          <StatusTile label={t("currency")} value={settings.currency} ok />
         </div>
 
         <div className="flex flex-wrap gap-2 text-xs">
-          <Badge variant={stripeReady ? "premium" : "outline"}>Stripe {stripeReady ? "ready" : "incomplete"}</Badge>
-          <Badge variant="outline">PayPal via ENV (optional)</Badge>
-          <Badge variant="outline">Apple / Google Pay via Stripe</Badge>
+          <Badge variant={stripeReady ? "premium" : "outline"}>{stripeReady ? t("stripeReady") : t("stripeIncomplete")}</Badge>
+          <Badge variant="outline">{t("paypalViaEnv")}</Badge>
+          <Badge variant="outline">{t("applePayGooglePay")}</Badge>
         </div>
       </Card>
 
       {!compact && (
         <Card className="p-6">
-          <h3 className="font-semibold mb-4">Recent checkouts</h3>
+          <h3 className="font-semibold mb-4">{t("recentCheckouts")}</h3>
           {transactions.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No recent Stripe sessions.</p>
+            <p className="text-sm text-muted-foreground">{t("noRecentSessions")}</p>
           ) : (
             <div className="space-y-2">
               {transactions.map((tx) => (

@@ -2,6 +2,7 @@
 
 import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -36,6 +37,7 @@ function readAudioDuration(file: File): Promise<number | null> {
 }
 
 export function SoundPreviewUpload({ modId, hasPreview, hasCover }: Props) {
+  const t = useTranslations("common.cx.soundPreview");
   const previewRef = useRef<HTMLInputElement>(null);
   const coverRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
@@ -73,7 +75,7 @@ export function SoundPreviewUpload({ modId, hasPreview, hasCover }: Props) {
         });
         if (r.success) {
           toast({
-            title: "Preview uploaded",
+            title: t("previewUploaded"),
             description: durationSeconds ? formatDuration(durationSeconds) : undefined,
           });
           router.refresh();
@@ -83,7 +85,7 @@ export function SoundPreviewUpload({ modId, hasPreview, hasCover }: Props) {
         }
       });
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Preview upload failed";
+      const message = err instanceof Error ? err.message : t("previewUploadFailed");
       setLocalError(message);
       toast({ title: message, variant: "destructive" });
     }
@@ -106,7 +108,7 @@ export function SoundPreviewUpload({ modId, hasPreview, hasCover }: Props) {
         }
       });
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Cover upload failed";
+      const message = err instanceof Error ? err.message : t("coverUploadFailed");
       setLocalError(message);
       toast({ title: message, variant: "destructive" });
     }
@@ -117,11 +119,11 @@ export function SoundPreviewUpload({ modId, hasPreview, hasCover }: Props) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Sound assets</CardTitle>
+        <CardTitle className="text-base">{t("title")}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div>
-          <label className="text-sm font-medium">Preview audio (mp3, wav, ogg, flac, m4a)</label>
+          <label className="text-sm font-medium">{t("previewAudioLabel")}</label>
           <Input
             ref={previewRef}
             type="file"
@@ -134,11 +136,11 @@ export function SoundPreviewUpload({ modId, hasPreview, hasCover }: Props) {
               e.target.value = "";
             }}
           />
-          {hasPreview && <p className="text-xs text-success mt-1">Preview configured</p>}
+          {hasPreview && <p className="text-xs text-success mt-1">{t("previewConfigured")}</p>}
         </div>
 
         <div>
-          <label className="text-sm font-medium">Cover image</label>
+          <label className="text-sm font-medium">{t("coverImageLabel")}</label>
           <Input
             ref={coverRef}
             type="file"
@@ -151,13 +153,13 @@ export function SoundPreviewUpload({ modId, hasPreview, hasCover }: Props) {
               e.target.value = "";
             }}
           />
-          {hasCover && <p className="text-xs text-success mt-1">Cover configured</p>}
+          {hasCover && <p className="text-xs text-success mt-1">{t("coverConfigured")}</p>}
         </div>
 
         {busy && (
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <Loader2 className="h-3 w-3 animate-spin" />
-            Uploading… {progress}%
+            {t("uploadingProgress", { progress })}
           </div>
         )}
 
@@ -167,10 +169,10 @@ export function SoundPreviewUpload({ modId, hasPreview, hasCover }: Props) {
 
         <div className="flex gap-2">
           <Button type="button" variant="outline" size="sm" disabled={busy} onClick={() => previewRef.current?.click()}>
-            Upload preview
+            {t("uploadPreviewButton")}
           </Button>
           <Button type="button" variant="outline" size="sm" disabled={busy} onClick={() => coverRef.current?.click()}>
-            Upload cover
+            {t("uploadCoverButton")}
           </Button>
         </div>
       </CardContent>

@@ -3,6 +3,7 @@
 import { EntityIcon } from "@/components/ui/entity-icon";
 import { colors } from "@/styles/tokens";
 import { memo, useMemo, useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { ArrowDown, ArrowUp, Copy, Plus, Shield, Trash2 } from "lucide-react";
 import {
@@ -66,6 +67,7 @@ function PermissionPicker({
   onChange: (next: string[]) => void;
   search: string;
 }) {
+  const t = useTranslations("admin.ui.customRoles");
   const toggle = (key: string) => {
     onChange(selected.includes(key) ? selected.filter((p) => p !== key) : [...selected, key]);
   };
@@ -101,7 +103,7 @@ function PermissionPicker({
       ))}
       {ungrouped.length > 0 && (
         <div className="space-y-2">
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Other</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t("otherGroupLabel")}</p>
           {ungrouped.map((key) => (
             <label key={key} className="flex items-center justify-between gap-3 rounded-md border border-border/30 px-3 py-2 text-sm">
               <span className="font-mono text-xs">{key}</span>
@@ -111,7 +113,7 @@ function PermissionPicker({
         </div>
       )}
       <label className="flex items-center justify-between gap-3 rounded-md border border-violet-bright/30 bg-violet-soft px-3 py-2 text-sm">
-        <span className="font-mono text-xs">* (full access)</span>
+        <span className="font-mono text-xs">{t("fullAccessLabel")}</span>
         <Switch checked={selected.includes("*")} onCheckedChange={() => toggle("*")} />
       </label>
     </div>
@@ -119,6 +121,7 @@ function PermissionPicker({
 }
 
 function CustomRolesEditorInner({ groups: initial }: { groups: CustomRole[] }) {
+  const t = useTranslations("admin.ui.customRoles");
   const appToast = useAppToast();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -167,7 +170,7 @@ function CustomRolesEditorInner({ groups: initial }: { groups: CustomRole[] }) {
 
   const saveRole = () => {
     if (!name.trim()) {
-      appToast.error("Role name is required");
+      appToast.error(t("roleNameRequired"));
       return;
     }
     startTransition(async () => {
@@ -218,14 +221,14 @@ function CustomRolesEditorInner({ groups: initial }: { groups: CustomRole[] }) {
         <div>
           <h2 className="text-lg font-semibold flex items-center gap-2">
             <Shield className="h-5 w-5 text-violet-bright" />
-            Custom roles
+            {t("customRolesHeading")}
           </h2>
           <p className="text-sm text-muted-foreground mt-1">
-            Create VIP, Developer, Translator, or any custom role. Permission changes sync live to assigned users.
+            {t("customRolesSubtitle")}
           </p>
         </div>
         <Button size="sm" onClick={startCreate}>
-          <Plus className="h-4 w-4 mr-1" /> Create role
+          <Plus className="h-4 w-4 mr-1" /> {t("createRoleButton")}
         </Button>
       </div>
 
@@ -248,8 +251,8 @@ function CustomRolesEditorInner({ groups: initial }: { groups: CustomRole[] }) {
                   </div>
                 </div>
                 <div className="flex flex-col items-end gap-1 shrink-0">
-                  {role.isSystem && <Badge variant="outline">System</Badge>}
-                  {role.isDisabled && <Badge variant="destructive">Disabled</Badge>}
+                  {role.isSystem && <Badge variant="outline">{t("systemBadge")}</Badge>}
+                  {role.isDisabled && <Badge variant="destructive">{t("disabledBadge")}</Badge>}
                   {role.badge && <Badge style={{ backgroundColor: role.color ?? undefined }}>{role.badge}</Badge>}
                 </div>
               </div>
@@ -275,7 +278,7 @@ function CustomRolesEditorInner({ groups: initial }: { groups: CustomRole[] }) {
                       })
                     }
                   >
-                    <Copy className="h-3 w-3 mr-1" /> Duplicate
+                    <Copy className="h-3 w-3 mr-1" /> {t("duplicateButton")}
                   </Button>
                   <Button
                     size="sm"
@@ -300,39 +303,39 @@ function CustomRolesEditorInner({ groups: initial }: { groups: CustomRole[] }) {
         </div>
 
         <Card className="p-5 space-y-4 xl:col-span-3 sticky top-24 h-fit">
-          <h3 className="font-semibold">{editing ? `Edit ${editing.name}` : "New custom role"}</h3>
+          <h3 className="font-semibold">{editing ? t("editRoleHeading", { name: editing.name }) : t("newCustomRoleHeading")}</h3>
           <div className="grid gap-3 sm:grid-cols-2">
-            <Input placeholder="Role name" value={name} onChange={(e) => setName(e.target.value)} />
+            <Input placeholder={t("roleNamePlaceholder")} value={name} onChange={(e) => setName(e.target.value)} />
             <Input
-              placeholder="Slug (auto)"
+              placeholder={t("slugAutoPlaceholder")}
               value={slug}
               onChange={(e) => setSlug(e.target.value)}
               disabled={!!editing}
               className="font-mono text-sm"
             />
           </div>
-          <Input placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} />
+          <Input placeholder={t("descriptionPlaceholder")} value={description} onChange={(e) => setDescription(e.target.value)} />
           <div className="grid gap-3 sm:grid-cols-3">
             <Input type="color" value={color} onChange={(e) => setColor(e.target.value)} className="h-10" />
-            <Input placeholder="Badge" value={badge} onChange={(e) => setBadge(e.target.value)} />
-            <Input placeholder="Icon" value={icon} onChange={(e) => setIcon(e.target.value)} />
+            <Input placeholder={t("badgePlaceholder")} value={badge} onChange={(e) => setBadge(e.target.value)} />
+            <Input placeholder={t("iconPlaceholder")} value={icon} onChange={(e) => setIcon(e.target.value)} />
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
-              <label className="text-xs text-muted-foreground">Hierarchy tier</label>
+              <label className="text-xs text-muted-foreground">{t("hierarchyTierLabel")}</label>
               <select
                 value={hierarchyTier}
                 onChange={(e) => setHierarchyTier(e.target.value)}
                 className="mt-1 h-10 w-full rounded-md border border-input bg-background/50 px-3 text-sm"
               >
                 <option value="">—</option>
-                {HIERARCHY_TIERS.map((t) => (
-                  <option key={t} value={t}>{t}</option>
+                {HIERARCHY_TIERS.map((tier) => (
+                  <option key={tier} value={tier}>{tier}</option>
                 ))}
               </select>
             </div>
             <div>
-              <label className="text-xs text-muted-foreground">Dashboard access</label>
+              <label className="text-xs text-muted-foreground">{t("dashboardAccessLabel")}</label>
               <div className="mt-2 flex flex-wrap gap-2">
                 {DASHBOARD_OPTIONS.map((opt) => (
                   <label key={opt} className="flex items-center gap-1.5 text-xs">
@@ -353,16 +356,16 @@ function CustomRolesEditorInner({ groups: initial }: { groups: CustomRole[] }) {
           </div>
           <label className="flex items-center gap-2 text-sm">
             <Switch checked={isDisabled} onCheckedChange={setIsDisabled} />
-            Role disabled
+            {t("roleDisabledLabel")}
           </label>
           <Input
-            placeholder="Search permissions…"
+            placeholder={t("searchPermissionsPlaceholder")}
             value={permSearch}
             onChange={(e) => setPermSearch(e.target.value)}
           />
           <PermissionPicker selected={selected} onChange={setSelected} search={permSearch} />
           <Button disabled={pending || !!editing?.isSystem} onClick={saveRole}>
-            {editing ? "Save role" : "Create role"}
+            {editing ? t("saveRoleButton") : t("createRoleButton")}
           </Button>
         </Card>
       </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useMemo, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -48,18 +49,10 @@ type Props = {
   };
 };
 
-const TABS: { id: Tab; label: string }[] = [
-  { id: "identity", label: "Identity" },
-  { id: "assets", label: "Logo & Icons" },
-  { id: "header", label: "Header" },
-  { id: "footer", label: "Footer" },
-  { id: "content", label: "Content" },
-  { id: "seo", label: "SEO" },
-  { id: "headScripts", label: "Head Scripts" },
-  { id: "preview", label: "Preview" },
-];
+const TAB_IDS: Tab[] = ["identity", "assets", "header", "footer", "content", "seo", "headScripts", "preview"];
 
 export function BrandingCenterPanel({ initial }: Props) {
+  const t = useTranslations("admin.ui.brandingCenter");
   const appToast = useAppToast();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -151,36 +144,36 @@ export function BrandingCenterPanel({ initial }: Props) {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap gap-2">
-        {TABS.map((t) => (
-          <Button key={t.id} size="sm" variant={tab === t.id ? "default" : "outline"} onClick={() => setTab(t.id)}>
-            {t.label}
+        {TAB_IDS.map((id) => (
+          <Button key={id} size="sm" variant={tab === id ? "default" : "outline"} onClick={() => setTab(id)}>
+            {t(`tabs.${id}`)}
           </Button>
         ))}
       </div>
 
       {tab === "identity" && (
         <Card className="p-6 space-y-4 max-w-2xl">
-          <h3 className="font-semibold">Site identity</h3>
-          <label className="text-sm">Website name</label>
+          <h3 className="font-semibold">{t("identity.heading")}</h3>
+          <label className="text-sm">{t("identity.websiteName")}</label>
           <Input value={branding.siteTitle} onChange={(e) => setBranding((b) => ({ ...b, siteTitle: e.target.value }))} />
-          <label className="text-sm">Short name</label>
+          <label className="text-sm">{t("identity.shortName")}</label>
           <Input value={branding.siteShortName} onChange={(e) => setBranding((b) => ({ ...b, siteShortName: e.target.value }))} />
-          <label className="text-sm">Browser / SEO title</label>
+          <label className="text-sm">{t("identity.browserTitle")}</label>
           <Input value={branding.browserTitle} onChange={(e) => setBranding((b) => ({ ...b, browserTitle: e.target.value }))} />
-          <label className="text-sm">Tagline</label>
+          <label className="text-sm">{t("identity.tagline")}</label>
           <Input value={branding.siteTagline} onChange={(e) => setBranding((b) => ({ ...b, siteTagline: e.target.value }))} />
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-sm">Primary color</label>
+              <label className="text-sm">{t("identity.primaryColor")}</label>
               <Input type="color" value={branding.primaryColor} onChange={(e) => setBranding((b) => ({ ...b, primaryColor: e.target.value }))} />
             </div>
             <div>
-              <label className="text-sm">Accent color</label>
+              <label className="text-sm">{t("identity.accentColor")}</label>
               <Input type="color" value={branding.accentColor} onChange={(e) => setBranding((b) => ({ ...b, accentColor: e.target.value }))} />
             </div>
           </div>
           <Button
-           
+
             disabled={pending}
             onClick={() =>
               startTransition(async () => {
@@ -190,7 +183,7 @@ export function BrandingCenterPanel({ initial }: Props) {
               })
             }
           >
-            Save identity
+            {t("identity.save")}
           </Button>
         </Card>
       )}
@@ -198,50 +191,50 @@ export function BrandingCenterPanel({ initial }: Props) {
       {tab === "assets" && (
         <div className="grid gap-6 lg:grid-cols-2">
           <Card className="p-6 space-y-4">
-            <h3 className="font-semibold">Logo manager</h3>
-            <AssetRow label="Main logo" url={branding.logoUrl} onUpload={(f) => upload("logo", f)} onRemove={() => removeAsset("logoUrl")} />
-            <AssetRow label="Dark logo" url={branding.logoDarkUrl} onUpload={(f) => upload("logo-dark", f)} onRemove={() => removeAsset("logoDarkUrl")} />
-            <label className="text-sm">Logo crop / focus</label>
+            <h3 className="font-semibold">{t("assets.logoManager")}</h3>
+            <AssetRow label={t("assets.mainLogo")} url={branding.logoUrl} onUpload={(f) => upload("logo", f)} onRemove={() => removeAsset("logoUrl")} removeLabel={t("assets.remove")} />
+            <AssetRow label={t("assets.darkLogo")} url={branding.logoDarkUrl} onUpload={(f) => upload("logo-dark", f)} onRemove={() => removeAsset("logoDarkUrl")} removeLabel={t("assets.remove")} />
+            <label className="text-sm">{t("assets.logoCropFocus")}</label>
             <select
               className="h-10 w-full rounded-md border border-input bg-background/50 px-3 text-sm"
               value={branding.logoObjectPosition}
               onChange={(e) => setBranding((b) => ({ ...b, logoObjectPosition: e.target.value }))}
             >
-              {["center", "top", "bottom", "left", "right"].map((v) => (
-                <option key={v} value={v}>{v}</option>
+              {(["center", "top", "bottom", "left", "right"] as const).map((v) => (
+                <option key={v} value={v}>{t(`assets.position.${v}`)}</option>
               ))}
             </select>
-            <p className="text-xs text-muted-foreground">PNG, SVG, WEBP supported. Images are served optimized via CDN.</p>
+            <p className="text-xs text-muted-foreground">{t("assets.logoFormatsHint")}</p>
           </Card>
 
           <Card className="p-6 space-y-4">
-            <h3 className="font-semibold">Favicon & PWA icons</h3>
-            <AssetRow label="Favicon" url={branding.faviconUrl} onUpload={(f) => upload("favicon", f)} onRemove={() => removeAsset("faviconUrl")} />
+            <h3 className="font-semibold">{t("assets.faviconHeading")}</h3>
+            <AssetRow label={t("assets.favicon")} url={branding.faviconUrl} onUpload={(f) => upload("favicon", f)} onRemove={() => removeAsset("faviconUrl")} removeLabel={t("assets.remove")} />
             <p className="text-xs text-muted-foreground">
-              Uploading a favicon auto-generates Apple Touch, Android, and PWA icon references.
+              {t("assets.faviconHint")}
             </p>
             <div className="grid grid-cols-3 gap-2 text-xs">
-              <IconPreview label="Apple" url={branding.appleTouchIconUrl} />
-              <IconPreview label="Android" url={branding.androidIconUrl} />
-              <IconPreview label="PWA" url={branding.pwaIconUrl} />
+              <IconPreview label={t("assets.apple")} url={branding.appleTouchIconUrl} />
+              <IconPreview label={t("assets.android")} url={branding.androidIconUrl} />
+              <IconPreview label={t("assets.pwa")} url={branding.pwaIconUrl} />
             </div>
           </Card>
 
           <Card className="p-6 space-y-4 lg:col-span-2">
-            <h3 className="font-semibold">Site symbol (replaces default X icon)</h3>
+            <h3 className="font-semibold">{t("assets.symbolHeading")}</h3>
             <div className="flex flex-wrap gap-4 items-center">
               <Logo branding={branding} />
-              <Badge variant="outline">Live preview</Badge>
+              <Badge variant="outline">{t("assets.livePreview")}</Badge>
             </div>
-            <label className="text-sm">Symbol mode</label>
+            <label className="text-sm">{t("assets.symbolMode")}</label>
             <select
               className="h-10 w-full rounded-md border border-input bg-background/50 px-3 text-sm"
               value={branding.siteSymbolMode}
               onChange={(e) => setBranding((b) => ({ ...b, siteSymbolMode: e.target.value as BrandingAssetSettings["siteSymbolMode"] }))}
             >
-              <option value="letter">Letter</option>
-              <option value="library">Icon library</option>
-              <option value="image">Custom image</option>
+              <option value="letter">{t("assets.symbolModeLetter")}</option>
+              <option value="library">{t("assets.symbolModeLibrary")}</option>
+              <option value="image">{t("assets.symbolModeImage")}</option>
             </select>
             {branding.siteSymbolMode === "letter" && (
               <>
@@ -264,10 +257,10 @@ export function BrandingCenterPanel({ initial }: Props) {
               </>
             )}
             {branding.siteSymbolMode === "image" && (
-              <AssetRow label="Symbol image" url={branding.siteSymbolUrl} onUpload={(f) => upload("symbol", f)} onRemove={() => removeAsset("siteSymbolUrl")} />
+              <AssetRow label={t("assets.symbolImage")} url={branding.siteSymbolUrl} onUpload={(f) => upload("symbol", f)} onRemove={() => removeAsset("siteSymbolUrl")} removeLabel={t("assets.remove")} />
             )}
             <Button
-             
+
               disabled={pending}
               onClick={() =>
                 startTransition(async () => {
@@ -277,7 +270,7 @@ export function BrandingCenterPanel({ initial }: Props) {
                 })
               }
             >
-              Save symbols
+              {t("assets.saveSymbols")}
             </Button>
           </Card>
         </div>
@@ -285,28 +278,28 @@ export function BrandingCenterPanel({ initial }: Props) {
 
       {tab === "header" && (
         <Card className="p-6 space-y-4 max-w-3xl">
-          <h3 className="font-semibold">Header builder</h3>
+          <h3 className="font-semibold">{t("header.heading")}</h3>
           <div className="grid sm:grid-cols-2 gap-3">
             <label className="flex items-center gap-2 text-sm">
               <input type="checkbox" checked={header.sticky} onChange={(e) => setHeader((h) => ({ ...h, sticky: e.target.checked }))} />
-              Sticky header
+              {t("header.sticky")}
             </label>
             <label className="flex items-center gap-2 text-sm">
               <input type="checkbox" checked={header.blur} onChange={(e) => setHeader((h) => ({ ...h, blur: e.target.checked }))} />
-              Blur effect
+              {t("header.blur")}
             </label>
             <label className="flex items-center gap-2 text-sm">
               <input type="checkbox" checked={header.transparent} onChange={(e) => setHeader((h) => ({ ...h, transparent: e.target.checked }))} />
-              Transparent background
+              {t("header.transparent")}
             </label>
             <div>
-              <label className="text-sm">Height (px)</label>
+              <label className="text-sm">{t("header.heightPx")}</label>
               <Input type="number" value={header.height} onChange={(e) => setHeader((h) => ({ ...h, height: Number(e.target.value) }))} />
             </div>
           </div>
-          <Input placeholder="Background color (optional hex)" value={header.backgroundColor} onChange={(e) => setHeader((h) => ({ ...h, backgroundColor: e.target.value }))} />
+          <Input placeholder={t("header.backgroundColorPlaceholder")} value={header.backgroundColor} onChange={(e) => setHeader((h) => ({ ...h, backgroundColor: e.target.value }))} />
           <div className="space-y-2">
-            <p className="text-sm font-medium">Menu items</p>
+            <p className="text-sm font-medium">{t("header.menuItems")}</p>
             {header.menuItems.map((item, idx) => (
               <div key={item.id} className="grid sm:grid-cols-4 gap-2 items-center border border-border/30 rounded-md p-2">
                 <Input value={item.label} onChange={(e) => {
@@ -330,7 +323,7 @@ export function BrandingCenterPanel({ initial }: Props) {
                     items[idx] = { ...item, hidden: e.target.checked };
                     setHeader((h) => ({ ...h, menuItems: items }));
                   }} />
-                  Hidden
+                  {t("header.hidden")}
                 </label>
               </div>
             ))}
@@ -342,16 +335,16 @@ export function BrandingCenterPanel({ initial }: Props) {
                   ...h,
                   menuItems: [
                     ...h.menuItems,
-                    { id: `custom-${Date.now()}`, label: "New link", href: "/", hidden: false, order: h.menuItems.length },
+                    { id: `custom-${Date.now()}`, label: t("header.newLinkLabel"), href: "/", hidden: false, order: h.menuItems.length },
                   ],
                 }))
               }
             >
-              Add menu item
+              {t("header.addMenuItem")}
             </Button>
           </div>
           <Button
-           
+
             disabled={pending}
             onClick={() =>
               startTransition(async () => {
@@ -361,19 +354,19 @@ export function BrandingCenterPanel({ initial }: Props) {
               })
             }
           >
-            Save header
+            {t("header.save")}
           </Button>
         </Card>
       )}
 
       {tab === "footer" && (
         <Card className="p-6 space-y-4 max-w-3xl">
-          <h3 className="font-semibold">Footer builder</h3>
-          <Textarea value={footer.tagline} onChange={(e) => setFooter((f) => ({ ...f, tagline: e.target.value }))} placeholder="Tagline" rows={2} />
-          <Input value={footer.copyright} onChange={(e) => setFooter((f) => ({ ...f, copyright: e.target.value }))} placeholder="Copyright suffix" />
+          <h3 className="font-semibold">{t("footer.heading")}</h3>
+          <Textarea value={footer.tagline} onChange={(e) => setFooter((f) => ({ ...f, tagline: e.target.value }))} placeholder={t("footer.tagline")} rows={2} />
+          <Input value={footer.copyright} onChange={(e) => setFooter((f) => ({ ...f, copyright: e.target.value }))} placeholder={t("footer.copyrightSuffix")} />
           <div className="grid sm:grid-cols-2 gap-3">
-            <Input placeholder="Discord URL" value={footer.socialLinks.discord ?? ""} onChange={(e) => setFooter((f) => ({ ...f, socialLinks: { ...f.socialLinks, discord: e.target.value } }))} />
-            <Input placeholder="Twitter / X URL" value={footer.socialLinks.twitter ?? ""} onChange={(e) => setFooter((f) => ({ ...f, socialLinks: { ...f.socialLinks, twitter: e.target.value } }))} />
+            <Input placeholder={t("footer.discordUrl")} value={footer.socialLinks.discord ?? ""} onChange={(e) => setFooter((f) => ({ ...f, socialLinks: { ...f.socialLinks, discord: e.target.value } }))} />
+            <Input placeholder={t("footer.twitterUrl")} value={footer.socialLinks.twitter ?? ""} onChange={(e) => setFooter((f) => ({ ...f, socialLinks: { ...f.socialLinks, twitter: e.target.value } }))} />
           </div>
           {footer.sections.map((section, sIdx) => (
             <div key={section.id} className="border border-border/30 rounded-lg p-3 space-y-2">
@@ -420,14 +413,14 @@ export function BrandingCenterPanel({ initial }: Props) {
               })
             }
           >
-            Save footer
+            {t("footer.save")}
           </Button>
         </Card>
       )}
 
       {tab === "content" && (
         <Card className="p-6 space-y-4">
-          <h3 className="font-semibold">Multilingual content</h3>
+          <h3 className="font-semibold">{t("content.heading")}</h3>
           <div className="flex flex-wrap gap-2">
             {(Object.keys(PAGE_CONTENT_FIELDS) as PageId[]).map((page) => (
               <Button key={page} size="sm" variant={contentPage === page ? "default" : "outline"} onClick={() => setContentPage(page)}>
@@ -450,7 +443,7 @@ export function BrandingCenterPanel({ initial }: Props) {
                   rows={field.includes("Title") || field.includes("Badge") ? 1 : 2}
                   value={pageContent[contentPage]?.[contentLocale]?.[field] ?? ""}
                   onChange={(e) => setPageField(field, e.target.value)}
-                  placeholder={`Override ${field} (${contentLocale})`}
+                  placeholder={t("content.overridePlaceholder", { field, locale: contentLocale })}
                 />
               </div>
             ))}
@@ -466,16 +459,16 @@ export function BrandingCenterPanel({ initial }: Props) {
               })
             }
           >
-            Save page content
+            {t("content.save")}
           </Button>
         </Card>
       )}
 
       {tab === "seo" && (
         <Card className="p-6 space-y-4 max-w-2xl">
-          <h3 className="font-semibold">SEO manager</h3>
+          <h3 className="font-semibold">{t("seo.heading")}</h3>
           <div className="flex flex-wrap gap-2">
-            <Button size="sm" variant={seoLocale === "global" ? "default" : "outline"} onClick={() => setSeoLocale("global")}>Global</Button>
+            <Button size="sm" variant={seoLocale === "global" ? "default" : "outline"} onClick={() => setSeoLocale("global")}>{t("seo.global")}</Button>
             {SUPPORTED_LOCALES.map((loc) => (
               <Button key={loc} size="sm" variant={seoLocale === loc ? "default" : "outline"} onClick={() => setSeoLocale(loc)}>
                 {localeLabels[loc]}
@@ -523,7 +516,7 @@ export function BrandingCenterPanel({ initial }: Props) {
               )}
             </div>
           ))}
-          <label className="text-sm">Twitter card</label>
+          <label className="text-sm">{t("seo.twitterCard")}</label>
           <select
             className="h-10 w-full rounded-md border border-input bg-background/50 px-3 text-sm"
             value={seoFields.twitterCard}
@@ -539,11 +532,12 @@ export function BrandingCenterPanel({ initial }: Props) {
               }
             }}
           >
-            <option value="summary">Summary</option>
-            <option value="summary_large_image">Summary large image</option>
+            <option value="summary">{t("seo.twitterCardSummary")}</option>
+            <option value="summary_large_image">{t("seo.twitterCardSummaryLargeImage")}</option>
           </select>
           <AssetRow
-            label="OpenGraph image"
+            label={t("seo.ogImage")}
+            removeLabel={t("assets.remove")}
             url={seoFields.ogImageUrl}
             onUpload={async (f) => {
               try {
@@ -587,22 +581,22 @@ export function BrandingCenterPanel({ initial }: Props) {
               })
             }
           >
-            Save SEO
+            {t("seo.save")}
           </Button>
         </Card>
       )}
 
       {tab === "headScripts" && (
         <Card className="p-6 space-y-4 max-w-2xl">
-          <h3 className="font-semibold">Head & body scripts</h3>
+          <h3 className="font-semibold">{t("headScripts.heading")}</h3>
           <p className="text-xs text-muted-foreground">
-            Meta tags render in &lt;head&gt;. Scripts use next/script (async, no hydration issues). AdSense loads globally from root layout — do not add a second AdSense loader here.
+            {t("headScripts.hint")}
           </p>
           <div className="space-y-3">
-            <label className="text-sm font-medium">Custom meta tag</label>
+            <label className="text-sm font-medium">{t("headScripts.customMetaTag")}</label>
             <div className="grid gap-2 sm:grid-cols-2">
               <Input
-                placeholder="name (e.g. google-site-verification)"
+                placeholder={t("headScripts.metaNamePlaceholder")}
                 value={headScripts.metaTags[0]?.name ?? ""}
                 onChange={(e) =>
                   setHeadScripts((h) => ({
@@ -618,7 +612,7 @@ export function BrandingCenterPanel({ initial }: Props) {
                 }
               />
               <Input
-                placeholder="content"
+                placeholder={t("headScripts.metaContentPlaceholder")}
                 value={headScripts.metaTags[0]?.content ?? ""}
                 onChange={(e) =>
                   setHeadScripts((h) => ({
@@ -636,11 +630,11 @@ export function BrandingCenterPanel({ initial }: Props) {
             </div>
           </div>
           <div>
-            <label className="text-sm font-medium">Body script snippet</label>
+            <label className="text-sm font-medium">{t("headScripts.bodyScriptSnippet")}</label>
             <Textarea
               className="mt-1 font-mono text-xs"
               rows={6}
-              placeholder="Analytics or tracking code (without script tags)"
+              placeholder={t("headScripts.bodyScriptPlaceholder")}
               value={headScripts.scriptSnippets[0]?.html ?? ""}
               onChange={(e) =>
                 setHeadScripts((h) => ({
@@ -669,7 +663,7 @@ export function BrandingCenterPanel({ initial }: Props) {
               })
             }
           >
-            Save head scripts
+            {t("headScripts.save")}
           </Button>
         </Card>
       )}
@@ -677,19 +671,19 @@ export function BrandingCenterPanel({ initial }: Props) {
       {tab === "preview" && (
         <div className="grid gap-6 lg:grid-cols-2">
           <Card className="p-6 space-y-4">
-            <h3 className="font-semibold">Header preview</h3>
+            <h3 className="font-semibold">{t("preview.headerPreview")}</h3>
             <div className="rounded-lg border border-border/40 overflow-hidden">
               <div
                 className={`flex items-center justify-between px-4 ${previewBundle.header.blur ? " bg-background/80" : "bg-background"}`}
                 style={{ height: previewBundle.header.height }}
               >
                 <Logo size="sm" branding={previewBundle.branding} />
-                <span className="text-xs text-muted-foreground">Nav items · Auth</span>
+                <span className="text-xs text-muted-foreground">{t("preview.navItemsAuth")}</span>
               </div>
             </div>
           </Card>
           <Card className="p-6 space-y-4">
-            <h3 className="font-semibold">Footer preview</h3>
+            <h3 className="font-semibold">{t("preview.footerPreview")}</h3>
             <div className="rounded-lg border border-border/40 p-4 text-sm space-y-2">
               <Logo branding={previewBundle.branding} />
               <p className="text-muted-foreground">{previewBundle.footer.tagline}</p>
@@ -697,8 +691,8 @@ export function BrandingCenterPanel({ initial }: Props) {
             </div>
           </Card>
           <Card className="p-6 space-y-2 lg:col-span-2">
-            <h3 className="font-semibold">Homepage hero preview</h3>
-            <p className="text-xs text-violet-bright">{pageContent.homepage?.[contentLocale]?.heroBadge ?? "Badge"}</p>
+            <h3 className="font-semibold">{t("preview.homepageHeroPreview")}</h3>
+            <p className="text-xs text-violet-bright">{pageContent.homepage?.[contentLocale]?.heroBadge ?? t("preview.badgeFallback")}</p>
             <h4 className="text-2xl font-bold">{pageContent.homepage?.[contentLocale]?.heroTitle ?? previewBundle.branding.siteTitle}</h4>
             <p className="text-muted-foreground">{pageContent.homepage?.[contentLocale]?.heroSubtitle ?? previewBundle.branding.siteTagline}</p>
           </Card>
@@ -713,11 +707,13 @@ function AssetRow({
   url,
   onUpload,
   onRemove,
+  removeLabel,
 }: {
   label: string;
   url: string | null;
   onUpload: (file: File) => void;
   onRemove: () => void;
+  removeLabel: string;
 }) {
   return (
     <div className="flex items-center gap-4">
@@ -732,7 +728,7 @@ function AssetRow({
         }} />
         {url && (
           <Button size="sm" variant="ghost" className="h-7 text-xs text-destructive" onClick={onRemove}>
-            Remove
+            {removeLabel}
           </Button>
         )}
       </div>

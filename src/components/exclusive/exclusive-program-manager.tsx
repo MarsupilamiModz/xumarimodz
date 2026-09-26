@@ -3,6 +3,7 @@
 import { useRef, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import {
   reviewExclusiveApplication,
   uploadExclusiveBuild,
@@ -42,7 +43,31 @@ type Program = {
   inviteCodes: { id: string; code: string; maxUses: number; uses: number; expiresAt: Date | null }[];
 };
 
+const PROGRAM_TYPE_KEYS: Record<string, string> = {
+  CLOSED_ALPHA: "programTypeClosedAlpha",
+  CLOSED_BETA: "programTypeClosedBeta",
+  INVITE_ONLY: "programTypeInviteOnly",
+};
+
+const APPLICATION_STATUS_KEYS: Record<string, string> = {
+  PENDING: "statusPending",
+  APPROVED: "statusApproved",
+  REJECTED: "statusRejected",
+  WAITLIST: "statusWaitlist",
+};
+
+function programTypeLabel(type: string, t: (key: string) => string) {
+  const key = PROGRAM_TYPE_KEYS[type];
+  return key ? t(key) : type.replace("_", " ");
+}
+
+function applicationStatusLabel(status: string, t: (key: string) => string) {
+  const key = APPLICATION_STATUS_KEYS[status];
+  return key ? t(key) : status;
+}
+
 export function ExclusiveProgramManager({ locale, program }: { locale: string; program: Program }) {
+  const t = useTranslations("common.cx.exclusiveProgram");
   const router = useRouter();
   const appToast = useAppToast();
   const [pending, startTransition] = useTransition();
@@ -63,7 +88,7 @@ export function ExclusiveProgramManager({ locale, program }: { locale: string; p
   const uploadBuild = () => {
     const file = fileRef.current?.files?.[0];
     if (!file || !version.trim()) {
-      appToast.error("File and version required");
+      appToast.error(t("fileVersionRequired"));
       return;
     }
     const fd = new FormData();
@@ -105,15 +130,15 @@ export function ExclusiveProgramManager({ locale, program }: { locale: string; p
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <Badge variant="premium">{program.type.replace("_", " ")}</Badge>
-            <Badge variant={program.isActive ? "free" : "outline"}>{program.isActive ? "Active" : "Inactive"}</Badge>
+            <Badge variant="premium">{programTypeLabel(program.type, t)}</Badge>
+            <Badge variant={program.isActive ? "free" : "outline"}>{program.isActive ? t("active") : t("inactive")}</Badge>
           </div>
           <h2 className="text-xl font-semibold">{program.title}</h2>
           <p className="text-sm text-muted-foreground">{program.mod.title}</p>
           {program.description && <p className="mt-2 text-sm">{program.description}</p>}
           {program.maxSlots != null && (
             <p className="text-xs text-muted-foreground mt-1">
-              {program.currentCount}/{program.maxSlots} slots filled
+              {t("slotsFilled", { current: program.currentCount, max: program.maxSlots })}
             </p>
           )}
         </div>
@@ -128,33 +153,33 @@ export function ExclusiveProgramManager({ locale, program }: { locale: string; p
                 })
               }
             />
-            Active
+            {t("active")}
           </label>
           <Button variant="outline" size="sm" asChild>
             <Link href={`/${locale}/exclusive/${program.id}`} target="_blank">
-              Public apply page
+              {t("publicApplyPage")}
             </Link>
           </Button>
         </div>
       </div>
 
       <Card className="p-5 space-y-4">
-        <h3 className="font-semibold">Private builds</h3>
+        <h3 className="font-semibold">{t("privateBuildsTitle")}</h3>
         <div className="flex flex-wrap gap-2 items-end">
-          <Input placeholder="Version e.g. 0.9.1-beta" value={version} onChange={(e) => setVersion(e.target.value)} className="max-w-[180px]" />
+          <Input placeholder={t("versionPlaceholder")} value={version} onChange={(e) => setVersion(e.target.value)} className="max-w-[180px]" />
           <Input type="datetime-local" value={expiresAt} onChange={(e) => setExpiresAt(e.target.value)} className="max-w-[220px]" />
           <input ref={fileRef} type="file" className="text-sm" />
-          <Button size="sm" disabled={pending} onClick={uploadBuild}>Upload build</Button>
+          <Button size="sm" disabled={pending} onClick={uploadBuild}>{t("uploadBuild")}</Button>
         </div>
         {program.builds.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No builds uploaded yet.</p>
+          <p className="text-sm text-muted-foreground">{t("noBuilds")}</p>
         ) : (
           <ul className="space-y-2">
             {program.builds.map((b) => (
               <li key={b.id} className="flex flex-wrap items-center justify-between gap-2 text-sm border-b border-border/30 pb-2">
-                <span>v{b.version} · {b.fileName} · {(b.fileSize / 1024 / 1024).toFixed(1)} MB</span>
+                <span>{t("buildLine", { version: b.version, fileName: b.fileName, size: (b.fileSize / 1024 / 1024).toFixed(1) })}</span>
                 <Button size="sm" variant="outline" disabled={pending} onClick={() => downloadBuild(b.id)}>
-                  Download
+                  {t("download")}
                 </Button>
               </li>
             ))}
@@ -164,38 +189,38 @@ export function ExclusiveProgramManager({ locale, program }: { locale: string; p
 
       <Card className="p-5 space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="font-semibold">Invite codes</h3>
-          <Button size="sm" variant="outline" disabled={pending} onClick={generateInvite}>Generate code</Button>
+          <h3 className="font-semibold">{t("inviteCodesTitle")}</h3>
+          <Button size="sm" variant="outline" disabled={pending} onClick={generateInvite}>{t("generateCode")}</Button>
         </div>
         {program.inviteCodes.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No invite codes yet.</p>
+          <p className="text-sm text-muted-foreground">{t("noInviteCodes")}</p>
         ) : (
           <ul className="space-y-1 font-mono text-sm text-ink-muted">
             {program.inviteCodes.map((c) => (
-              <li key={c.id}>{c.code} · {c.uses}/{c.maxUses || "∞"} uses</li>
+              <li key={c.id}>{t("inviteCodeLine", { code: c.code, uses: c.uses, max: c.maxUses || "∞" })}</li>
             ))}
           </ul>
         )}
       </Card>
 
       <Card className="p-5 space-y-4">
-        <h3 className="font-semibold">Applications ({program.applications.length})</h3>
+        <h3 className="font-semibold">{t("applicationsTitle", { count: program.applications.length })}</h3>
         {program.applications.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No applications yet.</p>
+          <p className="text-sm text-muted-foreground">{t("noApplications")}</p>
         ) : (
           <ul className="space-y-3">
             {program.applications.map((a) => (
               <li key={a.id} className="rounded-lg border border-border/30 p-3 space-y-2">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="font-medium">{a.user.displayName ?? a.user.username}</span>
-                  <Badge variant="outline">{a.status}</Badge>
-                  {a.user.discordId && <Badge variant="free">Discord linked</Badge>}
+                  <Badge variant="outline">{applicationStatusLabel(a.status, t)}</Badge>
+                  {a.user.discordId && <Badge variant="free">{t("discordLinked")}</Badge>}
                 </div>
                 {a.message && <p className="text-sm text-muted-foreground">{a.message}</p>}
                 {a.status === "PENDING" || a.status === "WAITLIST" ? (
                   <div className="flex gap-2">
-                    <Button size="sm" disabled={pending} onClick={() => review(a.id, "APPROVED")}>Approve</Button>
-                    <Button size="sm" variant="outline" disabled={pending} onClick={() => review(a.id, "REJECTED")}>Reject</Button>
+                    <Button size="sm" disabled={pending} onClick={() => review(a.id, "APPROVED")}>{t("approve")}</Button>
+                    <Button size="sm" variant="outline" disabled={pending} onClick={() => review(a.id, "REJECTED")}>{t("reject")}</Button>
                   </div>
                 ) : null}
               </li>

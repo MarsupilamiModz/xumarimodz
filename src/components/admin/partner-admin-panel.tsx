@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import type { PublisherLevel } from "@prisma/client";
 import {
   updatePartnerProfile,
@@ -44,6 +45,7 @@ type PartnerData = {
 };
 
 export function PartnerAdminPanel({ locale, partner }: { locale: string; partner: PartnerData }) {
+  const t = useTranslations("admin.ui.partnerAdmin");
   const router = useRouter();
   const appToast = useAppToast();
   const [pending, startTransition] = useTransition();
@@ -75,9 +77,9 @@ export function PartnerAdminPanel({ locale, partner }: { locale: string; partner
     <div className="space-y-6">
       <Card className="p-6 space-y-4">
         <div className="flex flex-wrap gap-2">
-          {partner.isVerified && <Badge variant="premium">Verified</Badge>}
-          {partner.isFeatured && <Badge variant="outline">Featured</Badge>}
-          {partner.isSuspended && <Badge variant="destructive">Suspended</Badge>}
+          {partner.isVerified && <Badge variant="premium">{t("verifiedBadge")}</Badge>}
+          {partner.isFeatured && <Badge variant="outline">{t("featuredBadge")}</Badge>}
+          {partner.isSuspended && <Badge variant="destructive">{t("suspendedBadge")}</Badge>}
         </div>
 
         <form
@@ -87,22 +89,20 @@ export function PartnerAdminPanel({ locale, partner }: { locale: string; partner
           }}
           className="space-y-3"
         >
-          <Input name="tagline" defaultValue={partner.tagline ?? ""} placeholder="Tagline" />
-          <Textarea name="description" defaultValue={partner.description ?? ""} rows={4} placeholder="Bio" />
-          <Input name="website" defaultValue={partner.website ?? ""} placeholder="Website URL" />
-          <Input name="commissionRateBps" type="number" defaultValue={partner.commissionRateBps} placeholder="Commission bps" />
-          <label className="flex items-center gap-2 text-sm"><input type="checkbox" name="isVerified" defaultChecked={partner.isVerified} /> Verified</label>
-          <label className="flex items-center gap-2 text-sm"><input type="checkbox" name="isFeatured" defaultChecked={partner.isFeatured} /> Featured</label>
-          <label className="flex items-center gap-2 text-sm"><input type="checkbox" name="isSuspended" defaultChecked={partner.isSuspended} /> Suspended</label>
-          <Button type="submit" disabled={pending}>Save partner</Button>
+          <Input name="tagline" defaultValue={partner.tagline ?? ""} placeholder={t("taglinePlaceholder")} />
+          <Textarea name="description" defaultValue={partner.description ?? ""} rows={4} placeholder={t("bioPlaceholder")} />
+          <Input name="website" defaultValue={partner.website ?? ""} placeholder={t("websitePlaceholder")} />
+          <Input name="commissionRateBps" type="number" defaultValue={partner.commissionRateBps} placeholder={t("commissionPlaceholder")} />
+          <label className="flex items-center gap-2 text-sm"><input type="checkbox" name="isVerified" defaultChecked={partner.isVerified} /> {t("verifiedLabel")}</label>
+          <label className="flex items-center gap-2 text-sm"><input type="checkbox" name="isFeatured" defaultChecked={partner.isFeatured} /> {t("featuredLabel")}</label>
+          <label className="flex items-center gap-2 text-sm"><input type="checkbox" name="isSuspended" defaultChecked={partner.isSuspended} /> {t("suspendedLabel")}</label>
+          <Button type="submit" disabled={pending}>{t("savePartner")}</Button>
         </form>
       </Card>
 
       <Card className="p-6 space-y-4">
-        <h3 className="font-semibold">Discord community</h3>
-        <p className="text-xs text-muted-foreground">
-          Invite link, server ID, and widget are validated on save. Enable the widget in Discord Server Settings → Widget.
-        </p>
+        <h3 className="font-semibold">{t("discordCommunityTitle")}</h3>
+        <p className="text-xs text-muted-foreground">{t("discordHint")}</p>
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -110,20 +110,20 @@ export function PartnerAdminPanel({ locale, partner }: { locale: string; partner
           }}
           className="space-y-3"
         >
-          <Input name="discordInviteUrl" defaultValue={partner.discordInviteUrl ?? ""} placeholder="Discord invite URL (https://discord.gg/…)" />
-          <Input name="discordServerId" defaultValue={partner.discordServerId ?? ""} placeholder="Discord Server ID (17–20 digits)" className="font-mono text-xs" />
-          <Input name="discordWidgetUrl" defaultValue={partner.discordWidgetUrl ?? ""} placeholder="Custom widget URL (optional — auto-generated from server ID)" className="font-mono text-xs" />
-          <Textarea name="discordDescription" defaultValue={partner.discordDescription ?? ""} rows={3} placeholder="Community description shown on partner page" />
+          <Input name="discordInviteUrl" defaultValue={partner.discordInviteUrl ?? ""} placeholder={t("discordInvitePlaceholder")} />
+          <Input name="discordServerId" defaultValue={partner.discordServerId ?? ""} placeholder={t("discordServerIdPlaceholder")} className="font-mono text-xs" />
+          <Input name="discordWidgetUrl" defaultValue={partner.discordWidgetUrl ?? ""} placeholder={t("discordWidgetUrlPlaceholder")} className="font-mono text-xs" />
+          <Textarea name="discordDescription" defaultValue={partner.discordDescription ?? ""} rows={3} placeholder={t("discordDescriptionPlaceholder")} />
           <label className="flex items-center gap-2 text-sm">
             <input type="checkbox" name="discordWidgetEnabled" defaultChecked={partner.discordWidgetEnabled !== false} />
-            Show Discord widget on partner page
+            {t("showDiscordWidget")}
           </label>
-          <Button type="submit" variant="outline" disabled={pending}>Save Discord settings</Button>
+          <Button type="submit" variant="outline" disabled={pending}>{t("saveDiscordSettings")}</Button>
         </form>
       </Card>
 
       <Card className="p-6 space-y-4">
-        <h3 className="font-semibold">Level & codes</h3>
+        <h3 className="font-semibold">{t("levelCodesTitle")}</h3>
         <Select
           defaultValue={partner.level}
           onValueChange={(v) => startTransition(async () => {
@@ -139,23 +139,23 @@ export function PartnerAdminPanel({ locale, partner }: { locale: string; partner
           </SelectContent>
         </Select>
         <div className="flex gap-2">
-          <Input value={code} onChange={(e) => setCode(e.target.value)} placeholder="Affiliate code" className="font-mono" />
+          <Input value={code} onChange={(e) => setCode(e.target.value)} placeholder={t("affiliateCodePlaceholder")} className="font-mono" />
           <Button variant="outline" disabled={pending} onClick={() => startTransition(async () => {
             const r = await assignPartnerCode(partner.id, code);
             if (r.success) { appToast.saved(); router.refresh(); }
             else appToast.error(r.error);
-          })}>Assign code</Button>
+          })}>{t("assignCode")}</Button>
         </div>
         <div className="grid grid-cols-3 gap-4 text-center text-sm">
-          <div><p className="text-2xl font-bold">{partner.totalClicks}</p><p className="text-muted-foreground">Clicks</p></div>
-          <div><p className="text-2xl font-bold">{partner.totalConversions}</p><p className="text-muted-foreground">Conversions</p></div>
-          <div><p className="text-2xl font-bold">{formatCents(partner.totalRevenueCents)}</p><p className="text-muted-foreground">Revenue</p></div>
+          <div><p className="text-2xl font-bold">{partner.totalClicks}</p><p className="text-muted-foreground">{t("clicksLabel")}</p></div>
+          <div><p className="text-2xl font-bold">{partner.totalConversions}</p><p className="text-muted-foreground">{t("conversionsLabel")}</p></div>
+          <div><p className="text-2xl font-bold">{formatCents(partner.totalRevenueCents)}</p><p className="text-muted-foreground">{t("revenueLabel")}</p></div>
         </div>
         <Button
           variant="destructive"
           disabled={pending}
           onClick={() => {
-            if (!confirm("Delete this partner profile?")) return;
+            if (!confirm(t("deletePartnerConfirm"))) return;
             startTransition(async () => {
               const r = await deletePartnerProfile(partner.id);
               if (r.success) router.push(`/${locale}/admin/partners`);
@@ -163,7 +163,7 @@ export function PartnerAdminPanel({ locale, partner }: { locale: string; partner
             });
           }}
         >
-          Delete partner
+          {t("deletePartner")}
         </Button>
       </Card>
     </div>

@@ -32,7 +32,7 @@
 | /admin/creators/visibility | src/app/[locale]/admin/creators/visibility/page.tsx | – | vorhanden (Design-Sweep) |  |
 | /admin/diagnostics/screenshots | src/app/[locale]/admin/diagnostics/screenshots/page.tsx | – | vorhanden (Design-Sweep) |  |
 | /admin/dmca | src/app/[locale]/admin/dmca/page.tsx | – | vorhanden (Design-Sweep) |  |
-| /admin/email | src/app/[locale]/admin/email/page.tsx | ACP E-Mail | teilweise | Newsletter blockiert: Einwilligung fehlt im Schema (Migration B1 vorbereitet) |
+| /admin/email | src/app/[locale]/admin/email/page.tsx | ACP E-Mail | nach Spezifikation | Newsletter mit Einwilligung, Live-Empfängerzahl, Test, Vorschau, Queue-Versand |
 | /admin/email/templates | src/app/[locale]/admin/email/templates/page.tsx | ACP E-Mail-Vorlagen | nach Spezifikation | Platzhalter %…%, helle Vorschau |
 | /admin/games/[id] | src/app/[locale]/admin/games/[id]/page.tsx | – | vorhanden (Design-Sweep) |  |
 | /admin/games/new | src/app/[locale]/admin/games/new/page.tsx | – | vorhanden (Design-Sweep) |  |
@@ -66,7 +66,7 @@
 | /admin/referrals | src/app/[locale]/admin/referrals/page.tsx | – | vorhanden (Design-Sweep) |  |
 | /admin/reports | src/app/[locale]/admin/reports/page.tsx | ACP Meldungen | neu gebaut |  |
 | /admin/security | src/app/[locale]/admin/security/page.tsx | ACP Sicherheit | nach Spezifikation | 2FA-Status, Sitzungen, IP-Sperren (SiteSetting + Middleware), Passwort-Regeln, Captcha-Status |
-| /admin/settings/media | src/app/[locale]/admin/settings/media/page.tsx | – | nach Spezifikation | Bibliothek; Alt-Text fehlt im Schema |
+| /admin/settings/media | src/app/[locale]/admin/settings/media/page.tsx | – | nach Spezifikation | Bibliothek mit Alt-Text |
 | /admin/settings | src/app/[locale]/admin/settings/page.tsx | ACP Einstellungen | neu gebaut | Übersicht |
 | /admin/shop | src/app/[locale]/admin/shop/page.tsx | ACP Produkte | teilweise |  |
 | /admin/subscriptions | src/app/[locale]/admin/subscriptions/page.tsx | ACP Käufe und Abos | nach Spezifikation | Tabs, Verlängern/Kündigen/Erstatten mit Audit |
@@ -159,28 +159,48 @@
 | /register | src/app/[locale]/register/page.tsx | W8 Registrieren | umgesetzt |  |
 | /reset-password | src/app/[locale]/reset-password/page.tsx | W8 Passwort setzen | umgesetzt |  |
 | /search | src/app/[locale]/search/page.tsx | – | vorhanden (Design-Sweep) |  |
-| /shop/[slug] | src/app/[locale]/shop/[slug]/page.tsx | W5/W6 Produkt + Direktkauf | teilweise | Kasse mit Warenkorb fehlt (Backend) |
+| /shop/[slug] | src/app/[locale]/shop/[slug]/page.tsx | W5/W6 Produkt + Direktkauf | nach Spezifikation | Direktkauf und Warenkorb |
 | /shop | src/app/[locale]/shop/page.tsx | W5 Shop | teilweise | kein Warenkorb (Backend) |
 | /team-chat | src/app/[locale]/team-chat/page.tsx | – | vorhanden (Design-Sweep) |  |
 | /team | src/app/[locale]/team/page.tsx | – | vorhanden (Design-Sweep) |  |
+| /cart | src/app/[locale]/cart/page.tsx | W6 Warenkorb | neu | Serverpreise, AGB/Widerruf, eine Stripe-Session |
+| /checkout/success | src/app/[locale]/checkout/success/page.tsx | W7 Bestätigung | neu | nur angemeldet |
+| /tutorials | src/app/[locale]/tutorials/page.tsx | – | neu | Übersicht mit Suche |
 | /tutorials/[slug] | src/app/[locale]/tutorials/[slug]/page.tsx | – | vorhanden (Design-Sweep) |  |
 
 ## Bericht Phase 3 (Detail-Spezifikation)
 
-### Neue Endpunkte
+### Neue Endpunkte und Seiten
 | Pfad | Zweck | Schutz |
 | --- | --- | --- |
 | GET /api/admin/audit/export | Audit-Log als CSV (gleiche Filter wie ACP) | Anmeldung + audit.read, eigener Audit-Eintrag |
 | GET /api/admin/localization/export?locale= | Texte einer Sprache als JSON | Anmeldung + settings.write |
 | GET /api/security/ip-bans | Sperrliste (nur Hashes) für die Middleware | abgeleiteter interner Token |
 | GET /api/cron/health | Dienst-Prüfung für externen Cron (Verfügbarkeit) | Bearer CRON_SECRET |
+| GET /api/cron/email | Arbeitet die Newsletter-Warteschlange (EmailLog) ab | Bearer CRON_SECRET |
+| GET /api/newsletter/unsubscribe?u=&t= | Abmelde-Link aus Rundmails (HMAC-signiert) | Signatur, 400 bei ungültigem Token |
+| /[locale]/cart | Warenkorb (Slugs im Browser, Preise immer vom Server) | öffentlich, Bezahlen nur angemeldet |
+| /[locale]/checkout/success | Bestätigung nach Stripe-Kasse | Anmeldung (Middleware), Session muss zum Nutzer gehören |
+| /[locale]/tutorials | Tutorial-Übersicht mit Suche (Footer-Link war 404) | öffentlich |
 
-### Datenbank
-- Keine Migration ausgeführt (Live-Datenbank). Neue Indizes stehen in `prisma/schema.prisma` und als sperrfreies SQL in `prisma/proposed/2026-09-redesign.sql`.
-- Vorgeschlagene Spalten (auskommentiert, erst mit Code-Umstellung): Newsletter-Einwilligung, `refundedAt` für Käufe. Alt-Text für Medien fehlt ebenfalls.
-- Ohne Schemaänderung über SiteSetting gelöst: IP-Sperren, Passwort-Regeln, Auszahlungsregeln, ausgeblendete Bestenlisten-Creator, Monitoring-Historie; Art/Kanäle von Ankündigungen als Präfix-Einträge in `visibilityTargets`.
+Server-Actions: `getCartQuote`, `startCartCheckout` (AGB- und Widerrufs-Checkbox Pflicht, Rate-Limit), `getCheckoutResult`,
+`setNewsletterConsent`, ACP-Newsletter (`countNewsletterRecipientsAdmin`, `sendNewsletterTest`, `createNewsletterCampaign`,
+`processNewsletterQueueAdmin`, `listNewsletterCampaigns`), `saveMediaAltText`.
+
+### Datenbank (Live, 26.09.2026)
+Additive Migration `prisma/proposed/2026-09-redesign.sql` direkt auf der Live-Datenbank ausgeführt (idempotent, `lock_timeout`,
+Indizes mit `CREATE INDEX CONCURRENTLY IF NOT EXISTS`). Nichts gelöscht oder umbenannt.
+- Neue Spalten: `User.newsletterConsent`, `User.newsletterConsentAt`, `ModPurchase.refundedAt`, `MembershipPurchase.refundedAt`,
+  `MediaFile.altText`, `EmailLog.campaignId`.
+- Neue Tabelle `EmailCampaign`; neue Sequenz `invoice_number_seq` (Start 10000) für lückenlose Rechnungsnummern `MM-<Jahr>-<Nr>`.
+- Neue Indizes laut Schema. Nur live vorhandene Indizes und der Download-Fremdschlüssel sind jetzt im Schema dokumentiert,
+  damit ein späteres `prisma db push` nichts entfernt. `prisma migrate diff` Live → Schema ist leer.
+- Kontrolle: Zeilenzahlen vor/nach identisch (Nutzer 13, Medien 189, E-Mail-Logs 47, Audit 477, Käufe 0); keine ungültigen Indizes.
+- Wichtig: kein `prisma db push` ohne vorheriges `prisma migrate diff`.
 
 ### Behobene Fehler (Auswahl)
+- Shop-Direktkäufe wurden vom Stripe-Webhook nie als bezahlt markiert (Typ `shop_product_order` fehlte im Webhook).
+- Erstattete Mod-Käufe gaben weiter Zugriff; jetzt `refundedAt`, Zugang endet, erneuter Kauf möglich.
 - Rollen-Sync nach Mitgliedschaft setzte Creator/Partner/Support auf USER/PREMIUM zurück.
 - Kündigen im ACP beendete bezahlte Stripe-Laufzeit sofort; jetzt zum Laufzeitende, Webhook beendet die Mitgliedschaft.
 - Premium-Creator sahen Werbung (Rollen-Stufe wurde vor der Mitgliedschaft geprüft).
@@ -188,8 +208,13 @@
 - API-Schlüssel-Hash wurde an den Browser geschickt; Owner-Rolle war serverseitig editierbar.
 - 16 ACP-Seiten prüften Rechte nur im Layout; Zahlungseinstellungen waren für jedes Team-Mitglied offen.
 - `getModSecurityInfo` ohne Rechteprüfung; DMCA-Formular ohne Begrenzung.
+- Live-Test: `/tutorials` war 404, `/checkout/success` ohne Anmeldung erreichbar, Bild-Ersatz zeigte auf die absolute Produktions-URL.
+- Suchseite zeigte rohe Schlüssel (`search.json` war doppelt verschachtelt); drei ACP-Texte fehlten auf Deutsch.
+- Favoriten-Button ohne zugänglichen Namen, Sprachlinks im Footer ohne Namen, feste englische Toast-Texte (31 Dateien).
 
-### Performance (Start-JS gzip, inkl. Layouts)
+### Performance
+Start-JS gzip inkl. Layouts:
+
 | Seite | vorher | nachher |
 | --- | --- | --- |
 | Startseite | 258,6 KB | 161,0 KB |
@@ -198,19 +223,34 @@
 | Premium | 259,0 KB | 161,6 KB |
 | ACP-Dashboard | 254,2 KB | 153,4 KB |
 
-Hinweis: Frühere Angaben (136 KB Startseite) zählten nur die Seiten-Chunks ohne Layout-Chunks und waren daher zu niedrig.
-Maßnahmen: Supabase-Client, Konto-Menü, Suchdialog, Galerie-Vollbild und Meldedialog laden bei Bedarf; Sprachwahl ohne Radix;
-Bestenlisten zählen Zeitraum-Downloads per SQL-Gruppierung statt bis zu 50 000 Zeilen; Provisionen/Partner ohne N+1.
-Lighthouse/LCP/INP nicht gemessen: kein Testserver ohne Live-Daten verfügbar.
+Lighthouse 12 gegen `next start` mit Live-Daten (lokal, 26.09.2026):
+
+| Seite | Mobil Perf. | Mobil LCP | Desktop Perf. | Desktop LCP | CLS | A11y | SEO |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Startseite | 90 | 3,4 s | 98 | 1,1 s | 0,003 | 92–96 | 100 |
+| Mods | 79 | 5,3 s | 99 | 0,8 s | 0,002 | 95 | 100 |
+| Mod-Seite | 84 | 4,3 s | 98 | 1,2 s | 0,018 | 92 | 100 |
+| Premium | 90 | 3,5 s | – | – | 0 | 96 | 100 |
+
+Mobiles LCP auf Mods/Mod-Seite: Jedes Bild geht zuerst an `pub-….r2.dev` und bekommt 401 (öffentlicher R2-Zugriff am Bucket
+aus). Erst nach der Hydration lädt der Ersatz über `/api/assets`. Mit funktionierender Bild-Domain entfällt die Wartezeit von
+ca. 3 s (Desktop zeigt das Potenzial). Maßnahmen dieser Runde: Cookie-Banner serverseitig (vorher spätes LCP-Element), erste
+Modkarten mit Bild-Priorität.
 
 ### Tests
-`npm test` (Node-Testrunner, keine neuen Pakete): Rechteprüfung jeder ACP-Seite, Menü-Recht = Seiten-Recht, jede ACP-Action und /api/admin-Route prüft Rechte, Hilfsfunktionen (IP-Maskierung, Audit-Kategorien, Ankündigungs-Ziele, „Angemeldet bleiben“). Checkout-, Ticket- und API-Schlüssel-Abläufe brauchen eine Test-Datenbank und sind nicht automatisiert.
+`npm test` (Node-Testrunner, keine neuen Pakete, 14 Tests): Rechteprüfung jeder ACP-Seite, Menü-Recht = Seiten-Recht, jede
+ACP-Action und /api/admin-Route prüft Rechte, Hilfsfunktionen, jeder benutzte Toast-Schlüssel und jeder `t("…")`-Schlüssel mit festem Namespace existiert in de und en.
+Smoke-Test gegen den Produktions-Build mit Live-Daten: 82/82 (alle öffentlichen Seiten 200, Konto- und ACP-Seiten leiten
+ohne Anmeldung auf /login, geschützte APIs 403/400). Checkout nur bis Stripe getestet, keine echte Zahlung.
 
 ### Offen
-- Warenkorb und Kasse (W6) – Backend fehlt.
-- Newsletter-Versand – Einwilligung fehlt im Schema.
-- Alt-Texte, Zugang nach Mod-Erstattung entziehen – Schemafelder fehlen.
+- Bilder: öffentlichen Zugriff für den R2-Bucket aktivieren oder eine eigene Bild-Domain setzen und `NEXT_PUBLIC_CDN_URL`/`R2_PUBLIC_URL` anpassen.
+- Cron beim Hoster einrichten: `/api/cron/email` (z. B. alle 5 Min) und `/api/cron/health`, jeweils mit `Authorization: Bearer $CRON_SECRET`.
+- Eingeloggte ACP-Durchläufe brauchen Test-Zugangsdaten; ohne sie nur Weiterleitung und Rechte-Tests geprüft.
+- Nicht verwendete Komponenten (kein Import): admin-diagnostics-panel, auth-branding-panel, enterprise-shop-admin,
+  owner-control-center, owner-user-management, partner-form-builder, role-analytics-panel, team-profiles-admin,
+  translations-admin-panel, applications/partner-application-status – nicht übersetzt (letztere schon), Löschen nach Rückfrage.
+- i18n: 30 ACP-, Creator- und Konto-Komponenten mit ~915 neuen Schlüsseln (de/en; fr/es/pl/tr fallen auf Englisch zurück).
 - App/Discord-Anbindung für Ankündigungen.
-- Noch nicht umgebaut/teilweise englisch: Nutzer-Detailkarten, Mitgliedschafts-Plan-Editor, Spiele, Produkte, Shop-Übersicht, Inhalte (Branding), Creator-/Partner-Detailseiten, Bestellungs-Detail.
 - Header liest Cookies → Seiten rendern dynamisch (ISR wirkungslos); Umbau auf clientseitige Personalisierung empfohlen.
-- Lighthouse-Messung, ESLint-Konfiguration.
+- ESLint ist nicht eingerichtet (`next lint` fragt interaktiv nach einer Konfiguration).

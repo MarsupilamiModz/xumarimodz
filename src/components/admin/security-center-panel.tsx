@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
 import { safeToLocaleDateString } from "@/lib/i18n/safe-locale";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -105,6 +106,7 @@ type Props = {
 };
 
 export function SecurityCenterPanel({ settings, stats }: Props) {
+  const t = useTranslations("admin.ui.securityCenter");
   const [pending, startTransition] = useTransition();
   const [selected, setSelected] = useState<string[]>([]);
   const [tab, setTab] = useState<"approvals" | "sounds" | "history" | "audit" | "settings">("approvals");
@@ -127,7 +129,7 @@ export function SecurityCenterPanel({ settings, stats }: Props) {
   function runWorker() {
     startTransition(async () => {
       const r = await triggerScanWorker();
-      if (r.success) toast({ title: `Processed ${r.data.processed} scan jobs` });
+      if (r.success) toast({ title: t("scanJobsProcessedMsg", { count: r.data.processed }) });
       else toast({ title: r.error, variant: "destructive" });
     });
   }
@@ -188,7 +190,12 @@ export function SecurityCenterPanel({ settings, stats }: Props) {
           ? await bulkApproveVersions(selected)
           : await bulkRejectVersions(selected);
       if (r.success) {
-        toast({ title: `${r.data.count} files ${action}d` });
+        toast({
+          title:
+            action === "approve"
+              ? t("filesApprovedMsg", { count: r.data.count })
+              : t("filesRejectedMsg", { count: r.data.count }),
+        });
         setSelected([]);
       } else toast({ title: r.error, variant: "destructive" });
     });
@@ -225,17 +232,17 @@ export function SecurityCenterPanel({ settings, stats }: Props) {
   function soundStatusLabel(status: string) {
     switch (status) {
       case "VIRUS_TOTAL_VERIFIED":
-        return "VirusTotal geprüft";
+        return t("statusVirusTotalVerified");
       case "MANUALLY_APPROVED":
-        return "Manuell freigegeben";
+        return t("statusManuallyApproved");
       case "REVIEW_REQUIRED":
-        return "Prüfung nötig";
+        return t("statusReviewRequired");
       case "REJECTED":
-        return "Abgelehnt";
+        return t("statusRejected");
       case "CHANGES_REQUESTED":
-        return "Änderungen angefordert";
+        return t("statusChangesRequested");
       default:
-        return "Wartet auf Prüfung";
+        return t("statusPendingReview");
     }
   }
 
@@ -247,15 +254,15 @@ export function SecurityCenterPanel({ settings, stats }: Props) {
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8">
         {[
-          { label: "Scanned today", value: stats.scannedToday },
-          { label: "Pending reviews", value: stats.pendingReviews },
-          { label: "Approved", value: stats.approved },
-          { label: "Rejected", value: stats.rejected },
-          { label: "Suspicious", value: stats.suspicious },
-          { label: "Malware", value: stats.malware },
-          { label: "Failed scans", value: stats.failedScans },
+          { label: t("statScannedToday"), value: stats.scannedToday },
+          { label: t("statPendingReviews"), value: stats.pendingReviews },
+          { label: t("statApproved"), value: stats.approved },
+          { label: t("statRejected"), value: stats.rejected },
+          { label: t("statSuspicious"), value: stats.suspicious },
+          { label: t("statMalware"), value: stats.malware },
+          { label: t("statFailedScans"), value: stats.failedScans },
           {
-            label: "VT quota",
+            label: t("statVtQuota"),
             value: `${stats.quota.requestsUsed}/${stats.quota.requestsLimit}`,
           },
         ].map((s) => (
@@ -270,10 +277,10 @@ export function SecurityCenterPanel({ settings, stats }: Props) {
 
       <div className="flex flex-wrap gap-2">
         <Button variant="outline" size="sm" disabled={pending} onClick={runWorker}>
-          Process scan queue
+          {t("processScanQueueButton")}
         </Button>
         <Button variant="outline" size="sm" disabled={pending} onClick={exportReport}>
-          Export reports
+          {t("exportReportsButton")}
         </Button>
         <Button
           variant="outline"
@@ -281,7 +288,7 @@ export function SecurityCenterPanel({ settings, stats }: Props) {
           disabled={pending || selected.length === 0}
           onClick={() => bulk("approve")}
         >
-          Bulk approve ({selected.length})
+          {t("bulkApproveButton", { count: selected.length })}
         </Button>
         <Button
           variant="destructive"
@@ -289,18 +296,18 @@ export function SecurityCenterPanel({ settings, stats }: Props) {
           disabled={pending || selected.length === 0}
           onClick={() => bulk("reject")}
         >
-          Bulk reject
+          {t("bulkRejectButton")}
         </Button>
       </div>
 
       <div className="flex flex-wrap gap-2 border-b border-border/40 pb-2">
         {(
           [
-            ["approvals", "File approvals"],
-            ["sounds", `Sound reviews (${stats.pendingSounds?.length ?? 0})`],
-            ["history", "Scan history"],
-            ["audit", "Audit logs"],
-            ["settings", "Settings"],
+            ["approvals", t("tabFileApprovals")],
+            ["sounds", t("tabSoundReviews", { count: stats.pendingSounds?.length ?? 0 })],
+            ["history", t("tabScanHistory")],
+            ["audit", t("tabAuditLogs")],
+            ["settings", t("tabSettings")],
           ] as const
         ).map(([key, label]) => (
           <Button
@@ -317,11 +324,11 @@ export function SecurityCenterPanel({ settings, stats }: Props) {
       {tab === "approvals" && (
         <Card>
             <CardHeader>
-              <CardTitle>Pending file approvals</CardTitle>
+              <CardTitle>{t("pendingFileApprovalsHeading")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               {stats.pendingApprovals.length === 0 ? (
-                <p className="text-sm text-muted-foreground">No files awaiting review.</p>
+                <p className="text-sm text-muted-foreground">{t("noFilesAwaitingReview")}</p>
               ) : (
                 stats.pendingApprovals.map((v) => (
                   <div
@@ -343,16 +350,16 @@ export function SecurityCenterPanel({ settings, stats }: Props) {
                     <div className="flex flex-wrap items-center gap-1">
                       <SecurityBadge scanStatus={v.scanStatus} isTrusted={!!v.trustedFile} />
                       <Button size="sm" variant="outline" disabled={pending} onClick={() => review(v.id, "approve")}>
-                        Approve
+                        {t("approveButton")}
                       </Button>
                       <Button size="sm" variant="outline" disabled={pending} onClick={() => review(v.id, "trust")}>
-                        Mark trusted
+                        {t("markTrustedButton")}
                       </Button>
                       <Button size="sm" variant="outline" disabled={pending} onClick={() => review(v.id, "rescan")}>
-                        Re-scan
+                        {t("rescanButton")}
                       </Button>
                       <Button size="sm" variant="destructive" disabled={pending} onClick={() => review(v.id, "reject")}>
-                        Reject
+                        {t("rejectButton")}
                       </Button>
                     </div>
                   </div>
@@ -365,11 +372,11 @@ export function SecurityCenterPanel({ settings, stats }: Props) {
       {tab === "sounds" && (
         <Card>
           <CardHeader>
-            <CardTitle>Pending sound reviews</CardTitle>
+            <CardTitle>{t("pendingSoundReviewsHeading")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             {(stats.pendingSounds ?? []).length === 0 ? (
-              <p className="text-sm text-muted-foreground">No sounds awaiting review.</p>
+              <p className="text-sm text-muted-foreground">{t("noSoundsAwaitingReview")}</p>
             ) : (
               stats.pendingSounds.map((sound) => {
                 const profile = sound.soundProfile;
@@ -384,9 +391,9 @@ export function SecurityCenterPanel({ settings, stats }: Props) {
                     <div className="min-w-0 flex-1">
                       <p className="font-medium text-sm">{sound.title}</p>
                       <p className="text-xs text-muted-foreground">
-                        by {sound.author.displayName ?? sound.author.username} ·{" "}
+                        {t("byAuthor", { author: sound.author.displayName ?? sound.author.username })} ·{" "}
                         {safeToLocaleDateString(new Date(sound.createdAt))}
-                        {duration != null && ` · ${duration}s`}
+                        {duration != null && ` · ${t("durationSeconds", { seconds: duration })}`}
                       </p>
                       {peaks.length > 0 && (
                         <div className="mt-2 flex h-8 items-end gap-px max-w-xs">
@@ -403,26 +410,26 @@ export function SecurityCenterPanel({ settings, stats }: Props) {
                         {soundStatusLabel(profile?.approvalStatus ?? "PENDING_REVIEW")}
                         {profile?.previewScanStatus && (
                           <span className="text-muted-foreground ml-2">
-                            Scan: {profile.previewScanStatus}
+                            {t("scanLabel", { status: profile.previewScanStatus })}
                           </span>
                         )}
                       </p>
                     </div>
                     <div className="flex flex-wrap gap-1">
                       <Button size="sm" variant="outline" disabled={pending} onClick={() => soundReview(sound.id, "approve")}>
-                        Approve
+                        {t("approveButton")}
                       </Button>
                       <Button size="sm" variant="outline" disabled={pending} onClick={() => soundReview(sound.id, "reject")}>
-                        Reject
+                        {t("rejectButton")}
                       </Button>
                       <Button size="sm" variant="outline" disabled={pending} onClick={() => soundReview(sound.id, "changes")}>
-                        Request Changes
+                        {t("requestChangesButton")}
                       </Button>
                       <Button size="sm" variant="outline" disabled={pending} onClick={() => soundReview(sound.id, "review")}>
-                        Manual Review
+                        {t("manualReviewButton")}
                       </Button>
                       <Button size="sm" variant="outline" disabled={pending} onClick={() => soundReview(sound.id, "rescan")}>
-                        Re-Scan
+                        {t("rescanButton")}
                       </Button>
                     </div>
                   </div>
@@ -436,7 +443,7 @@ export function SecurityCenterPanel({ settings, stats }: Props) {
       {tab === "history" && (
         <Card>
             <CardHeader>
-              <CardTitle>Scan history</CardTitle>
+              <CardTitle>{t("scanHistoryHeading")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               {stats.recent.map((log) => (
@@ -449,7 +456,7 @@ export function SecurityCenterPanel({ settings, stats }: Props) {
                     <p className="text-xs text-muted-foreground">
                       {log.modVersion
                         ? `${log.modVersion.mod.title} v${log.modVersion.version}`
-                        : "Blocked upload"}
+                        : t("blockedUpload")}
                       {" · "}
                       {new Date(log.createdAt).toLocaleString()}
                     </p>
@@ -464,10 +471,10 @@ export function SecurityCenterPanel({ settings, stats }: Props) {
                     {log.modVersion && (
                       <div className="flex gap-1">
                         <Button size="sm" variant="outline" disabled={pending} onClick={() => review(log.modVersion!.id, "approve")}>
-                          Approve
+                          {t("approveButton")}
                         </Button>
                         <Button size="sm" variant="outline" disabled={pending} onClick={() => review(log.modVersion!.id, "rescan")}>
-                          Re-scan
+                          {t("rescanButton")}
                         </Button>
                       </div>
                     )}
@@ -481,14 +488,14 @@ export function SecurityCenterPanel({ settings, stats }: Props) {
       {tab === "audit" && (
         <Card>
             <CardHeader>
-              <CardTitle>Security audit logs</CardTitle>
+              <CardTitle>{t("securityAuditLogsHeading")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
               {stats.auditRecent.map((log) => (
                 <div key={log.id} className="flex justify-between gap-2 text-sm border-b border-border/20 pb-2">
                   <span className="font-mono text-xs">{log.action}</span>
                   <span className="text-muted-foreground text-xs">
-                    {log.user?.displayName ?? log.user?.username ?? "system"} ·{" "}
+                    {log.user?.displayName ?? log.user?.username ?? t("systemActor")} ·{" "}
                     {new Date(log.createdAt).toLocaleString()}
                   </span>
                 </div>
@@ -500,24 +507,24 @@ export function SecurityCenterPanel({ settings, stats }: Props) {
       {tab === "settings" && (
         <Card>
             <CardHeader>
-              <CardTitle>Malware scanner settings</CardTitle>
+              <CardTitle>{t("malwareScannerSettingsHeading")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4 max-w-xl">
               <div className="flex items-center justify-between">
-                <label className="text-sm font-medium">Scanner enabled</label>
+                <label className="text-sm font-medium">{t("scannerEnabledLabel")}</label>
                 <Switch checked={form.enabled} onCheckedChange={(v) => setForm((f) => ({ ...f, enabled: v }))} />
               </div>
               <div>
-                <label className="text-sm font-medium">VirusTotal API key</label>
+                <label className="text-sm font-medium">{t("virusTotalApiKeyLabel")}</label>
                 <Input
                   type="password"
-                  placeholder={settings.hasKey ? "Key configured — enter to replace" : "Paste API key"}
+                  placeholder={settings.hasKey ? t("keyConfiguredPlaceholder") : t("pasteApiKeyPlaceholder")}
                   value={form.virusTotalApiKey}
                   onChange={(e) => setForm((f) => ({ ...f, virusTotalApiKey: e.target.value }))}
                 />
               </div>
               <div>
-                <label className="text-sm font-medium">Scan threshold (detections → malware)</label>
+                <label className="text-sm font-medium">{t("scanThresholdLabel")}</label>
                 <Input
                   type="number"
                   min={1}
@@ -527,25 +534,28 @@ export function SecurityCenterPanel({ settings, stats }: Props) {
                 />
               </div>
               <div className="flex items-center justify-between">
-                <label className="text-sm font-medium">Auto-approve clean uploads</label>
+                <label className="text-sm font-medium">{t("autoApproveCleanLabel")}</label>
                 <Switch
                   checked={form.autoApproveClean}
                   onCheckedChange={(v) => setForm((f) => ({ ...f, autoApproveClean: v }))}
                 />
               </div>
               <div className="flex items-center justify-between">
-                <label className="text-sm font-medium">Require manual review for suspicious</label>
+                <label className="text-sm font-medium">{t("requireManualReviewLabel")}</label>
                 <Switch
                   checked={form.requireManualReviewSuspicious}
                   onCheckedChange={(v) => setForm((f) => ({ ...f, requireManualReviewSuspicious: v }))}
                 />
               </div>
               <p className="text-xs text-muted-foreground">
-                VT uploads today: {stats.quota.uploadsUsed}/{stats.quota.uploadsLimit} · Requests remaining:{" "}
-                {stats.quota.requestsRemaining}
+                {t("vtUploadsQuotaLine", {
+                  uploadsUsed: stats.quota.uploadsUsed,
+                  uploadsLimit: stats.quota.uploadsLimit,
+                  requestsRemaining: stats.quota.requestsRemaining,
+                })}
               </p>
               <Button onClick={saveSettings} disabled={pending}>
-                Save settings
+                {t("saveSettingsButton")}
               </Button>
             </CardContent>
           </Card>

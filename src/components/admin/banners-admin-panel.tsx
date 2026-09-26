@@ -2,6 +2,7 @@
 
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import {
   createSiteBanner,
   deleteSiteBanner,
@@ -30,6 +31,7 @@ const FREQUENCIES: SiteBannerFrequency[] = [
 ];
 
 export function BannersAdminPanel({ banners }: { banners: BannerRow[] }) {
+  const t = useTranslations("admin.ui.bannersAdmin");
   const router = useRouter();
   const appToast = useAppToast();
   const [pending, startTransition] = useTransition();
@@ -37,7 +39,7 @@ export function BannersAdminPanel({ banners }: { banners: BannerRow[] }) {
   return (
     <div className="space-y-6">
       <Card className="p-6 space-y-4">
-        <h3 className="font-semibold">Create banner</h3>
+        <h3 className="font-semibold">{t("createBannerTitle")}</h3>
         <form
           className="grid gap-3 sm:grid-cols-2"
           onSubmit={(e) => {
@@ -65,8 +67,8 @@ export function BannersAdminPanel({ banners }: { banners: BannerRow[] }) {
           }}
         >
           <select name="type" defaultValue="GLOBAL" className="h-10 rounded-md border border-input bg-background/50 px-3 text-sm">
-            {TYPES.map((t) => (
-              <option key={t} value={t}>{t}</option>
+            {TYPES.map((type) => (
+              <option key={type} value={type}>{type}</option>
             ))}
           </select>
           <select name="frequency" defaultValue="ALWAYS" className="h-10 rounded-md border border-input bg-background/50 px-3 text-sm">
@@ -74,22 +76,22 @@ export function BannersAdminPanel({ banners }: { banners: BannerRow[] }) {
               <option key={f} value={f}>{f.replace(/_/g, " ")}</option>
             ))}
           </select>
-          <Input name="title" placeholder="Title" required className="sm:col-span-2" />
-          <Input name="description" placeholder="Description" className="sm:col-span-2" />
-          <Input name="imageUrl" placeholder="Image URL" />
-          <Input name="linkUrl" placeholder="Link URL" />
-          <Input name="buttonText" placeholder="Button text" />
-          <Input name="priority" type="number" defaultValue={0} placeholder="Priority" />
-          <Input name="gameId" placeholder="Game ID (GAME type)" />
-          <Input name="gameCategoryId" placeholder="Category ID (CATEGORY type)" />
+          <Input name="title" placeholder={t("titlePlaceholder")} required className="sm:col-span-2" />
+          <Input name="description" placeholder={t("descriptionPlaceholder")} className="sm:col-span-2" />
+          <Input name="imageUrl" placeholder={t("imageUrlPlaceholder")} />
+          <Input name="linkUrl" placeholder={t("linkUrlPlaceholder")} />
+          <Input name="buttonText" placeholder={t("buttonTextPlaceholder")} />
+          <Input name="priority" type="number" defaultValue={0} placeholder={t("priorityPlaceholder")} />
+          <Input name="gameId" placeholder={t("gameIdPlaceholder")} />
+          <Input name="gameCategoryId" placeholder={t("gameCategoryIdPlaceholder")} />
           <Button type="submit" disabled={pending} className="sm:col-span-2">
-            Create banner
+            {t("createBanner")}
           </Button>
         </form>
       </Card>
 
       <Card className="p-6">
-        <h3 className="font-semibold mb-4">Active banners</h3>
+        <h3 className="font-semibold mb-4">{t("activeBannersTitle")}</h3>
         <div className="space-y-3">
           {banners.map((banner) => (
             <div key={banner.id} className="rounded-lg border border-border/40 p-4">
@@ -99,7 +101,7 @@ export function BannersAdminPanel({ banners }: { banners: BannerRow[] }) {
                   <p className="text-xs text-muted-foreground">{banner.type} · {banner.frequency}</p>
                 </div>
                 <Badge variant={banner.isActive ? "premium" : "outline"}>
-                  {banner.isActive ? "Active" : "Off"}
+                  {banner.isActive ? t("statusActive") : t("statusOff")}
                 </Badge>
               </div>
               {banner.description && (
@@ -117,27 +119,27 @@ export function BannersAdminPanel({ banners }: { banners: BannerRow[] }) {
                     })
                   }
                 >
-                  {banner.isActive ? "Disable" : "Enable"}
+                  {banner.isActive ? t("disable") : t("enable")}
                 </Button>
                 <Button
                   size="sm"
                   variant="destructive"
                   disabled={pending}
                   onClick={() => {
-                    if (!confirm("Delete this banner?")) return;
+                    if (!confirm(t("deleteConfirm"))) return;
                     startTransition(async () => {
                       const r = await deleteSiteBanner(banner.id);
                       if (r.success) router.refresh();
                     });
                   }}
                 >
-                  Delete
+                  {t("delete")}
                 </Button>
               </div>
             </div>
           ))}
           {banners.length === 0 && (
-            <p className="text-sm text-muted-foreground">No banners configured.</p>
+            <p className="text-sm text-muted-foreground">{t("noBanners")}</p>
           )}
         </div>
       </Card>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import type { UserRole, MembershipTier } from "@prisma/client";
@@ -104,6 +105,7 @@ export function OwnerUserDetailPanel({
   allAchievements: AchievementOption[];
 }) {
   const router = useRouter();
+  const t = useTranslations("admin.ui.ownerUserDetail");
   const appToast = useAppToast();
   const [pending, startTransition] = useTransition();
   const [banReason, setBanReason] = useState("");
@@ -132,56 +134,56 @@ export function OwnerUserDetailPanel({
           <p className="text-muted-foreground">{user.email}</p>
           <div className="mt-2 flex flex-wrap gap-2">
             <Badge variant={roleBadgeVariant(user.role)}>{formatRoleLabel(user.role)}</Badge>
-            {user.isBanned && <Badge variant="destructive">Account banned</Badge>}
-            {user.isSuspended && <Badge variant="outline">Suspended</Badge>}
-            {user.deletedAt && <Badge variant="destructive">Deleted</Badge>}
+            {user.isBanned && <Badge variant="destructive">{t("badgeAccountBanned")}</Badge>}
+            {user.isSuspended && <Badge variant="outline">{t("badgeSuspended")}</Badge>}
+            {user.deletedAt && <Badge variant="destructive">{t("badgeDeleted")}</Badge>}
           </div>
         </div>
         <Link href={`/${locale}/admin/owner/users`} className="text-sm text-muted-foreground hover:text-foreground">
-          ← Back to users
+          ← {t("backToUsers")}
         </Link>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-4">
-        <Card><CardHeader><CardTitle className="text-sm">Downloads</CardTitle></CardHeader><CardContent><p className="text-2xl font-bold">{user._count.downloads}</p></CardContent></Card>
-        <Card><CardHeader><CardTitle className="text-sm">Uploads</CardTitle></CardHeader><CardContent><p className="text-2xl font-bold">{user._count.mods}</p></CardContent></Card>
-        <Card><CardHeader><CardTitle className="text-sm">Tickets</CardTitle></CardHeader><CardContent><p className="text-2xl font-bold">{user._count.supportTickets}</p></CardContent></Card>
-        <Card><CardHeader><CardTitle className="text-sm">Member since</CardTitle></CardHeader><CardContent><p className="text-sm">{safeToLocaleDateString(user.createdAt)}</p></CardContent></Card>
+        <Card><CardHeader><CardTitle className="text-sm">{t("statDownloads")}</CardTitle></CardHeader><CardContent><p className="text-2xl font-bold">{user._count.downloads}</p></CardContent></Card>
+        <Card><CardHeader><CardTitle className="text-sm">{t("statUploads")}</CardTitle></CardHeader><CardContent><p className="text-2xl font-bold">{user._count.mods}</p></CardContent></Card>
+        <Card><CardHeader><CardTitle className="text-sm">{t("statTickets")}</CardTitle></CardHeader><CardContent><p className="text-2xl font-bold">{user._count.supportTickets}</p></CardContent></Card>
+        <Card><CardHeader><CardTitle className="text-sm">{t("statMemberSince")}</CardTitle></CardHeader><CardContent><p className="text-sm">{safeToLocaleDateString(user.createdAt)}</p></CardContent></Card>
       </div>
 
       <Card className="p-4 space-y-3">
-        <h3 className="font-semibold">Role management</h3>
+        <h3 className="font-semibold">{t("roleManagementHeading")}</h3>
         <div className="flex flex-wrap gap-2 items-end">
           <select
             className="h-10 rounded-md border border-input bg-background px-3 text-sm"
             defaultValue={user.role}
             onChange={(e) => {
               const role = e.target.value as UserRole;
-              run(() => ownerUpdateUserRole(user.id, role, roleReason || undefined), "Role updated");
+              run(() => ownerUpdateUserRole(user.id, role, roleReason || undefined), t("roleUpdatedMsg"));
             }}
           >
             {ASSIGNABLE_ROLES.map((r) => (
               <option key={r} value={r}>{formatRoleLabel(r)}</option>
             ))}
           </select>
-          <Input placeholder="Reason (optional)" value={roleReason} onChange={(e) => setRoleReason(e.target.value)} className="max-w-xs" />
-          <Button variant="outline" size="sm" disabled={pending} onClick={() => run(() => ownerSuspendUser(user.id, !user.isSuspended), user.isSuspended ? "Unsuspended" : "Suspended")}>
-            {user.isSuspended ? "Unsuspend" : "Suspend"}
+          <Input placeholder={t("reasonOptionalPlaceholder")} value={roleReason} onChange={(e) => setRoleReason(e.target.value)} className="max-w-xs" />
+          <Button variant="outline" size="sm" disabled={pending} onClick={() => run(() => ownerSuspendUser(user.id, !user.isSuspended), user.isSuspended ? t("unsuspendedMsg") : t("suspendedMsg"))}>
+            {user.isSuspended ? t("unsuspendButton") : t("suspendButton")}
           </Button>
           {user.deletedAt ? (
-            <Button variant="outline" size="sm" disabled={pending} onClick={() => run(() => ownerRestoreUser(user.id), "Restored")}>Restore account</Button>
+            <Button variant="outline" size="sm" disabled={pending} onClick={() => run(() => ownerRestoreUser(user.id), t("restoredMsg"))}>{t("restoreAccountButton")}</Button>
           ) : (
-            <Button variant="destructive" size="sm" disabled={pending} onClick={() => run(() => ownerSoftDeleteUser(user.id), "Account disabled")}>Disable account</Button>
+            <Button variant="destructive" size="sm" disabled={pending} onClick={() => run(() => ownerSoftDeleteUser(user.id), t("disabledMsg"))}>{t("disableAccountButton")}</Button>
           )}
         </div>
       </Card>
 
       <Card className="p-4 space-y-3">
-        <h3 className="font-semibold">Premium management</h3>
+        <h3 className="font-semibold">{t("premiumManagementHeading")}</h3>
         {user.userMembership && (
           <p className="text-sm text-muted-foreground">
             {user.userMembership.membershipType} · {user.userMembership.status}
-            {user.userMembership.renewalDate && ` · renews ${safeToLocaleDateString(user.userMembership.renewalDate)}`}
+            {user.userMembership.renewalDate && ` · ${t("renewsLabel", { date: safeToLocaleDateString(user.userMembership.renewalDate) })}`}
             {user.userMembership.stripeSubscriptionId && ` · Stripe`}
           </p>
         )}
@@ -192,26 +194,26 @@ export function OwnerUserDetailPanel({
               variant="outline"
               size="sm"
               disabled={pending}
-              onClick={() => run(() => ownerAssignMembership(user.id, tier, { extendDays: 30 }), `${tier} assigned`)}
+              onClick={() => run(() => ownerAssignMembership(user.id, tier, { extendDays: 30 }), t("membershipAssignedMsg", { tier }))}
             >
               {tier.replace("_", " ")}
             </Button>
           ))}
-          <Button variant="outline" size="sm" disabled={pending} onClick={() => run(() => ownerAssignMembership(user.id, "PREMIUM_MAX", { lifetime: true }), "Lifetime premium")}>
-            Lifetime Premium Max
+          <Button variant="outline" size="sm" disabled={pending} onClick={() => run(() => ownerAssignMembership(user.id, "PREMIUM_MAX", { lifetime: true }), t("lifetimePremiumMsg"))}>
+            {t("lifetimePremiumMaxButton")}
           </Button>
         </div>
       </Card>
 
       <Card className="p-4 space-y-3">
-        <h3 className="font-semibold">Ban management</h3>
+        <h3 className="font-semibold">{t("banManagementHeading")}</h3>
         <div className="grid gap-2 sm:grid-cols-2">
-          <Input placeholder="Ban reason (required)" value={banReason} onChange={(e) => setBanReason(e.target.value)} />
+          <Input placeholder={t("banReasonPlaceholder")} value={banReason} onChange={(e) => setBanReason(e.target.value)} />
           <select className="h-10 rounded-md border border-input bg-background px-3 text-sm" value={banScope} onChange={(e) => setBanScope(e.target.value as typeof banScope)}>
-            <option value="ACCOUNT">Ban account</option>
-            <option value="UPLOAD">Ban uploads</option>
-            <option value="COMMENT">Ban comments</option>
-            <option value="IP">Ban IP (record)</option>
+            <option value="ACCOUNT">{t("banAccountOption")}</option>
+            <option value="UPLOAD">{t("banUploadsOption")}</option>
+            <option value="COMMENT">{t("banCommentsOption")}</option>
+            <option value="IP">{t("banIpOption")}</option>
           </select>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -228,20 +230,20 @@ export function OwnerUserDetailPanel({
                     scope: banScope,
                     duration: "permanent",
                   }),
-                "Ban applied"
+                t("banAppliedMsg")
               )
             }
           >
-            Apply ban
+            {t("applyBanButton")}
           </Button>
           {user.isBanned && (
-            <Button variant="outline" size="sm" disabled={pending} onClick={() => run(() => ownerLiftBan(user.id, "ACCOUNT"), "Unbanned")}>Lift account ban</Button>
+            <Button variant="outline" size="sm" disabled={pending} onClick={() => run(() => ownerLiftBan(user.id, "ACCOUNT"), t("unbannedMsg"))}>{t("liftAccountBanButton")}</Button>
           )}
           {user.uploadBanned && (
-            <Button variant="outline" size="sm" disabled={pending} onClick={() => run(() => ownerLiftBan(user.id, "UPLOAD"), "Upload ban lifted")}>Lift upload ban</Button>
+            <Button variant="outline" size="sm" disabled={pending} onClick={() => run(() => ownerLiftBan(user.id, "UPLOAD"), t("uploadBanLiftedMsg"))}>{t("liftUploadBanButton")}</Button>
           )}
           {user.commentBanned && (
-            <Button variant="outline" size="sm" disabled={pending} onClick={() => run(() => ownerLiftBan(user.id, "COMMENT"), "Comment ban lifted")}>Lift comment ban</Button>
+            <Button variant="outline" size="sm" disabled={pending} onClick={() => run(() => ownerLiftBan(user.id, "COMMENT"), t("commentBanLiftedMsg"))}>{t("liftCommentBanButton")}</Button>
           )}
         </div>
         {user.banRecords.length > 0 && (
@@ -249,7 +251,7 @@ export function OwnerUserDetailPanel({
             {user.banRecords.slice(0, 8).map((b) => (
               <li key={b.id}>
                 {b.banScope} · {b.banType} · {b.reason} · {safeToLocaleDateString(b.createdAt)}
-                {b.liftedAt ? " (lifted)" : ""}
+                {b.liftedAt ? ` ${t("liftedSuffix")}` : ""}
               </li>
             ))}
           </ul>
@@ -257,7 +259,7 @@ export function OwnerUserDetailPanel({
       </Card>
 
       <Card className="p-4 space-y-3">
-        <h3 className="font-semibold">Individual permissions</h3>
+        <h3 className="font-semibold">{t("individualPermissionsHeading")}</h3>
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 max-h-72 overflow-y-auto">
           {permissionKeys.map((key) => (
             <label key={key} className="flex items-center gap-2 text-sm">
@@ -265,7 +267,7 @@ export function OwnerUserDetailPanel({
                 type="checkbox"
                 checked={granted.has(key)}
                 onChange={(e) =>
-                  run(() => ownerSetUserPermission(user.id, key, e.target.checked), "Permission updated")
+                  run(() => ownerSetUserPermission(user.id, key, e.target.checked), t("permissionUpdatedMsg"))
                 }
               />
               <span className="truncate" title={PERMISSIONS[key]}>{key}</span>
@@ -282,7 +284,7 @@ export function OwnerUserDetailPanel({
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Card className="p-4">
-          <h3 className="font-semibold mb-3">Purchases & uploads</h3>
+          <h3 className="font-semibold mb-3">{t("purchasesUploadsHeading")}</h3>
           <ul className="text-sm space-y-1 text-muted-foreground">
             {user.purchases.slice(0, 5).map((p) => (
               <li key={p.id}>{p.mod.title} · €{(p.amountCents / 100).toFixed(2)}</li>
@@ -298,38 +300,38 @@ export function OwnerUserDetailPanel({
           </ul>
         </Card>
         <Card className="p-4">
-          <h3 className="font-semibold mb-3">Tickets & applications</h3>
+          <h3 className="font-semibold mb-3">{t("ticketsApplicationsHeading")}</h3>
           <ul className="text-sm space-y-1 text-muted-foreground">
-            {user.supportTickets.map((t) => (
-              <li key={t.id}>{t.ticketNumber}: {t.subject} ({t.status})</li>
+            {user.supportTickets.map((ticket) => (
+              <li key={ticket.id}>{ticket.ticketNumber}: {ticket.subject} ({ticket.status})</li>
             ))}
             {user.creatorApplications.map((a) => (
-              <li key={a.id}>Creator app · {a.status}</li>
+              <li key={a.id}>{t("creatorAppLabel")} · {a.status}</li>
             ))}
             {user.partnerApplications.map((a) => (
-              <li key={a.id}>Partner app · {a.status}</li>
+              <li key={a.id}>{t("partnerAppLabel")} · {a.status}</li>
             ))}
           </ul>
         </Card>
       </div>
 
       <Card className="p-4">
-        <h3 className="font-semibold mb-3">Role history</h3>
+        <h3 className="font-semibold mb-3">{t("roleHistoryHeading")}</h3>
         <ul className="text-sm space-y-1">
           {user.roleHistory.map((h) => (
             <li key={h.id} className="text-muted-foreground">
-              {h.fromRole ?? "?"} → {h.toRole} by @{h.changedBy?.username ?? "system"} · {safeToLocaleDateString(h.createdAt)}
+              {h.fromRole ?? "?"} → {t("changedByLine", { toRole: h.toRole, username: h.changedBy?.username ?? t("systemActor") })} · {safeToLocaleDateString(h.createdAt)}
             </li>
           ))}
         </ul>
       </Card>
 
       <Card className="p-4">
-        <h3 className="font-semibold mb-3">Owner audit log</h3>
+        <h3 className="font-semibold mb-3">{t("ownerAuditLogHeading")}</h3>
         <ul className="text-sm space-y-1 max-h-64 overflow-y-auto">
           {auditLogs.map((log) => (
             <li key={log.id} className="text-muted-foreground">
-              <span className="text-foreground">{log.action}</span> · @{log.actor?.username ?? "system"} · {safeToLocaleDateString(log.createdAt)}
+              <span className="text-foreground">{log.action}</span> · @{log.actor?.username ?? t("systemActor")} · {safeToLocaleDateString(log.createdAt)}
             </li>
           ))}
         </ul>

@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -31,12 +32,13 @@ type Product = {
   _count?: { purchases: number };
 };
 
-function creditsToEuroHint(credits: number, locale: string) {
+function creditsToEuroHint(credits: number, locale: string, t: ReturnType<typeof useTranslations>) {
   const euros = credits / CREDITS_PER_EUR;
-  return `${formatNumber(credits, locale)} Credits = ${formatEuro(Math.round(euros * 100), locale)}`;
+  return t("creditsEuroHint", { credits: formatNumber(credits, locale), euro: formatEuro(Math.round(euros * 100), locale) });
 }
 
 export function ShopAdminPanel({ products, locale }: { products: Product[]; locale: string }) {
+  const t = useTranslations("admin.ui.shopAdmin");
   const appToast = useAppToast();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -46,9 +48,9 @@ export function ShopAdminPanel({ products, locale }: { products: Product[]; loca
   return (
     <div className="space-y-6">
       <Card className="p-6 space-y-4">
-        <h3 className="font-semibold">{editing ? "Produkt bearbeiten" : "Produkt erstellen"}</h3>
+        <h3 className="font-semibold">{editing ? t("editProduct") : t("createProduct")}</h3>
         <p className="text-xs text-muted-foreground">
-          Kurs: 10 € = 1.000 Credits · z. B. 500 Credits = 5,00 €
+          {t("rateHint")}
         </p>
         <form
           key={editing?.id ?? "new"}
@@ -83,12 +85,12 @@ export function ShopAdminPanel({ products, locale }: { products: Product[]; loca
             });
           }}
         >
-          <Input name="name" defaultValue={editing?.name} placeholder="Produktname" required />
+          <Input name="name" defaultValue={editing?.name} placeholder={t("productName")} required />
           <Input
             name="creditsAmount"
             type="number"
             defaultValue={editing?.creditsAmount ?? ""}
-            placeholder="Credits (z. B. 500)"
+            placeholder={t("creditsPlaceholder")}
             onChange={(e) => setCreditsPreview(Number(e.target.value) || 0)}
           />
           <Input
@@ -97,7 +99,7 @@ export function ShopAdminPanel({ products, locale }: { products: Product[]; loca
             step="0.01"
             min={0}
             defaultValue={editing ? (editing.priceCents / 100).toFixed(2) : ""}
-            placeholder="Preis in € (z. B. 5.00)"
+            placeholder={t("priceEuroPlaceholder")}
           />
           <Input
             name="stripePriceId"
@@ -105,9 +107,9 @@ export function ShopAdminPanel({ products, locale }: { products: Product[]; loca
             placeholder="Stripe Price ID (price_...)"
             className="font-mono text-xs"
           />
-          <Input name="creditPrice" type="number" defaultValue={editing?.creditPrice ?? 0} placeholder="Preis in Credits (In-App-Kauf)" />
+          <Input name="creditPrice" type="number" defaultValue={editing?.creditPrice ?? 0} placeholder={t("creditPricePlaceholder")} />
           {creditsPreview > 0 && (
-            <p className="text-xs text-ink-muted sm:col-span-2">{creditsToEuroHint(creditsPreview, locale)}</p>
+            <p className="text-xs text-ink-muted sm:col-span-2">{creditsToEuroHint(creditsPreview, locale, t)}</p>
           )}
           <select name="category" defaultValue={editing?.category ?? "CREDITS"} className="h-10 rounded-md border border-input bg-background/50 px-3 text-sm">
             {["CREDITS", "MEMBERSHIP", "MODS", "EXCLUSIVE", "BUNDLES", "ACCESS"].map((c) => (
@@ -119,14 +121,14 @@ export function ShopAdminPanel({ products, locale }: { products: Product[]; loca
               <option key={c} value={c}>{c}</option>
             ))}
           </select>
-          <Input name="salePercent" type="number" defaultValue={editing?.salePercent ?? 0} placeholder="Rabatt %" />
-          <Input name="sortOrder" type="number" defaultValue={editing?.sortOrder ?? 0} placeholder="Sortierung" />
-          <Textarea name="description" defaultValue={editing?.description ?? ""} placeholder="Beschreibung" className="sm:col-span-2" rows={3} />
-          <label className="flex items-center gap-2 text-sm"><input type="checkbox" name="isFeatured" defaultChecked={editing?.isFeatured} /> Featured</label>
-          <label className="flex items-center gap-2 text-sm"><input type="checkbox" name="isActive" defaultChecked={editing?.isActive ?? true} /> Aktiv</label>
+          <Input name="salePercent" type="number" defaultValue={editing?.salePercent ?? 0} placeholder={t("salePercentPlaceholder")} />
+          <Input name="sortOrder" type="number" defaultValue={editing?.sortOrder ?? 0} placeholder={t("sortOrderPlaceholder")} />
+          <Textarea name="description" defaultValue={editing?.description ?? ""} placeholder={t("descriptionPlaceholder")} className="sm:col-span-2" rows={3} />
+          <label className="flex items-center gap-2 text-sm"><input type="checkbox" name="isFeatured" defaultChecked={editing?.isFeatured} /> {t("featured")}</label>
+          <label className="flex items-center gap-2 text-sm"><input type="checkbox" name="isActive" defaultChecked={editing?.isActive ?? true} /> {t("active")}</label>
           <div className="sm:col-span-2 flex gap-2">
-            <Button type="submit" disabled={pending}>{editing ? "Speichern" : "Erstellen"}</Button>
-            {editing && <Button type="button" variant="outline" onClick={() => setEditing(null)}>Abbrechen</Button>}
+            <Button type="submit" disabled={pending}>{editing ? t("save") : t("create")}</Button>
+            {editing && <Button type="button" variant="outline" onClick={() => setEditing(null)}>{t("cancel")}</Button>}
           </div>
         </form>
       </Card>
@@ -137,20 +139,20 @@ export function ShopAdminPanel({ products, locale }: { products: Product[]; loca
             <div>
               <div className="flex flex-wrap items-center gap-2">
                 <p className="font-medium">{p.name}</p>
-                {p.isFeatured && <Badge variant="premium">Featured</Badge>}
-                {!p.isActive && <Badge variant="outline">Inaktiv</Badge>}
+                {p.isFeatured && <Badge variant="premium">{t("featured")}</Badge>}
+                {!p.isActive && <Badge variant="outline">{t("inactive")}</Badge>}
               </div>
               <p className="text-xs text-muted-foreground">
-                {p.category} · {p.productType} · {p._count?.purchases ?? 0} Verkäufe
+                {p.category} · {p.productType} · {t("salesCount", { count: p._count?.purchases ?? 0 })}
               </p>
               <p className="text-sm mt-1">
                 {p.creditsAmount ? (
                   <>
-                    <span className="text-ink-muted">{formatNumber(p.creditsAmount, locale)} Credits</span>
+                    <span className="text-ink-muted">{t("creditsAmount", { amount: formatNumber(p.creditsAmount, locale) })}</span>
                     {" · "}
                     <span>{formatEuro(p.priceCents, locale)}</span>
                     {p.creditPrice > 0 && (
-                      <span className="text-muted-foreground"> · {formatNumber(p.creditPrice, locale)} Credits (In-App)</span>
+                      <span className="text-muted-foreground"> · {t("creditsInApp", { amount: formatNumber(p.creditPrice, locale) })}</span>
                     )}
                   </>
                 ) : (
@@ -170,7 +172,7 @@ export function ShopAdminPanel({ products, locale }: { products: Product[]; loca
                   setCreditsPreview(p.creditsAmount ?? 0);
                 }}
               >
-                Bearbeiten
+                {t("edit")}
               </Button>
               <Button
                 size="sm"
@@ -184,7 +186,7 @@ export function ShopAdminPanel({ products, locale }: { products: Product[]; loca
                   })
                 }
               >
-                Löschen
+                {t("delete")}
               </Button>
             </div>
           </Card>
