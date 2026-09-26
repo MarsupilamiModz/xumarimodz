@@ -1,5 +1,6 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { requireStaff } from "@/lib/auth";
+import { AdminIntlProvider } from "@/components/i18n/admin-intl-provider";
 import { userHasPermission } from "@/lib/permission-store";
 import { formatDisplayName } from "@/lib/display-name";
 import type { PermissionKey } from "@/lib/permissions";
@@ -119,6 +120,7 @@ export default async function AdminLayout({
   })).filter((g) => g.links.length > 0);
 
   return (
+    <AdminIntlProvider locale={locale}>
     <div className="flex min-h-[calc(100vh-var(--header-height))] flex-col lg:flex-row">
       <AcpNav
         groups={groups}
@@ -131,5 +133,6 @@ export default async function AdminLayout({
       />
       <div className="min-w-0 flex-1 px-4 py-8 md:px-8 xl:px-10">{children}</div>
     </div>
+    </AdminIntlProvider>
   );
 }

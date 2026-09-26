@@ -1,4 +1,5 @@
 import { requireDesigner } from "@/lib/auth";
+import { AdminIntlProvider } from "@/components/i18n/admin-intl-provider";
 import { Palette, Package, MessageSquare, BarChart3, Plus } from "lucide-react";
 import type { Locale } from "@/i18n/config";
 import { getTranslations } from "next-intl/server";
@@ -33,6 +34,7 @@ export default async function DesignerLayout({
   }));
 
   return (
+    <AdminIntlProvider locale={locale}>
     <div className="page-container flex flex-col gap-6 py-8 lg:flex-row lg:gap-10">
       <aside className="shrink-0 lg:w-56">
         <div className="lg:sticky lg:top-[calc(var(--header-height)+2rem)]">
@@ -48,5 +50,6 @@ export default async function DesignerLayout({
       </aside>
       <div className="min-w-0 flex-1">{children}</div>
     </div>
+    </AdminIntlProvider>
   );
 }

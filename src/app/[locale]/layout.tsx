@@ -78,9 +78,12 @@ export default async function LocaleLayout({
     }
     messages = {};
   }
+  // ACP-Texte (~100 KB) nicht an jede öffentliche Seite schicken; /admin und /designer
+  // liefern sie über einen eigenen Provider nach (AdminIntlProvider).
+  const { admin: _adminMessages, ...clientMessages } = messages as Record<string, unknown>;
 
   return (
-    <IntlProvider locale={locale} messages={messages}>
+    <IntlProvider locale={locale} messages={clientMessages as typeof messages}>
       <LocaleHtmlLang locale={locale} />
       <ScrollRestoration />
       <PlatformVisitTracker />

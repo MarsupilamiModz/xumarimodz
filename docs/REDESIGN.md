@@ -223,23 +223,27 @@ Start-JS gzip inkl. Layouts:
 | Premium | 259,0 KB | 161,6 KB |
 | ACP-Dashboard | 254,2 KB | 153,4 KB |
 
-Lighthouse 12 gegen `next start` mit Live-Daten (lokal, 26.09.2026):
+Lighthouse 12 gegen `next start` mit Live-Daten (lokal, 26.09.2026, Endstand; Mobil = Median aus 3 Läufen):
 
-| Seite | Mobil Perf. | Mobil LCP | Desktop Perf. | Desktop LCP | CLS | A11y | SEO |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| Startseite | 90 | 3,4 s | 98 | 1,1 s | 0,003 | 92–96 | 100 |
-| Mods | 79 | 5,3 s | 99 | 0,8 s | 0,002 | 95 | 100 |
-| Mod-Seite | 84 | 4,3 s | 98 | 1,2 s | 0,018 | 92 | 100 |
-| Premium | 90 | 3,5 s | – | – | 0 | 96 | 100 |
+| Seite | Mobil Perf. | Mobil LCP | Desktop Perf. | Desktop LCP | CLS | A11y | Best Pr. | SEO |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Startseite | 83 | 4,5 s | 97 | 1,2 s | 0 | 100 | 100 | 100 |
+| Mods | 81 | 4,8 s | 99 | 0,9 s | 0 | 100 | 100 | 100 |
+| Mod-Seite | 83 | 4,3 s | 98 | 1,1 s | 0,018 | 100 | 100 | 100 |
+| Premium | 90 | 3,5 s | 100 | 0,8 s | 0 | 100 | 100 | 100 |
 
-Mobiles LCP auf Mods/Mod-Seite: Jedes Bild geht zuerst an `pub-….r2.dev` und bekommt 401 (öffentlicher R2-Zugriff am Bucket
-aus). Erst nach der Hydration lädt der Ersatz über `/api/assets`. Mit funktionierender Bild-Domain entfällt die Wartezeit von
-ca. 3 s (Desktop zeigt das Potenzial). Maßnahmen dieser Runde: Cookie-Banner serverseitig (vorher spätes LCP-Element), erste
-Modkarten mit Bild-Priorität.
+HTML der Startseite: 282 KB → 189 KB (gzip 63 → 35 KB), weil die ACP-Texte (~100 KB) nicht mehr an öffentliche Seiten gehen
+(`AdminIntlProvider` nur unter /admin und /designer, per Test abgesichert).
+
+Mobiles LCP: Tatsächlich malt die Startseite nach 1,4 s (FCP = LCP). Lighthouse simuliert mehr, weil jedes Bild zuerst an
+`pub-….r2.dev` geht und 401 bekommt (öffentlicher R2-Zugriff am Bucket aus); diese hoch priorisierten Anfragen zählen als
+Abhängigkeiten, der Ersatz über `/api/assets` lädt erst nach der Hydration. Mit funktionierender Bild-Domain entfällt das
+(Desktop zeigt das Potenzial). Lokale Messungen schwanken bei wenig freiem Arbeitsspeicher stark (gleicher Build 73–89).
+Maßnahmen dieser Runde: Cookie-Banner serverseitig, erste Modkarten mit Bild-Priorität, ACP-Texte aus der Seiten-Nutzlast.
 
 ### Tests
-`npm test` (Node-Testrunner, keine neuen Pakete, 14 Tests): Rechteprüfung jeder ACP-Seite, Menü-Recht = Seiten-Recht, jede
-ACP-Action und /api/admin-Route prüft Rechte, Hilfsfunktionen, jeder benutzte Toast-Schlüssel und jeder `t("…")`-Schlüssel mit festem Namespace existiert in de und en.
+`npm test` (Node-Testrunner, keine neuen Pakete, 15 Tests): Rechteprüfung jeder ACP-Seite, Menü-Recht = Seiten-Recht, jede
+ACP-Action und /api/admin-Route prüft Rechte, Hilfsfunktionen, jeder benutzte Toast-Schlüssel und jeder `t("…")`-Schlüssel mit festem Namespace existiert in de und en, ACP-Texte werden nur in /admin und /designer gebraucht.
 Smoke-Test gegen den Produktions-Build mit Live-Daten: 82/82 (alle öffentlichen Seiten 200, Konto- und ACP-Seiten leiten
 ohne Anmeldung auf /login, geschützte APIs 403/400). Checkout nur bis Stripe getestet, keine echte Zahlung.
 
