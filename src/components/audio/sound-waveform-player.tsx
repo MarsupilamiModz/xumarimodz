@@ -62,6 +62,10 @@ export function SoundWaveformPlayer({
     setLocalDuration(durationSeconds ?? 0);
   }, [durationSeconds]);
 
+  // Aktuelle Werte für den Klick-Handler, ohne WaveSurfer bei jedem Fortschritt neu aufzubauen.
+  const latestRef = useRef({ duration, global });
+  latestRef.current = { duration, global };
+
   // WaveSurfer — visual only; playback goes through global HTMLAudioElement.
   useEffect(() => {
     let cancelled = false;
@@ -110,9 +114,10 @@ export function SoundWaveformPlayer({
 
       ws.on("interaction", () => {
         const t = ws.getCurrentTime();
-        const total = duration || durationSeconds || ws.getDuration() || 1;
-        if (useGlobalPlayer && global?.current?.id === modId) {
-          global.seek(total > 0 ? t / total : 0);
+        const { duration: currentDuration, global: player } = latestRef.current;
+        const total = currentDuration || durationSeconds || ws.getDuration() || 1;
+        if (useGlobalPlayer && player?.current?.id === modId) {
+          player.seek(total > 0 ? t / total : 0);
         } else {
           setLocalTime(t);
         }

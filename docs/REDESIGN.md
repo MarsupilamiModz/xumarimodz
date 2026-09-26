@@ -242,7 +242,7 @@ Abhängigkeiten, der Ersatz über `/api/assets` lädt erst nach der Hydration. M
 Maßnahmen dieser Runde: Cookie-Banner serverseitig, erste Modkarten mit Bild-Priorität, ACP-Texte aus der Seiten-Nutzlast.
 
 ### Tests
-`npm test` (Node-Testrunner, keine neuen Pakete, 15 Tests): Rechteprüfung jeder ACP-Seite, Menü-Recht = Seiten-Recht, jede
+`npm run lint` (next/core-web-vitals, fehlerfrei, läuft auch im Build) und `npm test` (Node-Testrunner, keine neuen Pakete, 15 Tests): Rechteprüfung jeder ACP-Seite, Menü-Recht = Seiten-Recht, jede
 ACP-Action und /api/admin-Route prüft Rechte, Hilfsfunktionen, jeder benutzte Toast-Schlüssel und jeder `t("…")`-Schlüssel mit festem Namespace existiert in de und en, ACP-Texte werden nur in /admin und /designer gebraucht.
 Smoke-Test gegen den Produktions-Build mit Live-Daten: 82/82 (alle öffentlichen Seiten 200, Konto- und ACP-Seiten leiten
 ohne Anmeldung auf /login, geschützte APIs 403/400). Checkout nur bis Stripe getestet, keine echte Zahlung.
@@ -257,4 +257,3 @@ ohne Anmeldung auf /login, geschützte APIs 403/400). Checkout nur bis Stripe ge
 - i18n: 30 ACP-, Creator- und Konto-Komponenten mit ~915 neuen Schlüsseln (de/en; fr/es/pl/tr fallen auf Englisch zurück).
 - App/Discord-Anbindung für Ankündigungen.
 - Header liest Cookies → Seiten rendern dynamisch (ISR wirkungslos); Umbau auf clientseitige Personalisierung empfohlen.
-- ESLint ist nicht eingerichtet (`next lint` fragt interaktiv nach einer Konfiguration).

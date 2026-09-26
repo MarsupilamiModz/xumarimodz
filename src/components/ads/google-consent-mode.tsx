@@ -3,6 +3,8 @@ import { GOOGLE_CONSENT_SCRIPT_ID } from "@/lib/adsense-config";
 
 export function GoogleConsentDefault() {
   return (
+    // Steht im Root-Layout (src/app/layout.tsx) – dort ist beforeInteractive im App Router vorgesehen; die Regel stammt aus dem pages-Router.
+    // eslint-disable-next-line @next/next/no-before-interactive-script-outside-document
     <Script id={GOOGLE_CONSENT_SCRIPT_ID} strategy="beforeInteractive">
       {`
         window.dataLayer = window.dataLayer || [];

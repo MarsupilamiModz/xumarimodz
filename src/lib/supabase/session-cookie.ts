@@ -11,7 +11,6 @@ export function applySessionOnly<T extends Options | undefined>(options: T, sess
   if (!sessionOnly || !options) return options;
   // Löschvorgänge (maxAge 0) unverändert lassen.
   if (typeof options.maxAge === "number" && options.maxAge <= 0) return options;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { maxAge, expires, ...rest } = options;
+  const { maxAge: _maxAge, expires: _expires, ...rest } = options;
   return rest as T;
 }
