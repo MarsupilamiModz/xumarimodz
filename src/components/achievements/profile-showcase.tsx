@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { AchievementBadge } from "@/components/achievements/achievement-badge";
 import { CreatorRankBadge } from "@/components/leaderboards/creator-rank-badge";
 import type { AchievementRarity, CreatorRankTier } from "@prisma/client";
@@ -24,15 +25,16 @@ export function ProfileShowcase({
   rankTier?: CreatorRankTier | null;
   supporterLabel?: string | null;
 }) {
+  const t = useTranslations("ecosystem");
   if (achievements.length === 0 && !rankTier && !supporterLabel) return null;
 
   return (
-    <div className="rounded-xl p-4 space-y-3">
+    <div className="space-y-3">
       <div className="flex flex-wrap items-center gap-2">
-        <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Showcase</h3>
+        <h2 className="text-[15px] font-semibold text-ink">{t("showcaseTitle")}</h2>
         {rankTier && <CreatorRankBadge tier={rankTier} size="sm" />}
         {supporterLabel && (
-          <span className="text-xs rounded-full border border-violet-bright/40 bg-violet-soft px-2 py-0.5 text-violet-bright">
+          <span className="rounded-sm bg-violet-soft px-2 py-0.5 text-xs font-semibold text-violet-bright">
             {supporterLabel}
           </span>
         )}

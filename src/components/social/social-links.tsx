@@ -64,13 +64,14 @@ export function SocialLinks({
             target="_blank"
             rel="noopener noreferrer"
             title={SOCIAL_LABELS[link.platform]}
+            aria-label={SOCIAL_LABELS[link.platform]}
             className={cn(
-              "inline-flex items-center justify-center rounded-xl border border-border/50 bg-background/40 transition-all duration-200",
+              "inline-flex items-center justify-center rounded-md border border-line bg-raised text-ink-muted transition-colors duration-fast",
               sizeClass,
               SOCIAL_COLORS[link.platform]
             )}
           >
-            <Icon className="h-4 w-4" />
+            <Icon className="h-4 w-4" aria-hidden />
           </a>
         );
       })}

@@ -126,6 +126,25 @@
     "partnerAnalytics": "Partner-Statistik",
     "exclusiveAccess": "Exklusiver Zugang",
     "collectionsNav": "Sammlungen",
-    "soundPacks": "Sound-Pakete"
+    "soundPacks": "Sound-Pakete",
+    "follow": "Folgen",
+    "followingState": "Du folgst",
+    "allCreators": "Alle Creator",
+    "moreCreators": "Weitere Creator",
+    "allPartners": "Alle Partner",
+    "morePartners": "Weitere Partner",
+    "modsCount": "{count, plural, one {# Mod} other {# Mods}}",
+    "downloadsCount": "{value} Downloads",
+    "followersCount": "{value} Follower",
+    "statMods": "Mods",
+    "about": "Über {name}",
+    "noDescription": "Noch keine Beschreibung.",
+    "copy": "Kopieren",
+    "copied": "Kopiert",
+    "showcaseTitle": "Erfolge",
+    "creatorCtaTitle": "Eigene Mods veröffentlichen?",
+    "creatorCtaText": "Bewirb dich als Creator – die Bewerbung prüft unser Team.",
+    "partnerCtaTitle": "Partner werden?",
+    "partnerCtaText": "Bewirb dich als Partner – die Bewerbung prüft unser Team."
   }
 }

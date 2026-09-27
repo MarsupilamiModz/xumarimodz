@@ -126,6 +126,25 @@
     "upgradePartner": "Upgrade partner level",
     "partnerAnalytics": "Partner analytics",
     "exclusiveAccess": "Exclusive access",
-    "collectionsNav": "Collections"
+    "collectionsNav": "Collections",
+    "follow": "Follow",
+    "followingState": "Following",
+    "allCreators": "All creators",
+    "moreCreators": "More creators",
+    "allPartners": "All partners",
+    "morePartners": "More partners",
+    "modsCount": "{count, plural, one {# mod} other {# mods}}",
+    "downloadsCount": "{value} downloads",
+    "followersCount": "{value} followers",
+    "statMods": "Mods",
+    "about": "About {name}",
+    "noDescription": "No description yet.",
+    "copy": "Copy",
+    "copied": "Copied",
+    "showcaseTitle": "Achievements",
+    "creatorCtaTitle": "Want to publish your own mods?",
+    "creatorCtaText": "Apply as a creator – our team reviews every application.",
+    "partnerCtaTitle": "Want to become a partner?",
+    "partnerCtaText": "Apply as a partner – our team reviews every application."
   }
 }

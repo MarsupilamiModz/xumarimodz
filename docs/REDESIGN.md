@@ -101,8 +101,8 @@
 | /creator | src/app/[locale]/creator/page.tsx | W14 Creator-Dashboard | teilweise |  |
 | /creator/payouts | src/app/[locale]/creator/payouts/page.tsx | – | vorhanden (Design-Sweep) |  |
 | /creator/settings | src/app/[locale]/creator/settings/page.tsx | – | vorhanden (Design-Sweep) |  |
-| /creators/[slug] | src/app/[locale]/creators/[slug]/page.tsx | W13 Creator-Profil | teilweise |  |
-| /creators | src/app/[locale]/creators/page.tsx | W12 Creator-Programm | teilweise |  |
+| /creators/[slug] | src/app/[locale]/creators/[slug]/page.tsx | W13 Creator-Profil | nach Spezifikation | Kopf mit Banner/Kennzahlen aus echten Mod-Daten, Creator-Code kopierbar, Mods mit Seiten |
+| /creators | src/app/[locale]/creators/page.tsx | W12 Creator-Programm | nach Spezifikation | Übersicht ohne doppelte Abschnitte, Link zur Bewerbung |
 | /custom-orders | src/app/[locale]/custom-orders/page.tsx | – | vorhanden (Design-Sweep) |  |
 | /dashboard/achievements | src/app/[locale]/dashboard/achievements/page.tsx | – | vorhanden (Design-Sweep) |  |
 | /dashboard/downloads | src/app/[locale]/dashboard/downloads/page.tsx | – | vorhanden (Design-Sweep) |  |
@@ -153,8 +153,8 @@
 | /partner | src/app/[locale]/partner/page.tsx | – | vorhanden (Design-Sweep) |  |
 | /partner/payouts | src/app/[locale]/partner/payouts/page.tsx | – | vorhanden (Design-Sweep) |  |
 | /partner/settings | src/app/[locale]/partner/settings/page.tsx | – | vorhanden (Design-Sweep) |  |
-| /partners/[slug] | src/app/[locale]/partners/[slug]/page.tsx | – | vorhanden (Design-Sweep) |  |
-| /partners | src/app/[locale]/partners/page.tsx | W11 Partner | teilweise |  |
+| /partners/[slug] | src/app/[locale]/partners/[slug]/page.tsx | – | nach Spezifikation | nur öffentliche Profile, Partnercode/Empfehlungslink kopierbar |
+| /partners | src/app/[locale]/partners/page.tsx | W11 Partner | nach Spezifikation | jeder Partner einmal, nur öffentliche |
 | /premium | src/app/[locale]/premium/page.tsx | W4 Premium | umgesetzt | Preise aus DB |
 | /register | src/app/[locale]/register/page.tsx | W8 Registrieren | umgesetzt |  |
 | /reset-password | src/app/[locale]/reset-password/page.tsx | W8 Passwort setzen | umgesetzt |  |
@@ -209,6 +209,7 @@ Indizes mit `CREATE INDEX CONCURRENTLY IF NOT EXISTS`). Nichts gelöscht oder um
 - 16 ACP-Seiten prüften Rechte nur im Layout; Zahlungseinstellungen waren für jedes Team-Mitglied offen.
 - `getModSecurityInfo` ohne Rechteprüfung; DMCA-Formular ohne Begrenzung.
 - Live-Test: `/tutorials` war 404, `/checkout/success` ohne Anmeldung erreichbar, Bild-Ersatz zeigte auf die absolute Produktions-URL.
+- Partnerprofile ohne `isPublic` waren öffentlich erreichbar; ACP-Nutzerliste stürzte ohne Sortierung ab; Datumsausgaben verursachten Hydration-Fehler.
 - Suchseite zeigte rohe Schlüssel (`search.json` war doppelt verschachtelt); drei ACP-Texte fehlten auf Deutsch.
 - Favoriten-Button ohne zugänglichen Namen, Sprachlinks im Footer ohne Namen, feste englische Toast-Texte (31 Dateien).
 
@@ -256,4 +257,5 @@ ohne Anmeldung auf /login, geschützte APIs 403/400). Checkout nur bis Stripe ge
   translations-admin-panel, applications/partner-application-status – nicht übersetzt (letztere schon), Löschen nach Rückfrage.
 - i18n: 30 ACP-, Creator- und Konto-Komponenten mit ~915 neuen Schlüsseln (de/en; fr/es/pl/tr fallen auf Englisch zurück).
 - App/Discord-Anbindung für Ankündigungen.
+- `CreatorProfile.totalDownloads` wird nirgends fortgeschrieben (überall 0); Creator-Seiten rechnen jetzt aus den Mods, Bestenliste/Startseite nutzen das Feld noch.
 - Header liest Cookies → Seiten rendern dynamisch (ISR wirkungslos); Umbau auf clientseitige Personalisierung empfohlen.

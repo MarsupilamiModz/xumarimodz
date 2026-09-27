@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
 import { UserPlus, UserCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toggleFollow, getFollowState } from "@/actions/follow";
@@ -22,6 +23,7 @@ export function FollowButton({
   size?: "sm" | "default";
 }) {
   const appToast = useAppToast();
+  const t = useTranslations("ecosystem");
   const [following, setFollowing] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [pending, startTransition] = useTransition();
@@ -41,9 +43,10 @@ export function FollowButton({
       size={size}
       variant={following ? "outline" : "default"}
       disabled={pending || !loaded}
+      aria-pressed={following}
       className={cn(
-        "transition-all duration-base",
-        following && "border-violet-bright/40 bg-violet-soft",
+        "transition-colors duration-fast",
+        following && "border-violet-bright/40 bg-violet-soft text-violet-bright",
         className
       )}
       onClick={() =>
@@ -61,13 +64,13 @@ export function FollowButton({
     >
       {following ? (
         <>
-          <UserCheck className="h-4 w-4 mr-1.5" />
-          Following
+          <UserCheck className="h-4 w-4" aria-hidden />
+          {t("followingState")}
         </>
       ) : (
         <>
-          <UserPlus className="h-4 w-4 mr-1.5" />
-          Follow
+          <UserPlus className="h-4 w-4" aria-hidden />
+          {t("follow")}
         </>
       )}
     </Button>

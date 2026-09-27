@@ -1,6 +1,7 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
-import { SafeImage } from "@/components/ui/safe-image";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { ArrowLeft, Layers } from "lucide-react";
 import { prisma } from "@/lib/db";
 import { ModCard } from "@/components/mods/mod-card";
 import { CreatorLevelBadge } from "@/components/creator/creator-level-badge";
@@ -9,8 +10,13 @@ import { ProfileShowcase } from "@/components/achievements/profile-showcase";
 import { CreatorRankBadge } from "@/components/leaderboards/creator-rank-badge";
 import { getShowcasedAchievements } from "@/lib/achievements";
 import { getUserMembershipTier } from "@/lib/membership";
+import { getCreatorModStats } from "@/lib/creator-stats";
+import { formatCompactNumber } from "@/lib/format-locale";
 import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
+import { CopyButton } from "@/components/ui/copy-button";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Pagination } from "@/components/ui/pagination";
+import { PublicProfileHeader } from "@/components/profile/public-profile-header";
 import { REVALIDATE } from "@/lib/cache";
 import { AdLocationSlot } from "@/components/ads/ad-location-slot";
 import type { Locale } from "@/i18n/config";
@@ -21,25 +27,30 @@ import { formatDisplayName } from "@/lib/display-name";
 export const revalidate = REVALIDATE.catalog;
 
 export async function generateMetadata({
-  params: { slug },
+  params: { locale, slug },
 }: {
-  params: { slug: string };
+  params: { locale: Locale; slug: string };
 }): Promise<Metadata> {
+  const t = await getTranslations({ locale, namespace: "ecosystem" });
   const profile = await prisma.creatorProfile.findUnique({
     where: { slug },
-    include: { user: { select: { displayName: true, username: true } } },
+    select: { isPublic: true, isSuspended: true, tagline: true, description: true, user: { select: { displayName: true, username: true } } },
   });
-  if (!profile) return { title: "Creator" };
+  if (!profile || !profile.isPublic || profile.isSuspended) return { title: t("creatorDiscovery") };
   return {
-    title: `${profile.user.displayName ?? profile.user.username} | Creator`,
+    title: `${formatDisplayName(profile.user)} | Creator`,
     description: profile.tagline ?? profile.description?.slice(0, 160),
   };
 }
 
+const MODS_PER_PAGE = 24;
+
 export default async function CreatorProfilePage({
   params: { locale, slug },
+  searchParams,
 }: {
   params: { locale: Locale; slug: string };
+  searchParams: { page?: string };
 }) {
   setRequestLocale(locale);
   const t = await getTranslations("ecosystem");
@@ -53,11 +64,13 @@ export default async function CreatorProfilePage({
   });
   if (!profile) notFound();
 
-  const [mods, showcased, membershipTier] = await Promise.all([
+  const page = Math.max(1, Math.floor(Number(searchParams.page) || 1));
+  const [mods, showcased, membershipTier, stats] = await Promise.all([
     prisma.mod.findMany({
       where: { authorId: profile.userId, status: "PUBLISHED", visibility: "PUBLIC" },
       orderBy: [{ isFeatured: "desc" }, { downloadCount: "desc" }],
-      take: 12,
+      skip: (page - 1) * MODS_PER_PAGE,
+      take: MODS_PER_PAGE,
       include: {
         game: { select: { name: true, slug: true } },
         media: { orderBy: [{ isFeatured: "desc" }, { orderIndex: "asc" }] },
@@ -67,77 +80,95 @@ export default async function CreatorProfilePage({
     }),
     getShowcasedAchievements(profile.userId, locale),
     getUserMembershipTier(profile.userId),
+    getCreatorModStats([profile.userId]),
   ]);
+  const own = stats.get(profile.userId) ?? { downloads: 0, mods: 0 };
+  const name = formatDisplayName(profile.user);
+  const pages = Math.max(1, Math.ceil(own.mods / MODS_PER_PAGE));
 
   return (
-    <div>
-      <section className="relative border-b border-border/40 overflow-hidden">
-        {profile.bannerUrl && (
-          <div className="absolute inset-0 opacity-25">
-            <SafeImage src={profile.bannerUrl} alt="" fill className="object-cover" priority sizes="100vw" />
-          </div>
-        )}
-        <div className="absolute inset-0" />
-        <div className="page-container relative py-14">
-          <div className="flex flex-wrap items-start gap-5">
-            {profile.user.avatarUrl ? (
-              <div className="relative h-24 w-24 rounded-lg overflow-hidden border-2 border-violet-bright/40">
-                <SafeImage src={profile.user.avatarUrl} alt="" fill className="object-cover" sizes="96px" />
-              </div>
-            ) : null}
-            <div className="flex-1 min-w-0">
-              <div className="flex flex-wrap items-center gap-2 mb-2">
-                <CreatorLevelBadge level={profile.level} size="md" />
-                <CreatorRankBadge tier={profile.rankTier} size="sm" />
-                {profile.isFeatured && <Badge variant="outline">{t("featured")}</Badge>}
-              </div>
-              <h1 className="h1-acp">{formatDisplayName(profile.user)}</h1>
+    <div className="page-section">
+      <Link href={`/${locale}/creators`} className="meta mb-6 inline-flex items-center gap-1.5 hover:text-ink">
+        <ArrowLeft className="h-3.5 w-3.5" aria-hidden />
+        {t("allCreators")}
+      </Link>
+
+      <PublicProfileHeader
+        name={name}
+        avatarUrl={profile.user.avatarUrl}
+        bannerUrl={profile.bannerUrl}
+        tagline={profile.tagline}
+        badges={
+          <>
+            <CreatorLevelBadge level={profile.level} size="sm" />
+            <CreatorRankBadge tier={profile.rankTier} size="sm" />
+            {profile.isFeatured && <Badge variant="outline">{t("featured")}</Badge>}
+          </>
+        }
+        actions={
+          <>
+            <FollowButton followingUserId={profile.userId} profileType="creator" locale={locale} />
+            <SocialLinks links={profile.socialLinks} size="sm" />
+          </>
+        }
+        stats={[
+          { label: t("downloads"), value: formatCompactNumber(own.downloads, locale) },
+          { label: t("statMods"), value: formatCompactNumber(own.mods, locale) },
+          { label: t("followers"), value: formatCompactNumber(profile.followerCount, locale) },
+        ]}
+      />
+
+      <div className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_320px]">
+        <section aria-labelledby="creator-mods" className="min-w-0">
+          <AdLocationSlot location="creator" className="mb-6" />
+          <h2 id="creator-mods" className="mb-4 text-lg font-semibold text-ink">
+            {t("uploads")}
+            <span className="ml-2 text-sm font-normal tabular-nums text-ink-muted">{own.mods}</span>
+          </h2>
+          {mods.length === 0 ? (
+            <EmptyState icon={Layers} title={t("noMods")} />
+          ) : (
+            <>
+              <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                {mods.map((mod, index) => (
+                  <li key={mod.id}>
+                    <ModCard locale={locale} mod={mod} priority={page === 1 && index === 0} />
+                  </li>
+                ))}
+              </ul>
+              <Pagination
+                className="mt-8"
+                page={Math.min(page, pages)}
+                pages={pages}
+                hrefFor={(p) => `/${locale}/creators/${profile.slug}${p > 1 ? `?page=${p}` : ""}#creator-mods`}
+              />
+            </>
+          )}
+        </section>
+
+        <aside className="space-y-4 lg:sticky lg:top-[calc(var(--header-height)+1.5rem)] lg:h-fit">
+          {profile.description && (
+            <section className="rounded-lg border border-line bg-raised p-5">
+              <h2 className="text-[15px] font-semibold text-ink">{t("about", { name })}</h2>
+              <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-ink-muted">{profile.description}</p>
+            </section>
+          )}
+          {profile.creatorCode && (
+            <section className="rounded-lg border border-line bg-raised p-5">
+              <h2 className="text-[15px] font-semibold text-ink">{t("creatorCode")}</h2>
+              <p className="mt-2 break-all font-mono text-lg font-semibold text-violet-bright">{profile.creatorCode}</p>
               <div className="mt-3">
-                <FollowButton followingUserId={profile.userId} profileType="creator" locale={locale} />
+                <CopyButton value={profile.creatorCode} label={t("copy")} copiedLabel={t("copied")} />
               </div>
-              {profile.tagline && <p className="text-muted-foreground mt-1">{profile.tagline}</p>}
-              {profile.creatorCode && (
-                <p className="text-sm mt-2 font-mono text-violet-bright">{t("creatorCode")}: {profile.creatorCode}</p>
-              )}
-              <SocialLinks links={profile.socialLinks} className="mt-4" />
-              <div className="mt-4 max-w-md">
-                <ProfileShowcase
-                  achievements={showcased}
-                  rankTier={profile.rankTier}
-                  supporterLabel={membershipTier?.name ?? null}
-                />
-              </div>
-            </div>
-            <Card className="p-4 min-w-[140px] text-center">
-              <p className="text-2xl font-bold">{profile.totalDownloads.toLocaleString()}</p>
-              <p className="text-xs text-muted-foreground">{t("downloads")}</p>
-              <p className="text-lg font-semibold mt-2">{profile.followerCount}</p>
-              <p className="text-xs text-muted-foreground">{t("followers")}</p>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {profile.description && (
-        <div className="page-container py-8">
-          <Card className="p-6">
-            <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">{profile.description}</p>
-          </Card>
-        </div>
-      )}
-
-      <div className="page-container py-8">
-        <AdLocationSlot location="creator" className="mb-6" />
-        <h2 className="text-xl font-bold mb-6">{t("uploads")}</h2>
-        {mods.length === 0 ? (
-          <p className="text-muted-foreground">{t("noMods")}</p>
-        ) : (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {mods.map((mod) => (
-              <ModCard key={mod.id} locale={locale} mod={mod} />
-            ))}
-          </div>
-        )}
+            </section>
+          )}
+          {(showcased.length > 0 || membershipTier) && (
+            <section className="rounded-lg border border-line bg-raised p-5">
+              {/* Rang steht schon im Kopf – hier nur Erfolge und Unterstützer-Stufe. */}
+              <ProfileShowcase achievements={showcased} supporterLabel={membershipTier?.name ?? null} />
+            </section>
+          )}
+        </aside>
       </div>
     </div>
   );

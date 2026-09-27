@@ -1,92 +1,103 @@
 import Link from "next/link";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { Handshake } from "lucide-react";
 import { prisma } from "@/lib/db";
-import { Card } from "@/components/ui/card";
-import { PartnerHubCard } from "@/components/partners/partner-hub-card";
-import { SITE } from "@/lib/site";
+import { formatCompactNumber } from "@/lib/format-locale";
+import { PartnerHubCard, type PartnerCardItem } from "@/components/partners/partner-hub-card";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Button } from "@/components/ui/button";
 import type { Locale } from "@/i18n/config";
 import type { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "Partners",
-  description: `Verified affiliate partners on ${SITE.name}.`,
-};
+export async function generateMetadata({ params: { locale } }: { params: { locale: Locale } }): Promise<Metadata> {
+  const t = await getTranslations({ locale, namespace: "ecosystem" });
+  return { title: t("partnerHub"), description: t("partnersSubtitle") };
+}
+
+type PartnerRow = PartnerCardItem & { followerCount: number };
 
 export default async function PartnersPage({ params: { locale } }: { params: { locale: Locale } }) {
   setRequestLocale(locale);
   const t = await getTranslations("ecosystem");
 
-  const [featured, verified, elite, official, topPerforming] = await Promise.all([
-    prisma.partnerProfile.findMany({
-      where: { isFeatured: true, isBanned: false, isSuspended: false },
-      orderBy: { totalConversions: "desc" },
-      take: 6,
-      include: { user: { select: { displayName: true, username: true, avatarUrl: true } }, socialLinks: { take: 4 } },
-    }).catch(() => []),
-    prisma.partnerProfile.findMany({
-      where: { isVerified: true, isBanned: false, isSuspended: false },
-      orderBy: { followerCount: "desc" },
-      take: 12,
-      include: { user: { select: { displayName: true, username: true, avatarUrl: true } }, socialLinks: { take: 4 } },
-    }).catch(() => []),
-    prisma.partnerProfile.findMany({
-      where: { level: "ELITE", isBanned: false, isSuspended: false },
-      take: 8,
-      include: { user: { select: { displayName: true, username: true, avatarUrl: true } }, socialLinks: { take: 4 } },
-    }).catch(() => []),
-    prisma.partnerProfile.findMany({
-      where: { level: "OFFICIAL_PARTNER", isBanned: false, isSuspended: false },
-      take: 8,
-      include: { user: { select: { displayName: true, username: true, avatarUrl: true } }, socialLinks: { take: 4 } },
-    }).catch(() => []),
-    prisma.partnerProfile.findMany({
-      where: { isBanned: false, isSuspended: false },
-      orderBy: { totalConversions: "desc" },
-      take: 12,
-      include: { user: { select: { displayName: true, username: true, avatarUrl: true } }, socialLinks: { take: 4 } },
-    }).catch(() => []),
-  ]);
+  // Jeder Partner genau einmal: hervorgehobene oben, danach alle übrigen nach Followern.
+  const partners: PartnerRow[] = await prisma.partnerProfile
+    .findMany({
+      where: { isPublic: true, isBanned: false, isSuspended: false },
+      orderBy: [{ isFeatured: "desc" }, { isVerified: "desc" }, { followerCount: "desc" }, { createdAt: "asc" }],
+      take: 60,
+      include: { user: { select: { displayName: true, username: true, avatarUrl: true } } },
+    })
+    .catch(() => []);
+  const featured = partners.filter((p) => p.isFeatured);
+  const rest = partners.filter((p) => !p.isFeatured);
 
-  const sections = [
-    { title: t("featuredPartners"), items: featured },
-    { title: t("verifiedPartners"), items: verified },
-    { title: t("elitePartners"), items: elite },
-    { title: t("officialPartners"), items: official },
-    { title: t("topPartners"), items: topPerforming },
-  ];
-
-  const hasAny = sections.some((s) => s.items.length > 0);
+  const labels = { verified: t("verified"), featured: t("featured") };
+  const card = (p: PartnerRow) => (
+    <li key={p.id}>
+      <PartnerHubCard
+        locale={locale}
+        partner={p}
+        labels={labels}
+        meta={t("followersCount", { value: formatCompactNumber(p.followerCount, locale) })}
+      />
+    </li>
+  );
+  const grid = (items: PartnerRow[]) => <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">{items.map(card)}</ul>;
 
   return (
-    <div className="page-container py-12">
-      <h1 className="h1-acp">{t("partnerHub")}</h1>
-      <p className="mt-2 text-muted-foreground">{t("partnersSubtitle")}</p>
+    <div className="page-section">
+      <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 className="h1-display">{t("partnerHub")}</h1>
+          <p className="mt-3 max-w-2xl text-ink-muted">{t("partnersSubtitle")}</p>
+        </div>
+        <Button variant="outline" asChild>
+          <Link href={`/${locale}/become-partner`}>{t("becomePartner")}</Link>
+        </Button>
+      </div>
 
-      {!hasAny ? (
-        <Card className="mt-10 p-12 text-center text-muted-foreground">{t("noPartners")}</Card>
+      {partners.length === 0 ? (
+        <EmptyState
+          className="mt-10"
+          icon={Handshake}
+          title={t("noPartners")}
+          action={
+            <Button asChild>
+              <Link href={`/${locale}/become-partner`}>{t("becomePartner")}</Link>
+            </Button>
+          }
+        />
       ) : (
         <div className="mt-10 space-y-12">
-          {sections.map(
-            (section) =>
-              section.items.length > 0 && (
-                <section key={section.title}>
-                  <h2 className="text-xl font-bold mb-6">{section.title}</h2>
-                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    {section.items.map((p) => (
-                      <PartnerHubCard key={p.id} locale={locale} partner={p} t={t} />
-                    ))}
-                  </div>
-                </section>
-              )
+          {featured.length > 0 && (
+            <section aria-labelledby="partners-featured">
+              <h2 id="partners-featured" className="mb-4 text-lg font-semibold text-ink">{t("featuredPartners")}</h2>
+              {grid(featured)}
+            </section>
+          )}
+          {rest.length > 0 && (
+            <section aria-labelledby="partners-all">
+              <h2 id="partners-all" className="mb-4 text-lg font-semibold text-ink">
+                {featured.length > 0 ? t("morePartners") : t("allPartners")}
+              </h2>
+              {grid(rest)}
+            </section>
           )}
         </div>
       )}
 
-      <div className="mt-12 text-center">
-        <Link href={`/${locale}/register`} className="text-ink-muted hover:underline text-sm">
-          {t("becomePartner")}
-        </Link>
-      </div>
+      {partners.length > 0 && (
+        <section className="mt-16 flex flex-col gap-4 rounded-lg border border-line bg-raised p-6 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 className="text-lg font-semibold text-ink">{t("partnerCtaTitle")}</h2>
+            <p className="mt-1 text-sm text-ink-muted">{t("partnerCtaText")}</p>
+          </div>
+          <Button asChild>
+            <Link href={`/${locale}/become-partner`}>{t("becomePartner")}</Link>
+          </Button>
+        </section>
+      )}
     </div>
   );
 }

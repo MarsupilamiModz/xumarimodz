@@ -1,86 +1,67 @@
 import Link from "next/link";
-import { safeToLocaleString } from "@/lib/i18n/safe-locale";
+import type { PublisherLevel } from "@prisma/client";
 import { SafeImage } from "@/components/ui/safe-image";
-import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CreatorLevelBadge } from "@/components/creator/creator-level-badge";
-import { SocialLinks } from "@/components/social/social-links";
 import { formatDisplayName } from "@/lib/display-name";
-import { getMediaUrl } from "@/lib/media-url";
-import type { PublisherLevel, SocialPlatform } from "@prisma/client";
 
-type PartnerCardData = {
+export type PartnerCardItem = {
   id: string;
   slug: string;
   tagline: string | null;
-  affiliateCode: string | null;
   level: PublisherLevel;
   isVerified: boolean;
   isFeatured: boolean;
-  followerCount: number;
-  totalConversions: number;
   bannerUrl: string | null;
-  user: {
-    username: string;
-    displayName: string | null;
-    avatarUrl: string | null;
-  };
-  socialLinks?: {
-    platform: SocialPlatform;
-    url: string;
-    label?: string | null;
-  }[];
+  user: { username: string; displayName: string | null; avatarUrl: string | null };
 };
 
+/** Partner-Karte: Banner (falls vorhanden), Avatar, Name, Stufe, Kurzbeschreibung, Kennzahl. */
 export function PartnerHubCard({
   locale,
   partner,
-  t,
+  meta,
+  labels,
 }: {
   locale: string;
-  partner: PartnerCardData;
-  t: (key: string) => string;
+  partner: PartnerCardItem;
+  meta: string;
+  labels: { verified: string; featured: string };
 }) {
-  const banner = getMediaUrl(partner.bannerUrl);
-  const avatar = getMediaUrl(partner.user.avatarUrl);
-
+  const name = formatDisplayName(partner.user);
   return (
-    <Link href={`/${locale}/partners/${partner.slug}`}>
-      <Card className="overflow-hidden h-full hover:border-line-control transition-all duration-base">
-        <div className="relative h-24">
-          {banner && <SafeImage src={banner} alt="" fill className="object-cover opacity-60" sizes="400px" />}
-          <div className="absolute -bottom-6 left-4">
-            <div className="relative h-14 w-14 rounded-xl overflow-hidden border-2 border-line-control bg-background">
-              {avatar ? (
-                <SafeImage src={avatar} alt="" fill className="object-cover" sizes="56px" />
-              ) : (
-                <div className="h-full w-full flex items-center justify-center font-bold text-lg">
-                  {formatDisplayName(partner.user).slice(0, 1)}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-        <div className="p-5 pt-8 space-y-2">
-          <div className="flex flex-wrap items-center gap-2">
-            <p className="font-semibold">{formatDisplayName(partner.user)}</p>
-            {partner.isVerified && <Badge variant="premium">{t("verified")}</Badge>}
-            {partner.isFeatured && <Badge variant="outline">{t("featured")}</Badge>}
-          </div>
+    <Link
+      href={`/${locale}/partners/${partner.slug}`}
+      className="group flex h-full flex-col overflow-hidden rounded-lg border border-line bg-raised transition-colors duration-fast hover:border-line-control"
+    >
+      {/* Banner nur, wenn eines hinterlegt ist – sonst keine leere Fläche. */}
+      {partner.bannerUrl && (
+        <span className="relative block aspect-[3/1] bg-elevated">
+          <SafeImage src={partner.bannerUrl} alt="" fill className="object-cover" sizes="(max-width: 640px) 100vw, 33vw" fallbackLabel="" />
+        </span>
+      )}
+      <span className="flex flex-1 flex-col p-4">
+        <span className={partner.bannerUrl ? "-mt-10 flex items-end gap-3" : "flex items-end gap-3"}>
+          <span className="relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-md border border-line-control bg-elevated text-base font-bold text-ink-muted">
+            {partner.user.avatarUrl ? (
+              <SafeImage src={partner.user.avatarUrl} alt="" fill className="object-cover" sizes="56px" fallbackLabel="" />
+            ) : (
+              <span aria-hidden>{name.slice(0, 1).toUpperCase()}</span>
+            )}
+          </span>
+        </span>
+        <span className="mt-3 flex flex-wrap items-center gap-2">
+          <span className="truncate text-[15px] font-semibold text-ink group-hover:text-violet-bright">{name}</span>
+          {/* Die Stufe zeigt „Verifiziert“ bereits; Extra-Badge nur ohne Stufe. */}
+          {partner.isVerified && partner.level === "UNVERIFIED" && <Badge variant="premium">{labels.verified}</Badge>}
+          {partner.isFeatured && <Badge variant="outline">{labels.featured}</Badge>}
+        </span>
+        <span className="mt-1.5 block">
           <CreatorLevelBadge level={partner.level} size="xs" />
-          <p className="text-sm text-muted-foreground line-clamp-2">{partner.tagline ?? t("partner")}</p>
-          {partner.affiliateCode && (
-            <p className="text-xs font-mono text-ink-muted">{t("affiliateCode")}: {partner.affiliateCode}</p>
-          )}
-          <div className="flex gap-4 text-xs text-muted-foreground pt-1">
-            <span>{safeToLocaleString(partner.followerCount)} followers</span>
-            <span>{partner.totalConversions} {t("conversions")}</span>
-          </div>
-          {partner.socialLinks && partner.socialLinks.length > 0 && (
-            <SocialLinks links={partner.socialLinks} className="pt-2" />
-          )}
-        </div>
-      </Card>
+        </span>
+        {partner.tagline && <span className="mt-3 line-clamp-2 block text-sm text-ink-muted">{partner.tagline}</span>}
+        <span className="meta mt-auto block pt-3 tabular-nums">{meta}</span>
+      </span>
     </Link>
   );
 }
