@@ -52,19 +52,21 @@ export function DataTable<T>({
       <div role="rowgroup">
         <div role="row" className={cn(gridClass, "h-9 border-b border-line text-xs font-medium text-ink-faint")}>
           {columns.map((c) => {
-            const active = sort?.key === c.sortKey;
-            const nextDir = active && sort?.dir === "desc" ? "asc" : "desc";
+            // Ohne Sortierung bzw. ohne sortKey ist keine Spalte aktiv (sonst undefined === undefined).
+            const activeDir = sort && c.sortKey && sort.key === c.sortKey ? sort.dir : null;
+            const active = activeDir !== null;
+            const nextDir = activeDir === "desc" ? "asc" : "desc";
             return (
               <div
                 key={c.key}
                 role="columnheader"
-                aria-sort={active ? (sort!.dir === "asc" ? "ascending" : "descending") : undefined}
+                aria-sort={active ? (activeDir === "asc" ? "ascending" : "descending") : undefined}
                 className={cn(c.align === "right" && "text-right", c.hideOnMobile && "hidden md:block")}
               >
                 {c.sortKey && sortHref ? (
                   <Link href={sortHref(c.sortKey, nextDir)} className="inline-flex items-center gap-1 hover:text-ink">
                     {c.header}
-                    {active && (sort!.dir === "asc" ? <ArrowUp className="h-3 w-3" aria-hidden /> : <ArrowDown className="h-3 w-3" aria-hidden />)}
+                    {active && (activeDir === "asc" ? <ArrowUp className="h-3 w-3" aria-hidden /> : <ArrowDown className="h-3 w-3" aria-hidden />)}
                   </Link>
                 ) : (
                   c.header
