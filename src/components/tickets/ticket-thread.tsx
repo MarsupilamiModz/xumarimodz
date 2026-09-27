@@ -19,6 +19,7 @@ import { TICKET_STATUS_LABELS, TICKET_CATEGORY_LABELS, TICKET_PRIORITY_LABELS } 
 import { formatDisplayName } from "@/lib/display-name";
 import { cn } from "@/lib/utils";
 import { Paperclip, Download } from "lucide-react";
+import { formatDateTime } from "@/lib/format-locale";
 
 type Attachment = {
   id: string;
@@ -215,7 +216,7 @@ export function TicketThread({
                 <span className="font-medium text-foreground">{formatDisplayName(msg.sender)}</span>
                 {msg.isInternal && <Badge variant="outline" className="text-[10px] border-warning/50 text-warning">Internal</Badge>}
                 {msg.isStaff && !msg.isInternal && <Badge variant="outline" className="text-[10px]">Staff</Badge>}
-                <span>{new Date(msg.createdAt).toLocaleString()}</span>
+                <span>{formatDateTime(msg.createdAt)}</span>
               </div>
               <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
               {msg.attachments && msg.attachments.length > 0 && (

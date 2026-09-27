@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useAppToast } from "@/hooks/use-app-toast";
+import { formatDate } from "@/lib/format-locale";
 
 type Activation = {
   id: string;
@@ -79,7 +80,7 @@ export default function LicensesPage() {
                     {a.licenseKey.mod?.title ?? a.licenseKey.productType}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {new Date(a.createdAt).toLocaleDateString()}
+                    {formatDate(a.createdAt)}
                   </p>
                 </div>
                 <Badge variant="outline">{a.licenseKey.status}</Badge>

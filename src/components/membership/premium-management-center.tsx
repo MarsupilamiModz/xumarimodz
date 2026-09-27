@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { getIntlLocale } from "@/lib/i18n/safe-locale";
 import Link from "next/link";
 import { ExternalLink, CreditCard, Calendar, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,6 +9,7 @@ import { formatCreditsFromCents } from "@/lib/credits";
 import { formatPlanPrice } from "@/lib/membership-pricing";
 import type { UserMembershipStatus } from "@prisma/client";
 import { toast } from "@/hooks/use-toast";
+import { formatDate } from "@/lib/format-locale";
 
 type Plan = {
   name: string;
@@ -127,8 +127,8 @@ export function PremiumManagementCenter({
           <Calendar className="h-4 w-4 text-violet-bright shrink-0" />
           <span>
             {subscription?.cancelAtPeriodEnd || membership.cancelDate
-              ? `Access until ${new Date(nextBilling).toLocaleDateString(getIntlLocale(locale))}`
-              : `Next billing: ${new Date(nextBilling).toLocaleDateString(getIntlLocale(locale))}`}
+              ? `Access until ${formatDate(nextBilling)}`
+              : `Next billing: ${formatDate(nextBilling)}`}
           </span>
         </div>
       )}
@@ -168,7 +168,7 @@ export function PremiumManagementCenter({
               <div>
                 <p className="font-medium">{inv.number ?? inv.id.slice(-8)}</p>
                 <p className="text-xs text-muted-foreground">
-                  {new Date(inv.created).toLocaleDateString(getIntlLocale(locale))} · {(inv.amountDue / 100).toFixed(2)}{" "}
+                  {formatDate(inv.created)} · {(inv.amountDue / 100).toFixed(2)}{" "}
                   {inv.currency.toUpperCase()}
                 </p>
               </div>
@@ -197,7 +197,7 @@ export function PremiumManagementCenter({
                 <p className="font-medium">{p.plan.name}</p>
                 <p className="text-xs text-muted-foreground">
                   {formatCreditsFromCents(p.amountCents, locale)} ·{" "}
-                  {new Date(p.createdAt).toLocaleDateString(getIntlLocale(locale))}
+                  {formatDate(p.createdAt)}
                 </p>
               </div>
               {p.stripePaymentId && (

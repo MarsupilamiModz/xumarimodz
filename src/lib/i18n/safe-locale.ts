@@ -1,4 +1,7 @@
 import { defaultLocale, isValidLocale, locales, type Locale } from "@/i18n/config";
+import { formatDayMonthYear, withTimeZone } from "./display-time";
+
+export { DISPLAY_TIME_ZONE, formatDayMonthYear } from "./display-time";
 
 export const SUPPORTED_LOCALES = locales;
 
@@ -44,17 +47,12 @@ export function safeToLocaleDateString(
 ): string {
   const date = value instanceof Date ? value : new Date(value);
   if (Number.isNaN(date.getTime())) return "—";
-  if (!options || Object.keys(options).length === 0) {
-    const dd = String(date.getDate()).padStart(2, "0");
-    const mm = String(date.getMonth() + 1).padStart(2, "0");
-    const yyyy = date.getFullYear();
-    return `${dd}.${mm}.${yyyy}`;
-  }
+  if (!options || Object.keys(options).length === 0) return formatDayMonthYear(date);
   try {
-    return date.toLocaleDateString(getIntlLocale(locale), options);
+    return date.toLocaleDateString(getIntlLocale(locale), withTimeZone(options));
   } catch {
     try {
-      return date.toLocaleDateString("en-US", options);
+      return date.toLocaleDateString("en-US", withTimeZone(options));
     } catch {
       return date.toISOString().slice(0, 10);
     }
@@ -69,10 +67,10 @@ export function safeToLocaleTimeString(
   const date = value instanceof Date ? value : new Date(value);
   if (Number.isNaN(date.getTime())) return "—";
   try {
-    return date.toLocaleTimeString(getIntlLocale(locale), options);
+    return date.toLocaleTimeString(getIntlLocale(locale), withTimeZone(options));
   } catch {
     try {
-      return date.toLocaleTimeString("en-US", options);
+      return date.toLocaleTimeString("en-US", withTimeZone(options));
     } catch {
       return "";
     }
@@ -95,9 +93,9 @@ export function safeIntlDateTimeFormat(
   options?: Intl.DateTimeFormatOptions
 ): Intl.DateTimeFormat {
   try {
-    return new Intl.DateTimeFormat(getIntlLocale(locale), options);
+    return new Intl.DateTimeFormat(getIntlLocale(locale), withTimeZone(options));
   } catch {
-    return new Intl.DateTimeFormat("en-US", options);
+    return new Intl.DateTimeFormat("en-US", withTimeZone(options));
   }
 }
 

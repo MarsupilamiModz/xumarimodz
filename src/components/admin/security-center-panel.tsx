@@ -30,6 +30,7 @@ import {
 import type { MalwareScannerSettings } from "@/lib/malware-settings";
 import { SecurityBadge } from "@/components/security/security-badge";
 import type { FileScanStatus } from "@prisma/client";
+import { formatDateTime } from "@/lib/format-locale";
 
 type ScanLog = {
   id: string;
@@ -458,7 +459,7 @@ export function SecurityCenterPanel({ settings, stats }: Props) {
                         ? `${log.modVersion.mod.title} v${log.modVersion.version}`
                         : t("blockedUpload")}
                       {" · "}
-                      {new Date(log.createdAt).toLocaleString()}
+                      {formatDateTime(log.createdAt)}
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
@@ -496,7 +497,7 @@ export function SecurityCenterPanel({ settings, stats }: Props) {
                   <span className="font-mono text-xs">{log.action}</span>
                   <span className="text-muted-foreground text-xs">
                     {log.user?.displayName ?? log.user?.username ?? t("systemActor")} ·{" "}
-                    {new Date(log.createdAt).toLocaleString()}
+                    {formatDateTime(log.createdAt)}
                   </span>
                 </div>
               ))}

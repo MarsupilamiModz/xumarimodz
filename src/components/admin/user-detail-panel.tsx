@@ -61,6 +61,7 @@ type UserDetail = {
 
 import { UserAchievementsPanel } from "@/components/admin/user-achievements-panel";
 import type { getAdminAchievements, getUserAchievementsAdmin } from "@/actions/admin/achievements";
+import { formatDateTime } from "@/lib/format-locale";
 
 type UserAchievementAdmin = Extract<
   Awaited<ReturnType<typeof getUserAchievementsAdmin>>,
@@ -439,7 +440,7 @@ export function UserDetailPanel({
                 {auditLogs.map((log) => (
                   <li key={log.id} className="flex justify-between border-b border-border/30 pb-2">
                     <span>{log.action} {log.actor && <span className="text-muted-foreground">{tUi("byUsername", { username: log.actor.username })}</span>}</span>
-                    <span className="text-muted-foreground">{new Date(log.createdAt).toLocaleString()}</span>
+                    <span className="text-muted-foreground">{formatDateTime(log.createdAt, locale)}</span>
                   </li>
                 ))}
               </ul>

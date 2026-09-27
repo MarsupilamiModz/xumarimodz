@@ -23,6 +23,7 @@ import type { AdSenseReadinessReport } from "@/lib/ads-readiness";
 import type { SiteVerificationSettings } from "@/lib/site-verification";
 import type { HeadScriptsSettings } from "@/lib/head-scripts";
 import { DEFAULT_ADSENSE_CLIENT_ID } from "@/lib/adsense-config";
+import { formatDateTime } from "@/lib/format-locale";
 
 const ROLE_LEVELS = [
   "GUEST",
@@ -157,7 +158,7 @@ export function AdsAdminPanel({ data }: Props) {
             </div>
           )}
           <p className="text-xs text-muted-foreground">
-            {t("lastCheckLabel")} {new Date(data.readiness.lastCheckedAt).toLocaleString()} ·{" "}
+            {t("lastCheckLabel")} {formatDateTime(data.readiness.lastCheckedAt)} ·{" "}
             <a className="underline" href={data.readiness.adsTxtUrl} target="_blank" rel="noreferrer">
               {data.readiness.adsTxtUrl}
             </a>

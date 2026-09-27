@@ -2,7 +2,6 @@
 
 import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
-import { getIntlLocale } from "@/lib/i18n/safe-locale";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,6 +15,7 @@ import {
 } from "@/actions/admin/user-membership";
 import { formatMoneyFromCents } from "@/lib/currency";
 import type { MembershipTier } from "@prisma/client";
+import { formatDate } from "@/lib/format-locale";
 
 type MembershipState = {
   membershipType: MembershipTier;
@@ -84,13 +84,13 @@ export function MembershipManager({
           <div>
             <p className="text-xs text-muted-foreground">{t("renewalDate")}</p>
             <p className="text-sm">
-              {state.renewalDate ? new Date(state.renewalDate).toLocaleDateString(getIntlLocale(locale)) : "—"}
+              {state.renewalDate ? formatDate(state.renewalDate) : "—"}
             </p>
           </div>
           <div>
             <p className="text-xs text-muted-foreground">{t("cancelDate")}</p>
             <p className="text-sm">
-              {state.cancelDate ? new Date(state.cancelDate).toLocaleDateString(getIntlLocale(locale)) : "—"}
+              {state.cancelDate ? formatDate(state.cancelDate) : "—"}
             </p>
           </div>
         </div>
@@ -170,7 +170,7 @@ export function MembershipManager({
                   <span>{row.plan.name}</span>
                   <span className="text-muted-foreground">
                     {formatMoneyFromCents(row.amountCents, locale)} ·{" "}
-                    {new Date(row.createdAt).toLocaleDateString(getIntlLocale(locale))}
+                    {formatDate(row.createdAt)}
                   </span>
                 </li>
               ))}

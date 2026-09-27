@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { getIntlLocale } from "@/lib/i18n/safe-locale";
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatCreditsFromCents } from "@/lib/credits";
+import { formatDate } from "@/lib/format-locale";
 
 type Purchase = {
   id: string;
@@ -51,7 +51,7 @@ export function MembershipActions({
               <div>
                 <p className="font-medium">{p.plan.name}</p>
                 <p className="text-xs text-muted-foreground">
-                  {formatCreditsFromCents(p.amountCents, locale)} · {new Date(p.createdAt).toLocaleDateString(getIntlLocale(locale))}
+                  {formatCreditsFromCents(p.amountCents, locale)} · {formatDate(p.createdAt)}
                 </p>
               </div>
               {p.stripePaymentId && (

@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/card";
 import { useSystemHealthRealtime } from "@/hooks/use-system-health-realtime";
 import { cn } from "@/lib/utils";
 import type { HealthLevel, HealthServiceStatus, SystemHealthSnapshot } from "@/lib/system-health-monitor";
+import { safeToLocaleTimeString } from "@/lib/i18n/safe-locale";
 
 const LEVEL_META: Record<
   HealthLevel,
@@ -34,7 +35,7 @@ const LEVEL_META: Record<
 };
 
 function formatCheckedAt(iso: string) {
-  return new Date(iso).toLocaleTimeString(undefined, {
+  return safeToLocaleTimeString(iso, undefined, {
     hour: "2-digit",
     minute: "2-digit",
     second: "2-digit",

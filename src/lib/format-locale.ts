@@ -1,4 +1,5 @@
 import {
+  formatDayMonthYear,
   getIntlLocale,
   getSafeLocale,
   safeIntlDateTimeFormat,
@@ -46,8 +47,5 @@ export function formatDateTime(value: Date | number | string, locale?: string | 
 export function formatDate(value: Date | number | string, _locale?: string | null) {
   const date = value instanceof Date ? value : new Date(value);
   if (Number.isNaN(date.getTime())) return "—";
-  const dd = String(date.getDate()).padStart(2, "0");
-  const mm = String(date.getMonth() + 1).padStart(2, "0");
-  const yyyy = date.getFullYear();
-  return `${dd}.${mm}.${yyyy}`;
+  return formatDayMonthYear(date);
 }
