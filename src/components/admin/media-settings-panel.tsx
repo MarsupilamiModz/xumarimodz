@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { saveAdminMediaSettings } from "@/actions/mod-media";
-import type { MediaSettings } from "@/lib/media-settings";
-import { DEFAULT_MEDIA_SETTINGS } from "@/lib/media-settings";
+import type { MediaSettings } from "@/lib/media-settings-shared";
+import { DEFAULT_MEDIA_SETTINGS } from "@/lib/media-settings-shared";
 import { useAppToast } from "@/hooks/use-app-toast";
 
 type MediaSettingsPanelProps = {

@@ -3,6 +3,7 @@ import { evaluateUserAchievements, getUserAchievements, getUserProgress } from "
 import { AchievementShowcasePanel } from "@/components/dashboard/achievement-showcase-panel";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { Locale } from "@/i18n/config";
+import { runAfterResponse } from "@/lib/after-response";
 
 export default async function AchievementsPage(props: { params: Promise<{ locale: Locale }> }) {
   const params = await props.params;
@@ -14,7 +15,7 @@ export default async function AchievementsPage(props: { params: Promise<{ locale
   setRequestLocale(locale);
   const t = await getTranslations("dashboard");
   const user = await requireAuth(`/${locale}/login`);
-  void evaluateUserAchievements(user.id).catch(() => undefined);
+  runAfterResponse(evaluateUserAchievements(user.id).catch(() => undefined));
 
   const [achievements, progress] = await Promise.all([
     getUserAchievements(user.id, locale),

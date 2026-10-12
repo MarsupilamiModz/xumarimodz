@@ -1,5 +1,4 @@
-import { readFileSync } from "fs";
-import { join } from "path";
+import { readMessageFile } from "@/messages/files";
 import { locales, type Locale } from "@/i18n/config";
 import { MESSAGE_MODULES } from "@/lib/translation-missing-keys";
 
@@ -16,15 +15,10 @@ function flattenKeys(obj: Record<string, unknown>, prefix = ""): string[] {
   return keys;
 }
 
-function loadLocaleKeys(locale: Locale): Set<string> {
+async function loadLocaleKeys(locale: Locale): Promise<Set<string>> {
   const merged: Record<string, unknown> = {};
   for (const mod of MESSAGE_MODULES) {
-    try {
-      const raw = readFileSync(join(process.cwd(), "src", "messages", locale, `${mod}.json`), "utf8");
-      Object.assign(merged, JSON.parse(raw) as Record<string, unknown>);
-    } catch {
-      /* missing module file */
-    }
+    Object.assign(merged, await readMessageFile(locale, mod));
   }
   return new Set(flattenKeys(merged));
 }
@@ -41,20 +35,20 @@ export type TranslationAuditResult = {
   summary: string;
 };
 
-export function auditTranslationKeys(referenceLocale: Locale = "en"): TranslationAuditResult {
-  const reference = loadLocaleKeys(referenceLocale);
+export async function auditTranslationKeys(referenceLocale: Locale = "en"): Promise<TranslationAuditResult> {
+  const reference = await loadLocaleKeys(referenceLocale);
   const refArr = Array.from(reference).sort();
 
-  const localeResults = locales
+  const localeResults = await Promise.all(locales
     .filter((l) => l !== referenceLocale)
-    .map((locale) => {
-      const keys = loadLocaleKeys(locale);
+    .map(async (locale) => {
+      const keys = await loadLocaleKeys(locale);
       const missing = refArr.filter((k) => !keys.has(k));
       const extra = Array.from(keys)
         .filter((k) => !reference.has(k))
         .sort();
       return { locale, keyCount: keys.size, missing, extra };
-    });
+    }));
 
   const totalMissing = localeResults.reduce((n, r) => n + r.missing.length, 0);
 

@@ -8,6 +8,7 @@ import { grantMembershipPurchase } from "@/lib/membership";
 import { sendPaymentNotification, sendPremiumActivationEmail } from "@/lib/email/send";
 import { notifyPremiumActivated } from "@/lib/notifications-service";
 import type Stripe from "stripe";
+import { runAfterResponse } from "@/lib/after-response";
 
 export async function POST(req: Request) {
   const body = await req.text();
@@ -55,12 +56,12 @@ export async function POST(req: Request) {
             const user = await prisma.user.findUnique({ where: { id: userId } });
             if (user?.discordId) await syncDiscordRoles(user.discordId, ["premium"]);
             if (user?.email) {
-              void sendPremiumActivationEmail({
+              runAfterResponse(sendPremiumActivationEmail({
                 email: user.email,
                 username: user.displayName ?? user.username,
-              });
+              }));
             }
-            void notifyPremiumActivated(userId);
+            runAfterResponse(notifyPremiumActivated(userId));
           }
 
           const refCode = session.metadata?.refCode;
@@ -73,12 +74,12 @@ export async function POST(req: Request) {
             description: `User ${userId} purchased plan ${planId}`,
           });
 
-          void sendPaymentNotification({
+          runAfterResponse(sendPaymentNotification({
             type: "Membership purchase",
             amountCents: session.amount_total ?? 0,
             userId,
             reference: planId,
-          });
+          }));
         }
 
         if (modId && userId && type === "mod_purchase") {
@@ -100,14 +101,14 @@ export async function POST(req: Request) {
           });
 
           const { evaluateUserAchievements } = await import("@/lib/achievements");
-          void evaluateUserAchievements(userId);
+          runAfterResponse(evaluateUserAchievements(userId));
 
-          void sendPaymentNotification({
+          runAfterResponse(sendPaymentNotification({
             type: "Mod purchase",
             amountCents: session.amount_total ?? 0,
             userId,
             reference: modId,
-          });
+          }));
         }
 
         if (userId && type === "credit_purchase") {
@@ -138,12 +139,12 @@ export async function POST(req: Request) {
             });
           }
 
-          void sendPaymentNotification({
+          runAfterResponse(sendPaymentNotification({
             type: "Credit pack purchase",
             amountCents: session.amount_total ?? 0,
             userId,
             reference: productId ?? undefined,
-          });
+          }));
         }
 
         // Shop-Direktkauf und Warenkorb: Bestellungen erst nach bestätigter Zahlung als bezahlt markieren.
@@ -161,12 +162,12 @@ export async function POST(req: Request) {
               data: { paymentStatus: "PAID", paymentMethod: "STRIPE", stripePaymentId: paymentId ?? undefined, status: "PAID" },
             });
             if (updated.count > 0) {
-              void sendPaymentNotification({
+              runAfterResponse(sendPaymentNotification({
                 type: type === "cart_order" ? "Cart order" : "Shop order",
                 amountCents: session.amount_total ?? 0,
                 userId,
                 reference: ids.join(", "),
-              });
+              }));
             }
           }
         }
@@ -193,12 +194,12 @@ export async function POST(req: Request) {
             description: `Order ${session.metadata?.invoiceNumber ?? orderId} paid via Stripe`,
           });
 
-          void sendPaymentNotification({
+          runAfterResponse(sendPaymentNotification({
             type: "Custom order payment",
             amountCents: session.amount_total ?? 0,
             userId,
             reference: session.metadata?.invoiceNumber ?? orderId,
-          });
+          }));
         }
         break;
       }

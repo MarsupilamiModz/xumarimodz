@@ -10,6 +10,7 @@ import { createAuditLog } from "@/lib/audit";
 import { revalidateAchievementShowcase } from "@/lib/showcase-revalidate";
 import { achievementCacheTag } from "@/lib/achievements";
 import type { AchievementCategory, AchievementRarity, Prisma, UserRole } from "@prisma/client";
+import { runAfterResponse } from "@/lib/after-response";
 
 const achievementSchema = z.object({
   id: z.string().cuid().optional(),
@@ -288,7 +289,7 @@ export async function bulkGrantAchievement(input: {
     });
     if (achievement.xpReward > 0) await addUserXp(userId, achievement.xpReward);
     granted++;
-    void revalidateUserAchievements(userId);
+    runAfterResponse(revalidateUserAchievements(userId));
   }
 
   await createAuditLog({

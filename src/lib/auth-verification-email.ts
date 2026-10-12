@@ -5,6 +5,7 @@ import { queueEmail } from "@/lib/email/queue";
 import { getEmailTemplates, renderTemplate } from "@/lib/email/templates";
 import { SITE } from "@/lib/site";
 import { logPlatformError } from "@/lib/platform-log";
+import { runAfterResponse } from "@/lib/after-response";
 
 export type VerificationEmailType = "signup" | "recovery" | "magiclink";
 
@@ -40,7 +41,7 @@ export async function generateAuthActionLink(params: {
 
   const { data, error } = await admin.auth.admin.generateLink(linkParams);
   if (error) {
-    void logPlatformError("auth:generate-link", error);
+    runAfterResponse(logPlatformError("auth:generate-link", error));
     return null;
   }
 
@@ -65,7 +66,7 @@ export async function sendAuthVerificationEmail(params: {
   });
 
   if (!link) {
-    void logPlatformError("auth:verification-email", new Error("Could not generate verification link"));
+    runAfterResponse(logPlatformError("auth:verification-email", new Error("Could not generate verification link")));
     return { queued: false, linkGenerated: false };
   }
 

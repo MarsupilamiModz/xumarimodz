@@ -11,7 +11,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ORDER_STATUS_LABELS } from "@/lib/shop-enterprise";
+import { ORDER_STATUS_LABELS } from "@/lib/shop-enterprise-shared";
 import type { OrderStatus } from "@prisma/client";
 
 type OrderRow = {

@@ -1,6 +1,7 @@
 import { unstable_cache, revalidateTag } from "next/cache";
 import { prisma } from "@/lib/db";
 import { prismaErrorMessage } from "@/lib/errors";
+import { runAfterResponse } from "@/lib/after-response";
 
 const SITE_SETTINGS_TAG = "site-settings";
 
@@ -41,7 +42,7 @@ export async function setSiteSettingSafe(
     return { ok: true };
   } catch (err) {
     const { logPlatformError } = await import("@/lib/platform-log");
-    void logPlatformError(`site-setting:${key}`, err);
+    runAfterResponse(logPlatformError(`site-setting:${key}`, err));
     return { ok: false, error: prismaErrorMessage(err) };
   }
 }

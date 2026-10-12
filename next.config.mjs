@@ -1,10 +1,24 @@
 import createNextIntlPlugin from "next-intl/plugin";
+import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
 
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   poweredByHeader: false,
+  // Prisma-Client unverändert lassen: OpenNext passt ihn für Cloudflare Workers an.
+  serverExternalPackages: ["@prisma/client", ".prisma/client"],
+  // Next traced nur die Node-Variante von Prisma; der Cloudflare-Build braucht die workerd-Dateien
+  // (wasm.js + Query-Compiler), siehe scripts/prisma-workerd.mjs.
+  outputFileTracingIncludes: {
+    "/**": [
+      "./node_modules/.prisma/client/wasm.js",
+      "./node_modules/.prisma/client/wasm-worker-loader.mjs",
+      "./node_modules/.prisma/client/query_compiler_bg.js",
+      "./node_modules/.prisma/client/query_compiler_bg.wasm",
+      "./node_modules/@prisma/client/runtime/wasm-compiler-edge.js",
+    ],
+  },
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "**.supabase.co" },
@@ -63,3 +77,8 @@ const nextConfig = {
 };
 
 export default withNextIntl(nextConfig);
+
+// `next dev` mit Cloudflare-Bindings (getCloudflareContext) aus wrangler.jsonc.
+if (process.env.NODE_ENV === "development") {
+  initOpenNextCloudflareForDev();
+}

@@ -14,6 +14,7 @@ import { sendEmail } from "@/lib/email/send";
 import { logPlatformError } from "@/lib/platform-log";
 import { rateLimit } from "@/lib/rate-limit";
 import { SITE } from "@/lib/site";
+import { runAfterResponse } from "@/lib/after-response";
 
 const changeEmailSchema = z.object({
   email: z.string().email().max(255),
@@ -88,13 +89,13 @@ export async function changeEmail(input: z.infer<typeof changeEmailSchema>) {
     metadata: { from: user.email, to: nextEmail },
   });
 
-  void sendEmail({
+  runAfterResponse(sendEmail({
     to: user.email,
     subject: `[${SITE.name}] Email change requested`,
     html: `<p>Hi ${user.displayName ?? user.username},</p><p>We received a request to change your account email to <strong>${nextEmail}</strong>.</p><p>Check your inbox to confirm the change. If you did not request this, contact support immediately.</p>`,
     templateKey: "email_change_notice",
     userId: user.id,
-  });
+  }));
 
   revalidatePath("/dashboard/settings");
   return ok({ message: "Confirmation sent to your new email address" });
@@ -125,7 +126,7 @@ export async function resendVerificationEmail(locale = "en") {
       redirectPath: `/${locale}/dashboard/settings`,
     });
   } catch (err) {
-    void logPlatformError("auth:resend-verification", err);
+    runAfterResponse(logPlatformError("auth:resend-verification", err));
     return ok({ message: userFriendlyAuthCodeMessage("verification_error", locale) });
   }
 

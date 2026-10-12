@@ -1,48 +1,98 @@
 import { PrismaClient } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
-  prismaConnecting: Promise<void> | undefined;
 };
 
-/**
- * Beim `next build` rendert jeder Worker parallel vor und bekäme sonst einen eigenen Pool
- * (Standard: CPU-Kerne × 2 + 1). Das sprengt das Verbindungslimit der Datenbank (EMAXCONN).
- * Während des Builds deshalb höchstens 2 Verbindungen pro Worker.
- */
-function buildTimeDatasourceUrl(): string | undefined {
-  const url = process.env.DATABASE_URL;
-  if (!url || process.env.NEXT_PHASE !== "phase-production-build") return undefined;
-  if (/[?&]connection_limit=/.test(url)) return undefined;
-  return `${url}${url.includes("?") ? "&" : "?"}connection_limit=2`;
-}
+/** Läuft der Code in Cloudflare Workers (OpenNext) statt in Node? */
+const isWorkers = typeof navigator !== "undefined" && navigator.userAgent === "Cloudflare-Workers";
 
-function createPrismaClient() {
-  const datasourceUrl = buildTimeDatasourceUrl();
-  return new PrismaClient({
-    log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
-    ...(datasourceUrl ? { datasourceUrl } : {}),
+/**
+ * Prisma-Engine-Parameter (pgbouncer, connection_limit) kennt `pg` nicht. Ohne sslmode hat die
+ * Prisma-Engine SSL versucht („prefer“); `pg` nimmt dann gar kein SSL – deshalb für entfernte Hosts
+ * verschlüsselt ohne Zertifikatsprüfung (Supabase-Pooler). Hyperdrive verbindet lokal ohne SSL.
+ */
+function createAdapter(url: string, max: number, viaHyperdrive = false) {
+  const parsed = new URL(url);
+  parsed.searchParams.delete("pgbouncer");
+  parsed.searchParams.delete("connection_limit");
+  const explicitSsl = parsed.searchParams.has("sslmode") || parsed.searchParams.has("ssl");
+  const local = /^(localhost|127\.0\.0\.1|::1)$/.test(parsed.hostname);
+  return new PrismaPg({
+    connectionString: parsed.toString(),
+    max,
+    ...(explicitSsl || local || viaHyperdrive ? {} : { ssl: { rejectUnauthorized: false } }),
   });
 }
 
-export const prisma = globalForPrisma.prisma ?? createPrismaClient();
+function createPrismaClient(url: string, max: number, viaHyperdrive = false) {
+  return new PrismaClient({
+    adapter: createAdapter(url, max, viaHyperdrive),
+    log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
+  });
+}
 
-// Keep a single client per Node worker (dev + production) to avoid pool exhaustion.
-globalForPrisma.prisma = prisma;
+/**
+ * Node (next start, Build, Skripte): ein Client pro Prozess. Beim `next build` rendern mehrere
+ * Worker parallel vor – höchstens 2 Verbindungen pro Worker, sonst EMAXCONN.
+ */
+function nodeClient() {
+  if (!globalForPrisma.prisma) {
+    const max = process.env.NEXT_PHASE === "phase-production-build" ? 2 : 10;
+    globalForPrisma.prisma = createPrismaClient(process.env.DATABASE_URL ?? "", max);
+  }
+  return globalForPrisma.prisma;
+}
+
+/**
+ * Workers: Sockets gehören zum Request, der sie geöffnet hat, und dürfen nicht wiederverwendet
+ * werden. Deshalb ein Client pro Request (Schlüssel: ExecutionContext). Mit Hyperdrive-Binding
+ * kommt der Verbindungsaufbau aus dessen Pool und kostet kaum Zeit.
+ */
+const requestClients = new WeakMap<object, PrismaClient>();
+
+function workersClient() {
+  const { env, ctx } = getCloudflareContext();
+  let client = requestClients.get(ctx);
+  if (!client) {
+    const hyperdrive = (env as { HYPERDRIVE?: { connectionString: string } }).HYPERDRIVE;
+    client = hyperdrive
+      ? createPrismaClient(hyperdrive.connectionString, 5, true)
+      : createPrismaClient(process.env.DATABASE_URL ?? "", 5);
+    requestClients.set(ctx, client);
+  }
+  return client;
+}
+
+function currentClient(): PrismaClient {
+  return isWorkers ? workersClient() : nodeClient();
+}
+
+/** Gleiche API wie bisher (`prisma.user.findMany …`), löst aber je Laufzeit den passenden Client auf. */
+export const prisma = new Proxy({} as PrismaClient, {
+  get(_target, prop) {
+    const client = currentClient();
+    const value = Reflect.get(client, prop, client);
+    return typeof value === "function" ? value.bind(client) : value;
+  },
+});
+
+const warmed = new WeakMap<PrismaClient, Promise<void>>();
 
 /** Warm connection before critical auth paths (pooler cold start). */
 export async function warmDbConnection() {
-  if (!globalForPrisma.prismaConnecting) {
-    globalForPrisma.prismaConnecting = (async () => {
-      try {
-        await prisma.$connect();
-      } catch {
-        /* already connected or connecting */
-      }
-      await prisma.$queryRaw`SELECT 1`;
+  const client = currentClient();
+  let pending = warmed.get(client);
+  if (!pending) {
+    pending = (async () => {
+      await client.$queryRaw`SELECT 1`;
     })();
+    pending.catch(() => warmed.delete(client));
+    warmed.set(client, pending);
   }
-  await globalForPrisma.prismaConnecting;
+  await pending;
 }
 
 const RETRYABLE =
@@ -72,12 +122,6 @@ export async function withDbRetry<T>(
       lastError = err;
       if (!isRetryableDbError(err) || attempt === retries) throw err;
       console.warn(`[${label}] retry ${attempt + 1}/${retries}`, err instanceof Error ? err.message : err);
-      globalForPrisma.prismaConnecting = undefined;
-      try {
-        await prisma.$connect();
-      } catch {
-        /* reconnect best-effort */
-      }
       await new Promise((r) => setTimeout(r, delayMs * (attempt + 1)));
     }
   }
@@ -85,15 +129,13 @@ export async function withDbRetry<T>(
   throw lastError;
 }
 
-/** Use inside unstable_cache callbacks so revalidation waits for a live Prisma engine. */
+/** Für unstable_cache-Callbacks: Wiederholung bei Verbindungsfehlern (Pooler-Kaltstart). */
 export async function runCachedQuery<T>(label: string, fn: () => Promise<T>): Promise<T> {
-  await warmDbConnection();
   return withDbRetry(fn, { label, retries: 3 });
 }
 
 export async function checkDbHealth(): Promise<{ ok: boolean; detail?: string }> {
   try {
-    await warmDbConnection();
     await withDbRetry(() => prisma.$queryRaw`SELECT 1`, { retries: 2, label: "health" });
     return { ok: true };
   } catch (err) {
@@ -104,6 +146,7 @@ export async function checkDbHealth(): Promise<{ ok: boolean; detail?: string }>
   }
 }
 
-if (typeof window === "undefined") {
+// In Node die erste Verbindung vorab öffnen; in Workers ist I/O außerhalb eines Requests verboten.
+if (typeof window === "undefined" && !isWorkers && process.env.NEXT_PHASE !== "phase-production-build") {
   void warmDbConnection().catch(() => undefined);
 }

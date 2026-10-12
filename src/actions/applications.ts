@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/db";
 import { fail, ok, requireActionUser } from "@/lib/action-utils";
 import { notifyStaffPartnerApplication } from "@/lib/notifications-service";
+import { runAfterResponse } from "@/lib/after-response";
 
 export async function submitCreatorApplication(input: {
   displayName: string;
@@ -165,11 +166,11 @@ export async function submitPartnerApplication(input: {
     });
   }
 
-  void notifyStaffPartnerApplication({
+  runAfterResponse(notifyStaffPartnerApplication({
     applicationId: app.id,
     applicantName: app.creatorName,
     username: app.username ?? user.username,
-  });
+  }));
 
   revalidatePath("/become-partner");
   revalidatePath("/admin/applications");

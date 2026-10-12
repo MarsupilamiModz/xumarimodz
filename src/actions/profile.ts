@@ -14,6 +14,7 @@ import { validateUploadFile } from "@/lib/upload-validation";
 import { slugify } from "@/lib/utils";
 import { persistUserAvatarFromBuffer, verifyAvatarStorage } from "@/lib/avatar-persist";
 import { bustAvatarUrl } from "@/lib/avatar-url";
+import { runAfterResponse } from "@/lib/after-response";
 
 const profileSchema = z.object({
   displayName: z.string().min(1).max(80).optional(),
@@ -126,7 +127,7 @@ export async function requestPasswordReset(email: string, locale = "en") {
       userId: user.id,
     });
   } catch (err) {
-    void logPlatformError("auth:password-reset", err);
+    runAfterResponse(logPlatformError("auth:password-reset", err));
   }
 
   return ok(undefined);

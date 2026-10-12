@@ -1,6 +1,7 @@
 import createMiddleware from "next-intl/middleware";
 import { NextRequest, NextResponse } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
+import { selfFetch } from "@/lib/self-fetch";
 import { locales, defaultLocale, localeRegex } from "@/i18n/config";
 import {
   REFERRAL_COOKIE,
@@ -65,7 +66,6 @@ function isStatelessApi(pathname: string): boolean {
 // ---- IP-Sperren (ACP → Sicherheit). Liste nur als Hashes, 60 s pro Instanz gecacht; bei Fehlern offen. ----
 const BAN_TTL_MS = 60_000;
 let banCache: { hashes: Set<string>; at: number } | null = null;
-let banLoad: Promise<void> | null = null;
 
 function ipBanSalt() {
   return process.env.IP_BAN_SALT ?? process.env.SUPABASE_SERVICE_ROLE_KEY ?? "xumari";
@@ -79,7 +79,7 @@ async function sha256Hex(value: string) {
 async function loadBans(origin: string) {
   try {
     const token = await sha256Hex(`ip-ban-list:${ipBanSalt()}`);
-    const res = await fetch(new URL("/api/security/ip-bans", origin), {
+    const res = await selfFetch(new URL("/api/security/ip-bans", origin), {
       headers: { "x-internal-token": token },
       cache: "no-store",
       signal: AbortSignal.timeout(1500),
@@ -94,13 +94,15 @@ async function loadBans(origin: string) {
 }
 
 async function isIpBanned(request: NextRequest) {
-  const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? request.headers.get("x-real-ip");
+  const ip =
+    request.headers.get("cf-connecting-ip") ??
+    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? request.headers.get("x-real-ip");
   if (!ip) return false;
   if (!banCache || Date.now() - banCache.at > BAN_TTL_MS) {
-    banLoad ??= loadBans(request.nextUrl.origin).finally(() => {
-      banLoad = null;
-    });
-    if (!banCache) await banLoad;
+    // Kein über Requests geteiltes Promise (in Workers unzulässig): Zeitstempel sofort setzen, damit
+    // pro Instanz und Minute nur ein Request nachlädt; die übrigen nutzen solange die alte Liste.
+    if (banCache) banCache.at = Date.now();
+    await loadBans(request.nextUrl.origin);
   }
   if (!banCache?.hashes.size) return false;
   return banCache.hashes.has(await sha256Hex(`${ipBanSalt()}:${ip.toLowerCase()}`));

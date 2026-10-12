@@ -19,7 +19,7 @@ export async function getOwnerTranslationCenter() {
     getTranslationQueueStats(),
     getTranslationCacheStats(),
     getMissingTranslationReport(),
-    Promise.resolve(auditTranslationKeys("en")),
+    auditTranslationKeys("en"),
   ]);
 
   return ok({ queue, cache, missing, audit });

@@ -18,6 +18,7 @@ import type { PermissionKey } from "@/lib/permissions";
 import type { AppUser, CurrentAppUser } from "@/lib/auth-cache";
 import type { User } from "@supabase/supabase-js";
 import { isDynamicServerUsageError } from "@/lib/is-dynamic-server-error";
+import { runAfterResponse } from "@/lib/after-response";
 
 export const getSession = cache(async () => {
   try {
@@ -88,7 +89,7 @@ export const getCurrentUser = cache(async (): Promise<CurrentAppUser | null> => 
 
     return applyBanState(user);
   } catch (err) {
-    void logPlatformError("auth:get-current-user", err);
+    runAfterResponse(logPlatformError("auth:get-current-user", err));
     console.error("[getCurrentUser]", err);
 
     const recovered = await recoverPrismaUserFromSession(session);

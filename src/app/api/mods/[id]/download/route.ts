@@ -8,6 +8,7 @@ import { evaluateUserAchievements } from "@/lib/achievements";
 import { rateLimit } from "@/lib/rate-limit";
 import { checkMissingDependencies } from "@/lib/mod-dependencies";
 import { createHash } from "crypto";
+import { runAfterResponse } from "@/lib/after-response";
 
 export async function POST(req: Request, props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
@@ -107,7 +108,7 @@ export async function POST(req: Request, props: { params: Promise<{ id: string }
   ]);
 
   if (user?.id) {
-    void evaluateUserAchievements(user.id);
+    runAfterResponse(evaluateUserAchievements(user.id));
   }
 
   return NextResponse.json({ url, token, versionId: version.id });

@@ -6,6 +6,7 @@ import { LeaderboardClient } from "@/components/leaderboards/leaderboard-client"
 import type { LeaderboardMetric, LeaderboardPeriod } from "@prisma/client";
 import type { Locale } from "@/i18n/config";
 import type { Metadata } from "next";
+import { runAfterResponse } from "@/lib/after-response";
 
 export const revalidate = 120;
 
@@ -34,7 +35,7 @@ export default async function LeaderboardsPage(
 
   setRequestLocale(locale);
 
-  void syncCreatorRanks();
+  runAfterResponse(syncCreatorRanks());
 
   const metric = (searchParams.metric?.toUpperCase() ?? "DOWNLOADS") as LeaderboardMetric;
   const period = (searchParams.period?.toUpperCase() ?? "ALL_TIME") as LeaderboardPeriod;

@@ -5,6 +5,7 @@ import { isAdmin, type PermissionKey } from "@/lib/permissions";
 import { userHasPermission } from "@/lib/permission-store";
 
 import { API_KEY_PRESETS, API_SCOPES, type ApiScope } from "@/lib/api-scopes";
+import { runAfterResponse } from "@/lib/after-response";
 
 export { API_KEY_PRESETS, API_SCOPES, type ApiScope };
 
@@ -102,7 +103,7 @@ export async function validateApiKeyRaw(
     return { ok: false, status: 429, error: "Rate limit exceeded", keyId: key.id };
   }
 
-  void recordApiKeyUsage(key.id, { action: "auth.success", ip: clientIp, userAgent });
+  runAfterResponse(recordApiKeyUsage(key.id, { action: "auth.success", ip: clientIp, userAgent }));
 
   return {
     ok: true,
@@ -140,7 +141,7 @@ export async function recordApiKeyUsage(
   });
 
   if (action) {
-    void prisma.auditLog
+    runAfterResponse(prisma.auditLog
       .create({
         data: {
           action,
@@ -153,7 +154,7 @@ export async function recordApiKeyUsage(
           },
         },
       })
-      .catch(() => undefined);
+      .catch(() => undefined));
   }
 }
 

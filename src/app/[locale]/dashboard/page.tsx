@@ -7,6 +7,7 @@ import { evaluateUserAchievements } from "@/lib/achievements";
 import { syncCreatorRanks } from "@/lib/leaderboards";
 import { formatDisplayName } from "@/lib/display-name";
 import { getDashboardStats } from "@/lib/dashboard-stats";
+import { runAfterResponse } from "@/lib/after-response";
 
 async function DashboardStats({
   userId,
@@ -95,7 +96,7 @@ export default async function DashboardPage(
   setRequestLocale(locale);
   const t = await getTranslations("dashboard");
   const user = await requireAuth();
-  void Promise.all([evaluateUserAchievements(user.id), syncCreatorRanks()]).catch(() => undefined);
+  runAfterResponse(Promise.all([evaluateUserAchievements(user.id), syncCreatorRanks()]).catch(() => undefined));
 
   const isPremium = hasPremiumAccess(user);
 

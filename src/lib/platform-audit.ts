@@ -14,7 +14,7 @@ export async function runPlatformAudit(): Promise<{
 }> {
   const issues: PlatformAuditIssue[] = [];
 
-  const translation = auditTranslationKeys("en");
+  const translation = await auditTranslationKeys("en");
   for (const loc of translation.locales) {
     if (loc.missing.length > 0) {
       issues.push({

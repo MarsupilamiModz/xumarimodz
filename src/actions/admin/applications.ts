@@ -9,6 +9,7 @@ import { slugify } from "@/lib/utils";
 import { invalidateUserSessionCache } from "@/lib/auth-cache";
 import { createAuditLog } from "@/lib/audit";
 import { savePartnerFormFields, getPartnerFormFields, type PartnerFormField } from "@/lib/partner-form-config";
+import { runAfterResponse } from "@/lib/after-response";
 
 export async function listCreatorApplicationsAdmin(status?: ApplicationStatus) {
   const { error } = await requireActionPermission("users.read");
@@ -106,10 +107,10 @@ export async function reviewCreatorApplicationAdmin(
 
     if (app.user.supabaseId) invalidateUserSessionCache(app.user.supabaseId);
 
-    void sendCreatorApprovalEmail({
+    runAfterResponse(sendCreatorApprovalEmail({
       email: app.email,
       creatorName: app.displayName,
-    });
+    }));
   } else {
     const status =
       action === "reject"
@@ -224,10 +225,10 @@ export async function reviewPartnerApplicationAdmin(
 
     if (app.user.supabaseId) invalidateUserSessionCache(app.user.supabaseId);
 
-    void sendPartnerApprovalEmail({
+    runAfterResponse(sendPartnerApprovalEmail({
       email: app.email,
       partnerName: app.creatorName,
-    });
+    }));
   } else {
     const status =
       action === "reject"

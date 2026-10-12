@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { upsertUserMembership, syncUserRoleFromMembership } from "@/lib/user-membership";
 import { logPlatformError } from "@/lib/platform-log";
 import { normalizeReferralCode } from "@/lib/referral-cookie";
+import { runAfterResponse } from "@/lib/after-response";
 
 export { REFERRAL_COOKIE, REFERRAL_COOKIE_MAX_AGE } from "@/lib/referral-cookie";
 
@@ -70,7 +71,7 @@ export async function redeemReferralForUser(userId: string, code: string) {
     });
     await syncUserRoleFromMembership(userId);
 
-    void import("@/lib/notifications-service")
+    runAfterResponse(import("@/lib/notifications-service")
       .then(({ notifyOwnerPlatformEvent }) =>
         notifyOwnerPlatformEvent({
           title: "Referral registration",
@@ -79,7 +80,7 @@ export async function redeemReferralForUser(userId: string, code: string) {
           category: "referrals",
         })
       )
-      .catch(() => undefined);
+      .catch(() => undefined));
 
     return {
       granted: true,
@@ -88,7 +89,7 @@ export async function redeemReferralForUser(userId: string, code: string) {
       expiresAt,
     };
   } catch (err) {
-    void logPlatformError("referral:redeem", err);
+    runAfterResponse(logPlatformError("referral:redeem", err));
     return { granted: false, reason: "error" as const };
   }
 }

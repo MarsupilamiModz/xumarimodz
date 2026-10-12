@@ -1,3 +1,5 @@
+import { after } from "next/server";
+
 type Job = () => Promise<void>;
 
 export type BackgroundJobKind =
@@ -27,9 +29,13 @@ async function drainQueue() {
   draining = false;
 }
 
-/** Fire-and-forget background work — batches via microtask queue. */
+/**
+ * Fire-and-forget background work. Im Request per `after()` – läuft nach der Antwort und bleibt am
+ * eigenen Request (in Cloudflare Workers über waitUntil, sonst würde die Arbeit abgebrochen oder
+ * im Kontext eines fremden Requests laufen). Außerhalb eines Requests: Microtask-Queue wie bisher.
+ */
 export function enqueueBackgroundJob(job: Job, kind: BackgroundJobKind = "generic") {
-  queue.push(async () => {
+  const run = async () => {
     const started = Date.now();
     try {
       await job();
@@ -38,7 +44,14 @@ export function enqueueBackgroundJob(job: Job, kind: BackgroundJobKind = "generi
         console.info(`[background-jobs:${kind}] ${Date.now() - started}ms`);
       }
     }
-  });
+  };
+  try {
+    after(() => run().catch((err) => console.error("[background-jobs]", err)));
+    return;
+  } catch {
+    /* außerhalb eines Request-Kontexts */
+  }
+  queue.push(run);
   if (!draining) {
     queueMicrotask(() => void drainQueue());
   }

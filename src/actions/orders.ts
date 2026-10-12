@@ -17,6 +17,7 @@ import { formatDisplayName } from "@/lib/display-name";
 import type { OrderPaymentMethod, OrderStatus } from "@prisma/client";
 import { transitionOrderStatus, onOrderMessageSent, logOrderActivity, onOrderRequirementsSubmitted } from "@/lib/order-workflow";
 import { userHasPermission } from "@/lib/permission-store";
+import { runAfterResponse } from "@/lib/after-response";
 
 export async function createCustomOrder(input: {
   title: string;
@@ -146,7 +147,7 @@ export async function createCustomOrderFromForm(formData: FormData) {
         attachments: { select: { fileName: true } },
       },
     });
-    if (order) void sendCustomOrderNotification(order);
+    if (order) runAfterResponse(sendCustomOrderNotification(order));
   }
 
   return result;
@@ -291,14 +292,14 @@ export async function sendOrderMessage(orderId: string, content: string, isInter
     },
   });
 
-  void onOrderMessageSent({
+  runAfterResponse(onOrderMessageSent({
     orderId,
     senderId: user.id,
     clientId: order.clientId,
     assigneeId: order.assigneeId,
     isInternal: isStaff ? isInternal : false,
     content,
-  });
+  }));
 
   revalidatePath(`/dashboard/orders/${orderId}`);
   revalidatePath(`/admin/orders/${orderId}`);

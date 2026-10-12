@@ -17,6 +17,7 @@ import { enqueueScan } from "@/lib/security/scan-queue";
 import { isDownloadAllowed } from "@/lib/security/status";
 import { CACHE_TAGS } from "@/lib/cache";
 import { revalidateLocalizedPaths } from "@/lib/revalidate-locale";
+import { runAfterResponse } from "@/lib/after-response";
 
 export async function getMalwareSettingsAdmin() {
   const { error } = await requireActionPermission("settings.write");
@@ -353,9 +354,9 @@ export async function reprocessVersionScan(versionId: string) {
     userId: user!.id,
   });
 
-  void import("@/lib/security/scan-worker").then(({ processScanQueue }) =>
+  runAfterResponse(import("@/lib/security/scan-worker").then(({ processScanQueue }) =>
     processScanQueue(1).catch(console.error)
-  );
+  ));
 
   revalidatePath("/admin/security");
   return ok({ scanStatus: "PENDING" as FileScanStatus });

@@ -9,6 +9,7 @@ import { rateLimit } from "@/lib/rate-limit";
 import { NEWSLETTER_AUDIENCES, countNewsletterRecipients, newsletterWhere, processCampaignQueue, unsubscribeUrl, type NewsletterAudience } from "@/lib/newsletter";
 import { renderTemplate } from "@/lib/email/render";
 import { sendEmail } from "@/lib/email/send";
+import { runAfterResponse } from "@/lib/after-response";
 
 const campaignSchema = z.object({
   audience: z.enum(NEWSLETTER_AUDIENCES),
@@ -77,7 +78,7 @@ export async function createNewsletterCampaign(input: z.infer<typeof campaignSch
   });
 
   // Ersten Schub sofort anstoßen; den Rest erledigt der Cron (/api/cron/email).
-  void processCampaignQueue(25).catch((err) => console.error("[newsletter]", err));
+  runAfterResponse(processCampaignQueue(25).catch((err) => console.error("[newsletter]", err)));
   revalidatePath("/admin/email");
   return ok({ id: campaign.id, recipients: recipients.length });
 }

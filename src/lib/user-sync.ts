@@ -4,6 +4,7 @@ import { prisma, withDbRetry } from "@/lib/db";
 import { logPlatformError } from "@/lib/platform-log";
 import { invalidateUserSessionCache, getCachedUserBySupabaseId, fetchUserBySupabaseIdDirect, type AppUser } from "@/lib/auth-cache";
 import { isValidEmail } from "@/lib/email/address";
+import { runAfterResponse } from "@/lib/after-response";
 
 const userInclude = {
   creatorProfile: true,
@@ -239,14 +240,14 @@ export async function ensurePrismaUser(session: User) {
   try {
     const created = await withDbRetry(() => createAppUser(session), { label: "user:create" });
     invalidateUserSessionCache(session.id);
-    void import("@/lib/notifications-service").then(({ notifyOwnerPlatformEvent }) =>
+    runAfterResponse(import("@/lib/notifications-service").then(({ notifyOwnerPlatformEvent }) =>
       notifyOwnerPlatformEvent({
         title: "New registration",
         body: `${created.username} (${created.email}) joined the platform.`,
         link: `/en/admin/owner/users/${created.id}`,
         category: "registrations",
       })
-    ).catch(() => undefined);
+    ).catch(() => undefined));
     return created;
   } catch (err) {
     if (isUniqueConstraintError(err)) {
@@ -258,7 +259,7 @@ export async function ensurePrismaUser(session: User) {
         return syncExistingUser(session, raced);
       }
     }
-    void logPlatformError("auth:ensure-user", err);
+    runAfterResponse(logPlatformError("auth:ensure-user", err));
     throw err;
   }
 }

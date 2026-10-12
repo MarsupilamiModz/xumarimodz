@@ -9,6 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import type { Locale } from "@/i18n/config";
+import { runAfterResponse } from "@/lib/after-response";
 
 export const dynamic = "force-dynamic";
 
@@ -29,7 +30,7 @@ export default async function CollectionDetailPage(
   if (!collection) notFound();
   if (collection.visibility === "PRIVATE") notFound();
 
-  void incrementCollectionView(collection.id);
+  runAfterResponse(incrementCollectionView(collection.id));
 
   const user = await getCurrentUser();
   const following = user

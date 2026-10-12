@@ -1,5 +1,4 @@
 import "server-only";
-import nodemailer from "nodemailer";
 import { prisma } from "@/lib/db";
 import { SITE } from "@/lib/site";
 import {
@@ -21,13 +20,15 @@ export type SendEmailParams = {
   existingLogId?: string;
 };
 
-function buildTransportFromConfig(config: {
+// nodemailer erst bei SMTP-Versand laden: Graph/Resend brauchen es nicht (kleineres Worker-Bundle).
+async function buildTransportFromConfig(config: {
   smtpHost: string;
   smtpPort: number;
   smtpUser: string;
   smtpPassword: string;
   encryption: EmailSettings["encryption"];
 }) {
+  const { default: nodemailer } = await import("nodemailer");
   const secure = config.encryption === "SSL";
   return nodemailer.createTransport({
     host: config.smtpHost,
@@ -54,7 +55,7 @@ async function sendViaSmtpConfig(
   params: SendEmailParams
 ): Promise<boolean> {
   if (!config.enabled || !config.smtpHost || !settings.senderEmail) return false;
-  const transport = buildTransportFromConfig({
+  const transport = await buildTransportFromConfig({
     smtpHost: config.smtpHost,
     smtpPort: config.smtpPort,
     smtpUser: config.smtpUser,
@@ -145,7 +146,7 @@ export async function sendEmail(params: SendEmailParams): Promise<boolean> {
   if (!sent && settings.enabled && settings.authMode === "smtp" && settings.smtpHost && settings.senderEmail) {
     providerAttempts.push("smtp");
     try {
-      const transport = buildTransport(settings);
+      const transport = await buildTransport(settings);
       await transport.sendMail({
         from: `"${settings.senderName || SITE.name}" <${settings.senderEmail}>`,
         to: params.to,
@@ -230,7 +231,7 @@ export async function testSmtpConnection(settingsOverride?: Partial<EmailSetting
   }
   if (!settings.smtpHost) throw new Error("SMTP host is required");
 
-  const transport = buildTransport(settings);
+  const transport = await buildTransport(settings);
   await transport.verify();
   return true;
 }

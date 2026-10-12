@@ -9,6 +9,7 @@ import { hasPremiumAccess } from "@/lib/auth";
 import { logAuthEvent } from "@/lib/auth-log";
 import { warmDbConnection, withDbRetry } from "@/lib/db";
 import { getCachedUserBySupabaseId } from "@/lib/auth-cache";
+import { runAfterResponse } from "@/lib/after-response";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -49,7 +50,7 @@ export async function GET(req: Request) {
         { retries: 5, delayMs: 300, label: "auth:callback-sync" }
       );
     } catch (syncErr) {
-      void logPlatformError("auth:callback-sync", syncErr);
+      runAfterResponse(logPlatformError("auth:callback-sync", syncErr));
       logAuthEvent("callback_sync_failed", { userId: data.user.id }, "error");
 
       dbUser = await withDbRetry(
@@ -68,12 +69,12 @@ export async function GET(req: Request) {
       if (hasPremiumAccess(dbUser)) roles.push("premium");
       if (dbUser.role === "CREATOR") roles.push("creator");
       if (["MODERATOR", "ADMIN", "OWNER"].includes(dbUser.role)) roles.push("moderator");
-      void syncDiscordRoles(dbUser.discordId, roles);
+      runAfterResponse(syncDiscordRoles(dbUser.discordId, roles));
     }
 
     return NextResponse.redirect(`${origin}${destination}`);
   } catch (err) {
-    void logPlatformError("auth:callback", err);
+    runAfterResponse(logPlatformError("auth:callback", err));
     logAuthEvent("callback_fatal", { message: err instanceof Error ? err.message : String(err) }, "error");
     return NextResponse.redirect(`${origin}/${locale}/login?error=auth_callback`);
   }

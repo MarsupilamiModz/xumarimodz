@@ -224,7 +224,7 @@ export async function getAdminPlatformMetrics() {
 export async function getAdminTranslationAudit() {
   const { error } = await requireActionPermission("settings.write");
   if (error) return error;
-  return ok(auditTranslationKeys("en"));
+  return ok(await auditTranslationKeys("en"));
 }
 
 export async function runAdminPlatformAudit() {

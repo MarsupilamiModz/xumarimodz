@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/db";
+import { runAfterResponse } from "@/lib/after-response";
 
 const SLOW_QUERY_MS = 200;
 const SLOW_API_MS = 500;
@@ -55,7 +56,7 @@ export async function timedQuery<T>(label: string, fn: () => Promise<T>): Promis
   try {
     return await fn();
   } finally {
-    void recordPerfSample("query", label, performance.now() - start);
+    runAfterResponse(recordPerfSample("query", label, performance.now() - start));
   }
 }
 
@@ -64,6 +65,6 @@ export async function timedApi<T>(label: string, fn: () => Promise<T>): Promise<
   try {
     return await fn();
   } finally {
-    void recordPerfSample("api", label, performance.now() - start);
+    runAfterResponse(recordPerfSample("api", label, performance.now() - start));
   }
 }

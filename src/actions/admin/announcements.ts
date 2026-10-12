@@ -16,6 +16,7 @@ import {
   buildVisibilityTargets,
 } from "@/lib/announcement-targeting";
 import { createAuditLog } from "@/lib/audit";
+import { runAfterResponse } from "@/lib/after-response";
 
 const schema = z.object({
   title: z.string().min(2).max(120),
@@ -139,13 +140,13 @@ export async function createAnnouncement(input: z.infer<typeof schema>) {
   revalidateTag(CACHE_TAGS.announcements);
   revalidatePath("/");
 
-  void import("@/lib/translation-worker").then(({ scheduleEntityTranslation }) =>
+  runAfterResponse(import("@/lib/translation-worker").then(({ scheduleEntityTranslation }) =>
     scheduleEntityTranslation({
       entityType: "Announcement",
       entityId: item.id,
       fields: { title: item.title, content: item.content },
     })
-  );
+  ));
 
   return ok(item);
 }

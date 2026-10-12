@@ -6,6 +6,7 @@ import { syncDiscordRoles } from "@/lib/discord";
 import { hasPremiumAccess } from "@/lib/auth";
 import { logAuthEvent } from "@/lib/auth-log";
 import { logPlatformError } from "@/lib/platform-log";
+import { runAfterResponse } from "@/lib/after-response";
 
 const DISCORD_TOKEN = "https://discord.com/api/oauth2/token";
 const DISCORD_USER = "https://discord.com/api/users/@me";
@@ -83,7 +84,7 @@ export async function GET(req: Request) {
         if (hasPremiumAccess({ role: dbUser.role, subscriptions: [] })) roles.push("premium");
         if (dbUser.role === "CREATOR") roles.push("creator");
         if (["MODERATOR", "ADMIN", "OWNER"].includes(dbUser.role)) roles.push("moderator");
-        void syncDiscordRoles(discordUser.id, roles);
+        runAfterResponse(syncDiscordRoles(discordUser.id, roles));
       }
       logAuthEvent("discord_linked", { supabaseId: sessionUser.id });
       return NextResponse.redirect(`${appUrl}/${locale}/dashboard/settings?discord=linked`);
@@ -118,7 +119,7 @@ export async function GET(req: Request) {
       `${appUrl}/${locale}/login?discord=linked&hint=${discordUser.email ?? ""}`
     );
   } catch (err) {
-    void logPlatformError("auth:discord-callback", err);
+    runAfterResponse(logPlatformError("auth:discord-callback", err));
     logAuthEvent("discord_callback_error", { message: err instanceof Error ? err.message : String(err) }, "error");
     const locale = (await cookies()).get("discord_oauth_locale")?.value ?? "en";
     return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/${locale}/login?error=discord`);
