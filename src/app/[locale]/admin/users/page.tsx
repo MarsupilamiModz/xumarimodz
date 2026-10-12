@@ -25,13 +25,19 @@ const STATES = ["active", "banned", "deleted"] as const;
 type State = (typeof STATES)[number];
 type Params = { q?: string; role?: string; banned?: string; state?: string; page?: string };
 
-export default async function AdminUsersPage({
-  params: { locale },
-  searchParams,
-}: {
-  params: { locale: Locale };
-  searchParams: Params;
-}) {
+export default async function AdminUsersPage(
+  props: {
+    params: Promise<{ locale: Locale }>;
+    searchParams: Promise<Params>;
+  }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   await requirePagePermission("users.read");
   const [t, ts] = await Promise.all([getTranslations("admin.us"), getTranslations("status")]);

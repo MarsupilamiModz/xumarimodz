@@ -10,7 +10,7 @@ import {
   FEATURE_FLAG_LABELS,
   type FeatureFlagKey,
   type FeatureFlags,
-} from "@/lib/feature-flags";
+} from "@/lib/feature-flags-shared";
 import { useAppToast } from "@/hooks/use-app-toast";
 
 export function FeatureFlagsPanel({ initial }: { initial: FeatureFlags }) {

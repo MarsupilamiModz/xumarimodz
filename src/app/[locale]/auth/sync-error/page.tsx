@@ -9,7 +9,13 @@ import type { Locale } from "@/i18n/config";
 export const metadata: Metadata = { robots: { index: false } };
 
 /** Ziel, wenn die Anmeldung klappt, der Abgleich mit der Datenbank aber scheitert. */
-export default async function AuthSyncErrorPage({ params: { locale } }: { params: { locale: Locale } }) {
+export default async function AuthSyncErrorPage(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   const t = await getTranslations("common");
   return (

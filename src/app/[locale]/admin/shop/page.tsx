@@ -5,7 +5,13 @@ import { ShopAdminPanel } from "@/components/admin/shop-admin-panel";
 import { PaymentStatusOverview } from "@/components/admin/payment-status-overview";
 import type { Locale } from "@/i18n/config";
 
-export default async function AdminShopPage({ params: { locale } }: { params: { locale: Locale } }) {
+export default async function AdminShopPage(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   await requirePagePermission("settings.write");
   const [result, settingsResult, txResult] = await Promise.all([
     listAdminShopProducts(),

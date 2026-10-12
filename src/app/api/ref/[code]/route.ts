@@ -2,10 +2,8 @@ import { NextResponse } from "next/server";
 import { trackAffiliateClick } from "@/actions/affiliate";
 import { safeRedirectPath } from "@/lib/safe-redirect";
 
-export async function GET(
-  req: Request,
-  { params }: { params: { code: string } }
-) {
+export async function GET(req: Request, props: { params: Promise<{ code: string }> }) {
+  const params = await props.params;
   const result = await trackAffiliateClick(params.code);
   // Nur interne Ziele – sonst wäre /api/ref/CODE?redirect=https://… ein Open Redirect.
   const redirectTo = safeRedirectPath(new URL(req.url).searchParams.get("redirect"), "/");

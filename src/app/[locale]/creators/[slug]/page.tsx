@@ -24,13 +24,20 @@ import type { Metadata } from "next";
 import { FollowButton } from "@/components/creator/follow-button";
 import { formatDisplayName } from "@/lib/display-name";
 
-export const revalidate = REVALIDATE.catalog;
+export const revalidate = 60; // REVALIDATE.catalog – Next verlangt ein Literal
 
-export async function generateMetadata({
-  params: { locale, slug },
-}: {
-  params: { locale: Locale; slug: string };
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: {
+    params: Promise<{ locale: Locale; slug: string }>;
+  }
+): Promise<Metadata> {
+  const params = await props.params;
+
+  const {
+    locale,
+    slug
+  } = params;
+
   const t = await getTranslations({ locale, namespace: "ecosystem" });
   const profile = await prisma.creatorProfile.findUnique({
     where: { slug },
@@ -45,13 +52,20 @@ export async function generateMetadata({
 
 const MODS_PER_PAGE = 24;
 
-export default async function CreatorProfilePage({
-  params: { locale, slug },
-  searchParams,
-}: {
-  params: { locale: Locale; slug: string };
-  searchParams: { page?: string };
-}) {
+export default async function CreatorProfilePage(
+  props: {
+    params: Promise<{ locale: Locale; slug: string }>;
+    searchParams: Promise<{ page?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
+
+  const {
+    locale,
+    slug
+  } = params;
+
   setRequestLocale(locale);
   const t = await getTranslations("ecosystem");
 

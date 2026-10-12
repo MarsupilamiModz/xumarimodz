@@ -7,13 +7,26 @@ import { getTutorialBySlug } from "@/lib/tutorials/data";
 import { TutorialDetail } from "@/components/tutorials/tutorial-detail";
 import type { Locale } from "@/i18n/config";
 
-export async function generateMetadata({ params: { slug } }: { params: { slug: string } }): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const params = await props.params;
+
+  const {
+    slug
+  } = params;
+
   const tutorial = await getTutorialBySlug(slug).catch(() => null);
   if (!tutorial) return { title: "Tutorials" };
   return { title: tutorial.title, description: tutorial.description ?? undefined };
 }
 
-export default async function TutorialPage({ params: { locale, slug } }: { params: { locale: Locale; slug: string } }) {
+export default async function TutorialPage(props: { params: Promise<{ locale: Locale; slug: string }> }) {
+  const params = await props.params;
+
+  const {
+    locale,
+    slug
+  } = params;
+
   setRequestLocale(locale);
   const tutorial = await getTutorialBySlug(slug).catch(() => null);
   if (!tutorial) notFound();

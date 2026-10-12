@@ -5,7 +5,13 @@ import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { ModAdminPanel } from "@/components/admin/mod-admin-panel";
 import type { Locale } from "@/i18n/config";
 
-export default async function AdminNewModPage({ params: { locale } }: { params: { locale: Locale } }) {
+export default async function AdminNewModPage(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   await requireAdmin();
   const [t, games, authors] = await Promise.all([getTranslations("admin"), getGamesAndCategories(), getCreatorsForSelect()]);

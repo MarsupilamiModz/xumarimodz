@@ -13,7 +13,16 @@ import type { Locale } from "@/i18n/config";
 
 type Params = { q?: string; visibility?: string; page?: string };
 
-export default async function AdminCreatorsPage({ params: { locale }, searchParams }: { params: { locale: Locale }; searchParams: Params }) {
+export default async function AdminCreatorsPage(
+  props: { params: Promise<{ locale: Locale }>; searchParams: Promise<Params> }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   await requirePagePermission("users.read");
   const t = await getTranslations("admin.pc");

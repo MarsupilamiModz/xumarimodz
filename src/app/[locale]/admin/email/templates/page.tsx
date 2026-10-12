@@ -5,7 +5,13 @@ import { AdminPageHeader, AdminLoadError } from "@/components/admin/admin-page-h
 import { EmailTemplatesPanel } from "@/components/admin/email-templates-panel";
 import type { Locale } from "@/i18n/config";
 
-export default async function AdminEmailTemplatesPage({ params: { locale } }: { params: { locale: Locale } }) {
+export default async function AdminEmailTemplatesPage(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   await requirePagePermission("settings.write");
   const [t, result] = await Promise.all([getTranslations("admin.et"), getAdminEmailTemplates()]);

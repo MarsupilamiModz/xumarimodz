@@ -3,11 +3,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { Locale } from "@/i18n/config";
 
-export default async function DevelopersPage({
-  params: { locale },
-}: {
-  params: { locale: Locale };
-}) {
+export default async function DevelopersPage(
+  props: {
+    params: Promise<{ locale: Locale }>;
+  }
+) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
 
   const endpoints = [

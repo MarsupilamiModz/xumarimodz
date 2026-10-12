@@ -42,7 +42,13 @@ function Panel({
 
 const rowClass = "flex min-h-11 items-center justify-between gap-3 px-4 py-2 text-[13px]";
 
-export default async function AdminDashboardPage({ params: { locale } }: { params: { locale: Locale } }) {
+export default async function AdminDashboardPage(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   await requireStaff();
   setRequestLocale(locale);
   const [t, ts] = await Promise.all([getTranslations("admin.dash"), getTranslations("status")]);

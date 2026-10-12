@@ -6,7 +6,13 @@ import type { Locale } from "@/i18n/config";
 
 export const metadata: Metadata = { title: "Team" };
 
-export default async function TeamPage({ params: { locale } }: { params: { locale: Locale } }) {
+export default async function TeamPage(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   const { members, departments } = await getPublicTeamPageData();
   return (

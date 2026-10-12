@@ -6,11 +6,18 @@ import { ExclusiveProgramManager } from "@/components/exclusive/exclusive-progra
 import { Button } from "@/components/ui/button";
 import type { Locale } from "@/i18n/config";
 
-export default async function CreatorExclusiveDetailPage({
-  params: { locale, id },
-}: {
-  params: { locale: Locale; id: string };
-}) {
+export default async function CreatorExclusiveDetailPage(
+  props: {
+    params: Promise<{ locale: Locale; id: string }>;
+  }
+) {
+  const params = await props.params;
+
+  const {
+    locale,
+    id
+  } = params;
+
   await requireAuth(`/${locale}/login`);
   const result = await getCreatorExclusiveProgram(id);
   if (!result.success) notFound();

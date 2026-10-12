@@ -7,11 +7,17 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { Locale } from "@/i18n/config";
 
-export default async function BecomePartnerPage({
-  params: { locale },
-}: {
-  params: { locale: Locale };
-}) {
+export default async function BecomePartnerPage(
+  props: {
+    params: Promise<{ locale: Locale }>;
+  }
+) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   const user = await requireAuth(`/${locale}/login`);
   const existing = await getMyPartnerApplication(user.id);

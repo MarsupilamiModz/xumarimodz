@@ -6,7 +6,7 @@ import { maskIp } from "@/lib/audit-categories";
 async function getRequestAuditContext() {
   try {
     const { headers } = await import("next/headers");
-    const h = headers();
+    const h = await headers();
     const forwarded = h.get("x-forwarded-for")?.split(",")[0]?.trim();
     const ip = forwarded ?? h.get("x-real-ip") ?? "unknown";
     const userAgent = h.get("user-agent") ?? "unknown";

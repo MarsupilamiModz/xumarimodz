@@ -12,13 +12,19 @@ import { REVALIDATE } from "@/lib/cache";
 import { SITE } from "@/lib/site";
 import type { Locale } from "@/i18n/config";
 
-export const revalidate = REVALIDATE.catalog;
+export const revalidate = 60; // REVALIDATE.catalog – Next verlangt ein Literal
 
-export async function generateMetadata({
-  params: { slug },
-}: {
-  params: { slug: string };
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: {
+    params: Promise<{ slug: string }>;
+  }
+): Promise<Metadata> {
+  const params = await props.params;
+
+  const {
+    slug
+  } = params;
+
   const data = await getGamePageData(slug);
   if (!data) return { title: "Game Not Found" };
 
@@ -34,13 +40,20 @@ export async function generateMetadata({
   };
 }
 
-export default async function GameDetailPage({
-  params: { locale, slug },
-  searchParams,
-}: {
-  params: { locale: Locale; slug: string };
-  searchParams: { q?: string; pricing?: string; category?: string };
-}) {
+export default async function GameDetailPage(
+  props: {
+    params: Promise<{ locale: Locale; slug: string }>;
+    searchParams: Promise<{ q?: string; pricing?: string; category?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
+
+  const {
+    locale,
+    slug
+  } = params;
+
   setRequestLocale(locale);
   const t = await getTranslations("mods");
   const tg = await getTranslations("games");

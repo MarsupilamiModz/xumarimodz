@@ -8,7 +8,13 @@ export const metadata: Metadata = { robots: { index: false } };
 
 // TODO(backend): Wartungsmodus fehlt. Benötigt eine Einstellung im ACP (SiteSetting "maintenance_mode")
 // und eine Weiterleitung in src/middleware.ts auf diese Seite – Admins und /api/stripe/webhook ausgenommen.
-export default async function MaintenancePage({ params: { locale } }: { params: { locale: Locale } }) {
+export default async function MaintenancePage(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   const t = await getTranslations("common");
 

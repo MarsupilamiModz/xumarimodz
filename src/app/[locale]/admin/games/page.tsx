@@ -7,7 +7,13 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import type { Locale } from "@/i18n/config";
 
-export default async function AdminGamesPage({ params: { locale } }: { params: { locale: Locale } }) {
+export default async function AdminGamesPage(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   await requirePagePermission("games.write");
   const result = await getAdminGames();
   const games = result.success ? result.data : [];

@@ -6,11 +6,18 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import type { Locale } from "@/i18n/config";
 
-export default async function PublicExclusivePage({
-  params: { locale, programId },
-}: {
-  params: { locale: Locale; programId: string };
-}) {
+export default async function PublicExclusivePage(
+  props: {
+    params: Promise<{ locale: Locale; programId: string }>;
+  }
+) {
+  const params = await props.params;
+
+  const {
+    locale,
+    programId
+  } = params;
+
   const result = await getPublicExclusiveProgram(programId);
   if (!result.success) notFound();
 

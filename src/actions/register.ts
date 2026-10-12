@@ -29,8 +29,8 @@ const registerSchema = z.object({
   promoCode: z.string().max(32).optional(),
 });
 
-function clientIp() {
-  return headers().get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+async function clientIp() {
+  return (await headers()).get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
 }
 
 async function queueVerification(params: {
@@ -119,7 +119,7 @@ export async function registerUser(
     return ok({ status: "pending_verification" });
   }
 
-  const ip = clientIp();
+  const ip = await clientIp();
   const ipLimit = rateLimit(`register:ip:${ip}`, 8, 60 * 60 * 1000);
   if (!ipLimit.success) {
     void logPlatformError("auth:register-rate-limit", new Error(`IP rate limit: ${ip}`));

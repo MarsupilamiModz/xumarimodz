@@ -12,11 +12,18 @@ import { getMediaSettings } from "@/lib/media-settings";
 import { mapModMedia } from "@/lib/mod-media";
 import type { Locale } from "@/i18n/config";
 
-export default async function ManageModPage({
-  params: { locale, id },
-}: {
-  params: { locale: Locale; id: string };
-}) {
+export default async function ManageModPage(
+  props: {
+    params: Promise<{ locale: Locale; id: string }>;
+  }
+) {
+  const params = await props.params;
+
+  const {
+    locale,
+    id
+  } = params;
+
   await requireAuth(`/${locale}/login`);
   const [result, mediaSettings, dependencies] = await Promise.all([
     getModForEdit(id),

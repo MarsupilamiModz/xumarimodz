@@ -11,7 +11,13 @@ import { Button } from "@/components/ui/button";
 import type { Locale } from "@/i18n/config";
 import type { Metadata } from "next";
 
-export async function generateMetadata({ params: { locale } }: { params: { locale: Locale } }): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   const t = await getTranslations({ locale, namespace: "ecosystem" });
   return { title: t("creatorDiscovery"), description: t("creatorDiscoverySubtitle") };
 }
@@ -22,7 +28,13 @@ function CreatorGrid({ children }: { children: React.ReactNode }) {
   return <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">{children}</ul>;
 }
 
-export default async function CreatorsPage({ params: { locale } }: { params: { locale: Locale } }) {
+export default async function CreatorsPage(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   const t = await getTranslations("ecosystem");
 

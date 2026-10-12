@@ -38,7 +38,16 @@ function deviceLabel(ua: string | null) {
   return [browser, os].filter(Boolean).join(" · ") || ua.slice(0, 60);
 }
 
-export default async function AdminSecurityPage({ params: { locale }, searchParams }: { params: { locale: Locale }; searchParams: { tab?: string } }) {
+export default async function AdminSecurityPage(
+  props: { params: Promise<{ locale: Locale }>; searchParams: Promise<{ tab?: string }> }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   await requirePagePermission("settings.write");
   const [t, tr, tl] = await Promise.all([getTranslations("admin.sc"), getTranslations("status.role"), getTranslations("admin.security")]);

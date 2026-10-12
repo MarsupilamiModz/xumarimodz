@@ -38,7 +38,7 @@ type Props = {
 };
 
 function useDebouncedCallback<T extends (...args: never[]) => void>(fn: T, ms: number) {
-  const timer = useRef<ReturnType<typeof setTimeout>>();
+  const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   return useCallback(
     (...args: Parameters<T>) => {
       clearTimeout(timer.current);

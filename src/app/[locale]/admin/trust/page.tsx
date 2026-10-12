@@ -5,7 +5,13 @@ import Link from "next/link";
 import { requirePagePermission } from "@/lib/auth";
 import { getTrustCenterStats } from "@/actions/admin/trust";
 
-export default async function AdminTrustPage({ params: { locale } }: { params: { locale: Locale } }) {
+export default async function AdminTrustPage(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   await requirePagePermission("moderation.reports");
   const t = await getTranslations("admin");

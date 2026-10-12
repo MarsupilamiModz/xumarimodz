@@ -14,18 +14,24 @@ export const metadata: Metadata = {
   description: "Top creators ranked by downloads, revenue, growth, and community engagement.",
 };
 
-export default async function LeaderboardsPage({
-  params: { locale },
-  searchParams,
-}: {
-  params: { locale: Locale };
-  searchParams: {
-    metric?: string;
-    period?: string;
-    game?: string;
-    q?: string;
-  };
-}) {
+export default async function LeaderboardsPage(
+  props: {
+    params: Promise<{ locale: Locale }>;
+    searchParams: Promise<{
+      metric?: string;
+      period?: string;
+      game?: string;
+      q?: string;
+    }>;
+  }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
 
   void syncCreatorRanks();

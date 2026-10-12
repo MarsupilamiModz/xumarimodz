@@ -46,13 +46,19 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   );
 }
 
-export default async function AdminAnalyticsPage({
-  params: { locale },
-  searchParams,
-}: {
-  params: { locale: Locale };
-  searchParams: { range?: string };
-}) {
+export default async function AdminAnalyticsPage(
+  props: {
+    params: Promise<{ locale: Locale }>;
+    searchParams: Promise<{ range?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   await requirePagePermission("analytics.read");
   const t = await getTranslations("admin.an");

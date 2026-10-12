@@ -22,13 +22,19 @@ const FILTERS = { all: "all", open: "active", closed: "solved" } as const satisf
 type Filter = keyof typeof FILTERS;
 type Params = { filter?: string; q?: string; page?: string; t?: string };
 
-export default async function AdminTicketsPage({
-  params: { locale },
-  searchParams,
-}: {
-  params: { locale: Locale };
-  searchParams: Params;
-}) {
+export default async function AdminTicketsPage(
+  props: {
+    params: Promise<{ locale: Locale }>;
+    searchParams: Promise<Params>;
+  }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   await requirePagePermission("tickets.read");
   const [t, ts] = await Promise.all([getTranslations("admin.tk"), getTranslations("status")]);

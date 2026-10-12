@@ -5,7 +5,13 @@ import { requirePagePermission } from "@/lib/auth";
 import { getGamesAndCategories, getCreatorsForSelect } from "@/lib/data";
 import { AdminSoundUploadPanel } from "@/components/admin/admin-sound-upload-panel";
 
-export default async function AdminNewSoundPage({ params: { locale } }: { params: { locale: Locale } }) {
+export default async function AdminNewSoundPage(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   await requirePagePermission("mods.write");
   const t = await getTranslations("admin");

@@ -7,14 +7,20 @@ import type { Metadata } from "next";
 import { REVALIDATE } from "@/lib/cache";
 import { SITE } from "@/lib/site";
 
-export const revalidate = REVALIDATE.catalog;
+export const revalidate = 60; // REVALIDATE.catalog – Next verlangt ein Literal
 
 export const metadata: Metadata = {
   title: "Games",
   description: `Browse all supported games on ${SITE.name} and discover premium mods.`,
 };
 
-export default async function GamesPage({ params: { locale } }: { params: { locale: Locale } }) {
+export default async function GamesPage(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   const t = await getTranslations("games");
   const games = await getAllGames().catch(() => []);

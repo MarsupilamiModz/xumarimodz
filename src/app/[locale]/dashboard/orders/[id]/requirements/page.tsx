@@ -7,7 +7,14 @@ import { OrderRequirementsForm } from "@/components/orders/order-requirements-fo
 import type { Locale } from "@/i18n/config";
 
 /** Projektdetails nach der Zahlung eines Custom-Service (Ziel nach dem Stripe-Checkout). */
-export default async function OrderRequirementsPage({ params: { locale, id } }: { params: { locale: Locale; id: string } }) {
+export default async function OrderRequirementsPage(props: { params: Promise<{ locale: Locale; id: string }> }) {
+  const params = await props.params;
+
+  const {
+    locale,
+    id
+  } = params;
+
   setRequestLocale(locale);
   const result = await getOrderDetail(id);
   if (!result.success) notFound();

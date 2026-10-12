@@ -33,7 +33,7 @@ import {
   type SeoSettings,
   type PageContentStore,
   type PageId,
-} from "@/lib/branding-cms";
+} from "@/lib/branding-cms-shared";
 import { localeLabels, type Locale } from "@/i18n/config";
 
 type Tab = "identity" | "assets" | "header" | "footer" | "content" | "seo" | "headScripts" | "preview";

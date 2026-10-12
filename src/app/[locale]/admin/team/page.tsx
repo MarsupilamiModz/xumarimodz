@@ -8,7 +8,13 @@ import { TeamAdminPanel } from "@/components/admin/team-admin-panel";
 import { TeamManagementPanel } from "@/components/admin/team-management-panel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-export default async function AdminTeamPage({ params: { locale } }: { params: { locale: Locale } }) {
+export default async function AdminTeamPage(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   await requirePagePermission("users.read");
   const [staff, departments, profiles] = await Promise.all([

@@ -5,13 +5,19 @@ import type { Locale } from "@/i18n/config";
 
 export const metadata: Metadata = { title: "Team-Chat", robots: { index: false } };
 
-export default async function TeamChatRoute({
-  params: { locale },
-  searchParams,
-}: {
-  params: { locale: Locale };
-  searchParams: { channel?: string };
-}) {
+export default async function TeamChatRoute(
+  props: {
+    params: Promise<{ locale: Locale }>;
+    searchParams: Promise<{ channel?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   return (
     <div className="page-container py-8">

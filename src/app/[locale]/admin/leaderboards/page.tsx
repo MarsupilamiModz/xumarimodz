@@ -16,7 +16,16 @@ import type { Locale } from "@/i18n/config";
 const PERIODS: LeaderboardPeriod[] = ["DAILY", "WEEKLY", "MONTHLY", "ALL_TIME"];
 type Params = { tab?: string; metric?: string; period?: string };
 
-export default async function AdminLeaderboardsPage({ params: { locale }, searchParams }: { params: { locale: Locale }; searchParams: Params }) {
+export default async function AdminLeaderboardsPage(
+  props: { params: Promise<{ locale: Locale }>; searchParams: Promise<Params> }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   await requirePagePermission("settings.write");
   const t = await getTranslations("admin.lb");

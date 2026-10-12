@@ -3,7 +3,13 @@ import { setRequestLocale } from "next-intl/server";
 import NewPartnerForm from "./new-partner-form";
 import type { Locale } from "@/i18n/config";
 
-export default async function NewPartnerPage({ params: { locale } }: { params: { locale: Locale } }) {
+export default async function NewPartnerPage(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   await requirePagePermission("users.write");
   setRequestLocale(locale);
   return (

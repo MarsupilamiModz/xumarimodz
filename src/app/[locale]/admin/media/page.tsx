@@ -5,13 +5,19 @@ import { requirePagePermission } from "@/lib/auth";
 import { getAdminMediaCenter, type MediaSection } from "@/actions/admin/media-center";
 import { MediaCenterPanel } from "@/components/admin/media-center-panel";
 
-export default async function AdminMediaPage({
-  params: { locale },
-  searchParams,
-}: {
-  params: { locale: Locale };
-  searchParams: { section?: string; page?: string; status?: string; q?: string };
-}) {
+export default async function AdminMediaPage(
+  props: {
+    params: Promise<{ locale: Locale }>;
+    searchParams: Promise<{ section?: string; page?: string; status?: string; q?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   await requirePagePermission("settings.write");
   const t = await getTranslations("admin");

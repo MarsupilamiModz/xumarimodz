@@ -3,7 +3,13 @@ import { ModAdminPanel } from "@/components/admin/mod-admin-panel";
 import { getTranslations } from "next-intl/server";
 import type { Locale } from "@/i18n/config";
 
-export default async function DesignerNewAssetPage({ params: { locale } }: { params: { locale: Locale } }) {
+export default async function DesignerNewAssetPage(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   const t = await getTranslations("designer");
   const games = await getGamesAndCategories();
 

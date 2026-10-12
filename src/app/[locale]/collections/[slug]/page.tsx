@@ -12,11 +12,18 @@ import type { Locale } from "@/i18n/config";
 
 export const dynamic = "force-dynamic";
 
-export default async function CollectionDetailPage({
-  params: { locale, slug },
-}: {
-  params: { locale: Locale; slug: string };
-}) {
+export default async function CollectionDetailPage(
+  props: {
+    params: Promise<{ locale: Locale; slug: string }>;
+  }
+) {
+  const params = await props.params;
+
+  const {
+    locale,
+    slug
+  } = params;
+
   setRequestLocale(locale);
   const collection = await getCollectionBySlug(slug);
   if (!collection) notFound();

@@ -109,7 +109,7 @@ export async function resendVerificationEmail(locale = "en") {
   }
   if (user.emailVerified) return fail("Your email is already verified");
 
-  const ip = headers().get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+  const ip = (await headers()).get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
   const rl = rateLimit(`verify-resend:${user.id}:${ip}`, 3, 60 * 60 * 1000);
   if (!rl.success) {
     return ok({ message: userFriendlyAuthCodeMessage("verification_error", locale) });

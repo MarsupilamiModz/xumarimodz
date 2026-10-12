@@ -4,7 +4,13 @@ import { ArrowLeft } from "lucide-react";
 import { GameForm } from "@/components/admin/game-form";
 import type { Locale } from "@/i18n/config";
 
-export default async function NewGamePage({ params: { locale } }: { params: { locale: Locale } }) {
+export default async function NewGamePage(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   await requirePagePermission("games.write");
   return (
     <div>

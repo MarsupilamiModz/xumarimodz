@@ -35,7 +35,13 @@ import { formatDisplayName } from "@/lib/display-name";
 import { safeIntlNumberFormat } from "@/lib/i18n/safe-locale";
 import type { Locale } from "@/i18n/config";
 
-export async function generateMetadata({ params: { slug } }: { params: { slug: string } }): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const params = await props.params;
+
+  const {
+    slug
+  } = params;
+
   const mod = await getModBySlug(slug);
   if (!mod) return { title: "Mod not found" };
   const media = mapModMedia(mod.media ?? []);
@@ -62,7 +68,14 @@ function Fact({ label, children }: { label: string; children: React.ReactNode })
   );
 }
 
-export default async function ModDetailPage({ params: { locale, slug } }: { params: { locale: Locale; slug: string } }) {
+export default async function ModDetailPage(props: { params: Promise<{ locale: Locale; slug: string }> }) {
+  const params = await props.params;
+
+  const {
+    locale,
+    slug
+  } = params;
+
   setRequestLocale(locale);
   const t = await getTranslations("mods");
   const mod = await getModBySlug(slug);

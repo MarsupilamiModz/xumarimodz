@@ -6,7 +6,13 @@ import { AchievementShowcasePanel } from "@/components/dashboard/achievement-sho
 import { evaluateUserAchievements, getUserAchievements, getUserProgress } from "@/lib/achievements";
 import type { Locale } from "@/i18n/config";
 
-export default async function SettingsPage({ params: { locale } }: { params: { locale: Locale } }) {
+export default async function SettingsPage(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   const user = await requireAuth(`/${locale}/login`);
   await evaluateUserAchievements(user.id);
 

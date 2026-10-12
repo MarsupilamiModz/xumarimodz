@@ -4,7 +4,13 @@ import { AchievementShowcasePanel } from "@/components/dashboard/achievement-sho
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { Locale } from "@/i18n/config";
 
-export default async function AchievementsPage({ params: { locale } }: { params: { locale: Locale } }) {
+export default async function AchievementsPage(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   const t = await getTranslations("dashboard");
   const user = await requireAuth(`/${locale}/login`);

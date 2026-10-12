@@ -6,11 +6,18 @@ import { getPartnerAdmin } from "@/actions/admin/partners";
 import { PartnerAdminPanel } from "@/components/admin/partner-admin-panel";
 import type { Locale } from "@/i18n/config";
 
-export default async function AdminPartnerDetailPage({
-  params: { locale, id },
-}: {
-  params: { locale: Locale; id: string };
-}) {
+export default async function AdminPartnerDetailPage(
+  props: {
+    params: Promise<{ locale: Locale; id: string }>;
+  }
+) {
+  const params = await props.params;
+
+  const {
+    locale,
+    id
+  } = params;
+
   await requirePagePermission("users.read");
   setRequestLocale(locale);
   const t = await getTranslations("ecosystem");

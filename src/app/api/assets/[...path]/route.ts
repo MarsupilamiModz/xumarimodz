@@ -16,10 +16,8 @@ const r2 =
       })
     : null;
 
-export async function GET(
-  _req: Request,
-  { params }: { params: { path: string[] } }
-) {
+export async function GET(_req: Request, props: { params: Promise<{ path: string[] }> }) {
+  const params = await props.params;
   const key = params.path.map(decodeURIComponent).join("/");
   if (!key || key.includes("..")) {
     return NextResponse.json({ error: "Invalid path" }, { status: 400 });

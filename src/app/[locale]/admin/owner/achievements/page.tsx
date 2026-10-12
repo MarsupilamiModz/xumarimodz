@@ -6,7 +6,13 @@ import { getAchievementAnalytics, getAdminAchievements } from "@/actions/admin/a
 import { getOwnerSoundAnalytics } from "@/actions/sounds";
 import { OwnerAchievementsPanel } from "@/components/admin/owner-achievements-panel";
 
-export default async function OwnerAchievementsPage({ params: { locale } }: { params: { locale: Locale } }) {
+export default async function OwnerAchievementsPage(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   await requireOwner();
   const t = await getTranslations("admin");

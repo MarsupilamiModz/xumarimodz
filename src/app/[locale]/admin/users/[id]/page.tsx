@@ -9,11 +9,18 @@ import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { UserDetailPanel } from "@/components/admin/user-detail-panel";
 import type { Locale } from "@/i18n/config";
 
-export default async function AdminUserDetailPage({
-  params: { locale, id },
-}: {
-  params: { locale: Locale; id: string };
-}) {
+export default async function AdminUserDetailPage(
+  props: {
+    params: Promise<{ locale: Locale; id: string }>;
+  }
+) {
+  const params = await props.params;
+
+  const {
+    locale,
+    id
+  } = params;
+
   setRequestLocale(locale);
   await requirePagePermission("users.read");
   const [result, plansResult, groupsResult, t] = await Promise.all([

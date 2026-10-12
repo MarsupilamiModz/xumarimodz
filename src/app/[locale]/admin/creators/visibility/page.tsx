@@ -5,7 +5,13 @@ import { listVisibleCreators } from "@/actions/admin/creators";
 import { CreatorVisibilityManager } from "@/components/admin/creator-visibility-manager";
 import type { Locale } from "@/i18n/config";
 
-export default async function CreatorVisibilityPage({ params: { locale } }: { params: { locale: Locale } }) {
+export default async function CreatorVisibilityPage(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   await requirePagePermission("users.write");
   setRequestLocale(locale);
   const t = await getTranslations("ecosystem");

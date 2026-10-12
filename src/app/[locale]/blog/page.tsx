@@ -4,7 +4,13 @@ import { Card } from "@/components/ui/card";
 import { formatDisplayName } from "@/lib/display-name";
 import type { Locale } from "@/i18n/config";
 
-export default async function BlogPage({ params: { locale } }: { params: { locale: Locale } }) {
+export default async function BlogPage(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   const posts = await prisma.blogPost
     .findMany({
       where: { published: true },

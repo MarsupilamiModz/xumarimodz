@@ -6,13 +6,19 @@ import { getModerationOverview } from "@/actions/admin/moderation";
 import { UserModerationPanel } from "@/components/admin/user-moderation-panel";
 import { Pagination } from "@/components/ui/pagination";
 
-export default async function AdminModerationPage({
-  params: { locale },
-  searchParams,
-}: {
-  params: { locale: Locale };
-  searchParams: { q?: string; page?: string };
-}) {
+export default async function AdminModerationPage(
+  props: {
+    params: Promise<{ locale: Locale }>;
+    searchParams: Promise<{ q?: string; page?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   await requirePagePermission("users.read");
   const t = await getTranslations("admin");

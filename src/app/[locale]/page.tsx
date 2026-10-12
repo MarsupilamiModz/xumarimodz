@@ -30,7 +30,7 @@ import { MembershipCampaignBanner } from "@/components/membership/membership-cam
 import { FaqList } from "@/components/faq/faq-list";
 import { getFaqEntries } from "@/lib/faq";
 
-export const revalidate = REVALIDATE.homepage;
+export const revalidate = 120; // REVALIDATE.homepage – Next verlangt ein Literal
 
 const FEATURE_ICONS: LucideIcon[] = [Download, ShieldCheck, Layers, History, UserRound, HeartHandshake];
 

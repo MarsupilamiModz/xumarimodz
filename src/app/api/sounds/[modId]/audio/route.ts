@@ -6,11 +6,12 @@ import { getSoundStreamInfo } from "@/actions/sounds";
  * Freigabe- und Malware-Prüfung erfolgen in getSoundStreamInfo; der Speicher
  * beantwortet Range-Anfragen (Spulen) selbst.
  */
-export async function GET(_req: Request, { params }: { params: { modId: string } }) {
-  const info = await getSoundStreamInfo(params.modId);
-  if (!info.success) return NextResponse.json({ error: info.error }, { status: 404 });
+export async function GET(_req: Request, props: { params: Promise<{ modId: string }> }) {
+ const params = await props.params;
+ const info = await getSoundStreamInfo(params.modId);
+ if (!info.success) return NextResponse.json({ error: info.error }, { status: 404 });
 
-  const res = NextResponse.redirect(info.data.streamUrl, 302);
-  res.headers.set("Cache-Control", "private, max-age=300");
-  return res;
+ const res = NextResponse.redirect(info.data.streamUrl, 302);
+ res.headers.set("Cache-Control", "private, max-age=300");
+ return res;
 }

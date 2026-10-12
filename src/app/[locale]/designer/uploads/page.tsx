@@ -6,7 +6,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { Locale } from "@/i18n/config";
 
-export default async function DesignerUploadsPage({ params: { locale } }: { params: { locale: Locale } }) {
+export default async function DesignerUploadsPage(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   const t = await getTranslations("designer");
   const result = await getDesignerDashboard();
   const uploads = result.success ? result.data.uploads : [];

@@ -14,7 +14,13 @@ import { ShopPrice } from "@/components/shop/shop-price";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/i18n/config";
 
-export async function generateMetadata({ params: { locale } }: { params: { locale: Locale } }): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   const t = await getTranslations({ locale, namespace: "shop" });
   return { title: t("title"), description: t("subtitle") };
 }
@@ -22,13 +28,19 @@ export async function generateMetadata({ params: { locale } }: { params: { local
 // TODO(backend): Warenkorb und Kasse in 3 Schritten fehlen. Heute kauft man je Produkt direkt über
 // Stripe (startShopProductCheckout) oder stellt eine Anfrage. Ein Warenkorb braucht ein eigenes Modell,
 // einen Checkout mit mehreren Positionen, serverseitige Gutscheinprüfung und Tests im Stripe-Testmodus.
-export default async function ShopPage({
-  params: { locale },
-  searchParams,
-}: {
-  params: { locale: Locale };
-  searchParams: { category?: string };
-}) {
+export default async function ShopPage(
+  props: {
+    params: Promise<{ locale: Locale }>;
+    searchParams: Promise<{ category?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   const t = await getTranslations("shop");
   const activeCategory = searchParams.category?.trim() || undefined;

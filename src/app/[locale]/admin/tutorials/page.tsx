@@ -5,7 +5,13 @@ import { requireRole } from "@/lib/auth";
 import { getTutorialsAdminData } from "@/actions/admin/tutorials";
 import { TutorialsAdminPanel } from "@/components/admin/tutorials-admin-panel";
 
-export default async function AdminTutorialsPage({ params: { locale } }: { params: { locale: Locale } }) {
+export default async function AdminTutorialsPage(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   await requireRole("OWNER", "ADMIN", "CREATOR");
   const result = await getTutorialsAdminData();

@@ -9,11 +9,18 @@ import { GameBannerSettings } from "@/components/admin/game-banner-settings";
 import { CategoryTreeEditor } from "@/components/admin/category-tree-editor";
 import type { Locale } from "@/i18n/config";
 
-export default async function EditGamePage({
-  params: { locale, id },
-}: {
-  params: { locale: Locale; id: string };
-}) {
+export default async function EditGamePage(
+  props: {
+    params: Promise<{ locale: Locale; id: string }>;
+  }
+) {
+  const params = await props.params;
+
+  const {
+    locale,
+    id
+  } = params;
+
   await requirePagePermission("games.write");
   setRequestLocale(locale);
   const t = await getTranslations("admin");

@@ -8,7 +8,8 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useAppToast } from "@/hooks/use-app-toast";
-import { bpsToPercent, type RevenueShareSettings } from "@/lib/revenue-sharing";
+import { bpsToPercent } from "@/lib/revenue-sharing-shared";
+import type { RevenueShareSettings } from "@/lib/revenue-sharing";
 import { formatCents } from "@/lib/affiliate";
 
 type Dashboard = {

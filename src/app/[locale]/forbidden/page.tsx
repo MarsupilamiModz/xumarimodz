@@ -9,7 +9,13 @@ import type { Locale } from "@/i18n/config";
 export const metadata: Metadata = { robots: { index: false } };
 
 /** Ziel der Berechtigungsprüfungen in lib/auth (403). */
-export default async function ForbiddenPage({ params: { locale } }: { params: { locale: Locale } }) {
+export default async function ForbiddenPage(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   const t = await getTranslations("common");
 

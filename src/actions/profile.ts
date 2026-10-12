@@ -106,7 +106,7 @@ export async function requestPasswordReset(email: string, locale = "en") {
     return ok(undefined);
   }
 
-  const ip = headers().get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+  const ip = (await headers()).get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
   const rl = rateLimit(`password-reset:${ip}`, 5, 60 * 60 * 1000);
   if (!rl.success) return ok(undefined);
 

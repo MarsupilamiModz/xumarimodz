@@ -5,7 +5,13 @@ import { CreatorHostingPanel } from "@/components/creator/creator-hosting-panel"
 import { EmptyState } from "@/components/ui/empty-state";
 import type { Locale } from "@/i18n/config";
 
-export default async function CreatorHostingPage({ params: { locale } }: { params: { locale: Locale } }) {
+export default async function CreatorHostingPage(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   const result = await getCreatorHostingSettings();
   if (!result.success) {

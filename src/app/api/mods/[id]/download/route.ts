@@ -9,10 +9,8 @@ import { rateLimit } from "@/lib/rate-limit";
 import { checkMissingDependencies } from "@/lib/mod-dependencies";
 import { createHash } from "crypto";
 
-export async function POST(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
+export async function POST(req: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const user = await getCurrentUser();
   const ip = req.headers.get("x-forwarded-for") ?? "unknown";
   const ipHash = createHash("sha256").update(ip).digest("hex").slice(0, 16);

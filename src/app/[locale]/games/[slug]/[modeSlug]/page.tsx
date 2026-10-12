@@ -15,11 +15,18 @@ import type { Locale } from "@/i18n/config";
 
 const SORTS = ["", "date", "likes"] as const;
 
-export async function generateMetadata({
-  params: { slug, modeSlug },
-}: {
-  params: { slug: string; modeSlug: string };
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: {
+    params: Promise<{ slug: string; modeSlug: string }>;
+  }
+): Promise<Metadata> {
+  const params = await props.params;
+
+  const {
+    slug,
+    modeSlug
+  } = params;
+
   const mode = await getGameModeBySlug(slug, modeSlug).catch(() => null);
   if (!mode) return { title: "Mods" };
   const title = `${mode.name} – ${mode.game.name} Mods`;
@@ -31,13 +38,21 @@ export async function generateMetadata({
 }
 
 /** Katalog eines Spielbereichs (Ziel der Spielkarten, der Bereichsauswahl und des Spiele-Menüs). */
-export default async function GameModePage({
-  params: { locale, slug, modeSlug },
-  searchParams,
-}: {
-  params: { locale: Locale; slug: string; modeSlug: string };
-  searchParams: { sort?: string; page?: string };
-}) {
+export default async function GameModePage(
+  props: {
+    params: Promise<{ locale: Locale; slug: string; modeSlug: string }>;
+    searchParams: Promise<{ sort?: string; page?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
+
+  const {
+    locale,
+    slug,
+    modeSlug
+  } = params;
+
   setRequestLocale(locale);
   const mode = await getGameModeBySlug(slug, modeSlug).catch(() => null);
   if (!mode) notFound();

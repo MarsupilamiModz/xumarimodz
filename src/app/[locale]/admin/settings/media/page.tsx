@@ -30,7 +30,16 @@ function formatBytes(bytes: number) {
 const KIND_BAR: Record<MediaKind, string> = { image: "bg-violet", audio: "bg-success", video: "bg-warning", other: "bg-ink-faint" };
 const KIND_ICON = { audio: FileAudio, video: FileVideo, other: FileText } as const;
 
-export default async function AdminMediaLibraryPage({ params: { locale }, searchParams }: { params: { locale: Locale }; searchParams: Params }) {
+export default async function AdminMediaLibraryPage(
+  props: { params: Promise<{ locale: Locale }>; searchParams: Promise<Params> }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   await requirePagePermission("settings.write");
   const t = await getTranslations("admin.md");

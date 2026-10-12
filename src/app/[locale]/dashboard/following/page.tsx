@@ -10,7 +10,13 @@ import { resolveAssetUrl } from "@/lib/assets";
 import Link from "next/link";
 import type { Locale } from "@/i18n/config";
 
-export default async function FollowingPage({ params: { locale } }: { params: { locale: Locale } }) {
+export default async function FollowingPage(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   const t = await getTranslations("dashboard");
   const user = await requireAuth(`/${locale}/login`);

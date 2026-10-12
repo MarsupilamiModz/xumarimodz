@@ -8,8 +8,8 @@ import { fail, ok } from "@/lib/action-utils";
 import { visitorHash } from "@/lib/affiliate-server";
 import { recordCommission } from "@/lib/analytics/ecosystem";
 
-function ipHash() {
-  const ip = headers().get("x-forwarded-for") ?? "unknown";
+async function ipHash() {
+  const ip = (await headers()).get("x-forwarded-for") ?? "unknown";
   return createHash("sha256").update(ip).digest("hex").slice(0, 16);
 }
 
@@ -23,8 +23,8 @@ export async function trackAffiliateClick(code: string) {
   if (!coupon || !coupon.isActive) return fail("Invalid code");
   if (coupon.expiresAt && coupon.expiresAt < new Date()) return fail("Code expired");
 
-  const ip = headers().get("x-forwarded-for") ?? "unknown";
-  const ua = headers().get("user-agent") ?? undefined;
+  const ip = (await headers()).get("x-forwarded-for") ?? "unknown";
+  const ua = (await headers()).get("user-agent") ?? undefined;
   const vHash = visitorHash(ip, ua);
 
   await prisma.$transaction(async (tx) => {
@@ -39,7 +39,7 @@ export async function trackAffiliateClick(code: string) {
         ownerUserId: coupon.ownerUserId,
         eventType: "CLICK",
         visitorHash: vHash,
-        ipHash: ipHash(),
+        ipHash: await ipHash(),
         userAgent: ua?.slice(0, 512),
       },
     });
@@ -80,7 +80,7 @@ export async function trackAffiliateConversion(
         ownerUserId: coupon.ownerUserId,
         eventType,
         amountCents,
-        ipHash: ipHash(),
+        ipHash: await ipHash(),
       },
     });
 

@@ -4,7 +4,13 @@ import { requireAuth } from "@/lib/auth";
 import { CreateTicketForm } from "@/components/tickets/create-ticket-form";
 import type { Locale } from "@/i18n/config";
 
-export default async function NewTicketPage({ params: { locale } }: { params: { locale: Locale } }) {
+export default async function NewTicketPage(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   await requireAuth(`/${locale}/login`);
 
   return (

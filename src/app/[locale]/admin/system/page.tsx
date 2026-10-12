@@ -23,7 +23,16 @@ function formatUptime(seconds: number) {
   return d > 0 ? `${d} d ${h} h` : h > 0 ? `${h} h ${m} min` : `${m} min`;
 }
 
-export default async function AdminSystemPage({ params: { locale }, searchParams }: { params: { locale: Locale }; searchParams: { tab?: string } }) {
+export default async function AdminSystemPage(
+  props: { params: Promise<{ locale: Locale }>; searchParams: Promise<{ tab?: string }> }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   await requirePagePermission("settings.write");
   const t = await getTranslations("admin.st");

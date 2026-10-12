@@ -5,7 +5,13 @@ import { requirePagePermission } from "@/lib/auth";
 import { getAdminSiteBanners } from "@/actions/admin/banners";
 import { BannersAdminPanel } from "@/components/admin/banners-admin-panel";
 
-export default async function AdminBannersPage({ params: { locale } }: { params: { locale: Locale } }) {
+export default async function AdminBannersPage(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   await requirePagePermission("settings.write");
   const t = await getTranslations("admin");

@@ -38,8 +38,8 @@ export async function saveSecurityRules(input: z.infer<typeof rulesSchema>) {
 const IPV4 = /^(25[0-5]|2[0-4]\d|1?\d?\d)(\.(25[0-5]|2[0-4]\d|1?\d?\d)){3}$/;
 const IPV6 = /^[0-9a-f:]+$/i;
 
-function requestIp() {
-  const h = headers();
+async function requestIp() {
+  const h = (await headers());
   return h.get("x-forwarded-for")?.split(",")[0]?.trim() ?? h.get("x-real-ip") ?? null;
 }
 
@@ -49,7 +49,7 @@ export async function addIpBan(ip: string, reason?: string) {
 
   const value = ip.trim().toLowerCase();
   if (!IPV4.test(value) && !(value.includes(":") && IPV6.test(value))) return fail("Invalid IP address");
-  if (requestIp()?.toLowerCase() === value) return fail("You cannot ban your own current IP address");
+  if ((await requestIp())?.toLowerCase() === value) return fail("You cannot ban your own current IP address");
 
   const policy = await getSecurityPolicy();
   const hash = hashIpForBan(value);

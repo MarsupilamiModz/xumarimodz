@@ -44,7 +44,13 @@ const EMPTY_SETTINGS: EmailSettingsPublic = {
   fallbackBrevo: EMPTY_FALLBACK,
 };
 
-export default async function AdminEmailPage({ params: { locale } }: { params: { locale: Locale } }) {
+export default async function AdminEmailPage(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   await requirePagePermission("settings.write");
 

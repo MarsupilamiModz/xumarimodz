@@ -6,7 +6,14 @@ import { getAdminAchievements, getUserAchievementsAdmin } from "@/actions/admin/
 import { OwnerUserDetailPanel } from "@/components/admin/owner-user-detail-panel";
 import type { Locale } from "@/i18n/config";
 
-export default async function OwnerUserDetailPage({ params: { locale, id } }: { params: { locale: Locale; id: string } }) {
+export default async function OwnerUserDetailPage(props: { params: Promise<{ locale: Locale; id: string }> }) {
+  const params = await props.params;
+
+  const {
+    locale,
+    id
+  } = params;
+
   setRequestLocale(locale);
   await requireOwner();
   const [detail, userAchievements, allAchievements] = await Promise.all([

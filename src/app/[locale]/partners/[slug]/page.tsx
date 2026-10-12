@@ -18,15 +18,22 @@ import { ProfileShowcase } from "@/components/achievements/profile-showcase";
 import type { Locale } from "@/i18n/config";
 import type { Metadata } from "next";
 
-export const revalidate = REVALIDATE.catalog;
+export const revalidate = 60; // REVALIDATE.catalog – Next verlangt ein Literal
 
 const visible = { isPublic: true, isBanned: false, isSuspended: false } as const;
 
-export async function generateMetadata({
-  params: { locale, slug },
-}: {
-  params: { locale: Locale; slug: string };
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: {
+    params: Promise<{ locale: Locale; slug: string }>;
+  }
+): Promise<Metadata> {
+  const params = await props.params;
+
+  const {
+    locale,
+    slug
+  } = params;
+
   const t = await getTranslations({ locale, namespace: "ecosystem" });
   const profile = await prisma.partnerProfile.findFirst({
     where: { slug, ...visible },
@@ -39,11 +46,18 @@ export async function generateMetadata({
   };
 }
 
-export default async function PartnerProfilePage({
-  params: { locale, slug },
-}: {
-  params: { locale: Locale; slug: string };
-}) {
+export default async function PartnerProfilePage(
+  props: {
+    params: Promise<{ locale: Locale; slug: string }>;
+  }
+) {
+  const params = await props.params;
+
+  const {
+    locale,
+    slug
+  } = params;
+
   setRequestLocale(locale);
   const t = await getTranslations("ecosystem");
 

@@ -3,7 +3,13 @@ import { getGamesAndCategories } from "@/lib/data";
 import { ModForm } from "@/components/creator/mod-form";
 import type { Locale } from "@/i18n/config";
 
-export default async function NewModPage({ params: { locale } }: { params: { locale: Locale } }) {
+export default async function NewModPage(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   const t = await getTranslations("creator");
   const catalog = await getGamesAndCategories().catch(() => []);

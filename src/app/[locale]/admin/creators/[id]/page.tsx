@@ -6,11 +6,18 @@ import { getCreatorAdmin } from "@/actions/admin/creators";
 import { CreatorAdminPanel } from "@/components/admin/creator-admin-panel";
 import type { Locale } from "@/i18n/config";
 
-export default async function AdminCreatorDetailPage({
-  params: { locale, id },
-}: {
-  params: { locale: Locale; id: string };
-}) {
+export default async function AdminCreatorDetailPage(
+  props: {
+    params: Promise<{ locale: Locale; id: string }>;
+  }
+) {
+  const params = await props.params;
+
+  const {
+    locale,
+    id
+  } = params;
+
   await requirePagePermission("users.read");
   setRequestLocale(locale);
   const t = await getTranslations("ecosystem");

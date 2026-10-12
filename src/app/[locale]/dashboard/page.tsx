@@ -81,11 +81,17 @@ function StatsSkeleton() {
   );
 }
 
-export default async function DashboardPage({
-  params: { locale },
-}: {
-  params: { locale: string };
-}) {
+export default async function DashboardPage(
+  props: {
+    params: Promise<{ locale: string }>;
+  }
+) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   const t = await getTranslations("dashboard");
   const user = await requireAuth();

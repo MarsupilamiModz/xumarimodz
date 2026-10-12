@@ -9,11 +9,17 @@ import type { Locale } from "@/i18n/config";
 
 export const dynamic = "force-dynamic";
 
-export default async function CreatorCollectionsPage({
-  params: { locale },
-}: {
-  params: { locale: Locale };
-}) {
+export default async function CreatorCollectionsPage(
+  props: {
+    params: Promise<{ locale: Locale }>;
+  }
+) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   const user = await requireAuth(`/${locale}/login`);
 
