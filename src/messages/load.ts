@@ -2,6 +2,7 @@ import { unstable_cache } from "next/cache";
 import type { Locale } from "@/i18n/config";
 import { deepMergeMessages } from "@/lib/i18n-utils";
 import { getMessageOverrides } from "@/lib/message-overrides";
+import { MESSAGE_MODULES } from "./modules";
 import enSearch from "./en/search.json";
 import deSearch from "./de/search.json";
 import frSearch from "./fr/search.json";
@@ -18,27 +19,8 @@ const searchByLocale: Record<Locale, Record<string, unknown>> = {
   pl: plSearch,
 };
 
-const modules = [
-  "common",
-  "landing",
-  "catalog",
-  "premium",
-  "auth",
-  "dashboard",
-  "admin",
-  "designer",
-  "creator",
-  "support",
-  "licenses",
-  "toast",
-  "ecosystem",
-  "media",
-  "shop",
-  "security",
-  "sounds",
-  "email",
-  "chat",
-] as const;
+// Liste: src/messages/modules.ts
+const modules = MESSAGE_MODULES;
 
 async function loadLocaleModules(locale: Locale) {
   const parts = await Promise.all(

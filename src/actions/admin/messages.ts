@@ -1,6 +1,7 @@
 "use server";
 
 import { readMessageFile } from "@/messages/files";
+import { MESSAGE_MODULES } from "@/messages/modules";
 import { revalidatePath } from "next/cache";
 import { locales, type Locale } from "@/i18n/config";
 import { fail, ok, requireActionPermission } from "@/lib/action-utils";
@@ -12,23 +13,7 @@ import {
 } from "@/lib/message-overrides";
 import { deepMergeMessages } from "@/lib/i18n-utils";
 
-const MESSAGE_MODULES = [
-  "common",
-  "landing",
-  "catalog",
-  "premium",
-  "auth",
-  "dashboard",
-  "admin",
-  "designer",
-  "creator",
-  "support",
-  "licenses",
-  "toast",
-  "ecosystem",
-  "media",
-  "shop",
-] as const;
+// Liste wie im Loader – vorher fehlten security, sounds, email, chat.
 
 async function loadLocaleFileTree(locale: Locale): Promise<Record<string, unknown>> {
   const merged: Record<string, unknown> = {};

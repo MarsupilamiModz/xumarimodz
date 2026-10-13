@@ -2,29 +2,10 @@ import { locales, type Locale } from "@/i18n/config";
 import { getSiteSetting, setSiteSetting } from "@/lib/site-settings";
 import { auditTranslationKeys } from "@/lib/i18n-audit";
 import { readMessageFile } from "@/messages/files";
+import { MESSAGE_MODULES as LOADED_MODULES } from "@/messages/modules";
 
-const MESSAGE_MODULES = [
-  "common",
-  "landing",
-  "catalog",
-  "premium",
-  "auth",
-  "dashboard",
-  "admin",
-  "designer",
-  "creator",
-  "support",
-  "licenses",
-  "toast",
-  "ecosystem",
-  "media",
-  "shop",
-  "security",
-  "sounds",
-  "email",
-  "chat",
-  "search",
-] as const;
+// Wie der Loader (src/messages/modules.ts), plus search.json.
+const MESSAGE_MODULES = [...LOADED_MODULES, "search"] as const;
 
 const MISSING_LOG_KEY = "translation_missing_log";
 

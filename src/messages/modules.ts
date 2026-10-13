@@ -1,0 +1,32 @@
+/**
+ * Alle Nachrichtendateien je Sprache: src/messages/<locale>/<name>.json (für jede Sprache anlegen,
+ * fehlende Texte fallen auf Englisch zurück). search.json hat keinen Wrapper und wird extra eingehängt.
+ * Die *-pages- und acp-*-Dateien gehören zu den umgebauten Bereichen (eigene Datei je Bereich).
+ */
+export const MESSAGE_MODULES = [
+  "common",
+  "landing",
+  "catalog",
+  "premium",
+  "auth",
+  "dashboard",
+  "admin",
+  "designer",
+  "creator",
+  "support",
+  "licenses",
+  "toast",
+  "ecosystem",
+  "media",
+  "shop",
+  "security",
+  "sounds",
+  "email",
+  "chat",
+  "public-pages",
+  "account-pages",
+  "creator-pages",
+  "partner-pages",
+  "acp-a",
+  "acp-b",
+] as const;
