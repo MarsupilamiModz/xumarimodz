@@ -2,7 +2,9 @@ import { cache } from "react";
 import { getAdSettings } from "@/lib/ads";
 import { getUserMembershipTier } from "@/lib/membership";
 
-export type AdExperienceLevel = "full" | "reduced" | "none";
+import type { AdExperienceLevel } from "@/lib/ad-experience-shared";
+
+export * from "@/lib/ad-experience-shared";
 
 /**
  * Pro Anfrage nur einmal berechnen (React cache) – vorher lief die Mitgliedschaftsabfrage
@@ -34,12 +36,3 @@ export const getUserAdExperience = cache(async function getUserAdExperience(
 
   return "full";
 });
-
-export function shouldRenderAds(level: AdExperienceLevel): boolean {
-  return level !== "none";
-}
-
-export function adDensityClass(level: AdExperienceLevel): string {
-  if (level === "reduced") return "ad-density-reduced opacity-90";
-  return "";
-}

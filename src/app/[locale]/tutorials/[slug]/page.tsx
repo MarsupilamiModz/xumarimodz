@@ -7,6 +7,12 @@ import { getTutorialBySlug } from "@/lib/tutorials/data";
 import { TutorialDetail } from "@/components/tutorials/tutorial-detail";
 import type { Locale } from "@/i18n/config";
 
+// ISR: jede Anleitung beim ersten Aufruf rendern und 5 Minuten cachen.
+export const revalidate = 300;
+export function generateStaticParams() {
+  return [];
+}
+
 export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const params = await props.params;
 

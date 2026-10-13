@@ -1,33 +1,35 @@
-import { getCurrentUser } from "@/lib/auth";
 import { getAdsForLocation, getAdSettings, type AdLocation } from "@/lib/ads";
-import { getUserAdExperience, shouldRenderAds, adDensityClass } from "@/lib/ad-experience";
+import { getUserAdExperience } from "@/lib/ad-experience";
 import { AdSlot } from "@/components/ads/ad-slot";
+import { AdGate } from "@/components/ads/ad-gate";
 
 type AdLocationSlotProps = {
   location: AdLocation;
   className?: string;
 };
 
+/**
+ * Rendert die Werbung für Gäste (ohne Cookies, Seite bleibt cachebar); ob ein angemeldeter Nutzer
+ * sie sieht, entscheidet AdGate im Browser.
+ */
 export async function AdLocationSlot({ location, className }: AdLocationSlotProps) {
   const settings = await getAdSettings();
   if (!settings.globalAdsEnabled) return null;
   if (settings.placementEnabled?.[location] === false) return null;
 
-  const user = await getCurrentUser();
-  const level = await getUserAdExperience(user?.id ?? null, user?.role ?? null);
-  if (!shouldRenderAds(level)) return null;
-
   const ads = await getAdsForLocation(location);
   if (ads.length === 0) return null;
 
-  const density = adDensityClass(level);
-  const visibleAds = level === "reduced" ? ads.slice(0, 1) : ads;
+  const guestLevel = await getUserAdExperience(null, null);
 
   return (
-    <div className={`${className ?? ""} ${density}`.trim()}>
-      {visibleAds.map((ad) => (
-        <AdSlot key={ad.id} ad={ad} className="mb-4" />
+    <AdGate guestLevel={guestLevel} className={className}>
+      {/* Bei „reduziert“ nur die erste Fläche */}
+      {ads.map((ad, i) => (
+        <div key={ad.id} className={i > 0 ? "ad-extra" : undefined}>
+          <AdSlot ad={ad} className="mb-4" />
+        </div>
       ))}
-    </div>
+    </AdGate>
   );
 }

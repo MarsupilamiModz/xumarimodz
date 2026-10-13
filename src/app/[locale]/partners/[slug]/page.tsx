@@ -19,6 +19,10 @@ import type { Locale } from "@/i18n/config";
 import type { Metadata } from "next";
 
 export const revalidate = 60; // REVALIDATE.catalog – Next verlangt ein Literal
+// Leere Liste: jede Profilseite beim ersten Aufruf rendern und cachen (sonst in Next 15 immer dynamisch).
+export function generateStaticParams() {
+  return [];
+}
 
 const visible = { isPublic: true, isBanned: false, isSuspended: false } as const;
 

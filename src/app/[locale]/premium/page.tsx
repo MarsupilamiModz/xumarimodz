@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Crown } from "lucide-react";
-import { getActiveMembershipPlans, getPremiumPageSettings, localizedPlan, getUserMembershipTier } from "@/lib/membership";
+import { getActiveMembershipPlans, getPremiumPageSettings, localizedPlan } from "@/lib/membership";
 import { DEFAULT_PREMIUM_PAGE } from "@/lib/membership-pricing";
-import { getCurrentUser } from "@/lib/auth";
 import { getCachedPublicBranding } from "@/lib/branding-data";
 import { resolvePageContent } from "@/lib/branding-cms";
 import { PremiumPlansClient } from "@/components/membership/premium-plans-client";
@@ -11,6 +10,9 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { FaqList } from "@/components/faq/faq-list";
 import { getFaqEntries } from "@/lib/faq";
 import type { Locale } from "@/i18n/config";
+
+// Statisch mit ISR: Preise, Aktionen und Restbestand höchstens 60 s alt (Nutzerdaten kommen im Browser).
+export const revalidate = 60;
 
 export async function generateMetadata(props: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
   const params = await props.params;
@@ -32,19 +34,13 @@ export default async function PremiumPage(props: { params: Promise<{ locale: Loc
 
   setRequestLocale(locale);
   const t = await getTranslations("premium");
-  const [plans, pageSettings, user, cms, faqs] = await Promise.all([
+  // Ohne Nutzer: Login-Status und aktueller Plan kommen im Browser (PremiumPlansClient → useNavUser).
+  const [plans, pageSettings, cms, faqs] = await Promise.all([
     getActiveMembershipPlans(),
     getPremiumPageSettings(),
-    getCurrentUser(),
     getCachedPublicBranding(),
     getFaqEntries(locale),
   ]);
-
-  let currentPlanSlug: string | null = null;
-  if (user) {
-    const tier = await getUserMembershipTier(user.id);
-    currentPlanSlug = tier?.slug ?? null;
-  }
 
   // Reihenfolge: Inhalte aus dem ACP (je Sprache) > eigene Premium-Einstellung > Übersetzung.
   const custom = (value: string, fallback: string) => (value && value !== fallback ? value : "");
@@ -81,8 +77,6 @@ export default async function PremiumPage(props: { params: Promise<{ locale: Loc
           heroSubtitle={heroSubtitle}
           ctaText={ctaText}
           showComparison={pageSettings.showComparison !== false}
-          isLoggedIn={!!user}
-          currentPlanSlug={currentPlanSlug}
         />
       )}
 

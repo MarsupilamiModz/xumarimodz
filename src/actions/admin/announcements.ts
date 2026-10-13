@@ -80,9 +80,8 @@ const getCachedActiveAnnouncements = unstable_cache(
   { revalidate: 60, tags: [CACHE_TAGS.announcements] }
 );
 
-export async function getActiveAnnouncements() {
+async function activeAnnouncementsFor(viewer: Awaited<ReturnType<typeof buildViewerContext>>) {
   const now = new Date();
-  const viewer = await buildViewerContext();
 
   // Datumswerte kommen aus dem Cache als Text zurück.
   const items = (await getCachedActiveAnnouncements())
@@ -101,6 +100,16 @@ export async function getActiveAnnouncements() {
   return items.filter((item) =>
     announcementVisibleTo(item.visibilityTargets, viewer)
   ).slice(0, 3);
+}
+
+/** Für den aktuellen Betrachter (liest die Sitzung) – /api/announcements. */
+export async function getActiveAnnouncements() {
+  return activeAnnouncementsFor(await buildViewerContext());
+}
+
+/** Für Gäste, ohne Cookies: Seiten bleiben cachebar; Angemeldete laden ihre Liste im Browser nach. */
+export async function getGuestAnnouncements() {
+  return activeAnnouncementsFor(null);
 }
 
 export async function listAnnouncements() {

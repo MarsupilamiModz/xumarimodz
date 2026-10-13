@@ -29,6 +29,7 @@ function walk(dir, name) {
 /** Bewusst öffentliche Actions bzw. Routen, deren Prüfung in der aufgerufenen Action liegt – jeweils mit Grund. */
 const PUBLIC_ACTIONS = new Map([
   ["announcements.ts:getActiveAnnouncements", "Ankündigungsleiste der Webseite, filtert nach Zielgruppe des Besuchers"],
+  ["announcements.ts:getGuestAnnouncements", "Ankündigungsleiste für Gäste (nur Zielgruppe „alle“), ohne Sitzung – Startseite bleibt cachebar"],
   ["referrals.ts:captureReferralClick", "zählt Klicks auf Empfehlungslinks von Besuchern"],
   ["trust.ts:submitDMCAClaim", "öffentliches DMCA-Formular, per IP begrenzt"],
 ]);

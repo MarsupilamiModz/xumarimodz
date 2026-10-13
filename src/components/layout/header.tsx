@@ -13,7 +13,7 @@ import { GamesHoverMenu } from "@/components/layout/games-hover-menu";
 import { LanguageSwitcher } from "@/components/layout/language-switcher";
 import { CartLink } from "@/components/shop/cart-controls";
 import type { NavLabels } from "@/components/layout/nav-labels";
-import type { NavUser } from "@/components/layout/user-nav";
+import { useNavUser } from "@/lib/nav-user-client";
 import { DEFAULT_HEADER_MENU, type HeaderSettings } from "@/lib/branding-defaults";
 import type { NavGameItem } from "@/lib/nav-games";
 import type { PlatformLanguageOption } from "@/lib/languages";
@@ -37,7 +37,6 @@ function isActivePath(pathname: string | null, href: string) {
 
 export function Header({
   locale,
-  user,
   navLabels,
   header,
   branding,
@@ -46,7 +45,6 @@ export function Header({
   languages,
 }: {
   locale: string;
-  user: NavUser | null;
   navLabels: NavLabels;
   header?: HeaderSettings | null;
   branding?: LogoBranding | null;
@@ -56,6 +54,7 @@ export function Header({
 }) {
   const t = useTranslations("nav");
   const pathname = usePathname();
+  const { status: userStatus } = useNavUser();
   const [open, setOpen] = useState(false);
   const mobileNavId = useId();
 
@@ -137,7 +136,7 @@ export function Header({
         <div className="ml-auto flex items-center gap-1 sm:gap-2">
           <HeaderSearch locale={locale} />
           <LanguageSwitcher locale={locale} languages={languages} />
-          <AuthButtons locale={locale} user={user} />
+          <AuthButtons locale={locale} />
           <CartLink locale={locale} />
           <Button size="sm" className="hidden lg:inline-flex" asChild>
             <Link href={`/${locale}/download`}>{t("downloadApp")}</Link>
@@ -177,7 +176,7 @@ export function Header({
               </Link>
             </li>
           ))}
-          {!user && (
+          {userStatus === "guest" && (
             <li>
               <Link
                 href={`/${locale}/register`}

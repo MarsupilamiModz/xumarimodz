@@ -10,6 +10,7 @@ import { EntityIcon } from "@/components/ui/entity-icon";
 import { formatPlanPrice, getEffectivePlanPrice, getSaleTimeRemaining, type MembershipPlanData } from "@/lib/membership-pricing";
 import { isPlanSoldOut, planRemainingStock } from "@/lib/membership-stock";
 import { useAppToast } from "@/hooks/use-app-toast";
+import { useNavUser } from "@/lib/nav-user-client";
 import { cn } from "@/lib/utils";
 
 type Plan = Pick<
@@ -52,8 +53,6 @@ type Props = {
   heroSubtitle: string;
   ctaText: string;
   showComparison: boolean;
-  isLoggedIn: boolean;
-  currentPlanSlug: string | null;
 };
 
 type PerkRow = { key: string; label: string; free: boolean | string; value: (p: Plan) => boolean | string | null };
@@ -65,10 +64,12 @@ export function PremiumPlansClient({
   heroSubtitle,
   ctaText,
   showComparison,
-  isLoggedIn,
-  currentPlanSlug,
 }: Props) {
   const t = useTranslations("premium");
+  // Nutzer und Plan aus dem Browser – die Seite selbst bleibt dadurch cachebar.
+  const { status, user } = useNavUser();
+  const isLoggedIn = status === "user";
+  const currentPlanSlug = user?.planSlug ?? null;
   const appToast = useAppToast();
   const [pending, startTransition] = useTransition();
   const [loadingSlug, setLoadingSlug] = useState<string | null>(null);
