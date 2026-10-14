@@ -2,12 +2,16 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useTranslations } from "next-intl";
+import { ServerCog } from "lucide-react";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
+import { SectionCard } from "@/components/ui/page-header";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { toast } from "@/hooks/use-toast";
+import { useAppToast } from "@/hooks/use-app-toast";
 import { saveCreatorHostingSettings } from "@/actions/creator/hosting";
 
 type Props = {
@@ -26,7 +30,12 @@ type Props = {
   };
 };
 
+const labelClass = "label-text mb-1.5 block text-ink-muted";
+
 export function CreatorHostingPanel({ profile, platformSettings }: Props) {
+  const t = useTranslations("creatorPages.hosting");
+  const tc = useTranslations("common");
+  const appToast = useAppToast();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [form, setForm] = useState({
@@ -37,68 +46,71 @@ export function CreatorHostingPanel({ profile, platformSettings }: Props) {
   });
 
   if (platformSettings.creatorOnlyGlobal) {
-    return (
-      <Card>
-        <CardContent className="py-8 text-sm text-muted-foreground">
-          Die Plattform nutzt ausschließlich globale Hosting-Partner. Eigene Links sind deaktiviert.
-        </CardContent>
-      </Card>
-    );
+    return <EmptyState icon={ServerCog} title={t("globalOnlyTitle")} description={t("globalOnlyText")} />;
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Hosting Partner</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {!platformSettings.allowCreatorLinks ? (
-          <p className="text-sm text-destructive">Creator Hosting Links sind derzeit deaktiviert.</p>
-        ) : null}
-        <label className="flex items-center gap-2 text-sm">
+    <SectionCard
+      title={t("sectionTitle")}
+      className="max-w-2xl"
+      action={!platformSettings.allowCreatorLinks ? <StatusBadge tone="warning" label={t("linksDisabled")} /> : undefined}
+    >
+      <div className="space-y-4">
+        <label className="flex items-center gap-3 text-sm text-ink">
           <Switch
             checked={form.hostingPartnerEnabled}
             onCheckedChange={(v) => setForm((f) => ({ ...f, hostingPartnerEnabled: v }))}
           />
-          Eigener Hosting Partner aktiv
+          {t("enabled")}
         </label>
-        <Input
-          placeholder="Affiliate Link"
-          value={form.hostingAffiliateLink}
-          onChange={(e) => setForm((f) => ({ ...f, hostingAffiliateLink: e.target.value }))}
-        />
-        <Input
-          placeholder="Banner URL"
-          value={form.hostingBannerUrl}
-          onChange={(e) => setForm((f) => ({ ...f, hostingBannerUrl: e.target.value }))}
-        />
-        <Textarea
-          placeholder="Beschreibung für Modpack-Seiten"
-          value={form.hostingDescription}
-          onChange={(e) => setForm((f) => ({ ...f, hostingDescription: e.target.value }))}
-        />
+        <div>
+          <label htmlFor="hosting-link" className={labelClass}>{t("affiliateLink")}</label>
+          <Input
+            id="hosting-link"
+            value={form.hostingAffiliateLink}
+            onChange={(e) => setForm((f) => ({ ...f, hostingAffiliateLink: e.target.value }))}
+          />
+        </div>
+        <div>
+          <label htmlFor="hosting-banner" className={labelClass}>{t("bannerUrl")}</label>
+          <Input
+            id="hosting-banner"
+            value={form.hostingBannerUrl}
+            onChange={(e) => setForm((f) => ({ ...f, hostingBannerUrl: e.target.value }))}
+          />
+        </div>
+        <div>
+          <label htmlFor="hosting-description" className={labelClass}>{t("hostingDescription")}</label>
+          <Textarea
+            id="hosting-description"
+            value={form.hostingDescription}
+            onChange={(e) => setForm((f) => ({ ...f, hostingDescription: e.target.value }))}
+          />
+        </div>
         {platformSettings.revenueShareEnabled ? (
-          <p className="text-xs text-muted-foreground">
-            Revenue Share: Creator {(platformSettings.creatorHostingShareBps / 100).toFixed(0)}% · Plattform{" "}
-            {(platformSettings.platformHostingShareBps / 100).toFixed(0)}%
+          <p className="meta tabular-nums">
+            {t("revenueShare", {
+              creator: (platformSettings.creatorHostingShareBps / 100).toFixed(0),
+              platform: (platformSettings.platformHostingShareBps / 100).toFixed(0),
+            })}
           </p>
         ) : null}
         <Button
-         
           disabled={pending || !platformSettings.allowCreatorLinks}
+          aria-busy={pending}
           onClick={() =>
             startTransition(async () => {
               const r = await saveCreatorHostingSettings(form);
               if (r.success) {
-                toast({ title: "toast.saved" });
+                appToast.saved();
                 router.refresh();
-              } else toast({ title: r.error, variant: "destructive" });
+              } else appToast.error(r.error);
             })
           }
         >
-          Speichern
+          {tc("save")}
         </Button>
-      </CardContent>
-    </Card>
+      </div>
+    </SectionCard>
   );
 }

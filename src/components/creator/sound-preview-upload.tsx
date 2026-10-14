@@ -1,12 +1,13 @@
 "use client";
 
-import { useRef, useState, useTransition } from "react";
+import { useId, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { SectionCard } from "@/components/ui/page-header";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { Loader2 } from "lucide-react";
 import { useR2MultipartUpload } from "@/hooks/use-r2-multipart-upload";
 import { attachSoundPreviewFromSession, attachSoundCoverFromSession } from "@/actions/sounds";
@@ -38,6 +39,8 @@ function readAudioDuration(file: File): Promise<number | null> {
 
 export function SoundPreviewUpload({ modId, hasPreview, hasCover }: Props) {
   const t = useTranslations("common.cx.soundPreview");
+  const ts = useTranslations("sharedTools.soundPreview");
+  const uid = useId();
   const previewRef = useRef<HTMLInputElement>(null);
   const coverRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
@@ -66,7 +69,7 @@ export function SoundPreviewUpload({ modId, hasPreview, hasCover }: Props) {
       }
 
       const result = await upload({ purpose: "sound-preview", file, modId });
-      if (!result.sessionId) throw new Error("Upload did not return a session");
+      if (!result.sessionId) throw new Error(ts("sessionMissing"));
 
       startTransition(async () => {
         const r = await attachSoundPreviewFromSession(modId, result.sessionId, {
@@ -95,7 +98,7 @@ export function SoundPreviewUpload({ modId, hasPreview, hasCover }: Props) {
     setLocalError(null);
     try {
       const result = await upload({ purpose: "sound-cover", file, modId });
-      if (!result.sessionId) throw new Error("Upload did not return a session");
+      if (!result.sessionId) throw new Error(ts("sessionMissing"));
 
       startTransition(async () => {
         const r = await attachSoundCoverFromSession(modId, result.sessionId);
@@ -117,18 +120,15 @@ export function SoundPreviewUpload({ modId, hasPreview, hasCover }: Props) {
   const busy = uploading || pending;
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-base">{t("title")}</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div>
-          <label className="text-sm font-medium">{t("previewAudioLabel")}</label>
+    <SectionCard title={t("title")}>
+      <div className="space-y-4">
+        <div className="space-y-1.5">
+          <label htmlFor={`${uid}-preview`} className="label-text">{t("previewAudioLabel")}</label>
           <Input
+            id={`${uid}-preview`}
             ref={previewRef}
             type="file"
             accept=".mp3,.wav,.ogg,.flac,.m4a,audio/*"
-            className="mt-1"
             disabled={busy}
             onChange={(e) => {
               const f = e.target.files?.[0];
@@ -136,16 +136,16 @@ export function SoundPreviewUpload({ modId, hasPreview, hasCover }: Props) {
               e.target.value = "";
             }}
           />
-          {hasPreview && <p className="text-xs text-success mt-1">{t("previewConfigured")}</p>}
+          {hasPreview && <StatusBadge tone="success" label={t("previewConfigured")} />}
         </div>
 
-        <div>
-          <label className="text-sm font-medium">{t("coverImageLabel")}</label>
+        <div className="space-y-1.5">
+          <label htmlFor={`${uid}-cover`} className="label-text">{t("coverImageLabel")}</label>
           <Input
+            id={`${uid}-cover`}
             ref={coverRef}
             type="file"
             accept="image/*"
-            className="mt-1"
             disabled={busy}
             onChange={(e) => {
               const f = e.target.files?.[0];
@@ -153,21 +153,21 @@ export function SoundPreviewUpload({ modId, hasPreview, hasCover }: Props) {
               e.target.value = "";
             }}
           />
-          {hasCover && <p className="text-xs text-success mt-1">{t("coverConfigured")}</p>}
+          {hasCover && <StatusBadge tone="success" label={t("coverConfigured")} />}
         </div>
 
         {busy && (
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <Loader2 className="h-3 w-3 animate-spin" />
+          <div className="meta flex items-center gap-2 tabular-nums" role="status">
+            <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />
             {t("uploadingProgress", { progress })}
           </div>
         )}
 
         {(localError || uploadError) && (
-          <p className="text-xs text-destructive">{localError ?? uploadError}</p>
+          <p className="text-sm text-danger" role="alert">{localError ?? uploadError}</p>
         )}
 
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <Button type="button" variant="outline" size="sm" disabled={busy} onClick={() => previewRef.current?.click()}>
             {t("uploadPreviewButton")}
           </Button>
@@ -175,7 +175,7 @@ export function SoundPreviewUpload({ modId, hasPreview, hasCover }: Props) {
             {t("uploadCoverButton")}
           </Button>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </SectionCard>
   );
 }

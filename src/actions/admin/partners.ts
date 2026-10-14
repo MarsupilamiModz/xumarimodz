@@ -15,6 +15,7 @@ import {
   validatePartnerDiscordInput,
 } from "@/lib/discord-validation";
 import type { PublisherLevel, SocialPlatform } from "@prisma/client";
+import { runAfterResponse } from "@/lib/after-response";
 
 const profileSchema = z.object({
   userId: z.string(),
@@ -191,10 +192,10 @@ export async function createPartnerProfile(input: z.infer<typeof profileSchema>)
   revalidatePath("/admin/partners");
 
   if (profile.isVerified && target.email) {
-    void sendPartnerApprovalEmail({
+    runAfterResponse(sendPartnerApprovalEmail({
       email: target.email,
       partnerName: target.displayName ?? target.username,
-    });
+    }));
   }
 
   return ok(profile);
@@ -278,10 +279,10 @@ export async function updatePartnerProfile(id: string, input: Partial<z.infer<ty
   revalidatePath(`/partners/${profile.slug}`);
 
   if (input.isVerified === true && !existing.isVerified && existing.user.email) {
-    void sendPartnerApprovalEmail({
+    runAfterResponse(sendPartnerApprovalEmail({
       email: existing.user.email,
       partnerName: existing.user.displayName ?? existing.user.username,
-    });
+    }));
   }
 
   return ok(profile);

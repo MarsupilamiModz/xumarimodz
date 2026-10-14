@@ -6,8 +6,9 @@ function getModelFields(modelName: string): Set<string> {
   let cached = modelFieldsCache.get(modelName);
   if (cached) return cached;
 
-  const model = Prisma.dmmf.datamodel.models.find((m) => m.name === modelName);
-  cached = new Set(model?.fields.map((f) => f.name) ?? []);
+  // ScalarFieldEnum statt Prisma.dmmf: dmmf fehlt in der WASM-Variante (Cloudflare Workers).
+  const fields = (Prisma as unknown as Record<string, Record<string, string> | undefined>)[`${modelName}ScalarFieldEnum`];
+  cached = new Set(Object.values(fields ?? {}));
   modelFieldsCache.set(modelName, cached);
   return cached;
 }
@@ -17,7 +18,7 @@ export function prismaModelHasField(modelName: string, fieldName: string): boole
 }
 
 export function prismaModelExists(modelName: string): boolean {
-  return Prisma.dmmf.datamodel.models.some((m) => m.name === modelName);
+  return Object.values(Prisma.ModelName).includes(modelName as Prisma.ModelName);
 }
 
 /** Drop keys that are not on the generated Prisma model (safe pre/post migration). */

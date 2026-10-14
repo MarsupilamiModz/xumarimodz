@@ -29,20 +29,21 @@ export const PUBLIC_LEADERBOARD_METRICS: LeaderboardMetric[] = [
   "RATED",
 ];
 
+// Nachrichtenschlüssel (nicht Text): in der Komponente mit t(METRIC_LABELS[metric]) übersetzen.
 export const METRIC_LABELS: Record<LeaderboardMetric, string> = {
-  DOWNLOADS: "Top Downloads",
-  REVENUE: "Highest Revenue",
-  LIKES: "Most Likes",
-  GROWTH: "Fastest Growth",
-  ACTIVE: "Most Active",
-  REVIEWED: "Most Reviewed",
-  TRENDING: "Trending Creators",
-  RATED: "Highest Rated",
+  DOWNLOADS: "publicPages.leaderboards.metric.DOWNLOADS",
+  REVENUE: "publicPages.leaderboards.metric.REVENUE",
+  LIKES: "publicPages.leaderboards.metric.LIKES",
+  GROWTH: "publicPages.leaderboards.metric.GROWTH",
+  ACTIVE: "publicPages.leaderboards.metric.ACTIVE",
+  REVIEWED: "publicPages.leaderboards.metric.REVIEWED",
+  TRENDING: "publicPages.leaderboards.metric.TRENDING",
+  RATED: "publicPages.leaderboards.metric.RATED",
 };
 
 export const PERIOD_LABELS: Record<LeaderboardPeriod, string> = {
-  DAILY: "Daily",
-  WEEKLY: "Weekly",
-  MONTHLY: "Monthly",
-  ALL_TIME: "All Time",
+  DAILY: "publicPages.leaderboards.period.DAILY",
+  WEEKLY: "publicPages.leaderboards.period.WEEKLY",
+  MONTHLY: "publicPages.leaderboards.period.MONTHLY",
+  ALL_TIME: "publicPages.leaderboards.period.ALL_TIME",
 };

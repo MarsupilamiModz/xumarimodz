@@ -1,11 +1,12 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
-import { safeToLocaleString, safeToLocaleDateString } from "@/lib/i18n/safe-locale";
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
-import { Star, StarOff, RefreshCw, ChevronUp, ChevronDown, GripVertical } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useLocale, useTranslations } from "next-intl";
+import { Star, StarOff, RefreshCw, ChevronUp, ChevronDown, GripVertical, Trophy } from "lucide-react";
+import { SectionCard } from "@/components/ui/page-header";
+import { ChipTabs } from "@/components/ui/chip-tabs";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -22,6 +23,8 @@ import {
 } from "@/actions/achievements";
 import { SHOWCASE_MAX } from "@/lib/achievement-constants";
 import { useAppToast } from "@/hooks/use-app-toast";
+import { formatDate, formatNumber } from "@/lib/format-locale";
+import { cn } from "@/lib/utils";
 import type { AchievementRarity } from "@prisma/client";
 
 type AchievementRow = {
@@ -50,13 +53,18 @@ export function AchievementShowcasePanel({
   achievements,
   xp,
   level,
+  showTitle = true,
 }: {
   achievements: AchievementRow[];
   xp: number;
   level: number;
+  /** Aus, wenn die Seite den Titel schon als H1 zeigt (Erfolge-Seite). */
+  showTitle?: boolean;
 }) {
   const router = useRouter();
+  const locale = useLocale();
   const t = useTranslations("dashboard");
+  const ta = useTranslations("accountPages.achievements");
   const appToast = useAppToast();
   const [pending, startTransition] = useTransition();
   const [filter, setFilter] = useState<"all" | "featured" | "locked">("all");
@@ -94,14 +102,11 @@ export function AchievementShowcasePanel({
   }
 
   return (
-    <Card className="max-w-3xl">
-      <CardHeader className="flex flex-row items-start justify-between gap-4">
-        <div>
-          <CardTitle>{t("achievementsTitle")}</CardTitle>
-          <p className="text-sm text-muted-foreground mt-1">
-            Level {level} · {safeToLocaleString(xp)} XP · {t("featuredCount", { count: showcased.length })}
-          </p>
-        </div>
+    <SectionCard
+      className="max-w-3xl"
+      title={showTitle ? t("achievementsTitle") : undefined}
+      description={`${ta("progress", { level, xp: formatNumber(xp, locale) })} · ${t("featuredCount", { count: showcased.length })}`}
+      action={
         <Button
           variant="outline"
           size="sm"
@@ -119,20 +124,21 @@ export function AchievementShowcasePanel({
             })
           }
         >
-          <RefreshCw className="h-4 w-4 mr-1" /> {t("sync")}
+          <RefreshCw className="h-4 w-4" aria-hidden /> {t("sync")}
         </Button>
-      </CardHeader>
-      <CardContent className="space-y-4">
+      }
+    >
+      <div className="space-y-4">
         {showcased.length > 0 && (
-          <div className="rounded-lg border border-violet-bright/30 bg-violet-soft p-3">
-            <p className="text-xs font-medium text-muted-foreground mb-2">{t("featuredShowcase")}</p>
+          <div className="rounded-lg border border-line bg-elevated p-3">
+            <p className="label-text mb-2">{t("featuredShowcase")}</p>
             <div className="flex flex-wrap gap-2">
               {showcasedIds.map((id, i) => {
                 const a = achievements.find((x) => x.id === id);
                 if (!a) return null;
                 return (
-                  <div key={id} className="flex items-center gap-1 rounded-md border border-border/40 bg-card/50 px-2 py-1">
-                    <GripVertical className="h-3 w-3 text-muted-foreground" />
+                  <div key={id} className="flex items-center gap-1 rounded-md border border-line bg-raised px-2 py-1">
+                    <GripVertical className="h-3 w-3 text-ink-faint" aria-hidden />
                     <AchievementBadge
                       name={a.name}
                       description={a.description}
@@ -144,11 +150,25 @@ export function AchievementShowcasePanel({
                       size="sm"
                     />
                     <div className="flex flex-col">
-                      <Button variant="ghost" size="icon" className="h-5 w-5" disabled={pending || i === 0} onClick={() => moveShowcase(id, -1)}>
-                        <ChevronUp className="h-3 w-3" />
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-5 w-5"
+                        aria-label={ta("moveUp", { name: a.name })}
+                        disabled={pending || i === 0}
+                        onClick={() => moveShowcase(id, -1)}
+                      >
+                        <ChevronUp className="h-3 w-3" aria-hidden />
                       </Button>
-                      <Button variant="ghost" size="icon" className="h-5 w-5" disabled={pending || i === showcasedIds.length - 1} onClick={() => moveShowcase(id, 1)}>
-                        <ChevronDown className="h-3 w-3" />
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-5 w-5"
+                        aria-label={ta("moveDown", { name: a.name })}
+                        disabled={pending || i === showcasedIds.length - 1}
+                        onClick={() => moveShowcase(id, 1)}
+                      >
+                        <ChevronDown className="h-3 w-3" aria-hidden />
                       </Button>
                     </div>
                   </div>
@@ -158,17 +178,21 @@ export function AchievementShowcasePanel({
           </div>
         )}
 
-        <div className="flex flex-wrap gap-2">
-          <Select value={filter} onValueChange={(v) => setFilter(v as typeof filter)}>
-            <SelectTrigger className="w-[140px] h-8 text-xs"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">{t("filterAll")}</SelectItem>
-              <SelectItem value="featured">{t("filterFeatured")}</SelectItem>
-              <SelectItem value="locked">{t("filterNotFeatured")}</SelectItem>
-            </SelectContent>
-          </Select>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <ChipTabs
+            label={ta("filterLabel")}
+            value={filter}
+            onChange={(v) => setFilter(v as typeof filter)}
+            options={[
+              { value: "all", label: t("filterAll") },
+              { value: "featured", label: t("filterFeatured") },
+              { value: "locked", label: t("filterNotFeatured") },
+            ]}
+          />
           <Select value={sort} onValueChange={(v) => setSort(v as typeof sort)}>
-            <SelectTrigger className="w-[140px] h-8 text-xs"><SelectValue /></SelectTrigger>
+            <SelectTrigger className="h-[30px] w-[140px] text-xs" aria-label={ta("sortLabel")}>
+              <SelectValue />
+            </SelectTrigger>
             <SelectContent>
               <SelectItem value="date">{t("sortNewest")}</SelectItem>
               <SelectItem value="rarity">{t("sortRarity")}</SelectItem>
@@ -178,14 +202,11 @@ export function AchievementShowcasePanel({
         </div>
 
         {filtered.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No achievements match this filter.</p>
+          <EmptyState icon={Trophy} title={ta("emptyTitle")} description={ta("emptyText")} />
         ) : (
           <div className="grid gap-3 sm:grid-cols-2">
             {filtered.map((a) => (
-              <div
-                key={a.id}
-                className="flex items-center gap-3 rounded-lg border border-border/40 p-3 bg-card/30"
-              >
+              <div key={a.id} className="flex items-center gap-3 rounded-lg border border-line p-3">
                 <AchievementBadge
                   name={a.name}
                   description={a.description}
@@ -196,19 +217,21 @@ export function AchievementShowcasePanel({
                   unlockedAt={a.unlockedAt}
                   size="sm"
                 />
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate">{a.name}</p>
-                  {a.description && <p className="text-xs text-muted-foreground line-clamp-2">{a.description}</p>}
-                  <p className="text-[10px] text-muted-foreground mt-0.5">
-                    {a.rarity} · Unlocked {safeToLocaleDateString(new Date(a.unlockedAt))}
-                    {a.grantedBy && ` · by @${a.grantedBy.username}`}
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium text-ink">{a.name}</p>
+                  {a.description && <p className="line-clamp-2 text-xs text-ink-muted">{a.description}</p>}
+                  <p className="meta mt-0.5">
+                    {ta(`rarity.${a.rarity}`)} · {ta("unlockedOn", { date: formatDate(a.unlockedAt, locale) })}
+                    {a.grantedBy && ` · ${ta("grantedBy", { username: a.grantedBy.username })}`}
                   </p>
                 </div>
                 <Button
-                  variant={a.isShowcased ? "default" : "ghost"}
+                  variant="ghost"
                   size="icon"
+                  className={cn(a.isShowcased && "text-violet-bright")}
                   disabled={pending}
-                  title={a.isShowcased ? "Remove from featured" : `Feature (${SHOWCASE_MAX} max)`}
+                  aria-pressed={a.isShowcased}
+                  aria-label={a.isShowcased ? ta("unfeature") : ta("feature", { max: SHOWCASE_MAX })}
                   onClick={() =>
                     startTransition(async () => {
                       const r = await toggleAchievementShowcase(a.id, !a.isShowcased);
@@ -217,13 +240,13 @@ export function AchievementShowcasePanel({
                     })
                   }
                 >
-                  {a.isShowcased ? <Star className="h-4 w-4" /> : <StarOff className="h-4 w-4" />}
+                  {a.isShowcased ? <Star className="h-4 w-4" aria-hidden /> : <StarOff className="h-4 w-4" aria-hidden />}
                 </Button>
               </div>
             ))}
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </SectionCard>
   );
 }

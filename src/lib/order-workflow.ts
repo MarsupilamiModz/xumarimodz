@@ -9,6 +9,7 @@ import { sendOrderStatusEmail, sendOrderMessageEmail, sendCustomOrderNotificatio
 import { ORDER_STATUS_LABELS } from "@/lib/shop-enterprise";
 import { postTeamChannelAlert } from "@/lib/team-chat-system";
 import { getAppUrl } from "@/lib/app-url";
+import { runAfterResponse } from "@/lib/after-response";
 
 export async function logOrderActivity(
   orderId: string,
@@ -55,12 +56,12 @@ export async function notifyOrderStakeholders(params: {
     });
   }
 
-  void sendOrderStatusEmail({
+  runAfterResponse(sendOrderStatusEmail({
     orderId: params.orderId,
     title: params.title,
     body: params.body,
     template: params.emailTemplate ?? "status",
-  }).catch(() => undefined);
+  }).catch(() => undefined));
 }
 
 export async function notifyStaffNewCustomOrder(orderId: string, locale = "en") {
@@ -82,19 +83,19 @@ export async function notifyStaffNewCustomOrder(orderId: string, locale = "en") 
     locale,
   });
 
-  void sendCustomOrderNotification({
+  runAfterResponse(sendCustomOrderNotification({
     id: order.id,
     title: order.title,
     description: "",
     client: order.client,
     attachments: order.attachments,
-  } as Parameters<typeof sendCustomOrderNotification>[0]).catch(() => undefined);
+  } as Parameters<typeof sendCustomOrderNotification>[0]).catch(() => undefined));
 
   const link = `${getAppUrl()}/${locale}/admin/orders/${orderId}`;
-  void postTeamChannelAlert({
+  runAfterResponse(postTeamChannelAlert({
     channelSlug: "designers",
     content: `🛒 **New Custom Order Received**\n${order.title} by @${order.client.username}\n${link}`,
-  }).catch(() => undefined);
+  }).catch(() => undefined));
 }
 
 export async function onNewShopOrder(orderId: string, locale = "en") {
@@ -247,8 +248,8 @@ export async function onOrderMessageSent(params: {
     locale: params.locale,
   });
 
-  void sendOrderMessageEmail({
+  runAfterResponse(sendOrderMessageEmail({
     orderId: params.orderId,
     preview: params.content.slice(0, 200),
-  }).catch(() => undefined);
+  }).catch(() => undefined));
 }

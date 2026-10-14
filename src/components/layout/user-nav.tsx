@@ -43,6 +43,10 @@ export type NavUser = {
   role: UserRole;
   isPremium: boolean;
   permissions?: import("@/lib/permissions").PermissionKey[];
+  /** Werbestufe dieses Nutzers (/api/auth/me); steuert AdGate im Browser. */
+  adLevel?: "full" | "reduced" | "none";
+  /** Slug der aktiven Mitgliedschaft (/api/auth/me), z. B. für die Premium-Seite. */
+  planSlug?: string | null;
 };
 
 export function UserNav({ locale, user }: { locale: string; user: NavUser }) {

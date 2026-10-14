@@ -5,16 +5,25 @@ import { requireAdmin } from "@/lib/auth";
 import { getPartnerAdsCenterData } from "@/actions/admin/partner-ads";
 import { PartnerAdsAdminPanel } from "@/components/admin/partner-ads-admin-panel";
 
-export default async function AdminPartnerAdsPage({ params: { locale } }: { params: { locale: Locale } }) {
+export default async function AdminPartnerAdsPage(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   await requireAdmin();
-  const t = await getTranslations("admin");
-  const result = await getPartnerAdsCenterData();
+  const [t, tp, result] = await Promise.all([
+    getTranslations("admin"),
+    getTranslations("admin.partnerAdsAdmin"),
+    getPartnerAdsCenterData(),
+  ]);
   return (
     <div>
-      <AdminPageHeader title={t("nav.ads")} />
+      <AdminPageHeader title={tp("title")} description={tp("subtitle")} parent={{ label: t("nav.ads"), href: `/${locale}/admin/ads` }} />
       {result.success ? (
-        <PartnerAdsAdminPanel partners={result.data.partners} analytics={result.data.analytics} />
+        <PartnerAdsAdminPanel partners={result.data.partners} analytics={result.data.analytics} locale={locale} />
       ) : (
         <AdminLoadError message={result.error} />
       )}

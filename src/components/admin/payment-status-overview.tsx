@@ -2,13 +2,16 @@
 
 import { useTransition } from "react";
 import { useTranslations } from "next-intl";
-import { Badge } from "@/components/ui/badge";
+import { Receipt } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { SectionCard } from "@/components/ui/page-header";
+import { DataTable, type DataColumn } from "@/components/ui/data-table";
+import { EmptyState } from "@/components/ui/empty-state";
+import { StatusBadge, type StatusTone } from "@/components/ui/status-badge";
 import { testStripeConnection } from "@/actions/admin/payments";
 import type { PaymentSettings } from "@/lib/payments/settings";
 import { useAppToast } from "@/hooks/use-app-toast";
-import { formatDateTime } from "@/lib/format-locale";
+import { formatDateTime, formatEuro, formatNumber } from "@/lib/format-locale";
 
 type Transaction = {
   id: string;
@@ -18,6 +21,9 @@ type Transaction = {
   type: string;
   created: number;
 };
+
+// Status einer Stripe-Checkout-Session → Ton des StatusBadge.
+const SESSION_TONE: Record<string, StatusTone> = { complete: "success", open: "pending", expired: "neutral" };
 
 export function PaymentStatusOverview({
   settings,
@@ -31,22 +37,53 @@ export function PaymentStatusOverview({
   compact?: boolean;
 }) {
   const t = useTranslations("admin.ui.paymentStatus");
+  const tp = useTranslations("admin.panelPaymentStatus");
   const appToast = useAppToast();
   const [pending, startTransition] = useTransition();
 
   const stripeReady = settings.stripeSecretKeySet && settings.stripeWebhookSecretSet;
   const activeProvider = stripeReady ? "Stripe" : t("notConfigured");
 
+  // Stripe liefert Beträge in der Währung der Session (kleinste Einheit).
+  const formatAmount = (tx: Transaction) => {
+    if (tx.amount == null) return "—";
+    const currency = tx.currency?.toUpperCase() ?? "";
+    return currency === "EUR" ? formatEuro(tx.amount, locale) : `${formatNumber(tx.amount / 100, locale)} ${currency}`.trim();
+  };
+
+  const columns: DataColumn<Transaction>[] = [
+    { key: "id", header: tp("colSession"), width: "minmax(0,2fr)", cell: (tx) => <span className="mono-id">{tx.id.slice(0, 24)}…</span> },
+    {
+      key: "type",
+      header: tp("colType"),
+      hideOnMobile: true,
+      cell: (tx) => <span className="text-ink-muted">{tx.type === "unknown" ? tp("typeUnknown") : tx.type}</span>,
+    },
+    { key: "amount", header: tp("colAmount"), align: "right", cell: formatAmount },
+    {
+      key: "status",
+      header: tp("colStatus"),
+      cell: (tx) =>
+        tx.status && SESSION_TONE[tx.status] ? (
+          <StatusBadge tone={SESSION_TONE[tx.status]!} label={tp(`sessionStatus.${tx.status}`)} />
+        ) : (
+          <StatusBadge tone="neutral" label={tx.status ?? "—"} />
+        ),
+    },
+    {
+      key: "created",
+      header: tp("colCreated"),
+      hideOnMobile: true,
+      cell: (tx) => <span className="meta tabular-nums">{formatDateTime(tx.created * 1000, locale)}</span>,
+    },
+  ];
+
   return (
     <div className={compact ? "space-y-4" : "space-y-6"}>
-      <Card className="p-6 space-y-4">
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div>
-            <h3 className="font-semibold">{t("heading")}</h3>
-            <p className="text-xs text-muted-foreground mt-1">
-              {t("hint")}
-            </p>
-          </div>
+      <SectionCard
+        title={t("heading")}
+        description={t("hint")}
+        action={
           <Button
             type="button"
             variant="outline"
@@ -62,57 +99,46 @@ export function PaymentStatusOverview({
           >
             {t("testStripeConnection")}
           </Button>
-        </div>
-
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        }
+      >
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <StatusTile label={t("activeProvider")} value={activeProvider} ok={stripeReady} />
           <StatusTile label={t("stripeSecret")} value={settings.stripeSecretKeySet ? t("configured") : t("missing")} ok={settings.stripeSecretKeySet} />
           <StatusTile label={t("webhookSecret")} value={settings.stripeWebhookSecretSet ? t("configured") : t("missing")} ok={settings.stripeWebhookSecretSet} />
           <StatusTile label={t("currency")} value={settings.currency} ok />
         </div>
 
-        <div className="flex flex-wrap gap-2 text-xs">
-          <Badge variant={stripeReady ? "premium" : "outline"}>{stripeReady ? t("stripeReady") : t("stripeIncomplete")}</Badge>
-          <Badge variant="outline">{t("paypalViaEnv")}</Badge>
-          <Badge variant="outline">{t("applePayGooglePay")}</Badge>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <StatusBadge tone={stripeReady ? "success" : "warning"} label={stripeReady ? t("stripeReady") : t("stripeIncomplete")} />
+          <StatusBadge tone="info" label={t("paypalViaEnv")} />
+          <StatusBadge tone="info" label={t("applePayGooglePay")} />
         </div>
-      </Card>
+      </SectionCard>
 
       {!compact && (
-        <Card className="p-6">
-          <h3 className="font-semibold mb-4">{t("recentCheckouts")}</h3>
-          {transactions.length === 0 ? (
-            <p className="text-sm text-muted-foreground">{t("noRecentSessions")}</p>
-          ) : (
-            <div className="space-y-2">
-              {transactions.map((tx) => (
-                <div key={tx.id} className="flex flex-wrap justify-between gap-2 text-sm border-b border-border/30 py-2 last:border-0">
-                  <span className="font-mono text-xs">{tx.id.slice(0, 24)}…</span>
-                  <span className="text-muted-foreground">{tx.type}</span>
-                  <span>
-                    {tx.amount != null
-                      ? `${(tx.amount / 100).toFixed(2)} ${tx.currency?.toUpperCase() ?? ""}`
-                      : "—"}
-                  </span>
-                  <Badge variant="outline">{tx.status}</Badge>
-                  <span className="text-xs text-muted-foreground w-full sm:w-auto">
-                    {formatDateTime(tx.created * 1000, locale)}
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
-        </Card>
+        <section className="space-y-3">
+          <h2 className="section-title">{t("recentCheckouts")}</h2>
+          <DataTable
+            caption={t("recentCheckouts")}
+            columns={columns}
+            rows={transactions}
+            rowKey={(tx) => tx.id}
+            empty={<EmptyState icon={Receipt} title={t("noRecentSessions")} />}
+          />
+        </section>
       )}
     </div>
   );
 }
 
+/** Kachel für einen Konfigurationswert; fehlende Werte als Status mit Wort und Icon. */
 function StatusTile({ label, value, ok }: { label: string; value: string; ok: boolean }) {
   return (
-    <div className="rounded-lg border border-border/40 bg-background/30 p-3">
-      <p className="text-xs text-muted-foreground">{label}</p>
-      <p className={`mt-1 text-sm font-medium ${ok ? "text-foreground" : "text-destructive"}`}>{value}</p>
+    <div className="rounded-lg border border-line bg-raised p-4">
+      <p className="label-text">{label}</p>
+      <div className="mt-1.5 text-sm font-medium text-ink">
+        {ok ? value : <StatusBadge tone="danger" label={value} />}
+      </div>
     </div>
   );
 }

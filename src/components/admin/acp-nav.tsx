@@ -45,7 +45,7 @@ function NavBody({
   userName: string;
   userRole: string;
   openTickets: number;
-  searchRef?: React.RefObject<HTMLInputElement>;
+  searchRef?: React.RefObject<HTMLInputElement | null>;
   onNavigate?: () => void;
 }) {
   const t = useTranslations("admin");

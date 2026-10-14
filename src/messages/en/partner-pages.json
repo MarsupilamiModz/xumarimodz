@@ -1,0 +1,87 @@
+{
+  "partnerPages": {
+    "partnerOverview": {
+      "description": "Clicks, conversions and commissions for your partner code at a glance.",
+      "affiliateCodeHint": "Share this code – purchases made with it earn you commission."
+    },
+    "partnerAnalytics": {
+      "description": "How your clicks, conversions and code uses developed over the last 14 days."
+    },
+    "partnerCodes": {
+      "description": "Your partner codes with clicks, conversions and revenue.",
+      "colStatus": "Status",
+      "emptyTitle": "No partner codes",
+      "emptyText": "As soon as the team assigns you a code, it will appear here."
+    },
+    "partnerPayouts": {
+      "description": "Pending commissions and past payouts.",
+      "colAmount": "Amount",
+      "colStatus": "Status",
+      "colMethod": "Method",
+      "colDate": "Date",
+      "emptyText": "Payouts appear here once commissions are paid out.",
+      "status": {
+        "PENDING": "Pending",
+        "PROCESSING": "Processing",
+        "PAID": "Paid",
+        "FAILED": "Failed",
+        "CANCELLED": "Cancelled"
+      }
+    },
+    "partnerSettings": {
+      "description": "Avatar, banner and logo of your partner profile.",
+      "noProfileTitle": "No partner profile",
+      "noProfileText": "There is no partner profile for your account yet. Please contact the team."
+    },
+    "designerOverview": {
+      "viewAll": "View all",
+      "emptyUploadsTitle": "No assets yet",
+      "emptyOrdersTitle": "No orders"
+    },
+    "designerUploads": {
+      "description": "Your design assets with status, downloads and versions.",
+      "colAsset": "Asset",
+      "colGame": "Game",
+      "colDownloads": "Downloads",
+      "colVersions": "Versions",
+      "colStatus": "Status",
+      "colUpdated": "Updated"
+    },
+    "designerOrders": {
+      "description": "Orders assigned to you.",
+      "colOrder": "Order",
+      "colClient": "Client",
+      "colStatus": "Status",
+      "colUpdated": "Updated",
+      "messages": "{count, plural, one {# message} other {# messages}}"
+    },
+    "designerNew": {
+      "description": "Upload a new design asset – the team reviews it before it is published."
+    },
+    "designerAsset": {
+      "description": "Edit the details, media and versions of your asset."
+    },
+    "designerSettings": {
+      "description": "Avatar and banner of your studio profile."
+    },
+    "orderStatus": {
+      "PENDING": "New",
+      "PAID": "Paid",
+      "QUOTED": "Quoted",
+      "IN_REVIEW": "In review",
+      "ACCEPTED": "Accepted",
+      "ASSIGNED": "Assigned",
+      "IN_PROGRESS": "In progress",
+      "WAITING_FOR_CUSTOMER": "Waiting for customer",
+      "REVISION_REQUESTED": "Revision requested",
+      "REVIEW": "Review",
+      "COMPLETED": "Completed",
+      "DELIVERED": "Delivered",
+      "CANCELED": "Canceled",
+      "REFUNDED": "Refunded"
+    },
+    "teamChat": {
+      "title": "Team chat"
+    }
+  }
+}

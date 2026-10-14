@@ -1,20 +1,24 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
-import { safeToLocaleString } from "@/lib/i18n/safe-locale";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { Activity, FileSearch, ScrollText } from "lucide-react";
 import {
   clearAdminSystemLogs,
   exportAdminSystemLogs,
   runAdminPlatformAudit,
 } from "@/actions/admin/system";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
+import { SectionCard } from "@/components/ui/page-header";
+import { ChipTabs } from "@/components/ui/chip-tabs";
+import { KpiTile } from "@/components/ui/kpi-tile";
+import { StatusBadge, type StatusTone } from "@/components/ui/status-badge";
+import { EmptyState } from "@/components/ui/empty-state";
+import { SearchField } from "@/components/ui/search-field";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useAppToast } from "@/hooks/use-app-toast";
-import { formatDateTime } from "@/lib/format-locale";
+import { formatDateTime, formatNumber } from "@/lib/format-locale";
 import type { PlatformErrorEntry } from "@/lib/platform-log";
 import type { TranslationAuditResult } from "@/lib/i18n-audit";
 import type { PlatformAuditIssue } from "@/lib/platform-audit";
@@ -34,6 +38,8 @@ export type PlatformMetrics = {
   virusTotal: { envEnabled: boolean; apiKeyConfigured: boolean };
 };
 
+const SEVERITY_TONE: Record<string, StatusTone> = { error: "danger", warning: "warning", info: "info" };
+
 export function SystemHealthPanel({
   locale,
   logs,
@@ -52,12 +58,14 @@ export function SystemHealthPanel({
   lazyAudit?: boolean;
 }) {
   const t = useTranslations("admin.system");
+  const tp = useTranslations("admin.panelSystemHealth");
   const appToast = useAppToast();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [tab, setTab] = useState<Tab>("health");
   const [search, setSearch] = useState("");
   const [auditResult, setAuditResult] = useState(platformAudit);
+  const [confirmClear, setConfirmClear] = useState(false);
 
   const filteredLogs = useMemo(() => {
     if (!search.trim()) return logs;
@@ -67,188 +75,166 @@ export function SystemHealthPanel({
     );
   }, [logs, search]);
 
-  const tabs: { id: Tab; label: string }[] = [
-    { id: "health", label: t("healthTab") },
-    { id: "metrics", label: t("metricsTab") },
-    { id: "errors", label: t("errorsTab") },
-    { id: "audit", label: t("auditTab") },
-    { id: "translations", label: t("translationsTab") },
+  const tabs: { value: Tab; label: string }[] = [
+    { value: "health", label: t("healthTab") },
+    { value: "metrics", label: t("metricsTab") },
+    { value: "errors", label: t("errorsTab") },
+    { value: "audit", label: t("auditTab") },
+    { value: "translations", label: t("translationsTab") },
   ];
 
+  const n = (value: number) => formatNumber(value, locale);
+  // In Cloudflare Workers gibt es keine Host-Kennzahlen (Polyfills liefern 0) – dann Hinweis statt „0 MB“.
+  const memoryAvailable = !!metrics && (metrics.memory.heapUsedMb > 0 || metrics.memory.rssMb > 0);
+  const cpuAvailable = metrics?.cpu.usagePercent != null;
+
   return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap gap-2">
-        {tabs.map((item) => (
-          <Button
-            key={item.id}
-            variant={tab === item.id ? "default" : "outline"}
-            size="sm"
-            onClick={() => setTab(item.id)}
-          >
-            {item.label}
-          </Button>
-        ))}
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <ChipTabs
+          label={tp("tabsLabel")}
+          options={tabs}
+          value={tab}
+          onChange={(v) => setTab(v as Tab)}
+        />
         <Button variant="ghost" size="sm" disabled={pending} onClick={() => router.refresh()}>
           {t("retryHealth")}
         </Button>
       </div>
 
-      {tab === "health" && (
-        <Card className="p-6 dark-reader-lock">
-          <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+      {tab === "health" &&
+        (health.length === 0 ? (
+          <EmptyState icon={Activity} title={tp("healthEmpty")} />
+        ) : (
+          <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" aria-label={t("healthTab")}>
             {health.map((check) => (
-              <div
-                key={check.name}
-                className="rounded-lg border border-border/40 bg-card/40 p-3"
-              >
+              <li key={check.name} className="rounded-lg border border-line bg-raised p-4">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-sm font-medium">{check.name}</span>
-                  <Badge variant={check.ok ? "premium" : "destructive"}>
-                    {check.ok ? t("statusOk") : t("statusIssue")}
-                  </Badge>
+                  <span className="text-sm font-medium text-ink">{check.name}</span>
+                  <StatusBadge tone={check.ok ? "success" : "danger"} label={check.ok ? t("statusOk") : t("statusIssue")} />
                 </div>
-                {check.detail && (
-                  <p className="mt-1 text-xs text-muted-foreground">{check.detail}</p>
-                )}
-              </div>
+                {check.detail && <p className="meta mt-1">{check.detail}</p>}
+              </li>
             ))}
-          </div>
-        </Card>
-      )}
+          </ul>
+        ))}
 
-      {tab === "metrics" && metrics && (
-        <Card className="p-6 dark-reader-lock">
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <div className="rounded-lg border border-border/40 p-4">
-              <p className="text-xs text-muted-foreground">{t("memoryUsage")}</p>
-              <p className="text-lg font-semibold">
-                {metrics.memory.heapUsedMb} MB heap · {metrics.memory.rssMb} MB RSS
-              </p>
-            </div>
-            <div className="rounded-lg border border-border/40 p-4">
-              <p className="text-xs text-muted-foreground">{t("storageUsage")}</p>
-              <p className="text-lg font-semibold">{metrics.storage.detail}</p>
-            </div>
-            <div className="rounded-lg border border-border/40 p-4">
-              <p className="text-xs text-muted-foreground">{t("scanQueue")}</p>
-              <p className="text-lg font-semibold">{metrics.queues.scan} pending</p>
-            </div>
-            <div className="rounded-lg border border-border/40 p-4">
-              <p className="text-xs text-muted-foreground">{t("uploadQueue")}</p>
-              <p className="text-lg font-semibold">{metrics.queues.upload} in progress</p>
-            </div>
-            <div className="rounded-lg border border-border/40 p-4">
-              <p className="text-xs text-muted-foreground">{t("emailQueue")}</p>
-              <p className="text-lg font-semibold">{metrics.queues.email} pending</p>
-            </div>
-            <div className="rounded-lg border border-border/40 p-4">
-              <p className="text-xs text-muted-foreground">{t("activeUsers")}</p>
-              <p className="text-lg font-semibold">{metrics.activeUsers} downloads (1h)</p>
-            </div>
-            <div className="rounded-lg border border-border/40 p-4">
-              <p className="text-xs text-muted-foreground">{t("adRevenue")}</p>
-              <p className="text-lg font-semibold">
-                {safeToLocaleString(metrics.ads.impressions)} imp · {metrics.ads.ctr.toFixed(2)}% CTR
-              </p>
-            </div>
-            <div className="rounded-lg border border-border/40 p-4">
-              <p className="text-xs text-muted-foreground">Catalog</p>
-              <p className="text-lg font-semibold">
-                {metrics.database.mods} mods · {metrics.database.sounds} sounds
-              </p>
-            </div>
-            <div className="rounded-lg border border-border/40 p-4">
-              <p className="text-xs text-muted-foreground">VirusTotal</p>
-              <p className="text-lg font-semibold">
-                {metrics.virusTotal.envEnabled ? "Enabled" : "Disabled"} ·{" "}
-                {metrics.virusTotal.apiKeyConfigured ? "API key set" : "No env key"}
-              </p>
+      {tab === "metrics" &&
+        (metrics ? (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <KpiTile
+              label={tp("cpu")}
+              value={cpuAvailable ? `${n(metrics.cpu.usagePercent!)} %` : "—"}
+              hint={cpuAvailable ? undefined : tp("hostUnavailable")}
+            />
+            <KpiTile
+              label={t("memoryUsage")}
+              value={memoryAvailable ? tp("memoryValue", { heap: n(metrics.memory.heapUsedMb), rss: n(metrics.memory.rssMb) }) : "—"}
+              hint={memoryAvailable ? undefined : tp("hostUnavailable")}
+            />
+            <KpiTile
+              label={t("storageUsage")}
+              value={metrics.storage.bytes ? tp("storageValue", { mb: n(Math.round(metrics.storage.bytes / 1024 / 1024)) }) : "—"}
+              hint={metrics.storage.bytes ? tp("storageHint") : tp("storageNoData")}
+            />
+            <KpiTile label={t("scanQueue")} value={n(metrics.queues.scan)} hint={tp("pendingHint")} tone={metrics.queues.scan > 0 ? "warning" : undefined} />
+            <KpiTile label={t("uploadQueue")} value={n(metrics.queues.upload)} hint={tp("inProgressHint")} />
+            <KpiTile label={t("emailQueue")} value={n(metrics.queues.email)} hint={tp("pendingHint")} />
+            <KpiTile label={t("activeUsers")} value={n(metrics.activeUsers)} hint={tp("downloadsLastHour")} />
+            <KpiTile
+              label={t("adRevenue")}
+              value={n(metrics.ads.impressions)}
+              hint={tp("adsHint", { ctr: formatNumber(Math.round(metrics.ads.ctr * 100) / 100, locale) })}
+            />
+            <KpiTile
+              label={tp("catalog")}
+              value={n(metrics.database.mods)}
+              hint={tp("catalogHint", { sounds: n(metrics.database.sounds) })}
+            />
+            <div className="rounded-lg border border-line bg-raised p-4">
+              <p className="label-text">{tp("virusTotal")}</p>
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                <StatusBadge
+                  tone={metrics.virusTotal.envEnabled ? "success" : "neutral"}
+                  label={metrics.virusTotal.envEnabled ? tp("enabled") : tp("disabled")}
+                />
+                <StatusBadge
+                  tone={metrics.virusTotal.apiKeyConfigured ? "success" : "warning"}
+                  label={metrics.virusTotal.apiKeyConfigured ? tp("apiKeySet") : tp("noEnvKey")}
+                />
+              </div>
             </div>
           </div>
-        </Card>
-      )}
+        ) : (
+          <EmptyState icon={Activity} title={tp("metricsEmpty")} description={tp("metricsEmptyText")} />
+        ))}
 
       {tab === "errors" && (
-        <Card className="p-6">
-          <div className="flex flex-wrap items-center gap-3 mb-4">
-            <Input
-              placeholder={t("searchErrors")}
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="max-w-xs h-9"
-            />
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={pending}
-              onClick={() =>
-                startTransition(async () => {
-                  const r = await exportAdminSystemLogs();
-                  if (r.success && r.data) {
-                    const blob = new Blob([r.data], { type: "application/json" });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement("a");
-                    a.href = url;
-                    a.download = `platform-errors-${Date.now()}.json`;
-                    a.click();
-                    URL.revokeObjectURL(url);
-                  } else if (!r.success) {
-                    appToast.error(r.error);
-                  }
-                })
-              }
-            >
-              {t("exportLogs")}
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={pending || logs.length === 0}
-              onClick={() =>
-                startTransition(async () => {
-                  const r = await clearAdminSystemLogs();
-                  if (r.success) {
-                    appToast.saved();
-                    router.refresh();
-                  } else appToast.error(r.error);
-                })
-              }
-            >
-              {t("clearLogs")}
-            </Button>
-          </div>
+        <SectionCard
+          title={t("errorsTab")}
+          action={
+            <div className="flex flex-wrap gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={pending}
+                onClick={() =>
+                  startTransition(async () => {
+                    const r = await exportAdminSystemLogs();
+                    if (r.success && r.data) {
+                      const blob = new Blob([r.data], { type: "application/json" });
+                      const url = URL.createObjectURL(blob);
+                      const a = document.createElement("a");
+                      a.href = url;
+                      a.download = `platform-errors-${Date.now()}.json`;
+                      a.click();
+                      URL.revokeObjectURL(url);
+                    } else if (!r.success) {
+                      appToast.error(r.error);
+                    }
+                  })
+                }
+              >
+                {t("exportLogs")}
+              </Button>
+              <Button variant="outline" size="sm" disabled={pending || logs.length === 0} onClick={() => setConfirmClear(true)}>
+                {t("clearLogs")}
+              </Button>
+            </div>
+          }
+        >
+          <SearchField
+            label={t("searchErrors")}
+            name="log-search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="mb-4 max-w-xs"
+          />
 
           {filteredLogs.length === 0 ? (
-            <p className="text-sm text-muted-foreground">{t("noErrors")}</p>
+            <EmptyState icon={ScrollText} title={t("noErrors")} />
           ) : (
-            <div className="space-y-2 max-h-[520px] overflow-y-auto">
+            <ul className="max-h-[520px] divide-y divide-line overflow-y-auto rounded-lg border border-line">
               {filteredLogs.map((log) => (
-                <div
-                  key={log.id}
-                  className="rounded-lg border border-border/30 bg-card/30 p-3 text-sm"
-                >
+                <li key={log.id} className="p-3 text-sm">
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <Badge variant="outline">{log.context}</Badge>
-                    <span className="text-xs text-muted-foreground">
-                      {formatDateTime(log.createdAt, locale)}
-                    </span>
+                    <span className="mono-id text-ink-muted">{log.context}</span>
+                    <span className="meta tabular-nums">{formatDateTime(log.createdAt, locale)}</span>
                   </div>
-                  <p className="mt-2 text-xs break-words font-mono">{log.message}</p>
-                </div>
+                  <p className="mono-id mt-2 break-words text-ink">{log.message}</p>
+                </li>
               ))}
-            </div>
+            </ul>
           )}
-        </Card>
+        </SectionCard>
       )}
 
       {tab === "audit" && (
-        <Card className="p-6 space-y-4">
-          {!auditResult && (
-            <p className="text-sm text-muted-foreground">Run a platform audit to check uploads, Stripe, and configuration.</p>
-          )}
-          <div className="flex flex-wrap items-center gap-3">
+        <SectionCard
+          title={t("auditTab")}
+          description={auditResult?.scannedAt ? t("lastScan", { time: formatDateTime(auditResult.scannedAt, locale) }) : undefined}
+          action={
             <Button
-             
               size="sm"
               disabled={pending}
               onClick={() =>
@@ -263,80 +249,87 @@ export function SystemHealthPanel({
             >
               {pending ? t("auditRunning") : t("runAudit")}
             </Button>
-            {auditResult?.scannedAt && (
-              <span className="text-xs text-muted-foreground">
-                {t("lastScan", { time: formatDateTime(auditResult.scannedAt, locale) })}
-              </span>
-            )}
-          </div>
-          <div className="space-y-2">
-            {(auditResult?.issues ?? []).map((issue, i) => (
-              <div
-                key={`${issue.category}-${i}`}
-                className="rounded-lg border border-border/30 bg-card/30 p-3 text-sm"
-              >
-                <div className="flex flex-wrap items-center gap-2 mb-1">
-                  <Badge
-                    variant={
-                      issue.severity === "error"
-                        ? "destructive"
-                        : issue.severity === "warning"
-                          ? "premium"
-                          : "outline"
-                    }
-                  >
-                    {issue.severity === "error"
-                      ? t("severityError")
-                      : issue.severity === "warning"
-                        ? t("severityWarning")
-                        : t("severityInfo")}
-                  </Badge>
-                  <span className="text-xs text-muted-foreground">{issue.category}</span>
-                </div>
-                <p>{issue.message}</p>
-                {issue.detail && (
-                  <p className="text-xs text-muted-foreground mt-1 font-mono">{issue.detail}</p>
-                )}
-              </div>
-            ))}
-          </div>
-        </Card>
+          }
+        >
+          {!auditResult ? (
+            <EmptyState icon={FileSearch} title={tp("auditEmpty")} description={tp("auditEmptyText")} />
+          ) : auditResult.issues.length === 0 ? (
+            <EmptyState icon={FileSearch} title={tp("auditNoIssues")} />
+          ) : (
+            <ul className="divide-y divide-line rounded-lg border border-line">
+              {auditResult.issues.map((issue, i) => (
+                <li key={`${issue.category}-${i}`} className="p-3 text-sm">
+                  <div className="mb-1 flex flex-wrap items-center gap-2">
+                    <StatusBadge
+                      tone={SEVERITY_TONE[issue.severity] ?? "info"}
+                      label={
+                        issue.severity === "error"
+                          ? t("severityError")
+                          : issue.severity === "warning"
+                            ? t("severityWarning")
+                            : t("severityInfo")
+                      }
+                    />
+                    <span className="meta">{issue.category}</span>
+                  </div>
+                  <p className="text-ink">{issue.message}</p>
+                  {issue.detail && <p className="mono-id mt-1 text-ink-muted">{issue.detail}</p>}
+                </li>
+              ))}
+            </ul>
+          )}
+        </SectionCard>
       )}
 
       {tab === "translations" && (
-        <Card className="p-6 space-y-4">
-          <p className="text-sm text-muted-foreground">
-            {t("translationSummary", {
-              locale: translationAudit.referenceLocale,
-              count: translationAudit.totalReferenceKeys,
-            })}
-          </p>
-          <p className="text-sm">{translationAudit.summary}</p>
-          <div className="space-y-2">
+        <SectionCard
+          title={t("translationsTab")}
+          description={t("translationSummary", {
+            locale: translationAudit.referenceLocale,
+            count: translationAudit.totalReferenceKeys,
+          })}
+        >
+          {translationAudit.summary && <p className="mb-4 text-sm text-ink">{translationAudit.summary}</p>}
+          <ul className="divide-y divide-line rounded-lg border border-line">
             {translationAudit.locales.map((loc) => (
-              <div
-                key={loc.locale}
-                className="rounded-lg border border-border/30 bg-card/30 p-3 text-sm flex flex-wrap justify-between gap-2"
-              >
-                <span className="font-medium uppercase">{loc.locale}</span>
+              <li key={loc.locale} className="flex flex-wrap items-center justify-between gap-2 p-3 text-sm">
+                <span className="font-medium uppercase text-ink">{loc.locale}</span>
                 {loc.missing.length === 0 ? (
-                  <Badge variant="premium">{t("noMissingKeys")}</Badge>
+                  <StatusBadge tone="success" label={t("noMissingKeys")} />
                 ) : (
-                  <Badge variant="destructive">
-                    {t("missingKeys", { count: loc.missing.length, locale: loc.locale })}
-                  </Badge>
+                  <StatusBadge tone="danger" label={t("missingKeys", { count: loc.missing.length, locale: loc.locale })} />
                 )}
                 {loc.missing.length > 0 && (
-                  <p className="w-full text-xs text-muted-foreground font-mono line-clamp-2">
+                  <p className="mono-id line-clamp-2 w-full text-ink-muted">
                     {loc.missing.slice(0, 20).join(", ")}
                     {loc.missing.length > 20 ? "…" : ""}
                   </p>
                 )}
-              </div>
+              </li>
             ))}
-          </div>
-        </Card>
+          </ul>
+        </SectionCard>
       )}
+
+      <ConfirmDialog
+        open={confirmClear}
+        onOpenChange={setConfirmClear}
+        title={tp("clearConfirmTitle")}
+        description={tp("clearConfirmText")}
+        confirmLabel={t("clearLogs")}
+        variant="destructive"
+        loading={pending}
+        onConfirm={() =>
+          startTransition(async () => {
+            const r = await clearAdminSystemLogs();
+            if (r.success) {
+              setConfirmClear(false);
+              appToast.saved();
+              router.refresh();
+            } else appToast.error(r.error);
+          })
+        }
+      />
     </div>
   );
 }

@@ -9,18 +9,13 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ModCard } from "@/components/mods/mod-card";
 import { ModDetailMedia } from "@/components/mods/mod-detail-media";
-import { FavoriteButton } from "@/components/mods/favorite-button";
-import { ReviewForm } from "@/components/mods/review-form";
-import { ModDependenciesPanel } from "@/components/mods/mod-dependencies-panel";
 import { ModVersionsPanel } from "@/components/mods/mod-versions-panel";
 import { ModDownloadButton } from "@/components/mods/mod-download-button";
-import { ModPurchaseButton } from "@/components/mods/mod-purchase-button";
+import { ModDependenciesLive, ModFavoriteLive, ModPurchaseLive, ModReviewLive } from "@/components/mods/mod-viewer";
 import { ModSecurityPanel } from "@/components/security/mod-security-panel";
 import { ReportContentButton } from "@/components/trust/report-content-button";
 import { checkMissingDependencies } from "@/lib/mod-dependencies";
 import { getModBySlug, getTrendingMods } from "@/lib/data";
-import { getCurrentUser } from "@/lib/auth";
-import { prisma } from "@/lib/db";
 import { SITE } from "@/lib/site";
 import { getFeaturedMediaUrl, getGalleryImages, getYouTubeVideos, mapModMedia } from "@/lib/mod-media";
 import { getLocalizedModContent } from "@/lib/localization";
@@ -28,14 +23,28 @@ import { SafeImage } from "@/components/ui/safe-image";
 import { UserIdentity } from "@/components/user/user-identity";
 import { getInlineBadgesForUsers } from "@/lib/user-badges";
 import { AdLocationSlot } from "@/components/ads/ad-location-slot";
-import { formatMoneyFromCents } from "@/lib/currency";
 import { formatBytes } from "@/lib/file-size";
 import { formatCompactNumber, formatDate } from "@/lib/format-locale";
 import { formatDisplayName } from "@/lib/display-name";
 import { safeIntlNumberFormat } from "@/lib/i18n/safe-locale";
 import type { Locale } from "@/i18n/config";
 
-export async function generateMetadata({ params: { slug } }: { params: { slug: string } }): Promise<Metadata> {
+// Für Gäste gerendert und per ISR gecacht; Favorit, Kauf, Bewertung und fehlende Abhängigkeiten
+// lädt der Browser für Angemeldete nach (components/mods/mod-viewer.tsx).
+export const revalidate = 60;
+// Leere Liste = keine Vorab-Builds, aber jede Mod-Seite wird beim ersten Aufruf gerendert und gecacht
+// (ohne generateStaticParams rendert Next 15 dynamische Segmente bei jedem Aufruf neu).
+export function generateStaticParams() {
+  return [];
+}
+
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const params = await props.params;
+
+  const {
+    slug
+  } = params;
+
   const mod = await getModBySlug(slug);
   if (!mod) return { title: "Mod not found" };
   const media = mapModMedia(mod.media ?? []);
@@ -62,20 +71,24 @@ function Fact({ label, children }: { label: string; children: React.ReactNode })
   );
 }
 
-export default async function ModDetailPage({ params: { locale, slug } }: { params: { locale: Locale; slug: string } }) {
+export default async function ModDetailPage(props: { params: Promise<{ locale: Locale; slug: string }> }) {
+  const params = await props.params;
+
+  const {
+    locale,
+    slug
+  } = params;
+
   setRequestLocale(locale);
   const t = await getTranslations("mods");
   const mod = await getModBySlug(slug);
   if (!mod || mod.status !== "PUBLISHED") notFound();
 
-  const [localized, user] = await Promise.all([
-    getLocalizedModContent(mod.id, locale, {
-      title: mod.title,
-      description: mod.description,
-      shortDescription: mod.shortDescription,
-    }),
-    getCurrentUser(),
-  ]);
+  const localized = await getLocalizedModContent(mod.id, locale, {
+    title: mod.title,
+    description: mod.description,
+    shortDescription: mod.shortDescription,
+  });
 
   const media = mapModMedia(mod.media ?? []);
   const featuredUrl = getFeaturedMediaUrl(media, mod.screenshots);
@@ -91,14 +104,10 @@ export default async function ModDetailPage({ params: { locale, slug } }: { para
   const reviewUserIds = mod.reviews.map((r) => r.userId);
   const authorId = mod.author.id;
 
-  const [favorited, related, badgeMap, owned, depCheck] = await Promise.all([
-    user ? prisma.modFavorite.findUnique({ where: { modId_userId: { modId: mod.id, userId: user.id } } }) : null,
+  const [related, badgeMap, depCheck] = await Promise.all([
     getTrendingMods(5, mod.gameId),
     getInlineBadgesForUsers([authorId, ...reviewUserIds], locale),
-    user
-      ? prisma.modPurchase.findFirst({ where: { modId: mod.id, userId: user.id, refundedAt: null } }).catch(() => null)
-      : null,
-    checkMissingDependencies(mod.id, user?.id ?? null),
+    checkMissingDependencies(mod.id, null),
   ]);
 
   const relatedMods = related.filter((m) => m.id !== mod.id).slice(0, 4);
@@ -107,7 +116,6 @@ export default async function ModDetailPage({ params: { locale, slug } }: { para
   const primaryVersion = mod.versions.find((v) => v.isPrimary && !v.isArchived) ?? mod.versions.find((v) => !v.isArchived);
   const sizeLabel = primaryVersion ? formatBytes(primaryVersion.fileSize, locale) : null;
   const pricingLabel = mod.pricing === "FREE" ? t("free") : mod.pricing === "PREMIUM" ? t("premium") : t("paid");
-  const isPaid = mod.pricing === "PAID" && !!mod.priceCents && mod.priceCents > 0;
   const hasRatings = mod.reviews.length > 0 && mod.averageRating > 0;
   // Changelog: eigene Einträge, sonst die Notizen der Versionen.
   const changelog =
@@ -219,16 +227,7 @@ export default async function ModDetailPage({ params: { locale, slug } }: { para
             </TabsContent>
 
             <TabsContent value="comments" className="space-y-6">
-              {user ? (
-                <ReviewForm modId={mod.id} />
-              ) : (
-                <p className="text-sm text-ink-muted">
-                  <Link href={`/${locale}/login?redirect=/${locale}/mods/${mod.slug}`} className="link font-semibold">
-                    {t("signIn")}
-                  </Link>{" "}
-                  · {t("leaveReview")}
-                </p>
-              )}
+              <ModReviewLive modId={mod.id} slug={mod.slug} locale={locale} />
               {mod.reviews.length === 0 ? (
                 <EmptyState icon={MessageSquare} title={t("noReviews")} />
               ) : (
@@ -275,27 +274,10 @@ export default async function ModDetailPage({ params: { locale, slug } }: { para
                 variant="outline"
                 label={sizeLabel ? t("downloadWithSize", { size: sizeLabel }) : t("download")}
               />
-              <FavoriteButton modId={mod.id} initialFavorited={!!favorited} />
+              <ModFavoriteLive modId={mod.id} />
             </div>
 
-            {isPaid && user && (
-              <div className="mt-3">
-                <ModPurchaseButton modId={mod.id} priceCents={mod.priceCents!} owned={!!owned} locale={locale} />
-              </div>
-            )}
-            {isPaid && !user && (
-              <p className="mt-3 text-center text-lg font-bold tabular-nums text-ink">
-                {formatMoneyFromCents(mod.priceCents!, locale)}
-              </p>
-            )}
-            {!user && mod.pricing !== "FREE" && (
-              <p className="mt-3 text-sm text-ink-muted">
-                <Link href={`/${locale}/login?redirect=/${locale}/mods/${mod.slug}`} className="link font-semibold">
-                  {t("signIn")}
-                </Link>{" "}
-                – {t("signInForPremium")}
-              </p>
-            )}
+            <ModPurchaseLive modId={mod.id} slug={mod.slug} locale={locale} pricing={mod.pricing} priceCents={mod.priceCents} />
           </div>
 
           {primaryVersion && (
@@ -330,7 +312,8 @@ export default async function ModDetailPage({ params: { locale, slug } }: { para
             </dl>
           </div>
 
-          <ModDependenciesPanel
+          <ModDependenciesLive
+            modId={mod.id}
             locale={locale}
             required={depCheck.required}
             optional={depCheck.optional}

@@ -27,7 +27,16 @@ function maskKey(key: string) {
 
 type Params = { status?: string; q?: string; page?: string };
 
-export default async function AdminLicensesPage({ params: { locale }, searchParams }: { params: { locale: Locale }; searchParams: Params }) {
+export default async function AdminLicensesPage(
+  props: { params: Promise<{ locale: Locale }>; searchParams: Promise<Params> }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   await requirePagePermission("licenses.write");
   const t = await getTranslations("admin.li");

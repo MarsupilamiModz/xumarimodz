@@ -1,0 +1,49 @@
+// Cloudflare Workers – Xumari Modz (Next.js über OpenNext). Anleitung: docs/CLOUDFLARE.md
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "xumarimodz",
+  "main": "cloudflare/worker.ts",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+
+  // Statische Dateien (_next/static, public/) direkt vom Edge
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+
+  // Eigene App erreichen (Middleware lädt die IP-Sperrliste, ACP prüft ads.txt)
+  "services": [{ "binding": "WORKER_SELF_REFERENCE", "service": "xumarimodz" }],
+
+  // ISR- und Daten-Cache (open-next.config.ts). Bucket einmalig anlegen:
+  //   npx wrangler r2 bucket create xumarimodz-next-cache
+  "r2_buckets": [{ "binding": "NEXT_INC_CACHE_R2_BUCKET", "bucket_name": "xumarimodz-next-cache" }],
+
+  // Revalidierungs-Queue und Tag-Cache als Durable Objects (keine IDs nötig)
+  "durable_objects": {
+    "bindings": [
+      { "name": "NEXT_CACHE_DO_QUEUE", "class_name": "DOQueueHandler" },
+      { "name": "NEXT_TAG_CACHE_DO_SHARDED", "class_name": "DOShardedTagCache" }
+    ]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["DOQueueHandler", "DOShardedTagCache"] }],
+
+  // next/image-Optimierung über Cloudflare Images
+  "images": { "binding": "IMAGES" },
+
+  // Empfohlen: Hyperdrive vor der Supabase-Datenbank (Verbindungspool am Edge, viel schnellere Abfragen).
+  // Anlegen: npx wrangler hyperdrive create xumarimodz-db --connection-string="<DIRECT_URL>"
+  // Dann die ausgegebene ID hier eintragen und den Block einkommentieren – src/lib/db.ts nutzt ihn automatisch.
+  // "hyperdrive": [{ "binding": "HYPERDRIVE", "id": "<HYPERDRIVE_ID>" }],
+
+  // Ersetzt den externen Cron (siehe cloudflare/worker.ts)
+  "triggers": { "crons": ["*/5 * * * *", "*/15 * * * *"] },
+
+  "observability": { "enabled": true },
+
+  // NEXT_PUBLIC_* werden beim Build aus .env eingebaut; hier nur für den Cron-Einstieg.
+  // Alle Server-Werte aus .env (DATABASE_URL, STRIPE_SECRET_KEY, …) per `npm run cf:secrets` hochladen.
+  "vars": {
+    "NEXT_PUBLIC_APP_URL": "https://www.xumari-modz.com"
+  }
+}

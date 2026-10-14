@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Card } from "@/components/ui/card";
+import { SectionCard } from "@/components/ui/page-header";
 import { useAppToast } from "@/hooks/use-app-toast";
 import { type FlatCategory } from "@/lib/categories";
 import { SOUND_CATEGORIES, PREVIEW_TYPES } from "@/lib/sound";
@@ -20,6 +20,42 @@ type Game = {
   modes: { id: string; name: string; slug: string }[];
 };
 type Category = FlatCategory & { gameId: string; modeId?: string | null };
+
+/** Beschriftetes Formularfeld; `id` verbindet Label und Control, der Hinweis hat die id `${id}-hint`. */
+function Field({
+  id,
+  label,
+  hint,
+  required,
+  children,
+}: {
+  id: string;
+  label: string;
+  hint?: string;
+  /** Übersetztes „Pflichtfeld“ für Screenreader; das Sternchen ist nur visuell. */
+  required?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div>
+      <label htmlFor={id} className="label-text mb-1.5 block text-ink-muted">
+        {label}
+        {required && (
+          <>
+            <span aria-hidden> *</span>
+            <span className="sr-only"> ({required})</span>
+          </>
+        )}
+      </label>
+      {children}
+      {hint && (
+        <p id={`${id}-hint`} className="meta mt-1 text-ink-faint">
+          {hint}
+        </p>
+      )}
+    </div>
+  );
+}
 
 export function ProductForm({
   locale,
@@ -34,6 +70,7 @@ export function ProductForm({
   const ts = useTranslations("sounds");
   const tm = useTranslations("mods");
   const tc = useTranslations("common");
+  const tp = useTranslations("creatorPages.productForm");
   const appToast = useAppToast();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -78,7 +115,7 @@ export function ProductForm({
   }
 
   return (
-    <Card className="p-6 max-w-2xl">
+    <SectionCard className="max-w-2xl">
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -93,16 +130,16 @@ export function ProductForm({
               productType === "MOD" ? subcategoryId || parentCategoryId || undefined : undefined;
 
             if (productType === "MOD" && !resolvedCategoryId) {
-              appToast.error("Please select a game category");
+              appToast.error(tp("errorCategory"));
               return;
             }
             if (productType === "MOD" && requiresSubcategory && !subcategoryId) {
-              appToast.error("Please select a subcategory");
+              appToast.error(tp("errorSubcategory"));
               return;
             }
 
             if (productType === "MOD" && requiresMode && !modeId) {
-              appToast.error("Please select a game mode");
+              appToast.error(tp("errorMode"));
               return;
             }
 
@@ -144,10 +181,9 @@ export function ProductForm({
         }}
         className="space-y-4"
       >
-        <div>
-          <label className="text-sm font-medium">{ts("productType")} *</label>
+        <Field id="product-type" label={ts("productType")} required={tp("required")}>
           <Select value={productType} onValueChange={(v) => setProductType(v as "MOD" | "SOUND")}>
-            <SelectTrigger className="mt-1">
+            <SelectTrigger id="product-type">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -155,76 +191,73 @@ export function ProductForm({
               <SelectItem value="SOUND">{ts("typeSound")}</SelectItem>
             </SelectContent>
           </Select>
-        </div>
+        </Field>
 
-        <div>
-          <label className="text-sm font-medium">
-            {productType === "SOUND" ? ts("soundTitle") : t("newMod")} *
-          </label>
-          <Input name="title" required minLength={3} className="mt-1" />
-        </div>
+        <Field id="product-title" label={productType === "SOUND" ? ts("soundTitle") : tp("fieldTitle")} required={tp("required")}>
+          <Input id="product-title" name="title" required minLength={3} />
+        </Field>
 
         {productType === "SOUND" && (
-          <div>
-            <label className="text-sm font-medium">{ts("artist")}</label>
-            <Input name="artist" className="mt-1" />
-          </div>
+          <Field id="product-artist" label={ts("artist")}>
+            <Input id="product-artist" name="artist" />
+          </Field>
         )}
 
-        <div>
-          <label className="text-sm font-medium">{tm("search")}</label>
-          <Input name="shortDescription" maxLength={300} className="mt-1" />
-        </div>
+        <Field id="product-short" label={tp("shortDescription")} hint={tp("shortDescriptionHint")}>
+          <Input id="product-short" name="shortDescription" maxLength={300} aria-describedby="product-short-hint" />
+        </Field>
 
-        <div>
-          <label className="text-sm font-medium">{t("manageMod")} *</label>
-          <Textarea name="description" required minLength={20} rows={6} className="mt-1" />
-        </div>
+        <Field id="product-description" label={tp("fieldDescription")} hint={tp("descriptionHint")} required={tp("required")}>
+          <Textarea
+            id="product-description"
+            name="description"
+            required
+            minLength={20}
+            rows={6}
+            aria-describedby="product-description-hint"
+          />
+        </Field>
 
         {productType === "MOD" && requiresMode && (
-          <div>
-            <label className="text-sm font-medium">{t("gameMode")} *</label>
+          <Field id="product-mode" label={t("gameMode")} required={tp("required")}>
             <Select value={modeId} onValueChange={onModeChange}>
-              <SelectTrigger className="mt-1"><SelectValue placeholder="Select platform / mode" /></SelectTrigger>
+              <SelectTrigger id="product-mode"><SelectValue placeholder={tp("modePlaceholder")} /></SelectTrigger>
               <SelectContent>
                 {gameModes.map((m) => (
                   <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
-          </div>
+          </Field>
         )}
 
         <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <label className="text-sm font-medium">{t("myMods")} *</label>
+          <Field id="product-game" label={tp("game")} required={tp("required")}>
             <Select value={gameId} onValueChange={onGameChange}>
-              <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
+              <SelectTrigger id="product-game"><SelectValue /></SelectTrigger>
               <SelectContent>
                 {games.map((g) => (
                   <SelectItem key={g.id} value={g.id}>{g.name}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
-          </div>
+          </Field>
 
           {productType === "MOD" ? (
-            <div>
-              <label className="text-sm font-medium">{t("category")} *</label>
+            <Field id="product-category" label={t("category")} required={tp("required")}>
               <Select value={parentCategoryId} onValueChange={onParentCategoryChange}>
-                <SelectTrigger className="mt-1"><SelectValue placeholder="Select category" /></SelectTrigger>
+                <SelectTrigger id="product-category"><SelectValue placeholder={tp("categoryPlaceholder")} /></SelectTrigger>
                 <SelectContent>
                   {rootCategories.map((c) => (
                     <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-            </div>
+            </Field>
           ) : (
-            <div>
-              <label className="text-sm font-medium">{ts("audioCategory")} *</label>
+            <Field id="product-audio-category" label={ts("audioCategory")} required={tp("required")}>
               <Select value={audioCategory} onValueChange={(v) => setAudioCategory(v as SoundAudioCategory)}>
-                <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
+                <SelectTrigger id="product-audio-category"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {SOUND_CATEGORIES.map((c) => (
                     <SelectItem key={c.value} value={c.value}>
@@ -233,47 +266,42 @@ export function ProductForm({
                   ))}
                 </SelectContent>
               </Select>
-            </div>
+            </Field>
           )}
         </div>
 
         {productType === "MOD" && parentCategoryId && subcategories.length > 0 && (
-          <div>
-            <label className="text-sm font-medium">{t("subcategory")} *</label>
+          <Field id="product-subcategory" label={t("subcategory")} required={tp("required")}>
             <Select value={subcategoryId} onValueChange={setSubcategoryId}>
-              <SelectTrigger className="mt-1"><SelectValue placeholder="Select subcategory" /></SelectTrigger>
+              <SelectTrigger id="product-subcategory"><SelectValue placeholder={tp("subcategoryPlaceholder")} /></SelectTrigger>
               <SelectContent>
                 {subcategories.map((c) => (
                   <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
-          </div>
+          </Field>
         )}
 
         {productType === "SOUND" && (
           <div className="grid gap-4 sm:grid-cols-3">
-            <div>
-              <label className="text-sm font-medium">{ts("duration")}</label>
-              <Input name="durationSeconds" type="number" min={0} placeholder="210" className="mt-1" />
-            </div>
-            <div>
-              <label className="text-sm font-medium">{ts("bpm")}</label>
-              <Input name="bpm" type="number" min={0} className="mt-1" />
-            </div>
-            <div>
-              <label className="text-sm font-medium">{ts("genre")}</label>
-              <Input name="genre" className="mt-1" />
-            </div>
+            <Field id="product-duration" label={ts("duration")}>
+              <Input id="product-duration" name="durationSeconds" type="number" min={0} />
+            </Field>
+            <Field id="product-bpm" label={ts("bpm")}>
+              <Input id="product-bpm" name="bpm" type="number" min={0} />
+            </Field>
+            <Field id="product-genre" label={ts("genre")}>
+              <Input id="product-genre" name="genre" />
+            </Field>
           </div>
         )}
 
         {productType === "SOUND" && (
           <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label className="text-sm font-medium">{ts("previewType")}</label>
+            <Field id="product-preview" label={ts("previewType")}>
               <Select value={previewType} onValueChange={(v) => setPreviewType(v as SoundPreviewType)}>
-                <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
+                <SelectTrigger id="product-preview"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {PREVIEW_TYPES.map((p) => (
                     <SelectItem key={p.value} value={p.value}>
@@ -282,45 +310,41 @@ export function ProductForm({
                   ))}
                 </SelectContent>
               </Select>
-            </div>
+            </Field>
             {previewType === "CUSTOM" && (
-              <div>
-                <label className="text-sm font-medium">{ts("previewCustomSeconds")}</label>
-                <Input name="previewCustomSeconds" type="number" min={5} max={600} className="mt-1" />
-              </div>
+              <Field id="product-preview-seconds" label={ts("previewCustomSeconds")}>
+                <Input id="product-preview-seconds" name="previewCustomSeconds" type="number" min={5} max={600} />
+              </Field>
             )}
           </div>
         )}
 
-        <div>
-          <label className="text-sm font-medium">{tm("filter")}</label>
+        <Field id="product-pricing" label={tp("pricing")}>
           <Select value={pricing} onValueChange={(v) => setPricing(v as typeof pricing)}>
-            <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
+            <SelectTrigger id="product-pricing"><SelectValue /></SelectTrigger>
             <SelectContent>
               <SelectItem value="FREE">{tm("free")}</SelectItem>
               <SelectItem value="PREMIUM">{tm("premium")}</SelectItem>
               <SelectItem value="PAID">{tm("paid")}</SelectItem>
             </SelectContent>
           </Select>
-        </div>
+        </Field>
 
         {pricing === "PAID" && (
-          <div>
-            <label className="text-sm font-medium">{tm("paid")}</label>
-            <Input name="priceCents" type="number" min={0} step={0.01} className="mt-1" />
-          </div>
+          <Field id="product-price" label={tp("price")}>
+            <Input id="product-price" name="priceCents" type="number" min={0} step={0.01} />
+          </Field>
         )}
 
-        <div>
-          <label className="text-sm font-medium">Tags</label>
-          <Input name="tags" placeholder="ui, hud, realism" className="mt-1" />
-        </div>
+        <Field id="product-tags" label={tp("tags")} hint={tp("tagsHint")}>
+          <Input id="product-tags" name="tags" aria-describedby="product-tags-hint" />
+        </Field>
 
-        <Button type="submit" disabled={pending}>
+        <Button type="submit" disabled={pending} aria-busy={pending}>
           {pending ? tc("loading") : productType === "SOUND" ? ts("createSound") : t("createMod")}
         </Button>
       </form>
-    </Card>
+    </SectionCard>
   );
 }
 

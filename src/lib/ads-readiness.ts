@@ -1,9 +1,8 @@
-import { readFile } from "fs/promises";
-import path from "path";
 import { getAdSettings } from "@/lib/ads";
 import { resolveAdsenseClientId, buildAdsTxtLine, DEFAULT_ADSENSE_CLIENT_ID } from "@/lib/adsense-config";
 import { getAppUrl } from "@/lib/app-url";
 import { SITE } from "@/lib/site";
+import { selfFetch } from "@/lib/self-fetch";
 
 export type AdSenseReadinessCheck = {
   id: string;
@@ -52,28 +51,18 @@ export async function getAdSenseReadinessReport(): Promise<AdSenseReadinessRepor
   let adsTxtDetail = "Not found";
   let adsTxtReachable = false;
 
+  // ads.txt wird dynamisch aus den Einstellungen erzeugt (src/app/ads.txt/route.ts) – geprüft wird die Live-Antwort.
   try {
-    const filePath = path.join(process.cwd(), "public", "ads.txt");
-    const content = await readFile(filePath, "utf8");
-    const expectedLine = buildAdsTxtLine(publisherId);
-    adsTxtOk = content.includes("google.com") && content.includes("pub-");
-    adsTxtDetail = adsTxtOk
-      ? `public/ads.txt (${content.trim().split("\n").length} line(s))`
-      : "ads.txt missing google.com entry";
-    if (adsTxtOk && !content.includes(publisherId.replace("ca-pub-", "pub-"))) {
-      warnings.push("ads.txt publisher ID may not match current AdSense client ID");
-    }
-    if (!content.trim().includes(expectedLine)) {
-      warnings.push(`Expected: ${expectedLine}`);
-    }
-  } catch {
-    adsTxtDetail = "public/ads.txt not readable — save AdSense settings to regenerate";
-  }
-
-  try {
-    const res = await fetch(adsTxtUrl, { cache: "no-store", signal: AbortSignal.timeout(8000) });
+    const res = await selfFetch(adsTxtUrl, { cache: "no-store", signal: AbortSignal.timeout(8000) });
     if (res.ok) {
       const body = await res.text();
+      const expectedLine = buildAdsTxtLine(publisherId);
+      if (!body.includes(publisherId.replace("ca-pub-", "pub-"))) {
+        warnings.push("ads.txt publisher ID may not match current AdSense client ID");
+      }
+      if (!body.trim().includes(expectedLine)) {
+        warnings.push(`Expected: ${expectedLine}`);
+      }
       adsTxtReachable = body.includes("google.com") && body.includes("pub-");
       if (adsTxtReachable) {
         adsTxtOk = true;

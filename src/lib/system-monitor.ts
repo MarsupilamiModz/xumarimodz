@@ -1,5 +1,5 @@
 import "server-only";
-import os from "os";
+import { hostMetrics } from "@/lib/host-metrics";
 import { prisma } from "@/lib/db";
 import { getSiteSetting, setSiteSetting } from "@/lib/site-settings";
 
@@ -123,15 +123,12 @@ export async function recordServiceChecks(checks: ServiceCheck[], force = false)
 }
 
 export function serverMetrics() {
-  const [load1] = os.loadavg();
-  const cpus = os.cpus().length || 1;
-  const total = os.totalmem();
-  const free = os.freemem();
+  const host = hostMetrics();
   return {
-    cpuLoadPct: Math.min(100, Math.round((load1 / cpus) * 100)),
-    memoryUsedPct: Math.round(((total - free) / total) * 100),
-    processMemoryMb: Math.round(process.memoryUsage().rss / (1024 * 1024)),
-    uptimeSeconds: Math.round(process.uptime()),
-    platformNote: os.platform() === "win32" ? "loadavg-unavailable" : null,
+    cpuLoadPct: host.available ? Math.min(100, Math.round((host.load1 / host.cpuCount) * 100)) : 0,
+    memoryUsedPct: host.available ? Math.round(((host.totalMem - host.freeMem) / host.totalMem) * 100) : 0,
+    processMemoryMb: Math.round(host.processRss / (1024 * 1024)),
+    uptimeSeconds: host.uptimeSeconds,
+    platformNote: !host.available ? "serverless" : host.platform === "win32" ? "loadavg-unavailable" : null,
   };
 }

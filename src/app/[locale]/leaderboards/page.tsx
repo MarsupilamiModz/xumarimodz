@@ -1,34 +1,43 @@
 import { Suspense } from "react";
-import { setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { getLeaderboard, PUBLIC_LEADERBOARD_METRICS, syncCreatorRanks } from "@/lib/leaderboards";
 import { getAllGames } from "@/lib/data";
 import { LeaderboardClient } from "@/components/leaderboards/leaderboard-client";
 import type { LeaderboardMetric, LeaderboardPeriod } from "@prisma/client";
 import type { Locale } from "@/i18n/config";
 import type { Metadata } from "next";
+import { runAfterResponse } from "@/lib/after-response";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const revalidate = 120;
 
-export const metadata: Metadata = {
-  title: "Creator Leaderboards",
-  description: "Top creators ranked by downloads, revenue, growth, and community engagement.",
-};
+export async function generateMetadata(props: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
+  const { locale } = await props.params;
+  const t = await getTranslations({ locale, namespace: "publicPages.leaderboards" });
+  return { title: t("title"), description: t("metaDescription") };
+}
 
-export default async function LeaderboardsPage({
-  params: { locale },
-  searchParams,
-}: {
-  params: { locale: Locale };
-  searchParams: {
-    metric?: string;
-    period?: string;
-    game?: string;
-    q?: string;
-  };
-}) {
+export default async function LeaderboardsPage(
+  props: {
+    params: Promise<{ locale: Locale }>;
+    searchParams: Promise<{
+      metric?: string;
+      period?: string;
+      game?: string;
+      q?: string;
+    }>;
+  }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
 
-  void syncCreatorRanks();
+  runAfterResponse(syncCreatorRanks());
 
   const metric = (searchParams.metric?.toUpperCase() ?? "DOWNLOADS") as LeaderboardMetric;
   const period = (searchParams.period?.toUpperCase() ?? "ALL_TIME") as LeaderboardPeriod;
@@ -46,8 +55,8 @@ export default async function LeaderboardsPage({
   ]);
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
-      <Suspense fallback={<div className="h-96 animate-pulse rounded-xl bg-muted/20" />}>
+    <div className="page-section">
+      <Suspense fallback={<Skeleton className="h-96 rounded-lg" />}>
         <LeaderboardClient
           locale={locale}
           entries={entries}

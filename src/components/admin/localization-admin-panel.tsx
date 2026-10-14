@@ -1,9 +1,11 @@
 "use client";
 
 import { useTransition } from "react";
+import { useTranslations } from "next-intl";
+import { Languages } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty-state";
+import { StatusBadge, type StatusTone } from "@/components/ui/status-badge";
 import { useAppToast } from "@/hooks/use-app-toast";
 import { runTranslationJob, approveTranslationJob } from "@/actions/admin/localization";
 
@@ -18,27 +20,40 @@ type Job = {
   status: string;
 };
 
+// Status der Übersetzungsjobs (enum TranslationJobStatus) → Ton des StatusBadge.
+const STATUS_TONE: Record<string, StatusTone> = {
+  PENDING: "pending",
+  PROCESSING: "info",
+  COMPLETED: "warning",
+  FAILED: "danger",
+  APPROVED: "success",
+};
+const KNOWN_STATUS = new Set(Object.keys(STATUS_TONE));
+
 export function LocalizationAdminPanel({ jobs }: { jobs: Job[] }) {
+  const t = useTranslations("admin.panelLocalization");
   const appToast = useAppToast();
   const [pending, startTransition] = useTransition();
 
+  if (jobs.length === 0) {
+    return <EmptyState icon={Languages} title={t("emptyTitle")} description={t("emptyText")} />;
+  }
+
   return (
-    <div className="space-y-3">
-      {jobs.length === 0 && (
-        <Card className="p-6 text-sm text-muted-foreground">No translation jobs queued.</Card>
-      )}
+    <ul className="space-y-3" aria-label={t("listLabel")}>
       {jobs.map((job) => (
-        <Card key={job.id} className="p-4 space-y-2">
+        <li key={job.id} className="space-y-2 rounded-lg border border-line bg-raised p-4">
           <div className="flex flex-wrap items-center gap-2">
-            <Badge variant="outline">{job.status}</Badge>
-            <span className="text-xs text-muted-foreground">
-              {job.entityType}.{job.field} · {job.sourceLocale} → {job.targetLocale}
+            <StatusBadge
+              tone={STATUS_TONE[job.status] ?? "neutral"}
+              label={KNOWN_STATUS.has(job.status) ? t(`status.${job.status}`) : job.status}
+            />
+            <span className="meta">
+              <span className="mono-id">{job.entityType}.{job.field}</span> · {job.sourceLocale} → {job.targetLocale}
             </span>
           </div>
-          <p className="text-sm line-clamp-2">{job.sourceText}</p>
-          {job.translatedText && (
-            <p className="text-sm text-ink-muted line-clamp-2">{job.translatedText}</p>
-          )}
+          <p className="line-clamp-2 text-sm text-ink">{job.sourceText}</p>
+          {job.translatedText && <p className="line-clamp-2 text-sm text-ink-muted">{job.translatedText}</p>}
           <div className="flex gap-2">
             {job.status === "PENDING" && (
               <Button
@@ -53,13 +68,12 @@ export function LocalizationAdminPanel({ jobs }: { jobs: Job[] }) {
                   })
                 }
               >
-                Run AI translation
+                {t("run")}
               </Button>
             )}
             {job.status === "COMPLETED" && (
               <Button
                 size="sm"
-               
                 disabled={pending}
                 onClick={() =>
                   startTransition(async () => {
@@ -69,12 +83,12 @@ export function LocalizationAdminPanel({ jobs }: { jobs: Job[] }) {
                   })
                 }
               >
-                Approve
+                {t("approve")}
               </Button>
             )}
           </div>
-        </Card>
+        </li>
       ))}
-    </div>
+    </ul>
   );
 }

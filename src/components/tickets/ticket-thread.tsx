@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, useTransition } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import type { TicketStatus } from "@prisma/client";
 import {
   replyToTicket,
@@ -14,8 +15,11 @@ import { UserAvatar } from "@/components/ui/user-avatar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { PageHeader, SectionCard } from "@/components/ui/page-header";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { toast } from "@/hooks/use-toast";
-import { TICKET_STATUS_LABELS, TICKET_CATEGORY_LABELS, TICKET_PRIORITY_LABELS } from "@/lib/ticket-labels";
+import { TICKET_CATEGORY_LABELS, TICKET_PRIORITY_LABELS } from "@/lib/ticket-labels";
+import { ticketTone } from "@/lib/status-tones";
 import { formatDisplayName } from "@/lib/display-name";
 import { cn } from "@/lib/utils";
 import { Paperclip, Download } from "lucide-react";
@@ -59,6 +63,7 @@ function formatFileSize(bytes: number) {
 }
 
 function TicketAttachmentButton({ attachment }: { attachment: Attachment }) {
+  const t = useTranslations("accountPages.supportTicket");
   const [pending, startTransition] = useTransition();
 
   function download() {
@@ -77,11 +82,12 @@ function TicketAttachmentButton({ attachment }: { attachment: Attachment }) {
       type="button"
       onClick={download}
       disabled={pending}
-      className="inline-flex items-center gap-1 rounded-md border border-border/50 bg-background/40 px-2 py-1 text-xs hover:bg-accent/20"
+      aria-label={t("download", { file: attachment.fileName })}
+      className="inline-flex items-center gap-1 rounded-md border border-line bg-elevated px-2 py-1 text-xs text-ink transition-colors duration-fast hover:bg-hover disabled:opacity-50"
     >
-      <Download className="h-3 w-3" />
+      <Download className="h-3 w-3" aria-hidden />
       {attachment.fileName}
-      <span className="text-muted-foreground">({formatFileSize(attachment.fileSize)})</span>
+      <span className="text-ink-faint">({formatFileSize(attachment.fileSize)})</span>
     </button>
   );
 }
@@ -95,6 +101,9 @@ export function TicketThread({
   isStaff: boolean;
   canReply: boolean;
 }) {
+  const locale = useLocale();
+  const t = useTranslations("accountPages.supportTicket");
+  const ts = useTranslations("status");
   const [content, setContent] = useState("");
   const [internalNote, setInternalNote] = useState("");
   const [files, setFiles] = useState<File[]>([]);
@@ -174,137 +183,149 @@ export function TicketThread({
     ticket.attachments?.filter((a) => !a.messageId) ?? [];
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-center gap-2">
-        <Badge variant="outline">{ticket.ticketNumber}</Badge>
-        <Badge variant="outline">{TICKET_CATEGORY_LABELS[ticket.category]}</Badge>
-        <Badge variant="outline">{TICKET_PRIORITY_LABELS[ticket.priority]}</Badge>
-        <Badge variant={ticket.status === "CLOSED" ? "secondary" : "premium"}>
-          {TICKET_STATUS_LABELS[ticket.status]}
-        </Badge>
-      </div>
-      <h1 className="h1-acp">{ticket.subject}</h1>
+    <div>
+      <PageHeader
+        title={ticket.subject}
+        description={
+          <span className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <span className="mono-id">{ticket.ticketNumber}</span>
+            <span>{t("category", { category: ts(`category.${ticket.category}`) })}</span>
+            <span>{t("priority", { priority: ts(`priority.${ticket.priority}`) })}</span>
+          </span>
+        }
+        actions={<StatusBadge tone={ticketTone(ticket.status)} label={ts(`ticket.${ticket.status}`)} />}
+      />
 
-      {orphanAttachments.length > 0 && (
-        <div className="flex flex-wrap gap-2">
-          {orphanAttachments.map((a) => (
-            <TicketAttachmentButton key={a.id} attachment={a} />
-          ))}
-        </div>
-      )}
+      <div className="space-y-6">
+        {orphanAttachments.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {orphanAttachments.map((a) => (
+              <TicketAttachmentButton key={a.id} attachment={a} />
+            ))}
+          </div>
+        )}
 
-      <div className="space-y-4">
-        {ticket.messages.map((msg) => (
-          <div
-            key={msg.id}
-            className={cn(
-              "flex gap-3 rounded-lg border p-4",
-              msg.isInternal
-                ? "border-warning/40 bg-warning/5"
-                : msg.isStaff
-                  ? "border-line-control bg-elevated ml-0 mr-8"
-                  : "border-border/50 bg-card/40 mr-0 ml-8"
-            )}
-          >
-            <UserAvatar
-              src={msg.sender.avatarUrl}
-              name={msg.sender.displayName ?? msg.sender.username}
-              className="h-8 w-8 shrink-0"
-            />
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
-                <span className="font-medium text-foreground">{formatDisplayName(msg.sender)}</span>
-                {msg.isInternal && <Badge variant="outline" className="text-[10px] border-warning/50 text-warning">Internal</Badge>}
-                {msg.isStaff && !msg.isInternal && <Badge variant="outline" className="text-[10px]">Staff</Badge>}
-                <span>{formatDateTime(msg.createdAt)}</span>
+        <ul className="space-y-4">
+          {ticket.messages.map((msg) => (
+            <li
+              key={msg.id}
+              className={cn(
+                "flex gap-3 rounded-lg border p-4",
+                msg.isInternal
+                  ? "border-line bg-warning-soft"
+                  : msg.isStaff
+                    ? "ml-0 mr-8 border-line-control bg-elevated"
+                    : "ml-8 mr-0 border-line bg-raised"
+              )}
+            >
+              <UserAvatar
+                src={msg.sender.avatarUrl}
+                name={msg.sender.displayName ?? msg.sender.username}
+                className="h-8 w-8 shrink-0"
+              />
+              <div className="min-w-0 flex-1">
+                <div className="mb-1 flex flex-wrap items-center gap-2 text-xs text-ink-muted">
+                  <span className="font-medium text-ink">{formatDisplayName(msg.sender)}</span>
+                  {msg.isInternal && <Badge variant="warning">{t("internal")}</Badge>}
+                  {msg.isStaff && !msg.isInternal && <Badge variant="outline">{t("staff")}</Badge>}
+                  <span>{formatDateTime(msg.createdAt, locale)}</span>
+                </div>
+                <p className="whitespace-pre-wrap text-sm text-ink">{msg.content}</p>
+                {msg.attachments && msg.attachments.length > 0 && (
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {msg.attachments.map((a) => (
+                      <TicketAttachmentButton key={a.id} attachment={a} />
+                    ))}
+                  </div>
+                )}
               </div>
-              <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
-              {msg.attachments && msg.attachments.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {msg.attachments.map((a) => (
-                    <TicketAttachmentButton key={a.id} attachment={a} />
+            </li>
+          ))}
+        </ul>
+
+        {canReply && ticket.status !== "CLOSED" && (
+          <SectionCard>
+            <div className="space-y-3">
+              <label htmlFor="ticket-reply" className="label-text">
+                {t("replyLabel")}
+              </label>
+              <Textarea
+                id="ticket-reply"
+                placeholder={t("replyPlaceholder")}
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                rows={4}
+              />
+              <input
+                ref={fileInputRef}
+                type="file"
+                multiple
+                className="hidden"
+                accept="image/*,application/pdf,.zip,.txt,.log"
+                onChange={(e) => setFiles(Array.from(e.target.files ?? []))}
+              />
+              {files.length > 0 && (
+                <div className="flex flex-wrap gap-2 text-xs text-ink-muted">
+                  {files.map((f) => (
+                    <span key={f.name} className="rounded-sm border border-line px-2 py-0.5">
+                      {f.name}
+                    </span>
                   ))}
                 </div>
               )}
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  onClick={sendReply}
+                  disabled={pending || (!content.trim() && files.length === 0)}
+                >
+                  {t("sendReply")}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={pending}
+                >
+                  <Paperclip className="h-4 w-4" aria-hidden />
+                  {t("attach")}
+                </Button>
+                <Button variant="ghost" onClick={handleClose} disabled={pending}>
+                  {t("close")}
+                </Button>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          </SectionCard>
+        )}
 
-      {canReply && ticket.status !== "CLOSED" && (
-        <div className="rounded-xl p-4 space-y-3">
-          <Textarea
-            placeholder="Write your reply..."
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            rows={4}
-          />
-          <input
-            ref={fileInputRef}
-            type="file"
-            multiple
-            className="hidden"
-            accept="image/*,application/pdf,.zip,.txt,.log"
-            onChange={(e) => setFiles(Array.from(e.target.files ?? []))}
-          />
-          {files.length > 0 && (
-            <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
-              {files.map((f) => (
-                <span key={f.name} className="rounded border border-border/40 px-2 py-0.5">
-                  {f.name}
-                </span>
-              ))}
-            </div>
-          )}
-          <div className="flex flex-wrap gap-2">
+        {isStaff && ticket.status !== "CLOSED" && (
+          <div className="space-y-3 rounded-lg bg-warning-soft p-4">
+            <label htmlFor="ticket-internal" className="label-text text-warning">
+              {t("internalTitle")}
+            </label>
+            <Textarea
+              id="ticket-internal"
+              placeholder={t("internalPlaceholder")}
+              value={internalNote}
+              onChange={(e) => setInternalNote(e.target.value)}
+              rows={3}
+            />
             <Button
-             
-              onClick={sendReply}
-              disabled={pending || (!content.trim() && files.length === 0)}
-            >
-              Send Reply
-            </Button>
-            <Button
-              type="button"
               variant="outline"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={pending}
+              size="sm"
+              onClick={sendInternalNote}
+              disabled={pending || !internalNote.trim()}
             >
-              <Paperclip className="h-4 w-4 mr-1" />
-              Attach files
-            </Button>
-            <Button variant="outline" onClick={handleClose} disabled={pending}>
-              Close Ticket
+              {t("addInternal")}
             </Button>
           </div>
-        </div>
-      )}
+        )}
 
-      {isStaff && ticket.status !== "CLOSED" && (
-        <div className="rounded-xl border border-warning/30 bg-warning/5 p-4 space-y-3">
-          <p className="text-xs font-medium text-warning">Internal note (staff only)</p>
-          <Textarea
-            placeholder="Add an internal note visible only to staff..."
-            value={internalNote}
-            onChange={(e) => setInternalNote(e.target.value)}
-            rows={3}
-          />
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={sendInternalNote}
-            disabled={pending || !internalNote.trim()}
-          >
-            Add internal note
+        {ticket.status === "CLOSED" && (
+          <Button variant="outline" onClick={handleReopen} disabled={pending}>
+            {t("reopen")}
           </Button>
-        </div>
-      )}
-
-      {ticket.status === "CLOSED" && (
-        <Button variant="outline" onClick={handleReopen} disabled={pending}>
-          Reopen Ticket
-        </Button>
-      )}
+        )}
+      </div>
     </div>
   );
 }

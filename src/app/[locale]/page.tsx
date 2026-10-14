@@ -19,8 +19,8 @@ import { GameDiscoveryGrid } from "@/components/games/game-discovery-grid";
 import { getGamesDiscoveryCards } from "@/lib/game-discovery";
 import { getTrendingMods, getGameBySlug } from "@/lib/data";
 import { primaryGameSlug } from "@/i18n/config";
-import { getActiveAnnouncements } from "@/actions/admin/announcements";
-import { AnnouncementBar } from "@/components/announcements/announcement-bar";
+import { getGuestAnnouncements } from "@/actions/admin/announcements";
+import { AnnouncementBarLive } from "@/components/announcements/announcement-bar-live";
 import { REVALIDATE } from "@/lib/cache";
 import { AdLocationSlot } from "@/components/ads/ad-location-slot";
 import { getCachedPublicBranding } from "@/lib/branding-data";
@@ -30,7 +30,7 @@ import { MembershipCampaignBanner } from "@/components/membership/membership-cam
 import { FaqList } from "@/components/faq/faq-list";
 import { getFaqEntries } from "@/lib/faq";
 
-export const revalidate = REVALIDATE.homepage;
+export const revalidate = 120; // REVALIDATE.homepage – Next verlangt ein Literal
 
 const FEATURE_ICONS: LucideIcon[] = [Download, ShieldCheck, Layers, History, UserRound, HeartHandshake];
 
@@ -59,7 +59,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
   const [games, primaryGame, announcements, cms] = await Promise.all([
     getGamesDiscoveryCards().catch(() => []),
     getGameBySlug(primaryGameSlug).catch(() => null),
-    getActiveAnnouncements().catch(() => []),
+    getGuestAnnouncements().catch(() => []),
     getCachedPublicBranding(),
   ]);
 
@@ -94,20 +94,17 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
   return (
     <div>
       <MembershipCampaignBanner locale={locale} />
-      {announcements.length > 0 && (
-        <div className="page-container pt-4">
-          <AnnouncementBar
-            items={announcements.map((a) => ({ id: a.id, title: a.title, content: a.content, link: a.link, kind: a.kind }))}
-            kindLabels={{
-              news: tc("announcementKind.news"),
-              update: tc("announcementKind.update"),
-              maintenance: tc("announcementKind.maintenance"),
-              warning: tc("announcementKind.warning"),
-            }}
-            moreLabel={t("announcementMore")}
-          />
-        </div>
-      )}
+      <AnnouncementBarLive
+        className="page-container pt-4"
+        initialItems={announcements.map((a) => ({ id: a.id, title: a.title, content: a.content, link: a.link, kind: a.kind }))}
+        kindLabels={{
+          news: tc("announcementKind.news"),
+          update: tc("announcementKind.update"),
+          maintenance: tc("announcementKind.maintenance"),
+          warning: tc("announcementKind.warning"),
+        }}
+        moreLabel={t("announcementMore")}
+      />
 
       {/* Hero: Text links, App-Screenshot rechts */}
       <section className="page-section">

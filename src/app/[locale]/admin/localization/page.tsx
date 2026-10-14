@@ -16,7 +16,16 @@ import { SearchField } from "@/components/ui/search-field";
 
 type Params = { tab?: string; lang?: string; q?: string; missing?: string; page?: string };
 
-export default async function AdminLocalizationPage({ params: { locale }, searchParams }: { params: { locale: Locale }; searchParams: Params }) {
+export default async function AdminLocalizationPage(
+  props: { params: Promise<{ locale: Locale }>; searchParams: Promise<Params> }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   await requirePagePermission("settings.write");
   const t = await getTranslations("admin.lo");

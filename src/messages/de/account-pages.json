@@ -1,0 +1,230 @@
+{
+  "accountPages": {
+    "overview": {
+      "levelValue": "Level {level}",
+      "xp": "{xp} XP"
+    },
+    "achievements": {
+      "progress": "Level {level} · {xp} XP",
+      "filterLabel": "Erfolge filtern",
+      "sortLabel": "Sortierung",
+      "emptyTitle": "Keine passenden Erfolge",
+      "emptyText": "Für diesen Filter gibt es keine Erfolge.",
+      "unlockedOn": "Freigeschaltet am {date}",
+      "grantedBy": "von @{username}",
+      "feature": "Im Profil hervorheben (höchstens {max})",
+      "unfeature": "Aus dem Profil entfernen",
+      "moveUp": "{name} nach vorne verschieben",
+      "moveDown": "{name} nach hinten verschieben",
+      "rarity": {
+        "COMMON": "Gewöhnlich",
+        "UNCOMMON": "Ungewöhnlich",
+        "RARE": "Selten",
+        "EPIC": "Episch",
+        "LEGENDARY": "Legendär"
+      }
+    },
+    "downloads": {
+      "description": "Deine letzten 50 Downloads.",
+      "colMod": "Mod",
+      "colVersion": "Version",
+      "colDate": "Datum",
+      "version": "v{version}",
+      "emptyTitle": "Noch keine Downloads"
+    },
+    "favorites": {
+      "description": "Mods, die du gespeichert hast.",
+      "emptyTitle": "Noch nichts gespeichert"
+    },
+    "following": {
+      "description": "Creators, denen du folgst.",
+      "emptyText": "Folge Creators, damit du ihre neuen Mods nicht verpasst."
+    },
+    "library": {
+      "description": "Gekaufte Mods und Käufe aus dem Shop.",
+      "ownedMods": "Gekaufte Mods ({count})",
+      "shopPurchases": "Shop-Käufe ({count})",
+      "emptyModsTitle": "Noch keine gekauften Mods",
+      "emptyModsText": "Mods, die du kaufst, findest du hier.",
+      "visitShop": "Zum Shop",
+      "emptyShopTitle": "Noch keine Shop-Käufe",
+      "emptyShopText": "Käufe aus dem Shop erscheinen hier.",
+      "colProduct": "Produkt",
+      "colType": "Art",
+      "colDate": "Datum",
+      "colPrice": "Preis",
+      "productType": {
+        "CREDIT_PACK": "Guthabenpaket",
+        "MEMBERSHIP": "Mitgliedschaft",
+        "MOD": "Mod",
+        "EXCLUSIVE": "Exklusiv",
+        "BUNDLE": "Paket",
+        "SUBSCRIPTION": "Abo",
+        "ACCESS": "Zugang",
+        "CUSTOM": "Individuell"
+      }
+    },
+    "licenses": {
+      "redeemText": "Schlüssel sind an ein Produkt gebunden und schalten nur dieses frei.",
+      "keyLabel": "Lizenzschlüssel",
+      "colProduct": "Produkt",
+      "colActivated": "Aktiviert am",
+      "colStatus": "Status",
+      "emptyTitle": "Noch keine Lizenzen",
+      "emptyText": "Eingelöste Schlüssel erscheinen hier.",
+      "status": {
+        "ACTIVE": "Aktiv",
+        "REDEEMED": "Eingelöst",
+        "EXPIRED": "Abgelaufen",
+        "REVOKED": "Widerrufen",
+        "PAUSED": "Pausiert"
+      }
+    },
+    "notifications": {
+      "description": "Hinweise zu Tickets, Aufträgen und deinem Konto."
+    },
+    "orders": {
+      "description": "Deine Sonderaufträge und ihr Stand.",
+      "colOrder": "Auftrag",
+      "colType": "Art",
+      "colMessages": "Nachrichten",
+      "colStatus": "Status",
+      "emptyTitle": "Noch keine Aufträge",
+      "emptyText": "Stelle eine Anfrage – den Fortschritt verfolgst du hier.",
+      "back": "Zurück zu den Aufträgen",
+      "conversation": "Verlauf",
+      "noMessages": "Noch keine Nachrichten.",
+      "replyLabel": "Deine Antwort",
+      "replyPlaceholder": "Antwort schreiben …",
+      "send": "Senden",
+      "status": {
+        "PENDING": "Neu",
+        "PAID": "Bezahlt",
+        "QUOTED": "Angebot",
+        "IN_REVIEW": "In Prüfung",
+        "ACCEPTED": "Angenommen",
+        "ASSIGNED": "Zugewiesen",
+        "IN_PROGRESS": "In Arbeit",
+        "WAITING_FOR_CUSTOMER": "Wartet auf dich",
+        "REVISION_REQUESTED": "Änderung gewünscht",
+        "REVIEW": "Abnahme",
+        "COMPLETED": "Abgeschlossen",
+        "DELIVERED": "Geliefert",
+        "CANCELED": "Storniert",
+        "REFUNDED": "Erstattet"
+      },
+      "payment": {
+        "title": "Zahlung",
+        "invoice": "Rechnung",
+        "reference": "Verwendungszweck",
+        "payWithCard": "Mit Karte bezahlen",
+        "payWithCredits": "Mit Guthaben bezahlen",
+        "otherMethods": "Überweisung und PayPal: Gib die Rechnungsreferenz oben an und melde dich nach der Zahlung beim Support.",
+        "checkoutFailed": "Checkout fehlgeschlagen: Stripe hat keinen Zahlungslink geliefert.",
+        "download": "{file} herunterladen",
+        "status": {
+          "UNPAID": "Offen",
+          "AWAITING_PAYMENT": "Zahlung ausstehend",
+          "PAID": "Bezahlt",
+          "REFUNDED": "Erstattet"
+        }
+      }
+    },
+    "security": {
+      "description": "Zwei-Faktor-Anmeldung und Anmeldeaktivität.",
+      "mfaTitle": "Zwei-Faktor-Anmeldung",
+      "required": "Erforderlich",
+      "enabled": "Aktiv",
+      "notEnabled": "Nicht aktiv",
+      "mfaOnText": "Dein Konto ist mit einer Authenticator-App geschützt.",
+      "mfaOffText": "Schütze dein Konto zusätzlich mit einem Einmalcode (z. B. Google Authenticator, Authy).",
+      "enabledSince": "Aktiv seit {date}",
+      "enable": "Authenticator-App einrichten",
+      "scanQr": "Scanne diesen QR-Code mit deiner Authenticator-App:",
+      "qrLabel": "QR-Code für die Authenticator-App",
+      "secretLabel": "Schlüssel",
+      "codeLabel": "6-stelliger Code",
+      "codePlaceholder": "Code aus der App",
+      "verify": "Bestätigen und aktivieren",
+      "regenerate": "Backup-Codes neu erstellen ({count} übrig)",
+      "disable": "2FA deaktivieren",
+      "disableTitle": "Zwei-Faktor-Anmeldung deaktivieren?",
+      "disableText": "Dein Konto ist danach nur noch durch dein Passwort geschützt.",
+      "disableConfirm": "Deaktivieren",
+      "backupTitle": "Speichere diese Backup-Codes – sie werden nur einmal angezeigt:",
+      "activityTitle": "Sicherheitsaktivität",
+      "failedLogins": "Fehlgeschlagene Anmeldungen (zuletzt): {count}",
+      "colEvent": "Ereignis",
+      "colDate": "Zeitpunkt",
+      "emptyTitle": "Noch keine Ereignisse",
+      "emptyText": "Anmeldungen und Änderungen an der Sicherheit erscheinen hier.",
+      "event": {
+        "LOGIN_SUCCESS": "Anmeldung erfolgreich",
+        "LOGIN_FAILED": "Anmeldung fehlgeschlagen",
+        "MFA_ENABLED": "2FA aktiviert",
+        "MFA_DISABLED": "2FA deaktiviert",
+        "MFA_CHALLENGE": "2FA-Abfrage",
+        "BACKUP_CODE_USED": "Backup-Code verwendet",
+        "PASSWORD_CHANGED": "Passwort geändert",
+        "SESSION_REVOKED": "Sitzung beendet"
+      }
+    },
+    "settings": {
+      "description": "Profil, Anmeldung, Newsletter und Erfolge.",
+      "passwordLabel": "Neues Passwort"
+    },
+    "subscription": {
+      "description": "Lebenslanger Zugang – keine wiederkehrenden Zahlungen.",
+      "currentTitle": "Aktuelle Mitgliedschaft",
+      "none": "Du hast noch keine lebenslange Mitgliedschaft.",
+      "lifetime": "{price} · lebenslanger Zugang",
+      "benefitsTitle": "Deine Vorteile",
+      "benefitDownloads": "Premium-Downloads und exklusive Inhalte",
+      "benefitAds": "Werbefrei auf dem ganzen Marktplatz",
+      "benefitDiscord": "Premium-Rolle auf Discord (Discord in den Einstellungen verknüpfen)",
+      "benefitBeta": "Früher Zugang zu Beta-Versionen (Premium Max)",
+      "compare": "Lebenslange Pläne vergleichen",
+      "upgrade": "Mitgliedschaft upgraden",
+      "historyTitle": "Zahlungsverlauf",
+      "colPlan": "Plan",
+      "colAmount": "Betrag",
+      "colDate": "Datum",
+      "colReceipt": "Beleg",
+      "receipt": "Beleg",
+      "receiptLabel": "Beleg für {plan} öffnen"
+    },
+    "support": {
+      "description": "Verfolge deine Support-Anfragen.",
+      "colTicket": "Ticket",
+      "colCategory": "Kategorie",
+      "colMessages": "Nachrichten",
+      "colStatus": "Status",
+      "emptyText": "Wir helfen dir bei Fragen zu Mods, Käufen und deinem Konto.",
+      "firstTicket": "Erstes Ticket erstellen",
+      "back": "Zurück zum Hilfe-Center"
+    },
+    "supportNew": {
+      "description": "Wir antworten in der Regel innerhalb von 24–48 Stunden.",
+      "categoryLabel": "Kategorie",
+      "subjectPlaceholder": "Kurze Zusammenfassung",
+      "messagePlaceholder": "Beschreibe dein Anliegen möglichst genau …",
+      "sending": "Wird gesendet …"
+    },
+    "supportTicket": {
+      "category": "Kategorie: {category}",
+      "priority": "Priorität: {priority}",
+      "internal": "Intern",
+      "staff": "Team",
+      "replyLabel": "Deine Antwort",
+      "replyPlaceholder": "Antwort schreiben …",
+      "sendReply": "Antwort senden",
+      "attach": "Dateien anhängen",
+      "close": "Ticket schließen",
+      "reopen": "Ticket wieder öffnen",
+      "internalTitle": "Interne Notiz (nur Team)",
+      "internalPlaceholder": "Notiz, die nur das Team sieht …",
+      "addInternal": "Interne Notiz hinzufügen",
+      "download": "{file} herunterladen"
+    }
+  }
+}

@@ -6,7 +6,13 @@ import { AdminPageHeader, AdminLoadError } from "@/components/admin/admin-page-h
 import { AchievementsAdminPanel } from "@/components/admin/achievements-admin-panel";
 import type { Locale } from "@/i18n/config";
 
-export default async function AdminAchievementsPage({ params: { locale } }: { params: { locale: Locale } }) {
+export default async function AdminAchievementsPage(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   await requirePagePermission("settings.write");
   const [t, result, holders] = await Promise.all([

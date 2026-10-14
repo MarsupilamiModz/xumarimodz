@@ -28,6 +28,7 @@ import { ensureModMediaSynced } from "@/lib/mod-media-sync";
 import { fileSizeBigInt, fileSizeNumber } from "@/lib/file-size";
 import { isWithinUploadLimit, uploadLimitLabel } from "@/lib/upload-limits";
 import { z } from "zod";
+import { runAfterResponse } from "@/lib/after-response";
 
 function invalidateModCaches(slug?: string) {
   revalidateTag(CACHE_TAGS.mods);
@@ -147,7 +148,7 @@ export async function createMod(input: z.infer<typeof modCreateSchema> & { autho
   revalidatePath("/designer");
   revalidatePath("/admin/mods");
 
-  void import("@/lib/translation-worker").then(({ scheduleEntityTranslation }) =>
+  runAfterResponse(import("@/lib/translation-worker").then(({ scheduleEntityTranslation }) =>
     scheduleEntityTranslation({
       entityType: "Mod",
       entityId: mod.id,
@@ -157,7 +158,7 @@ export async function createMod(input: z.infer<typeof modCreateSchema> & { autho
         shortDescription: mod.shortDescription,
       },
     })
-  );
+  ));
 
   return ok({ id: mod.id, slug: mod.slug });
 }
@@ -294,11 +295,11 @@ export async function updateMod(
 
     if (status === "PUBLISHED" && mod.status !== "PUBLISHED") {
       const { notifyCreatorFollowers } = await import("@/lib/follows");
-      void notifyCreatorFollowers(updated.authorId, {
+      runAfterResponse(notifyCreatorFollowers(updated.authorId, {
         title: "New mod published",
         body: `${updated.title} is now live`,
         link: `/mods/${updated.slug}`,
-      });
+      }));
     }
 
     await createAuditLog({
@@ -313,7 +314,7 @@ export async function updateMod(
     revalidatePath("/admin/mods");
 
     if (data.title || data.description || data.shortDescription !== undefined) {
-      void import("@/lib/translation-worker").then(({ scheduleEntityTranslation }) =>
+      runAfterResponse(import("@/lib/translation-worker").then(({ scheduleEntityTranslation }) =>
         scheduleEntityTranslation({
           entityType: "Mod",
           entityId: modId,
@@ -323,7 +324,7 @@ export async function updateMod(
             shortDescription: updated.shortDescription,
           },
         })
-      );
+      ));
     }
 
     return ok(updated);
@@ -445,9 +446,9 @@ async function persistModVersion(input: {
       priority,
     });
 
-    void import("@/lib/security/scan-worker").then(({ processScanQueue }) =>
+    runAfterResponse(import("@/lib/security/scan-worker").then(({ processScanQueue }) =>
       processScanQueue(1).catch(console.error)
-    );
+    ));
   }
 
   await logSecurityEvent({
@@ -484,7 +485,7 @@ async function processModVersionFromR2(input: {
   const productionKey = modFileKey(input.modSlug, input.version, storageName);
   const resolvedMime = input.mimeType || input.contentType;
   await copyObjectInR2(input.sourceKey, productionKey, resolvedMime, "private, max-age=86400");
-  if (input.sourceKey !== productionKey) void deleteFromR2(input.sourceKey);
+  if (input.sourceKey !== productionKey) runAfterResponse(deleteFromR2(input.sourceKey));
 
   let sha256: string | undefined;
   try {

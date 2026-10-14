@@ -1,10 +1,16 @@
-export default function BannedPage() {
-  return (
-    <div className="mx-auto max-w-md px-4 py-24 text-center">
-      <h1 className="h1-display text-destructive">Account Suspended</h1>
-      <p className="mt-4 text-muted-foreground">
-        Your account has been banned. Contact support if you believe this is an error.
-      </p>
-    </div>
-  );
+import type { Metadata } from "next";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import { Ban } from "lucide-react";
+import { ErrorScreen } from "@/components/error/error-screen";
+import type { Locale } from "@/i18n/config";
+
+export const metadata: Metadata = { robots: { index: false } };
+
+/** Ziel für gesperrte Konten. */
+export default async function BannedPage(props: { params: Promise<{ locale: Locale }> }) {
+  const { locale } = await props.params;
+  setRequestLocale(locale);
+  const t = await getTranslations("publicPages.banned");
+
+  return <ErrorScreen icon={Ban} label={t("label")} title={t("title")} description={t("text")} />;
 }

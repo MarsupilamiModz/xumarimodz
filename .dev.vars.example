@@ -1,0 +1,2 @@
+# Lokale Werte für `npm run cf:preview` (wrangler dev). Server-Werte stehen sonst in .env.
+NEXTJS_ENV=development

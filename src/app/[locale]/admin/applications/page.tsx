@@ -17,13 +17,19 @@ function safeLinks(...urls: (string | null | undefined)[]) {
   return urls.filter((u): u is string => !!u && /^https?:\/\//i.test(u.trim())).map((u) => u.trim());
 }
 
-export default async function AdminApplicationsPage({
-  params: { locale },
-  searchParams,
-}: {
-  params: { locale: Locale };
-  searchParams: { type?: string };
-}) {
+export default async function AdminApplicationsPage(
+  props: {
+    params: Promise<{ locale: Locale }>;
+    searchParams: Promise<{ type?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   await requirePagePermission("users.read");
   const t = await getTranslations("admin.ap");

@@ -52,6 +52,10 @@ export const metadata: Metadata = {
   },
 };
 
+// Supabase-Session-Cookie: sb-<projekt>-auth-token (ggf. .0/.1). Nur ein Hinweis fürs Ausblenden, keine Auth.
+const SESSION_HINT_SCRIPT =
+  String.raw`try{if(/(?:^|;\s*)sb-[^=;]*-auth-token/.test(document.cookie))document.documentElement.classList.add("has-session")}catch(e){}`;
+
 export const viewport: Viewport = {
   themeColor: SITE.themeColor,
 };
@@ -60,6 +64,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
       <head>
+        {/* Vor dem ersten Paint: angemeldet? Dann Werbeflächen bis zur Prüfung ausblenden (AdGate). */}
+        <script dangerouslySetInnerHTML={{ __html: SESSION_HINT_SCRIPT }} />
         <GlobalSiteHead />
       </head>
       <body className={`${inter.variable} ${mono.variable} font-sans`}>

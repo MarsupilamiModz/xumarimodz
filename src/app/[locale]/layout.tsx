@@ -35,9 +35,9 @@ export function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ locale: Locale }>;
+  params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
-  const { locale } = await params;
+  const locale = getSafeLocale((await params).locale);
   const seo = await getCmsSeo(locale);
   return {
     title: seo.metaTitle,
@@ -61,7 +61,7 @@ export default async function LocaleLayout({
   params,
 }: {
   children: React.ReactNode;
-  params: Promise<{ locale: Locale }>;
+  params: Promise<{ locale: string }>;
 }) {
   const { locale: rawLocale } = await params;
   const locale = getSafeLocale(rawLocale);

@@ -9,13 +9,28 @@ import { CoverPlaceholder } from "@/components/ui/cover-placeholder";
 import { SearchField } from "@/components/ui/search-field";
 import type { Locale } from "@/i18n/config";
 
-export async function generateMetadata({ params: { locale } }: { params: { locale: Locale } }) {
+export async function generateMetadata(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   const t = await getTranslations({ locale, namespace: "common.tutorialsPage" });
   return { title: t("title"), description: t("subtitle") };
 }
 
 /** Übersicht der veröffentlichten Tutorials (Footer-Link „Tutorials“). */
-export default async function TutorialsPage({ params: { locale }, searchParams }: { params: { locale: Locale }; searchParams: { q?: string } }) {
+export default async function TutorialsPage(
+  props: { params: Promise<{ locale: Locale }>; searchParams: Promise<{ q?: string }> }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   const t = await getTranslations("common.tutorialsPage");
   const q = searchParams.q?.trim().slice(0, 100) || undefined;

@@ -3,14 +3,14 @@
 import { memo, useCallback, useEffect, useRef, useState, useTransition } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Loader2, Search, X } from "lucide-react";
+import { Loader2, Search, SearchX, X } from "lucide-react";
 import {
   globalSearchAction,
   type GlobalSearchGroups,
   type GlobalSearchItem,
 } from "@/actions/global-search";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
 
 const EMPTY: GlobalSearchGroups = {
   mods: [],
@@ -49,9 +49,9 @@ function ResultRow({
       onClick={onSelect}
       className="block rounded-md px-3 py-2 text-sm transition-colors duration-fast hover:bg-hover"
     >
-      <p className="truncate font-medium">{item.title}</p>
+      <p className="truncate font-medium text-ink">{item.title}</p>
       {item.subtitle && (
-        <p className="truncate text-xs text-muted-foreground">{item.subtitle}</p>
+        <p className="truncate text-xs text-ink-muted">{item.subtitle}</p>
       )}
     </Link>
   );
@@ -131,37 +131,34 @@ export const HeaderSearch = memo(function HeaderSearch({ locale }: { locale: str
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder={t("placeholder")}
+          aria-label={t("searchLabel")}
           className="h-8 flex-1 border-0 bg-transparent focus-visible:ring-0"
         />
-        {pending && <Loader2 className="h-4 w-4 shrink-0 animate-spin text-muted-foreground" />}
+        {pending && <Loader2 className="h-4 w-4 shrink-0 animate-spin text-ink-muted" aria-label={t("loading")} />}
         <button
           type="button"
           aria-label={t("close")}
           className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-ink-muted hover:bg-hover hover:text-ink"
           onClick={close}
         >
-          <X className="h-4 w-4" />
+          <X className="h-4 w-4" aria-hidden />
         </button>
       </div>
 
       {(query.trim().length >= 2 || hasResults) && (
-        <div
-          className={cn(
-            "absolute right-0 top-full z-50 mt-2 w-[min(420px,90vw)] overflow-hidden rounded-xl border border-border/50 bg-card"
-          )}
-        >
+        <div className="absolute right-0 top-full z-50 mt-2 w-[min(420px,90vw)] overflow-hidden rounded-lg border border-line bg-raised">
           <div className="max-h-[min(60vh,400px)] overflow-y-auto p-2">
             {query.trim().length < 2 ? (
-              <p className="px-3 py-6 text-center text-sm text-muted-foreground">{t("hint")}</p>
+              <p className="px-3 py-6 text-center text-sm text-ink-faint">{t("hint")}</p>
             ) : !pending && !hasResults ? (
-              <p className="px-3 py-6 text-center text-sm text-muted-foreground">{t("noResults")}</p>
+              <EmptyState icon={SearchX} title={t("noResults")} description={t("noResultsText")} className="border-0 py-6" />
             ) : (
               GROUP_ORDER.map((key) => {
                 const items = groups[key];
                 if (!items.length) return null;
                 return (
                   <div key={key} className="mb-2">
-                    <p className="px-3 py-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    <p className="label-text px-3 py-1">
                       {t(`groups.${key}`)}
                     </p>
                     {items.slice(0, 5).map((item) => (
@@ -173,7 +170,7 @@ export const HeaderSearch = memo(function HeaderSearch({ locale }: { locale: str
             )}
           </div>
           {query.trim().length >= 2 && (
-            <div className="border-t border-border/40 px-3 py-2 text-right">
+            <div className="border-t border-line px-3 py-2 text-right">
               <Link
                 href={`/${locale}/search?q=${encodeURIComponent(query)}`}
                 onClick={close}

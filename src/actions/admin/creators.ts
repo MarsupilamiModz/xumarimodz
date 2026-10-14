@@ -13,6 +13,7 @@ import { CACHE_TAGS } from "@/lib/cache";
 import { getCreatorAdminAnalytics } from "@/lib/creator-admin-analytics";
 import { sendCreatorApprovalEmail } from "@/lib/email/send";
 import type { PublisherLevel, SocialPlatform } from "@prisma/client";
+import { runAfterResponse } from "@/lib/after-response";
 
 const profileSchema = z.object({
   userId: z.string(),
@@ -170,10 +171,10 @@ export async function createCreatorProfile(input: z.infer<typeof profileSchema>)
   await createAuditLog({ actorId: user.id, action: "creator.create", entityType: "CreatorProfile", entityId: profile.id });
   revalidateCreatorPaths(slug);
 
-  void sendCreatorApprovalEmail({
+  runAfterResponse(sendCreatorApprovalEmail({
     email: target.email,
     creatorName: target.displayName ?? target.username,
-  });
+  }));
 
   return ok(profile);
 }
@@ -212,10 +213,10 @@ export async function updateCreatorProfile(
   revalidateCreatorPaths(profile.slug);
 
   if (input.isVerified === true && !existing.isVerified && existing.user.email) {
-    void sendCreatorApprovalEmail({
+    runAfterResponse(sendCreatorApprovalEmail({
       email: existing.user.email,
       creatorName: existing.user.displayName ?? existing.user.username,
-    });
+    }));
   }
 
   return ok(profile);

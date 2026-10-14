@@ -27,7 +27,16 @@ type SortKey = keyof typeof SORTS;
 
 type Params = { q?: string; game?: string; status?: string; sort?: string; dir?: string; page?: string };
 
-export default async function AdminModsPage({ params: { locale }, searchParams }: { params: { locale: Locale }; searchParams: Params }) {
+export default async function AdminModsPage(
+  props: { params: Promise<{ locale: Locale }>; searchParams: Promise<Params> }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   await requirePagePermission("mods.read");
   const [t, ts] = await Promise.all([getTranslations("admin.mp"), getTranslations("status")]);

@@ -10,12 +10,24 @@ import { formatBytes } from "@/lib/file-size";
 import { formatDate } from "@/lib/format-locale";
 import type { Locale } from "@/i18n/config";
 
-export async function generateMetadata({ params: { locale } }: { params: { locale: Locale } }): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   const t = await getTranslations({ locale, namespace: "download" });
   return { title: t("title"), description: t("subtitle") };
 }
 
-export default async function DownloadPage({ params: { locale } }: { params: { locale: Locale } }) {
+export default async function DownloadPage(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   const t = await getTranslations("download");
   const tl = await getTranslations("landing");

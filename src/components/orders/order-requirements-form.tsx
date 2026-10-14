@@ -7,7 +7,7 @@ import { submitOrderRequirements } from "@/actions/orders";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Card } from "@/components/ui/card";
+import { SectionCard } from "@/components/ui/page-header";
 import { useAppToast } from "@/hooks/use-app-toast";
 
 export function OrderRequirementsForm({
@@ -26,14 +26,10 @@ export function OrderRequirementsForm({
   const [files, setFiles] = useState<File[]>([]);
 
   return (
-    <Card className="p-6 space-y-4">
-      <div>
-        <h2 className="text-xl font-bold">{t("title")}</h2>
-        <p className="text-sm text-muted-foreground mt-1">
-          {t.rich("intro", { productName, strong: (chunks) => <strong>{chunks}</strong> })}
-        </p>
-      </div>
-
+    <SectionCard
+      title={t("title")}
+      description={t.rich("intro", { productName, strong: (chunks) => <strong className="text-ink">{chunks}</strong> })}
+    >
       <form
         className="space-y-4"
         onSubmit={(e) => {
@@ -53,43 +49,44 @@ export function OrderRequirementsForm({
           });
         }}
       >
-        <div className="space-y-1">
-          <label className="text-sm font-medium">{t("projectDescriptionLabel")}</label>
-          <Textarea name="projectDescription" required rows={4} placeholder={t("projectDescriptionPlaceholder")} />
+        <div className="space-y-1.5">
+          <label htmlFor="req-description" className="label-text">{t("projectDescriptionLabel")}</label>
+          <Textarea id="req-description" name="projectDescription" required rows={4} placeholder={t("projectDescriptionPlaceholder")} />
         </div>
-        <div className="space-y-1">
-          <label className="text-sm font-medium">{t("requirementsLabel")}</label>
-          <Textarea name="requirements" rows={4} placeholder={t("requirementsPlaceholder")} />
+        <div className="space-y-1.5">
+          <label htmlFor="req-requirements" className="label-text">{t("requirementsLabel")}</label>
+          <Textarea id="req-requirements" name="requirements" rows={4} placeholder={t("requirementsPlaceholder")} />
         </div>
-        <div className="space-y-1">
-          <label className="text-sm font-medium">{t("preferredStyleLabel")}</label>
-          <Input name="preferredStyle" placeholder={t("preferredStylePlaceholder")} />
+        <div className="space-y-1.5">
+          <label htmlFor="req-style" className="label-text">{t("preferredStyleLabel")}</label>
+          <Input id="req-style" name="preferredStyle" placeholder={t("preferredStylePlaceholder")} />
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
-          <div className="space-y-1">
-            <label className="text-sm font-medium">{t("budgetNotesLabel")}</label>
-            <Input name="budgetNotes" placeholder={t("budgetNotesPlaceholder")} />
+          <div className="space-y-1.5">
+            <label htmlFor="req-budget" className="label-text">{t("budgetNotesLabel")}</label>
+            <Input id="req-budget" name="budgetNotes" placeholder={t("budgetNotesPlaceholder")} />
           </div>
-          <div className="space-y-1">
-            <label className="text-sm font-medium">{t("deadlineLabel")}</label>
-            <Input name="deadline" type="date" />
+          <div className="space-y-1.5">
+            <label htmlFor="req-deadline" className="label-text">{t("deadlineLabel")}</label>
+            <Input id="req-deadline" name="deadline" type="date" />
           </div>
         </div>
-        <div className="space-y-1">
-          <label className="text-sm font-medium">{t("notesLabel")}</label>
-          <Textarea name="notes" rows={2} placeholder={t("notesPlaceholder")} />
+        <div className="space-y-1.5">
+          <label htmlFor="req-notes" className="label-text">{t("notesLabel")}</label>
+          <Textarea id="req-notes" name="notes" rows={2} placeholder={t("notesPlaceholder")} />
         </div>
 
         <div
-          className="rounded-lg border border-dashed border-violet-bright/40 p-4 text-center text-sm text-muted-foreground"
+          className="rounded-lg border border-dashed border-line-control p-4 text-center text-sm text-ink-muted"
           onDragOver={(e) => e.preventDefault()}
           onDrop={(e) => {
             e.preventDefault();
             setFiles((prev) => [...prev, ...Array.from(e.dataTransfer.files)].slice(0, 10));
           }}
         >
-          <p>{t("uploadHint")}</p>
+          <label htmlFor="req-files">{t("uploadHint")}</label>
           <Input
+            id="req-files"
             type="file"
             multiple
             accept=".png,.jpg,.jpeg,.webp,.psd,.zip,.rar,.7z,.pdf"
@@ -97,7 +94,7 @@ export function OrderRequirementsForm({
             onChange={(e) => setFiles(Array.from(e.target.files ?? []).slice(0, 10))}
           />
           {files.length > 0 && (
-            <ul className="mt-2 text-left text-xs space-y-1">
+            <ul className="mt-2 space-y-1 text-left text-xs text-ink">
               {files.map((f) => (
                 <li key={f.name}>{f.name}</li>
               ))}
@@ -109,6 +106,6 @@ export function OrderRequirementsForm({
           {t("submit")}
         </Button>
       </form>
-    </Card>
+    </SectionCard>
   );
 }

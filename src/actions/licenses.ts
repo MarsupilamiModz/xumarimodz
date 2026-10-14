@@ -8,8 +8,8 @@ import { fail, ok, requireActionUser } from "@/lib/action-utils";
 import { rateLimit } from "@/lib/rate-limit";
 import { normalizeLicenseKey } from "@/lib/licenses";
 
-function ipHash() {
-  const ip = headers().get("x-forwarded-for") ?? "unknown";
+async function ipHash() {
+  const ip = (await headers()).get("x-forwarded-for") ?? "unknown";
   return createHash("sha256").update(ip).digest("hex").slice(0, 16);
 }
 
@@ -77,14 +77,14 @@ export async function redeemLicense(key: string) {
     return fail("You have already activated this key");
   }
 
-  const ua = headers().get("user-agent") ?? undefined;
+  const ua = (await headers()).get("user-agent") ?? undefined;
 
   await prisma.$transaction(async (tx) => {
     await tx.licenseActivation.create({
       data: {
         licenseKeyId: license.id,
         userId: user.id,
-        ipHash: ipHash(),
+        ipHash: await ipHash(),
         userAgent: ua?.slice(0, 512),
       },
     });

@@ -4,12 +4,13 @@ import { colors } from "@/styles/tokens";
 import { useState, useTransition, type Dispatch, type SetStateAction } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { ArrowDown, ArrowUp, Plus, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowUp, Check, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Input, controlClassName } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { SectionCard } from "@/components/ui/page-header";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Switch } from "@/components/ui/switch";
 import { useAppToast } from "@/hooks/use-app-toast";
 import {
@@ -22,7 +23,7 @@ import { MembershipPlanPreview } from "@/components/admin/membership-plan-previe
 import type { MembershipPlanData, MembershipPerks, PremiumPageSettings, PlanCardStyle } from "@/lib/membership-pricing";
 import { formatPlanPrice } from "@/lib/membership-pricing";
 import { parseLines, safeFormOptional, safeFormString, safeStripePriceId } from "@/lib/text";
-import { SLUG_AUTO_GENERATED_MESSAGE } from "@/lib/slug";
+import { cn } from "@/lib/utils";
 
 const DEFAULT_PERKS: MembershipPerks = {
   adFree: false,
@@ -42,8 +43,32 @@ type Props = {
 
 type StartTransition = ReturnType<typeof useTransition>[1];
 
+const selectClass = cn(controlClassName, "h-9");
+
+/** Feld mit sichtbarem Label. */
+function Field({ id, label, hint, className, children }: { id: string; label: string; hint?: React.ReactNode; className?: string; children: React.ReactNode }) {
+  return (
+    <div className={cn("space-y-1.5", className)}>
+      <label htmlFor={id} className="label-text">{label}</label>
+      {children}
+      {hint && <p className="meta">{hint}</p>}
+    </div>
+  );
+}
+
+/** Gruppe im Formular mit Überschrift. */
+function FieldGroup({ title, className, children }: { title: string; className?: string; children: React.ReactNode }) {
+  return (
+    <fieldset className={cn("rounded-lg border border-line p-4", className)}>
+      <legend className="px-1 text-sm font-semibold text-ink">{title}</legend>
+      {children}
+    </fieldset>
+  );
+}
+
 export function MembershipsAdminPanel({ plans: initial, pageSettings: initialPage, locale }: Props) {
   const t = useTranslations("admin.ui.membershipsAdmin");
+  const tp = useTranslations("admin.panelMemberships");
   const router = useRouter();
   const appToast = useAppToast();
   const [pending, startTransition] = useTransition();
@@ -54,6 +79,7 @@ export function MembershipsAdminPanel({ plans: initial, pageSettings: initialPag
   const [perks, setPerks] = useState<MembershipPerks>(DEFAULT_PERKS);
   const [cardStyle, setCardStyle] = useState<PlanCardStyle>({});
   const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const [deletePlan, setDeletePlan] = useState<MembershipPlanData | null>(null);
 
   const openEdit = (plan: MembershipPlanData) => {
     setCreating(false);
@@ -98,34 +124,51 @@ export function MembershipsAdminPanel({ plans: initial, pageSettings: initialPag
   };
 
   return (
-    <div className="space-y-8">
-      <Card className="p-6 space-y-4">
-        <h3 className="font-semibold">{t("pageContent.heading")}</h3>
-        <Input value={pageSettings.heroTitle} onChange={(e) => setPageSettings((p) => ({ ...p, heroTitle: e.target.value }))} />
-        <Textarea value={pageSettings.heroSubtitle} onChange={(e) => setPageSettings((p) => ({ ...p, heroSubtitle: e.target.value }))} rows={2} />
-        <Input value={pageSettings.ctaText} onChange={(e) => setPageSettings((p) => ({ ...p, ctaText: e.target.value }))} />
-        <label className="flex items-center gap-2 text-sm">
-          <Switch checked={pageSettings.showComparison} onCheckedChange={(v) => setPageSettings((p) => ({ ...p, showComparison: v }))} />
-          {t("pageContent.showComparison")}
-        </label>
-        <Button disabled={pending} onClick={() => startTransition(async () => {
-          const r = await savePremiumPageSettings(pageSettings);
-          if (r.success) appToast.saved();
-          else appToast.error(r.error);
-        })}>{t("pageContent.save")}</Button>
-      </Card>
+    <div className="space-y-6">
+      <SectionCard title={t("pageContent.heading")}>
+        <div className="space-y-4">
+          <Field id="premium-hero-title" label={tp("heroTitle")}>
+            <Input id="premium-hero-title" value={pageSettings.heroTitle} onChange={(e) => setPageSettings((p) => ({ ...p, heroTitle: e.target.value }))} />
+          </Field>
+          <Field id="premium-hero-subtitle" label={tp("heroSubtitle")}>
+            <Textarea id="premium-hero-subtitle" value={pageSettings.heroSubtitle} onChange={(e) => setPageSettings((p) => ({ ...p, heroSubtitle: e.target.value }))} rows={2} />
+          </Field>
+          <Field id="premium-cta" label={tp("ctaText")}>
+            <Input id="premium-cta" value={pageSettings.ctaText} onChange={(e) => setPageSettings((p) => ({ ...p, ctaText: e.target.value }))} />
+          </Field>
+          <label className="flex items-center gap-2 text-sm text-ink">
+            <Switch checked={pageSettings.showComparison} onCheckedChange={(v) => setPageSettings((p) => ({ ...p, showComparison: v }))} />
+            {t("pageContent.showComparison")}
+          </label>
+          <Button
+            variant="outline"
+            disabled={pending}
+            onClick={() =>
+              startTransition(async () => {
+                const r = await savePremiumPageSettings(pageSettings);
+                if (r.success) appToast.saved();
+                else appToast.error(r.error);
+              })
+            }
+          >
+            {t("pageContent.save")}
+          </Button>
+        </div>
+      </SectionCard>
 
-      <div className="flex items-center justify-between">
-        <h3 className="font-semibold">{t("plans.heading")}</h3>
-        <Button variant="outline" size="sm" onClick={openCreate}><Plus className="h-4 w-4 mr-1" /> {t("plans.newPlan")}</Button>
+      <div className="flex items-center justify-between gap-3">
+        <h2 className="section-title">{t("plans.heading")}</h2>
+        <Button variant="outline" size="sm" onClick={openCreate}>
+          <Plus className="h-4 w-4" aria-hidden /> {t("plans.newPlan")}
+        </Button>
       </div>
 
       {(creating || editing) && (
         <div className="grid gap-6 lg:grid-cols-2">
-          <Card className="p-6">
-            <h3 className="font-semibold mb-4">{creating ? t("plans.createPlan") : t("plans.editPlan", { name: editing?.name ?? "" })}</h3>
+          <SectionCard title={creating ? t("plans.createPlan") : t("plans.editPlan", { name: editing?.name ?? "" })}>
             <PlanForm
               t={t}
+              tp={tp}
               plan={editing ?? undefined}
               isNew={creating}
               perks={perks}
@@ -138,13 +181,13 @@ export function MembershipsAdminPanel({ plans: initial, pageSettings: initialPag
               router={router}
               onClose={() => { setEditing(null); setCreating(false); }}
             />
-          </Card>
+          </SectionCard>
           <div>
-            <p className="text-sm text-muted-foreground mb-3">{t("plans.livePreview")}</p>
+            <p className="label-text mb-3">{t("plans.livePreview")}</p>
             <MembershipPlanPreview
               locale={locale}
               plan={{
-                ...(editing ?? { slug: "preview", name: "Preview Plan", priceCents: 999, currency: "EUR", features: [], isFeatured: false }),
+                ...(editing ?? { slug: "preview", name: tp("previewName"), priceCents: 999, currency: "EUR", features: [], isFeatured: false }),
                 perks,
                 cardStyle,
                 saleDiscountPercent: editing?.saleDiscountPercent ?? null,
@@ -156,54 +199,92 @@ export function MembershipsAdminPanel({ plans: initial, pageSettings: initialPag
         </div>
       )}
 
-      <div className="grid gap-4 lg:grid-cols-3">
+      <ul className="grid gap-6 lg:grid-cols-3" aria-label={t("plans.heading")}>
         {plans.map((plan, index) => (
-          <Card
+          <li
             key={plan.id}
             draggable
             onDragStart={() => setDragIndex(index)}
             onDragOver={(e) => e.preventDefault()}
             onDrop={() => handleDrop(index)}
-            className={`p-5 space-y-3 cursor-grab active:cursor-grabbing ${dragIndex === index ? "opacity-50" : ""}`}
-            style={{ borderColor: plan.perks.accentColor ? `${plan.perks.accentColor}40` : undefined }}
+            className={cn(
+              "cursor-grab space-y-3 rounded-lg border bg-raised p-5 active:cursor-grabbing",
+              plan.isFeatured ? "border-violet-bright" : "border-line",
+              dragIndex === index && "opacity-50"
+            )}
           >
-            <div className="flex items-start justify-between">
+            <div className="flex items-start justify-between gap-2">
               <div>
-                <h4 className="font-semibold">{plan.name}</h4>
-                <p className="text-2xl font-bold" style={{ color: plan.perks.accentColor ?? undefined }}>
+                <h3 className="font-semibold text-ink">{plan.name}</h3>
+                <p className="text-2xl font-bold tabular-nums text-ink">
                   {formatPlanPrice(plan.priceCents, plan.currency, locale)}
                 </p>
-                <p className="text-xs text-muted-foreground">{t("plans.lifetimeOneTime")}</p>
+                <p className="meta">{t("plans.lifetimeOneTime")}</p>
               </div>
-              <div className="flex flex-col gap-1">
-                {plan.isFeatured && <Badge variant="premium">{t("plans.featured")}</Badge>}
-                {!plan.isActive && <Badge variant="outline">{t("plans.inactive")}</Badge>}
+              <div className="flex flex-col items-end gap-1">
+                {plan.isFeatured && <StatusBadge tone="info" label={t("plans.featured")} />}
+                {!plan.isActive && <StatusBadge tone="neutral" label={t("plans.inactive")} />}
               </div>
             </div>
-            <ul className="text-xs text-muted-foreground space-y-1">
-              {plan.features.slice(0, 4).map((f) => <li key={f}>• {f}</li>)}
+            <ul className="space-y-1 text-xs text-ink-muted">
+              {plan.features.slice(0, 4).map((f) => (
+                <li key={f} className="flex gap-1.5">
+                  <Check className="h-3 w-3 shrink-0 text-success" aria-hidden /> {f}
+                </li>
+              ))}
             </ul>
-            <p className="text-xs font-mono text-muted-foreground truncate">{plan.stripePriceId ?? t("plans.noStripePrice")}</p>
+            <p className="mono-id truncate text-ink-muted">{plan.stripePriceId ?? t("plans.noStripePrice")}</p>
             <div className="flex flex-wrap gap-1">
               <Button size="sm" variant="outline" onClick={() => openEdit(plan)}>{t("plans.edit")}</Button>
-              <Button size="sm" variant="ghost" onClick={() => movePlan(index, -1)} disabled={index === 0}><ArrowUp className="h-4 w-4" /></Button>
-              <Button size="sm" variant="ghost" onClick={() => movePlan(index, 1)} disabled={index === plans.length - 1}><ArrowDown className="h-4 w-4" /></Button>
-              <Button size="sm" variant="ghost" className="text-destructive" disabled={pending} onClick={() => startTransition(async () => {
-                if (!confirm(t("plans.confirmDelete", { name: plan.name }))) return;
-                const r = await deleteMembershipPlan(plan.id);
-                if (r.success) { appToast.saved(); router.refresh(); }
-                else appToast.error(r.error);
-              })}><Trash2 className="h-4 w-4" /></Button>
+              <Button size="sm" variant="ghost" onClick={() => movePlan(index, -1)} disabled={index === 0} aria-label={tp("moveUp", { name: plan.name })}>
+                <ArrowUp className="h-4 w-4" aria-hidden />
+              </Button>
+              <Button size="sm" variant="ghost" onClick={() => movePlan(index, 1)} disabled={index === plans.length - 1} aria-label={tp("moveDown", { name: plan.name })}>
+                <ArrowDown className="h-4 w-4" aria-hidden />
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                className="text-danger"
+                disabled={pending}
+                onClick={() => setDeletePlan(plan)}
+                aria-label={tp("delete", { name: plan.name })}
+              >
+                <Trash2 className="h-4 w-4" aria-hidden />
+              </Button>
             </div>
-          </Card>
+          </li>
         ))}
-      </div>
+      </ul>
+
+      <ConfirmDialog
+        open={deletePlan !== null}
+        onOpenChange={(open) => !open && setDeletePlan(null)}
+        title={t("plans.confirmDelete", { name: deletePlan?.name ?? "" })}
+        description={tp("deleteConfirmText")}
+        confirmLabel={tp("deleteConfirm")}
+        variant="destructive"
+        loading={pending}
+        onConfirm={() => {
+          if (!deletePlan) return;
+          const id = deletePlan.id;
+          startTransition(async () => {
+            const r = await deleteMembershipPlan(id);
+            if (r.success) {
+              setDeletePlan(null);
+              appToast.saved();
+              router.refresh();
+            } else appToast.error(r.error);
+          });
+        }}
+      />
     </div>
   );
 }
 
 function PlanForm({
   t,
+  tp,
   plan,
   isNew,
   perks,
@@ -217,6 +298,7 @@ function PlanForm({
   onClose,
 }: {
   t: ReturnType<typeof useTranslations>;
+  tp: ReturnType<typeof useTranslations>;
   plan?: MembershipPlanData;
   isNew?: boolean;
   perks: MembershipPerks;
@@ -279,7 +361,7 @@ function PlanForm({
             },
           });
           if (r.success) {
-            appToast.saved(isNew ? SLUG_AUTO_GENERATED_MESSAGE : undefined);
+            appToast.saved(isNew ? tp("slugAutoGenerated") : undefined);
             onClose();
             router.refresh();
           } else appToast.error(r.error);
@@ -287,45 +369,44 @@ function PlanForm({
       }}
       className="space-y-4"
     >
-      <div className="grid gap-3 sm:grid-cols-2">
-        <div>
-          <label className="text-sm font-medium">{t("form.slug")}</label>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field id="plan-slug" label={t("form.slug")}>
           <Input
+            id="plan-slug"
             name="slug"
             defaultValue={plan?.slug}
             disabled={!isNew}
-            className="mt-1 font-mono"
+            className="mono-id"
             placeholder={isNew ? t("form.slugAutoGenerated") : undefined}
           />
-        </div>
-        <div>
-          <label className="text-sm font-medium">{t("form.badgeSlug")}</label>
-          <Input name="badgeSlug" defaultValue={plan?.badgeSlug ?? ""} className="mt-1" />
-        </div>
+        </Field>
+        <Field id="plan-badge-slug" label={t("form.badgeSlug")}>
+          <Input id="plan-badge-slug" name="badgeSlug" defaultValue={plan?.badgeSlug ?? ""} className="mono-id" />
+        </Field>
       </div>
-      <Input name="name" defaultValue={plan?.name} placeholder={t("form.planName")} required />
-      <Textarea name="description" defaultValue={plan?.description ?? ""} rows={2} />
-      <div className="grid gap-3 sm:grid-cols-2">
-        <div>
-          <label className="text-sm font-medium">{t("form.priceEur")}</label>
-          <Input name="price" type="number" step="0.01" defaultValue={plan ? (plan.priceCents / 100).toFixed(2) : "9.99"} required className="mt-1" />
-        </div>
-        <div>
-          <label className="text-sm font-medium">{t("form.currency")}</label>
-          <Input name="currency" defaultValue={plan?.currency ?? "EUR"} className="mt-1 w-24" />
-        </div>
+      <Field id="plan-name" label={t("form.planName")}>
+        <Input id="plan-name" name="name" defaultValue={plan?.name} required />
+      </Field>
+      <Field id="plan-description" label={tp("description")}>
+        <Textarea id="plan-description" name="description" defaultValue={plan?.description ?? ""} rows={2} />
+      </Field>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field id="plan-price" label={t("form.priceEur")}>
+          <Input id="plan-price" name="price" type="number" step="0.01" defaultValue={plan ? (plan.priceCents / 100).toFixed(2) : "9.99"} required className="tabular-nums" />
+        </Field>
+        <Field id="plan-currency" label={t("form.currency")}>
+          <Input id="plan-currency" name="currency" defaultValue={plan?.currency ?? "EUR"} className="w-24" />
+        </Field>
       </div>
-      <div className="grid gap-3 sm:grid-cols-2 rounded-lg border border-border/40 p-4">
-        <div>
-          <label className="text-sm font-medium">{t("form.billing")}</label>
-          <select name="billingType" defaultValue={plan?.billingType ?? "RECURRING"} className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+      <div className="grid gap-4 rounded-lg border border-line p-4 sm:grid-cols-2">
+        <Field id="plan-billing" label={t("form.billing")}>
+          <select id="plan-billing" name="billingType" defaultValue={plan?.billingType ?? "RECURRING"} className={selectClass}>
             <option value="RECURRING">{t("form.billingRecurring")}</option>
             <option value="ONE_TIME">{t("form.billingOneTime")}</option>
           </select>
-        </div>
-        <div>
-          <label className="text-sm font-medium">{t("form.planType")}</label>
-          <select name="planKind" defaultValue={plan?.planKind ?? "STANDARD"} className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+        </Field>
+        <Field id="plan-kind" label={t("form.planType")}>
+          <select id="plan-kind" name="planKind" defaultValue={plan?.planKind ?? "STANDARD"} className={selectClass}>
             <option value="STANDARD">{t("form.planKindStandard")}</option>
             <option value="LIFETIME">{t("form.planKindLifetime")}</option>
             <option value="LIMITED">{t("form.planKindLimited")}</option>
@@ -333,49 +414,74 @@ function PlanForm({
             <option value="CREATOR">{t("form.planKindCreator")}</option>
             <option value="PARTNER">{t("form.planKindPartner")}</option>
           </select>
+        </Field>
+        <Field
+          id="plan-stock"
+          label={t("form.stockLimit")}
+          hint={plan?.stockLimit ? t("form.remaining", { count: Math.max(0, plan.stockLimit - (plan.soldCount ?? 0)) }) : undefined}
+        >
+          <Input id="plan-stock" name="stockLimit" type="number" placeholder={t("form.stockLimitPlaceholder")} defaultValue={plan?.stockLimit ?? ""} className="tabular-nums" />
+        </Field>
+        <Field id="plan-duration" label={t("form.durationDays")}>
+          <Input id="plan-duration" name="durationDays" type="number" placeholder={t("form.optional")} defaultValue={plan?.durationDays ?? ""} className="tabular-nums" />
+        </Field>
+      </div>
+      <FieldGroup title={t("form.limitedOfferSale")}>
+        <div className="grid gap-4 sm:grid-cols-3">
+          <Field id="plan-original-price" label={t("form.originalPrice")}>
+            <Input id="plan-original-price" name="originalPrice" type="number" step="0.01" defaultValue={plan?.originalPriceCents ? plan.originalPriceCents / 100 : ""} className="tabular-nums" />
+          </Field>
+          <Field id="plan-sale-discount" label={t("form.discountPercent")}>
+            <Input id="plan-sale-discount" name="saleDiscount" type="number" defaultValue={plan?.saleDiscountPercent ?? ""} className="tabular-nums" />
+          </Field>
+          <Field id="plan-sale-ends" label={tp("saleEndsAt")}>
+            <Input id="plan-sale-ends" name="saleEndsAt" type="datetime-local" defaultValue={plan?.saleEndsAt ? new Date(plan.saleEndsAt).toISOString().slice(0, 16) : ""} />
+          </Field>
         </div>
-        <div>
-          <label className="text-sm font-medium">{t("form.stockLimit")}</label>
-          <Input name="stockLimit" type="number" placeholder={t("form.stockLimitPlaceholder")} defaultValue={plan?.stockLimit ?? ""} className="mt-1" />
-          {plan?.stockLimit ? (
-            <p className="text-xs text-muted-foreground mt-1">
-              {t("form.remaining", { count: Math.max(0, plan.stockLimit - (plan.soldCount ?? 0)) })}
-            </p>
-          ) : null}
+      </FieldGroup>
+      <FieldGroup title={t("form.cardStyling")}>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field id="plan-icon" label={tp("iconKey")}>
+            <Input id="plan-icon" name="iconKey" placeholder={t("form.iconPlaceholder")} defaultValue={plan?.iconKey ?? "crown"} />
+          </Field>
+          <Field id="plan-cta" label={t("form.ctaButtonText")}>
+            <Input id="plan-cta" name="ctaText" defaultValue={plan?.cardStyle?.ctaText ?? ""} />
+          </Field>
+          <label className="flex items-start gap-2 text-sm text-ink sm:col-span-2">
+            <input type="checkbox" name="borderGlow" className="mt-0.5" defaultChecked={plan?.cardStyle?.borderGlow ?? true} />
+            <span>
+              {t("form.neonBorderGlow")}
+              <span className="meta block">{t("form.neonBorderGlowHint")}</span>
+            </span>
+          </label>
         </div>
-        <div>
-          <label className="text-sm font-medium">{t("form.durationDays")}</label>
-          <Input name="durationDays" type="number" placeholder={t("form.optional")} defaultValue={plan?.durationDays ?? ""} className="mt-1" />
-        </div>
-      </div>
-      <div className="grid gap-3 sm:grid-cols-3 rounded-lg border border-border/40 p-4">
-        <p className="sm:col-span-3 text-sm font-medium">{t("form.limitedOfferSale")}</p>
-        <Input name="originalPrice" type="number" step="0.01" placeholder={t("form.originalPrice")} defaultValue={plan?.originalPriceCents ? plan.originalPriceCents / 100 : ""} />
-        <Input name="saleDiscount" type="number" placeholder={t("form.discountPercent")} defaultValue={plan?.saleDiscountPercent ?? ""} />
-        <Input name="saleEndsAt" type="datetime-local" defaultValue={plan?.saleEndsAt ? new Date(plan.saleEndsAt).toISOString().slice(0, 16) : ""} />
-      </div>
-      <div className="grid gap-3 sm:grid-cols-2 rounded-lg border border-border/40 p-4">
-        <p className="sm:col-span-2 text-sm font-medium">{t("form.cardStyling")}</p>
-        <Input name="iconKey" placeholder={t("form.iconPlaceholder")} defaultValue={plan?.iconKey ?? "crown"} />
-        <Input name="ctaText" placeholder={t("form.ctaButtonText")} defaultValue={plan?.cardStyle?.ctaText ?? ""} />
-        <label className="flex gap-2 text-sm sm:col-span-2"><input type="checkbox" name="borderGlow" defaultChecked={plan?.cardStyle?.borderGlow ?? true} /> {t("form.neonBorderGlow")} <span className="text-xs text-ink-muted">({t("form.neonBorderGlowHint")})</span></label>
-      </div>
-      <div>
-        <label className="text-sm font-medium">{t("form.stripePriceId")}</label>
-        <Input name="stripePriceId" placeholder="price_..." defaultValue={plan?.stripePriceId ?? ""} className="mt-1 font-mono text-xs" />
-      </div>
-      <Textarea name="features" defaultValue={plan?.features.join("\n") ?? ""} rows={5} placeholder={t("form.featuresPlaceholder")} />
+      </FieldGroup>
+      <Field id="plan-stripe-price" label={t("form.stripePriceId")}>
+        <Input id="plan-stripe-price" name="stripePriceId" placeholder={tp("stripePriceIdPlaceholder")} defaultValue={plan?.stripePriceId ?? ""} className="mono-id" />
+      </Field>
+      <Field id="plan-features" label={tp("features")}>
+        <Textarea id="plan-features" name="features" defaultValue={plan?.features.join("\n") ?? ""} rows={5} placeholder={t("form.featuresPlaceholder")} />
+      </Field>
 
-      <div className="rounded-lg border border-border/40 p-4 space-y-3">
-        <p className="text-sm font-medium">{t("form.perksLimits")}</p>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <Input name="downloadLimit" type="number" placeholder={t("form.downloadLimit")} defaultValue={plan?.perks.downloadLimit ?? ""} />
-          <Input name="storageLimitMb" type="number" placeholder={t("form.storageLimitMb")} defaultValue={plan?.perks.storageLimitMb ?? ""} />
-          <Input name="marketplaceFeeBps" type="number" placeholder={t("form.marketplaceFeeBps")} defaultValue={plan?.perks.marketplaceFeeBps ?? ""} />
-          <Input name="customBadge" placeholder={t("form.customBadgeId")} defaultValue={plan?.perks.customBadge ?? ""} />
-          <Input name="accentColor" type="color" defaultValue={plan?.perks.accentColor ?? colors.violet} className="h-10" />
+      <FieldGroup title={t("form.perksLimits")} className="space-y-4">
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field id="plan-download-limit" label={t("form.downloadLimit")}>
+            <Input id="plan-download-limit" name="downloadLimit" type="number" defaultValue={plan?.perks.downloadLimit ?? ""} className="tabular-nums" />
+          </Field>
+          <Field id="plan-storage" label={t("form.storageLimitMb")}>
+            <Input id="plan-storage" name="storageLimitMb" type="number" defaultValue={plan?.perks.storageLimitMb ?? ""} className="tabular-nums" />
+          </Field>
+          <Field id="plan-fee" label={t("form.marketplaceFeeBps")}>
+            <Input id="plan-fee" name="marketplaceFeeBps" type="number" defaultValue={plan?.perks.marketplaceFeeBps ?? ""} className="tabular-nums" />
+          </Field>
+          <Field id="plan-custom-badge" label={t("form.customBadgeId")}>
+            <Input id="plan-custom-badge" name="customBadge" defaultValue={plan?.perks.customBadge ?? ""} className="mono-id" />
+          </Field>
+          <Field id="plan-accent" label={tp("accentColor")} hint={tp("accentColorHint")}>
+            <Input id="plan-accent" name="accentColor" type="color" defaultValue={plan?.perks.accentColor ?? colors.violet} className="h-9 w-16 p-1" />
+          </Field>
         </div>
-        <div className="flex flex-wrap gap-4 text-sm">
+        <div className="flex flex-wrap gap-4 text-sm text-ink">
           {(
             [
               ["adFree", t("form.perks.adFree")],
@@ -393,9 +499,9 @@ function PlanForm({
             </label>
           ))}
         </div>
-      </div>
+      </FieldGroup>
 
-      <div className="flex flex-wrap gap-4 text-sm">
+      <div className="flex flex-wrap gap-4 text-sm text-ink">
         <label className="flex items-center gap-2">
           <input type="checkbox" name="isActive" defaultChecked={plan?.isActive ?? true} /> {t("form.active")}
         </label>

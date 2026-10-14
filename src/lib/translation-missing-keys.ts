@@ -1,43 +1,26 @@
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
-import { join } from "node:path";
 import { locales, type Locale } from "@/i18n/config";
 import { getSiteSetting, setSiteSetting } from "@/lib/site-settings";
 import { auditTranslationKeys } from "@/lib/i18n-audit";
+import { readMessageFile } from "@/messages/files";
+import { MESSAGE_MODULES as LOADED_MODULES } from "@/messages/modules";
 
-const MESSAGE_MODULES = [
-  "common",
-  "landing",
-  "catalog",
-  "premium",
-  "auth",
-  "dashboard",
-  "admin",
-  "designer",
-  "creator",
-  "support",
-  "licenses",
-  "toast",
-  "ecosystem",
-  "media",
-  "shop",
-  "security",
-  "sounds",
-  "email",
-  "chat",
-  "search",
-] as const;
+// Wie der Loader (src/messages/modules.ts), plus search.json.
+const MESSAGE_MODULES = [...LOADED_MODULES, "search"] as const;
 
 const MISSING_LOG_KEY = "translation_missing_log";
 
 type MissingLog = Record<string, { count: number; lastSeen: string; samples: string[] }>;
 
-function readModule(locale: Locale, mod: string): Record<string, unknown> {
-  const path = join(process.cwd(), "src", "messages", locale, `${mod}.json`);
-  if (!existsSync(path)) return {};
-  return JSON.parse(readFileSync(path, "utf8")) as Record<string, unknown>;
-}
-
-function writeModule(locale: Locale, mod: string, data: Record<string, unknown>) {
+/**
+ * Schreibt in die Quelldateien – nur in der lokalen Entwicklung sinnvoll (der Build bündelt die Texte;
+ * in Cloudflare Workers gibt es kein Projektverzeichnis). Für Live-Änderungen: ACP → Lokalisierung.
+ */
+async function writeModule(locale: Locale, mod: string, data: Record<string, unknown>) {
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("Nachrichtendateien lassen sich nur in der lokalen Entwicklung schreiben (ACP → Lokalisierung nutzen).");
+  }
+  const { mkdirSync, writeFileSync } = await import("node:fs");
+  const { join } = await import("node:path");
   const dir = join(process.cwd(), "src", "messages", locale);
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, `${mod}.json`), `${JSON.stringify(data, null, 2)}\n`, "utf8");
@@ -75,7 +58,7 @@ export async function logMissingTranslationKey(key: string) {
 }
 
 export async function getMissingTranslationReport() {
-  const audit = auditTranslationKeys("en");
+  const audit = await auditTranslationKeys("en");
   const runtimeLog = await getSiteSetting<MissingLog>(MISSING_LOG_KEY, {});
   const totalMissing = audit.locales.reduce((n, l) => n + l.missing.length, 0);
   return {
@@ -91,7 +74,7 @@ export async function getMissingTranslationReport() {
 
 /** Copy missing UI keys from EN into other locale JSON files (English placeholder until translated). */
 export async function syncMissingUiKeysFromEnglish() {
-  const reference = auditTranslationKeys("en");
+  const reference = await auditTranslationKeys("en");
   let added = 0;
 
   for (const localeResult of reference.locales) {
@@ -107,8 +90,8 @@ export async function syncMissingUiKeysFromEnglish() {
     }
 
     for (const [mod, keys] of Object.entries(byModule)) {
-      const enData = readModule("en", mod);
-      const localeData = readModule(locale, mod);
+      const enData = await readMessageFile("en", mod);
+      const localeData = await readMessageFile(locale, mod);
       for (const key of keys) {
         const enVal = getByPath(enData, key);
         if (typeof enVal === "string") {
@@ -116,7 +99,7 @@ export async function syncMissingUiKeysFromEnglish() {
           added++;
         }
       }
-      writeModule(locale, mod, localeData);
+      await writeModule(locale, mod, localeData);
     }
   }
 

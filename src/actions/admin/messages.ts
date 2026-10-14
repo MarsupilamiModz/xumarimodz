@@ -1,7 +1,7 @@
 "use server";
 
-import { readFileSync } from "fs";
-import { join } from "path";
+import { readMessageFile } from "@/messages/files";
+import { MESSAGE_MODULES } from "@/messages/modules";
 import { revalidatePath } from "next/cache";
 import { locales, type Locale } from "@/i18n/config";
 import { fail, ok, requireActionPermission } from "@/lib/action-utils";
@@ -13,34 +13,12 @@ import {
 } from "@/lib/message-overrides";
 import { deepMergeMessages } from "@/lib/i18n-utils";
 
-const MESSAGE_MODULES = [
-  "common",
-  "landing",
-  "catalog",
-  "premium",
-  "auth",
-  "dashboard",
-  "admin",
-  "designer",
-  "creator",
-  "support",
-  "licenses",
-  "toast",
-  "ecosystem",
-  "media",
-  "shop",
-] as const;
+// Liste wie im Loader – vorher fehlten security, sounds, email, chat.
 
-function loadLocaleFileTree(locale: Locale): Record<string, unknown> {
-  const root = join(process.cwd(), "src", "messages", locale);
+async function loadLocaleFileTree(locale: Locale): Promise<Record<string, unknown>> {
   const merged: Record<string, unknown> = {};
   for (const mod of MESSAGE_MODULES) {
-    try {
-      const raw = readFileSync(join(root, `${mod}.json`), "utf8");
-      Object.assign(merged, JSON.parse(raw) as Record<string, unknown>);
-    } catch {
-      /* skip missing module */
-    }
+    Object.assign(merged, await readMessageFile(locale, mod));
   }
   return merged;
 }
@@ -49,8 +27,8 @@ export async function listAdminMessages(locale: Locale, search?: string) {
   const { error } = await requireActionPermission("settings.write");
   if (error) return error;
 
-  const base = loadLocaleFileTree(locale);
-  const en = locale === "en" ? base : loadLocaleFileTree("en");
+  const base = await loadLocaleFileTree(locale);
+  const en = locale === "en" ? base : await loadLocaleFileTree("en");
   const merged = locale === "en" ? base : deepMergeMessages(en, base);
   const overrides = await getAllMessageOverrides();
   const withOverrides = deepMergeMessages(

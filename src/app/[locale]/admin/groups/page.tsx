@@ -10,7 +10,16 @@ import { RolePermissionMatrix } from "@/components/admin/role-permission-matrix"
 import { ChipTabs } from "@/components/ui/chip-tabs";
 import type { Locale } from "@/i18n/config";
 
-export default async function AdminGroupsPage({ params: { locale }, searchParams }: { params: { locale: Locale }; searchParams: { tab?: string } }) {
+export default async function AdminGroupsPage(
+  props: { params: Promise<{ locale: Locale }>; searchParams: Promise<{ tab?: string }> }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   const viewer = await requirePagePermission("settings.write");
   const t = await getTranslations("admin.pm");

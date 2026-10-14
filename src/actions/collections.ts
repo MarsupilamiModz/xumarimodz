@@ -34,7 +34,8 @@ export async function createCollection(input: {
       slug,
       title: input.title.trim(),
       description: input.description,
-      visibility: input.visibility ?? "PUBLIC",
+      // Hervorheben (FEATURED) ist Sache des Teams.
+      visibility: input.visibility === "FEATURED" && !isAdmin(user.role) ? "PUBLIC" : (input.visibility ?? "PUBLIC"),
       coverUrl: input.coverUrl,
       ownerId: user.id,
       creatorId: creator?.id,
@@ -62,9 +63,19 @@ export async function updateCollection(
   if (!collection) return fail("Not found");
   if (collection.ownerId !== user.id && !isAdmin(user.role)) return fail("Forbidden");
 
+  // Hervorheben ist Sache des Teams: Besitzer können FEATURED/isFeatured weder selbst setzen noch beim
+  // Speichern als „öffentlich“ versehentlich verlieren (das Formular kennt nur öffentlich/privat).
+  const data = { ...input };
+  if (!isAdmin(user.role)) {
+    delete data.isFeatured;
+    if (data.visibility === "FEATURED" || (data.visibility === "PUBLIC" && collection.visibility === "FEATURED")) {
+      delete data.visibility;
+    }
+  }
+
   const updated = await prisma.modCollection.update({
     where: { id: collectionId },
-    data: input,
+    data,
   });
 
   revalidatePath(`/collections/${updated.slug}`);

@@ -3,10 +3,8 @@ import { validateApiKey, hasScope } from "@/lib/api-auth";
 import { prisma } from "@/lib/db";
 import { getModDependencies } from "@/lib/mod-dependencies";
 
-export async function GET(
-  req: Request,
-  { params }: { params: { slug: string } }
-) {
+export async function GET(req: Request, props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   const auth = await validateApiKey(req.headers.get("authorization"));
   if (!auth.ok) {
     return NextResponse.json({ error: auth.error }, { status: auth.status });

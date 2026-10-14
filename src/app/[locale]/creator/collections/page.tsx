@@ -1,20 +1,32 @@
 import Link from "next/link";
+import { Layers, Plus } from "lucide-react";
 import { requireAuth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { DataTable } from "@/components/ui/data-table";
+import { EmptyState } from "@/components/ui/empty-state";
+import { PageHeader } from "@/components/ui/page-header";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { formatNumber } from "@/lib/format-locale";
 import type { Locale } from "@/i18n/config";
 
 export const dynamic = "force-dynamic";
 
-export default async function CreatorCollectionsPage({
-  params: { locale },
-}: {
-  params: { locale: Locale };
-}) {
+export default async function CreatorCollectionsPage(
+  props: {
+    params: Promise<{ locale: Locale }>;
+  }
+) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
+  const t = await getTranslations("ecosystem");
+  const tp = await getTranslations("creatorPages.collections");
   const user = await requireAuth(`/${locale}/login`);
 
   const collections = await prisma.modCollection.findMany({
@@ -23,38 +35,66 @@ export default async function CreatorCollectionsPage({
     include: { _count: { select: { items: true, followers: true } } },
   }).catch(() => []);
 
-  return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">My collections</h2>
-        <Button asChild>
-          <Link href={`/${locale}/creator/collections/new`}>New collection</Link>
-        </Button>
-      </div>
+  const newHref = `/${locale}/creator/collections/new`;
 
-      {collections.length === 0 ? (
-        <Card className="p-6 text-sm text-muted-foreground">
-          No collections yet. Create a modpack or curated list for your audience.
-        </Card>
-      ) : (
-        <div className="grid gap-4 sm:grid-cols-2">
-          {collections.map((c) => (
-            <Link key={c.id} href={`/${locale}/creator/collections/${c.id}`}>
-              <Card className="h-full hover:border-line-control transition-colors">
-                <CardHeader>
-                  <div className="flex items-center gap-2">
-                    <CardTitle className="text-base">{c.title}</CardTitle>
-                    {c.isFeatured && <Badge>Featured</Badge>}
-                  </div>
-                </CardHeader>
-                <CardContent className="text-sm text-muted-foreground">
-                  {c._count.items} mods · {c._count.followers} followers · {c.visibility}
-                </CardContent>
-              </Card>
+  return (
+    <div>
+      <PageHeader
+        level="h2"
+        title={tp("title")}
+        description={tp("description")}
+        actions={
+          <Button variant="outline" asChild>
+            <Link href={newHref}>
+              <Plus className="h-4 w-4" aria-hidden />
+              {tp("new")}
             </Link>
-          ))}
-        </div>
-      )}
+          </Button>
+        }
+      />
+
+      <DataTable
+        caption={tp("title")}
+        rows={collections}
+        rowKey={(c) => c.id}
+        rowHref={(c) => `/${locale}/creator/collections/${c.id}`}
+        empty={<EmptyState icon={Layers} title={tp("emptyTitle")} description={tp("emptyText")} />}
+        columns={[
+          {
+            key: "title",
+            header: tp("colTitle"),
+            width: "minmax(0,2fr)",
+            cell: (c) => (
+              <span className="flex min-w-0 items-center gap-2">
+                <span className="truncate font-medium text-ink">{c.title}</span>
+                {c.isFeatured && <StatusBadge tone="info" label={t("featured")} />}
+              </span>
+            ),
+          },
+          {
+            key: "mods",
+            header: tp("colMods"),
+            width: "90px",
+            align: "right",
+            cell: (c) => formatNumber(c._count.items, locale),
+          },
+          {
+            key: "followers",
+            header: tp("colFollowers"),
+            width: "100px",
+            align: "right",
+            hideOnMobile: true,
+            cell: (c) => formatNumber(c._count.followers, locale),
+          },
+          {
+            key: "visibility",
+            header: tp("colVisibility"),
+            width: "140px",
+            hideOnMobile: true,
+            cell: (c) => <span className="text-ink-muted">{tp(`visibility.${c.visibility}`)}</span>,
+          },
+        ]}
+      />
     </div>
   );
 }

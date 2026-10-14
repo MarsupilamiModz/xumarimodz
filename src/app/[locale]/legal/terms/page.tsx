@@ -1,21 +1,24 @@
 import type { Metadata } from "next";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { SITE } from "@/lib/site";
 import { LegalPage } from "@/components/legal/legal-page";
+import type { Locale } from "@/i18n/config";
 
-// TODO(content): AGB sind nur ein kurzer englischer Platzhalter – vollständigen Text liefern.
-export const metadata: Metadata = { title: "Terms of Service" };
+export async function generateMetadata(props: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
+  const { locale } = await props.params;
+  const t = await getTranslations({ locale, namespace: "publicPages.legal.terms" });
+  return { title: t("title") };
+}
 
-export default function TermsPage() {
+// TODO(content): AGB sind nur ein kurzer Platzhalter – vollständigen Text liefern.
+export default async function TermsPage(props: { params: Promise<{ locale: Locale }> }) {
+  const { locale } = await props.params;
+  setRequestLocale(locale);
+  const t = await getTranslations("publicPages.legal.terms");
   return (
-    <LegalPage title="Terms of Service">
-      <p>
-        By using {SITE.name} you agree to these terms. Mod creators retain intellectual property rights to
-        their content. Premium subscriptions renew automatically unless canceled before the renewal date.
-      </p>
-      <p>
-        You may not redistribute premium downloads outside the platform. Violations may result in account
-        suspension.
-      </p>
+    <LegalPage title={t("title")}>
+      <p>{t("p1", { site: SITE.name })}</p>
+      <p>{t("p2")}</p>
     </LegalPage>
   );
 }

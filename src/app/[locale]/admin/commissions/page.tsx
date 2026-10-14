@@ -13,7 +13,13 @@ import type { Locale } from "@/i18n/config";
 
 const PAYOUT_TONE: Record<string, StatusTone> = { PENDING: "warning", PROCESSING: "pending", PAID: "success", FAILED: "danger", CANCELLED: "neutral" };
 
-export default async function AdminCommissionsPage({ params: { locale } }: { params: { locale: Locale } }) {
+export default async function AdminCommissionsPage(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   await requirePagePermission("settings.write");
   const [t, tr] = await Promise.all([getTranslations("admin.cm"), getTranslations("status.role")]);

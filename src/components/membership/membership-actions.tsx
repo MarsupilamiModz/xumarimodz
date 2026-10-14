@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { DataTable } from "@/components/ui/data-table";
 import { formatCreditsFromCents } from "@/lib/credits";
 import { formatDate } from "@/lib/format-locale";
 
@@ -22,6 +24,7 @@ export function MembershipActions({
   locale: string;
   purchases: Purchase[];
 }) {
+  const t = useTranslations("accountPages.subscription");
   const [loadingId, setLoadingId] = useState<string | null>(null);
 
   async function openReceipt(paymentId: string) {
@@ -39,34 +42,59 @@ export function MembershipActions({
     <div className="space-y-4">
       <div className="flex flex-wrap gap-2">
         <Button asChild>
-          <Link href={`/${locale}/premium`}>Upgrade membership</Link>
+          <Link href={`/${locale}/premium`}>{t("upgrade")}</Link>
         </Button>
       </div>
 
       {purchases.length > 0 && (
         <div className="space-y-2">
-          <p className="text-xs uppercase tracking-wider text-muted-foreground">Payment history</p>
-          {purchases.map((p) => (
-            <div key={p.id} className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border/40 p-3 text-sm">
-              <div>
-                <p className="font-medium">{p.plan.name}</p>
-                <p className="text-xs text-muted-foreground">
-                  {formatCreditsFromCents(p.amountCents, locale)} · {formatDate(p.createdAt)}
-                </p>
-              </div>
-              {p.stripePaymentId && (
-                <Button
-                  size="sm"
-                  variant="outline"
-                  disabled={loadingId === p.stripePaymentId}
-                  onClick={() => openReceipt(p.stripePaymentId!)}
-                >
-                  <ExternalLink className="h-3.5 w-3.5 mr-1" />
-                  Receipt
-                </Button>
-              )}
-            </div>
-          ))}
+          <h3 className="label-text">{t("historyTitle")}</h3>
+          <DataTable
+            caption={t("historyTitle")}
+            rows={purchases}
+            rowKey={(p) => p.id}
+            columns={[
+              {
+                key: "plan",
+                header: t("colPlan"),
+                width: "minmax(0,2fr)",
+                cell: (p) => <span className="block truncate font-medium text-ink">{p.plan.name}</span>,
+              },
+              {
+                key: "amount",
+                header: t("colAmount"),
+                width: "120px",
+                align: "right",
+                cell: (p) => formatCreditsFromCents(p.amountCents, locale),
+              },
+              {
+                key: "date",
+                header: t("colDate"),
+                width: "110px",
+                hideOnMobile: true,
+                cell: (p) => <span className="text-ink-muted">{formatDate(p.createdAt, locale)}</span>,
+              },
+              {
+                key: "receipt",
+                header: t("colReceipt"),
+                width: "110px",
+                align: "right",
+                cell: (p) =>
+                  p.stripePaymentId ? (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      disabled={loadingId === p.stripePaymentId}
+                      aria-label={t("receiptLabel", { plan: p.plan.name })}
+                      onClick={() => openReceipt(p.stripePaymentId!)}
+                    >
+                      <ExternalLink className="h-3.5 w-3.5" aria-hidden />
+                      {t("receipt")}
+                    </Button>
+                  ) : null,
+              },
+            ]}
+          />
         </div>
       )}
     </div>

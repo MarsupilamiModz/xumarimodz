@@ -195,3 +195,12 @@
 html.cookie-decided #cookie-consent {
   display: none;
 }
+
+/* Werbung: bei Session-Cookie ausgeblendet, bis AdGate im Browser die Stufe kennt (kein Aufblitzen für Premium). */
+html.has-session [data-ad-gate]:not([data-ad-ready]) {
+  display: none;
+}
+/* Reduzierte Werbung: nur die erste Fläche eines Platzes. */
+.ad-density-reduced .ad-extra {
+  display: none;
+}

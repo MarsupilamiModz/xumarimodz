@@ -5,14 +5,20 @@ import { requirePagePermission } from "@/lib/auth";
 import { getAdminDMCAClaims } from "@/actions/admin/trust";
 import { DMCAAdminPanel } from "@/components/admin/dmca-admin-panel";
 
-export default async function AdminDmcaPage({ params: { locale } }: { params: { locale: Locale } }) {
+export default async function AdminDmcaPage(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   await requirePagePermission("moderation.reports");
-  const result = await getAdminDMCAClaims();
+  const [t, result] = await Promise.all([getTranslations("admin.dmcaAdmin"), getAdminDMCAClaims()]);
   return (
     <div>
-      <AdminPageHeader title="DMCA" />
-      {result.success ? <DMCAAdminPanel claims={result.data.claims} /> : <AdminLoadError message={result.error} />}
+      <AdminPageHeader title={t("title")} description={t("subtitle")} />
+      {result.success ? <DMCAAdminPanel claims={result.data.claims} locale={locale} /> : <AdminLoadError message={result.error} />}
     </div>
   );
 }

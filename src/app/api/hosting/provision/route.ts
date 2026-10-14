@@ -5,6 +5,7 @@ import { prisma } from "@/lib/db";
 import { resolveHostingPartner, recordHostingClick } from "@/lib/hosting/resolve";
 import { provisionHostingServer } from "@/lib/hosting/provision";
 import { rateLimit } from "@/lib/rate-limit";
+import { runAfterResponse } from "@/lib/after-response";
 
 const schema = z
   .object({ modId: z.string().max(64).optional(), collectionId: z.string().max(64).optional() })
@@ -69,7 +70,7 @@ export async function POST(req: Request) {
   });
 
   const user = await getCurrentUser().catch(() => null);
-  void recordHostingClick({
+  runAfterResponse(recordHostingClick({
     partnerId: partner.partnerId,
     userId: user?.id ?? null,
     modId: mod?.id ?? null,
@@ -77,7 +78,7 @@ export async function POST(req: Request) {
     gameId: mod?.gameId ?? null,
     context: "CTA",
     referrer: req.headers.get("referer"),
-  }).catch(() => null);
+  }).catch(() => null));
 
   return NextResponse.json({ redirectUrl: result.ok ? result.redirectUrl : result.fallbackUrl });
 }

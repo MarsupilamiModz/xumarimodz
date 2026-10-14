@@ -1,13 +1,15 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { safeToLocaleString } from "@/lib/i18n/safe-locale";
-import { useTransition } from "react";
-import { formatDistanceToNow } from "date-fns";
-import { toast } from "@/hooks/use-toast";
+import { useState, useTransition } from "react";
+import { useLocale, useTranslations } from "next-intl";
+import { History } from "lucide-react";
+import { useAppToast } from "@/hooks/use-app-toast";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { EmptyState } from "@/components/ui/empty-state";
+import { SectionCard } from "@/components/ui/page-header";
+import { StatusBadge, type StatusTone } from "@/components/ui/status-badge";
 import {
   archiveModVersion,
   restoreModVersion,
@@ -16,6 +18,7 @@ import {
 } from "@/actions/mods";
 import type { FileScanStatus, VersionChannel } from "@prisma/client";
 import { formatBytes } from "@/lib/file-size";
+import { formatDate } from "@/lib/format-locale";
 
 type Version = {
   id: string;
@@ -31,86 +34,106 @@ type Version = {
   createdAt: Date;
 };
 
+const SCAN_TONE: Record<FileScanStatus, StatusTone> = {
+  PENDING: "pending",
+  SCANNING: "pending",
+  CLEAN: "success",
+  APPROVED: "success",
+  SUSPICIOUS: "warning",
+  MALWARE: "danger",
+  REJECTED: "danger",
+  MANUAL_REVIEW: "warning",
+  FAILED: "danger",
+};
+
 export function CreatorModVersionManager({ versions }: { modId?: string; versions: Version[] }) {
+  const t = useTranslations("creatorPages.modEditor");
+  const tt = useTranslations("toast");
+  const locale = useLocale();
+  const appToast = useAppToast();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
+  const [archiveTarget, setArchiveTarget] = useState<Version | null>(null);
 
-  function act(fn: () => Promise<{ success: boolean; error?: string }>, label: string) {
+  function act(fn: () => Promise<{ success: boolean; error?: string }>, label: string, after?: () => void) {
     startTransition(async () => {
       const r = await fn();
       if (r.success) {
-        toast({ title: label });
+        appToast.raw({ title: label });
+        after?.();
         router.refresh();
-      } else toast({ title: r.error ?? "Failed", variant: "destructive" });
+      } else appToast.error(r.error ?? tt("error"));
     });
   }
 
-  if (versions.length === 0) {
-    return (
-      <Card>
-        <CardHeader><CardTitle>Version history</CardTitle></CardHeader>
-        <CardContent className="text-sm text-muted-foreground">No versions uploaded yet.</CardContent>
-      </Card>
-    );
-  }
-
   return (
-    <Card>
-      <CardHeader><CardTitle>Version history</CardTitle></CardHeader>
-      <CardContent className="space-y-3">
-        {versions.map((v) => (
-          <div key={v.id} className="border-b border-border/30 pb-3 last:border-0">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="font-medium">v{v.version}</span>
-              {v.isPrimary && <Badge>Latest</Badge>}
-              {v.channel === "BETA" && <Badge variant="outline">Beta</Badge>}
-              {v.isArchived && <Badge variant="outline">Archived</Badge>}
-              <Badge
-                variant={
-                  v.scanStatus === "CLEAN" || v.scanStatus === "APPROVED" ? "default" : "destructive"
-                }
-              >
-                {v.scanStatus}
-              </Badge>
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              {formatDistanceToNow(new Date(v.createdAt), { addSuffix: true })}
-              {" · "}
-              {formatBytes(v.fileSize)}
-              {v.gameVersion && ` · ${v.gameVersion}`}
-              {" · "}
-              {safeToLocaleString(v.downloadCount)} downloads
-            </p>
-            {v.changelog && <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{v.changelog}</p>}
-            <div className="flex flex-wrap gap-1 mt-2">
-              {!v.isPrimary && !v.isArchived && (
-                <Button size="sm" variant="outline" disabled={pending} onClick={() => act(() => setModVersionPrimary(v.id), "Set as latest")}>
-                  Set as latest
-                </Button>
-              )}
-              {!v.isArchived ? (
-                <Button size="sm" variant="outline" disabled={pending} onClick={() => act(() => archiveModVersion(v.id), "Version archived")}>
-                  Archive
-                </Button>
-              ) : (
-                <Button size="sm" variant="outline" disabled={pending} onClick={() => act(() => restoreModVersion(v.id), "Version restored")}>
-                  Restore
-                </Button>
-              )}
-              {v.channel !== "BETA" && !v.isArchived && (
-                <Button size="sm" variant="ghost" disabled={pending} onClick={() => act(() => setModVersionChannel(v.id, "BETA"), "Marked as beta")}>
-                  Mark beta
-                </Button>
-              )}
-              {v.channel === "BETA" && (
-                <Button size="sm" variant="ghost" disabled={pending} onClick={() => act(() => setModVersionChannel(v.id, "STABLE"), "Marked as stable")}>
-                  Mark stable
-                </Button>
-              )}
-            </div>
-          </div>
-        ))}
-      </CardContent>
-    </Card>
+    <SectionCard title={t("versionsTitle")}>
+      {versions.length === 0 ? (
+        <EmptyState icon={History} title={t("versionsEmptyTitle")} description={t("versionsEmptyText")} className="py-8" />
+      ) : (
+        <ul className="divide-y divide-line">
+          {versions.map((v) => (
+            <li key={v.id} className="py-3 first:pt-0 last:pb-0">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="font-medium text-ink">v{v.version}</span>
+                {v.isPrimary && <StatusBadge tone="success" label={t("latest")} />}
+                {v.channel === "BETA" && <StatusBadge tone="info" label={t("beta")} />}
+                {v.isArchived && <StatusBadge tone="neutral" label={t("archived")} />}
+                <StatusBadge tone={SCAN_TONE[v.scanStatus]} label={t(`scan.${v.scanStatus}`)} />
+              </div>
+              <p className="meta mt-1 tabular-nums">
+                {formatDate(v.createdAt, locale)}
+                {" · "}
+                {formatBytes(v.fileSize)}
+                {v.gameVersion && ` · ${v.gameVersion}`}
+                {" · "}
+                {t("downloads", { count: v.downloadCount })}
+              </p>
+              {v.changelog && <p className="mt-1 line-clamp-2 text-sm text-ink-muted">{v.changelog}</p>}
+              <div className="mt-2 flex flex-wrap gap-1">
+                {!v.isPrimary && !v.isArchived && (
+                  <Button size="sm" variant="outline" disabled={pending} onClick={() => act(() => setModVersionPrimary(v.id), t("setLatestDone"))}>
+                    {t("setLatest")}
+                  </Button>
+                )}
+                {!v.isArchived ? (
+                  <Button size="sm" variant="outline" disabled={pending} onClick={() => setArchiveTarget(v)}>
+                    {t("archive")}
+                  </Button>
+                ) : (
+                  <Button size="sm" variant="outline" disabled={pending} onClick={() => act(() => restoreModVersion(v.id), t("restoredDone"))}>
+                    {t("restore")}
+                  </Button>
+                )}
+                {v.channel !== "BETA" && !v.isArchived && (
+                  <Button size="sm" variant="ghost" disabled={pending} onClick={() => act(() => setModVersionChannel(v.id, "BETA"), t("betaDone"))}>
+                    {t("markBeta")}
+                  </Button>
+                )}
+                {v.channel === "BETA" && (
+                  <Button size="sm" variant="ghost" disabled={pending} onClick={() => act(() => setModVersionChannel(v.id, "STABLE"), t("stableDone"))}>
+                    {t("markStable")}
+                  </Button>
+                )}
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <ConfirmDialog
+        open={archiveTarget !== null}
+        onOpenChange={(open) => !open && setArchiveTarget(null)}
+        title={t("archiveTitle", { version: archiveTarget?.version ?? "" })}
+        description={t("archiveText")}
+        confirmLabel={t("archive")}
+        loading={pending}
+        onConfirm={() => {
+          if (!archiveTarget) return;
+          const id = archiveTarget.id;
+          act(() => archiveModVersion(id), t("archivedDone"), () => setArchiveTarget(null));
+        }}
+      />
+    </SectionCard>
   );
 }

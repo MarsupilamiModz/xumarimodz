@@ -7,13 +7,19 @@ import { getAdminReports } from "@/actions/admin/trust";
 import { ReportsAdminPanel } from "@/components/admin/reports-admin-panel";
 import { Pagination } from "@/components/ui/pagination";
 
-export default async function AdminReportsPage({
-  params: { locale },
-  searchParams,
-}: {
-  params: { locale: Locale };
-  searchParams: { page?: string };
-}) {
+export default async function AdminReportsPage(
+  props: {
+    params: Promise<{ locale: Locale }>;
+    searchParams: Promise<{ page?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   await requirePagePermission("moderation.reports");
   const t = await getTranslations("admin");

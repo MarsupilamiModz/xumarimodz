@@ -8,11 +8,18 @@ import { ModAdminPanel } from "@/components/admin/mod-admin-panel";
 import { getMediaSettings } from "@/lib/media-settings";
 import type { Locale } from "@/i18n/config";
 
-export default async function AdminEditModPage({
-  params: { locale, id },
-}: {
-  params: { locale: Locale; id: string };
-}) {
+export default async function AdminEditModPage(
+  props: {
+    params: Promise<{ locale: Locale; id: string }>;
+  }
+) {
+  const params = await props.params;
+
+  const {
+    locale,
+    id
+  } = params;
+
   setRequestLocale(locale);
   await requireAdmin();
   const [result, games, authors, mediaSettings, t] = await Promise.all([

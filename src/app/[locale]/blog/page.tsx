@@ -1,10 +1,23 @@
 import Link from "next/link";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import { Newspaper } from "lucide-react";
 import { prisma } from "@/lib/db";
-import { Card } from "@/components/ui/card";
 import { formatDisplayName } from "@/lib/display-name";
+import { formatDate } from "@/lib/format-locale";
+import { PageHeader } from "@/components/ui/page-header";
+import { EmptyState } from "@/components/ui/empty-state";
 import type { Locale } from "@/i18n/config";
 
-export default async function BlogPage({ params: { locale } }: { params: { locale: Locale } }) {
+export default async function BlogPage(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
+  setRequestLocale(locale);
+  const t = await getTranslations("publicPages.blog");
+
   const posts = await prisma.blogPost
     .findMany({
       where: { published: true },
@@ -15,21 +28,30 @@ export default async function BlogPage({ params: { locale } }: { params: { local
     .catch(() => []);
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6">
-      <h1 className="h1-display">News & Updates</h1>
-      <div className="mt-10 space-y-4">
+    <div className="page-section">
+      <div className="max-w-3xl">
+        <PageHeader title={t("title")} description={t("subtitle")} />
         {posts.length === 0 ? (
-          <p className="text-muted-foreground">No posts yet. Check back soon.</p>
+          <EmptyState icon={Newspaper} title={t("emptyTitle")} description={t("emptyText")} />
         ) : (
-          posts.map((p) => (
-            <Link key={p.id} href={`/${locale}/blog/${p.slug}`}>
-              <Card className="p-6 hover:border-line-control">
-                <h2 className="font-semibold text-lg">{p.title}</h2>
-                <p className="text-sm text-muted-foreground mt-1">{p.excerpt}</p>
-                <p className="text-xs text-ink-muted mt-2">{formatDisplayName(p.author)}</p>
-              </Card>
-            </Link>
-          ))
+          <ul className="space-y-4">
+            {posts.map((p) => (
+              <li key={p.id}>
+                <Link
+                  href={`/${locale}/blog/${p.slug}`}
+                  className="block rounded-lg border border-line bg-raised p-5 transition-colors duration-fast hover:border-line-control"
+                >
+                  <h2 className="section-title">{p.title}</h2>
+                  {p.excerpt && <p className="mt-1 text-sm text-ink-muted">{p.excerpt}</p>}
+                  <p className="meta mt-3">
+                    {p.publishedAt
+                      ? t("byline", { author: formatDisplayName(p.author), date: formatDate(p.publishedAt, locale) })
+                      : formatDisplayName(p.author)}
+                  </p>
+                </Link>
+              </li>
+            ))}
+          </ul>
         )}
       </div>
     </div>

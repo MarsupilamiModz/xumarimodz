@@ -1,14 +1,27 @@
 import { requireAuth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { formatCents } from "@/lib/affiliate";
+import { Ticket } from "lucide-react";
+import { PageHeader } from "@/components/ui/page-header";
+import { DataTable } from "@/components/ui/data-table";
+import { EmptyState } from "@/components/ui/empty-state";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { formatNumber } from "@/lib/format-locale";
+import { formatMoneyFromCents } from "@/lib/currency";
 import type { Locale } from "@/i18n/config";
 
-export default async function PartnerCodesPage({ params: { locale } }: { params: { locale: Locale } }) {
+export default async function PartnerCodesPage(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
-  const t = await getTranslations("ecosystem");
+  const [t, tp] = await Promise.all([
+    getTranslations("ecosystem"),
+    getTranslations("partnerPages.partnerCodes"),
+  ]);
   const user = await requireAuth();
 
   const coupons = await prisma.coupon.findMany({
@@ -17,19 +30,31 @@ export default async function PartnerCodesPage({ params: { locale } }: { params:
   });
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-lg font-semibold">{t("affiliateCodes")}</h2>
-      {coupons.map((c) => (
-        <Card key={c.id} className="p-4 flex flex-wrap justify-between gap-3">
-          <p className="font-mono text-ink-muted">{c.code}</p>
-          <div className="flex gap-4 text-sm text-muted-foreground">
-            <span>{c.clickCount} clicks</span>
-            <span>{c.conversionCount} conv.</span>
-            <span>{formatCents(c.revenueCents, locale)}</span>
-            <Badge variant={c.isActive ? "default" : "outline"}>{c.isActive ? "Active" : "Off"}</Badge>
-          </div>
-        </Card>
-      ))}
+    <div>
+      <PageHeader level="h2" title={t("affiliateCodes")} description={tp("description")} />
+      <DataTable
+        caption={t("affiliateCodes")}
+        rows={coupons}
+        rowKey={(c) => c.id}
+        empty={<EmptyState icon={Ticket} title={tp("emptyTitle")} description={tp("emptyText")} />}
+        columns={[
+          {
+            key: "code",
+            header: t("affiliateCode"),
+            width: "minmax(0,2fr)",
+            cell: (c) => <span className="mono-id block truncate text-ink">{c.code}</span>,
+          },
+          { key: "clicks", header: t("clicks"), width: "100px", align: "right", hideOnMobile: true, cell: (c) => formatNumber(c.clickCount, locale) },
+          { key: "conversions", header: t("conversions"), width: "110px", align: "right", hideOnMobile: true, cell: (c) => formatNumber(c.conversionCount, locale) },
+          { key: "revenue", header: t("revenue"), width: "120px", align: "right", cell: (c) => formatMoneyFromCents(c.revenueCents, locale) },
+          {
+            key: "status",
+            header: tp("colStatus"),
+            width: "120px",
+            cell: (c) => <StatusBadge tone={c.isActive ? "success" : "neutral"} label={c.isActive ? t("active") : t("inactive")} />,
+          },
+        ]}
+      />
     </div>
   );
 }

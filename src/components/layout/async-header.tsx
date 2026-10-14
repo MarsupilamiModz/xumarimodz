@@ -1,6 +1,5 @@
 import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
-import { getNavUser } from "@/lib/nav-user";
 import { Header } from "@/components/layout/header";
 import { HeaderSkeleton } from "@/components/layout/header-skeleton";
 import {
@@ -8,23 +7,15 @@ import {
   resolveNavLabel,
   type NavLabels,
 } from "@/components/layout/nav-labels";
-import type { NavUser } from "@/components/layout/user-nav";
 import { getCachedPublicBranding } from "@/lib/branding-data";
 import { getNavGames } from "@/lib/nav-games";
 import { getPlatformLanguages } from "@/lib/languages";
 import { getSafeLocale } from "@/lib/i18n/safe-locale";
-import { isDynamicServerUsageError } from "@/lib/is-dynamic-server-error";
 
-async function HeaderWithUser({ locale }: { locale: string }) {
+// Ohne Nutzer: der kommt im Browser (useNavUser). So liest der Header keine Cookies und die Seiten
+// bleiben statisch/ISR-fähig.
+async function HeaderContent({ locale }: { locale: string }) {
   const safeLocale = getSafeLocale(locale);
-  let user: NavUser | null = null;
-  try {
-    user = await getNavUser();
-  } catch (err) {
-    if (!isDynamicServerUsageError(err)) {
-      console.error("[header] getNavUser failed", err);
-    }
-  }
 
   const [t, brandingBundle, navGames, languages] = await Promise.all([
     getTranslations("nav"),
@@ -51,7 +42,6 @@ async function HeaderWithUser({ locale }: { locale: string }) {
   return (
     <Header
       locale={safeLocale}
-      user={user}
       navLabels={navLabels}
       header={brandingBundle.header}
       branding={brandingBundle.branding}
@@ -65,9 +55,8 @@ async function HeaderWithUser({ locale }: { locale: string }) {
 export function AsyncHeader({ locale }: { locale: string }) {
   return (
     <Suspense fallback={<HeaderSkeleton />}>
-      <HeaderWithUser locale={locale} />
+      <HeaderContent locale={locale} />
     </Suspense>
   );
 }
 
-export type { NavUser };

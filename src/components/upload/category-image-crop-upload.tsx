@@ -3,6 +3,7 @@
 import { useCallback, useMemo, useState } from "react";
 import Cropper, { type Area } from "react-easy-crop";
 import { Loader2, RotateCw, ZoomIn } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -15,10 +16,11 @@ import { SafeImage } from "@/components/ui/safe-image";
 import { getCroppedImageBlob } from "@/lib/crop-image";
 import { cn } from "@/lib/utils";
 
+// Beschriftung kommt aus sharedTools.categoryCrop.preset.<Schlüssel>.
 const ASPECT_PRESETS = {
-  square: { label: "Square", aspect: 1, output: { width: 640, height: 640 } },
-  portrait: { label: "Portrait", aspect: 3 / 4, output: { width: 480, height: 640 } },
-  landscape: { label: "Landscape", aspect: 16 / 9, output: { width: 640, height: 360 } },
+  square: { aspect: 1, output: { width: 640, height: 640 } },
+  portrait: { aspect: 3 / 4, output: { width: 480, height: 640 } },
+  landscape: { aspect: 16 / 9, output: { width: 640, height: 360 } },
 } as const;
 
 type AspectPreset = keyof typeof ASPECT_PRESETS;
@@ -34,12 +36,14 @@ type CategoryImageCropUploadProps = {
 
 export function CategoryImageCropUpload({
   label,
-  categoryName = "Category",
+  categoryName,
   modCount = 0,
   onCropped,
   className,
   disabled,
 }: CategoryImageCropUploadProps) {
+  const t = useTranslations("sharedTools.categoryCrop");
+  const tc = useTranslations("common");
   const [open, setOpen] = useState(false);
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -117,26 +121,26 @@ export function CategoryImageCropUpload({
 
   const previewCard = useMemo(
     () => (
-      <div className="rounded-xl border border-border/40 bg-background/30 p-3 space-y-2">
-        <p className="text-xs text-muted-foreground uppercase tracking-wide">Card preview</p>
-        <div className="flex flex-col items-center gap-2 rounded-xl border border-border/40 p-3 hover:border-line-control transition-colors">
-          <div className="relative h-32 w-32 overflow-hidden rounded-xl border border-border/50 bg-muted/30">
+      <div className="space-y-2 rounded-lg border border-line bg-canvas p-3">
+        <p className="label-text">{t("cardPreview")}</p>
+        <div className="flex flex-col items-center gap-2 rounded-lg border border-line bg-raised p-3">
+          <div className="relative h-32 w-32 overflow-hidden rounded-lg border border-line bg-elevated">
             {previewUrl ? (
               <SafeImage src={previewUrl} alt="" fill className="object-cover" sizes="128px" />
             ) : (
-              <div className="flex h-full w-full items-center justify-center text-xs text-muted-foreground">
-                Preview
+              <div className="flex h-full w-full items-center justify-center text-xs text-ink-faint">
+                {t("preview")}
               </div>
             )}
           </div>
           <div className="text-center">
-            <p className="font-medium text-sm">{categoryName}</p>
-            <p className="text-xs text-ink-muted">{modCount} mods</p>
+            <p className="text-sm font-medium text-ink">{categoryName ?? t("categoryFallback")}</p>
+            <p className="meta tabular-nums">{t("modCount", { count: modCount })}</p>
           </div>
         </div>
       </div>
     ),
-    [categoryName, modCount, previewUrl]
+    [categoryName, modCount, previewUrl, t]
   );
 
   return (
@@ -159,26 +163,27 @@ export function CategoryImageCropUpload({
       </label>
 
       <Dialog open={open} onOpenChange={(v) => !saving && setOpen(v)}>
-        <DialogContent className="max-w-3xl border-violet-bright/30">
+        <DialogContent className="max-w-3xl">
           <DialogHeader>
-            <DialogTitle>Crop category image</DialogTitle>
+            <DialogTitle>{t("title")}</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 md:grid-cols-[1fr_220px]">
             <div className="space-y-3">
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2" role="group" aria-label={t("aspect")}>
                 {(Object.keys(ASPECT_PRESETS) as AspectPreset[]).map((key) => (
                   <Button
                     key={key}
                     type="button"
                     size="sm"
                     variant={preset === key ? "default" : "outline"}
+                    aria-pressed={preset === key}
                     onClick={() => setPreset(key)}
                   >
-                    {ASPECT_PRESETS[key].label}
+                    {t(`preset.${key}`)}
                   </Button>
                 ))}
               </div>
-              <div className="relative h-72 w-full rounded-xl overflow-hidden bg-canvas/60 border border-border/40">
+              <div className="relative h-72 w-full overflow-hidden rounded-lg border border-line bg-canvas">
                 {imageSrc && (
                   <Cropper
                     image={imageSrc}
@@ -199,7 +204,7 @@ export function CategoryImageCropUpload({
                 )}
               </div>
               <div className="flex items-center gap-3 px-1">
-                <ZoomIn className="h-4 w-4 text-muted-foreground shrink-0" />
+                <ZoomIn className="h-4 w-4 shrink-0 text-ink-muted" aria-hidden />
                 <input
                   type="range"
                   min={1}
@@ -207,6 +212,7 @@ export function CategoryImageCropUpload({
                   step={0.05}
                   value={zoom}
                   onChange={(e) => setZoom(Number(e.target.value))}
+                  aria-label={t("zoom")}
                   className="w-full accent-violet"
                 />
               </div>
@@ -217,8 +223,8 @@ export function CategoryImageCropUpload({
                   size="sm"
                   onClick={() => setRotation((r) => (r + 90) % 360)}
                 >
-                  <RotateCw className="h-4 w-4 mr-1" />
-                  Rotate
+                  <RotateCw className="h-4 w-4" aria-hidden />
+                  {t("rotate")}
                 </Button>
                 <input
                   type="range"
@@ -227,6 +233,7 @@ export function CategoryImageCropUpload({
                   step={1}
                   value={rotation}
                   onChange={(e) => setRotation(Number(e.target.value))}
+                  aria-label={t("rotation")}
                   className="w-full accent-violet"
                 />
               </div>
@@ -235,11 +242,11 @@ export function CategoryImageCropUpload({
           </div>
           <DialogFooter className="gap-2">
             <Button variant="ghost" onClick={() => setOpen(false)} disabled={saving}>
-              Cancel
+              {tc("cancel")}
             </Button>
             <Button onClick={() => void save()} disabled={saving || !croppedArea}>
-              {saving ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : null}
-              Save image
+              {saving ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : null}
+              {t("save")}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -9,11 +9,18 @@ import { TicketHeaderActions } from "@/components/admin/tickets/ticket-header-ac
 import { Button } from "@/components/ui/button";
 import type { Locale } from "@/i18n/config";
 
-export default async function AdminTicketDetailPage({
-  params: { locale, id },
-}: {
-  params: { locale: Locale; id: string };
-}) {
+export default async function AdminTicketDetailPage(
+  props: {
+    params: Promise<{ locale: Locale; id: string }>;
+  }
+) {
+  const params = await props.params;
+
+  const {
+    locale,
+    id
+  } = params;
+
   setRequestLocale(locale);
   const user = await requirePagePermission("tickets.read");
   const [data, t] = await Promise.all([loadAdminTicket(id), getTranslations("admin.tk")]);

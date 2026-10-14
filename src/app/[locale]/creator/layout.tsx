@@ -9,13 +9,20 @@ import { Button } from "@/components/ui/button";
 import { isCreatorOrPartner } from "@/lib/permissions";
 import type { Locale } from "@/i18n/config";
 
-export default async function CreatorLayout({
-  children,
-  params: { locale },
-}: {
-  children: React.ReactNode;
-  params: { locale: Locale };
-}) {
+export default async function CreatorLayout(
+  props: {
+    children: React.ReactNode;
+    params: Promise<{ locale: string }>;
+  }
+) {
+  const params = await props.params;
+
+  const locale = params.locale as Locale;
+
+  const {
+    children
+  } = props;
+
   setRequestLocale(locale);
   const t = await getTranslations("ecosystem");
   const user = await requireAuth(`/${locale}/login`);

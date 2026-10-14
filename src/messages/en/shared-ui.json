@@ -1,0 +1,71 @@
+{
+  "sharedUi": {
+    "rankBadge": {
+      "BRONZE": "Bronze",
+      "SILVER": "Silver",
+      "GOLD": "Gold",
+      "DIAMOND": "Diamond",
+      "ELITE": "Elite",
+      "LEGENDARY": "Legendary"
+    },
+    "charts": {
+      "revenue": "Revenue (cents)",
+      "clicks": "Clicks",
+      "conversions": "Conversions"
+    },
+    "audio": {
+      "previous": "Previous track",
+      "next": "Next track",
+      "play": "Play",
+      "pause": "Pause",
+      "volume": "Volume",
+      "playbackSpeed": "Playback speed",
+      "speedValue": "{rate}x",
+      "loadingWaveform": "Loading waveform…",
+      "loadFailed": "Audio failed to load",
+      "playError": {
+        "loadFailed": "Audio failed to load — try refreshing the page.",
+        "autoplayBlocked": "Tap play to start audio (browser blocked autoplay).",
+        "playFailed": "Playback failed — audio may be unavailable."
+      }
+    },
+    "hosting": {
+      "bannerLabel": "Hosting partner: {name}",
+      "ctaTitle": "Rent a matching server",
+      "ctaText": "Start a game server that matches this modpack – ready to install and play.",
+      "startServer": "Start a server for this modpack",
+      "oneClick": "One-click install available",
+      "startFailed": "Could not start the server"
+    },
+    "dependencies": {
+      "title": "Dependencies",
+      "incompatible": "Incompatible mods",
+      "requires": "This mod requires:",
+      "minVersionHint": "(min. v{version})",
+      "minVersion": "min. {version}",
+      "version": "v{version}",
+      "downloadRequired": "Download required dependencies",
+      "required": "Required",
+      "optional": "Optional"
+    },
+    "media": {
+      "noMediaTitle": "No media",
+      "noMediaText": "This mod has no images or videos yet.",
+      "videos": "Videos",
+      "youtubeTitle": "YouTube video"
+    },
+    "versions": {
+      "latest": "Latest",
+      "beta": "Beta",
+      "legacy": "Older versions",
+      "legacyBadge": "Legacy",
+      "version": "v{version}",
+      "downloads": "{count} downloads",
+      "download": "Download",
+      "rollback": "Get this version"
+    },
+    "explorer": {
+      "emptyTitle": "No mods"
+    }
+  }
+}

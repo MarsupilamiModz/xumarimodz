@@ -1,6 +1,8 @@
 import { PrismaClient } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
 
-const prisma = new PrismaClient();
+// Ohne Rust-Engine braucht der Client den pg-Adapter (siehe src/lib/db.ts).
+const prisma = new PrismaClient({ adapter: new PrismaPg({ connectionString: process.env.DIRECT_URL ?? process.env.DATABASE_URL }) });
 
 const GAMES = [
   {

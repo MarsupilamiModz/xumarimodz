@@ -6,7 +6,13 @@ import { AdminPageHeader, AdminLoadError } from "@/components/admin/admin-page-h
 import { CouponsAdmin } from "@/components/admin/coupons-admin";
 import type { Locale } from "@/i18n/config";
 
-export default async function AdminCouponsPage({ params: { locale } }: { params: { locale: Locale } }) {
+export default async function AdminCouponsPage(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   await requirePagePermission("coupons.write");
   const [t, result] = await Promise.all([getTranslations("admin.cp"), getCoupons()]);

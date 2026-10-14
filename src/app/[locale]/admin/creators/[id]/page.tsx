@@ -1,28 +1,37 @@
 import { requirePagePermission } from "@/lib/auth";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { getCreatorAdmin } from "@/actions/admin/creators";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { CreatorAdminPanel } from "@/components/admin/creator-admin-panel";
 import type { Locale } from "@/i18n/config";
 
-export default async function AdminCreatorDetailPage({
-  params: { locale, id },
-}: {
-  params: { locale: Locale; id: string };
-}) {
+export default async function AdminCreatorDetailPage(
+  props: {
+    params: Promise<{ locale: Locale; id: string }>;
+  }
+) {
+  const params = await props.params;
+
+  const {
+    locale,
+    id
+  } = params;
+
   await requirePagePermission("users.read");
   setRequestLocale(locale);
-  const t = await getTranslations("ecosystem");
+  const [t, tc] = await Promise.all([getTranslations("ecosystem"), getTranslations("admin.creatorEdit")]);
   const result = await getCreatorAdmin(id);
   if (!result.success) notFound();
 
   return (
-    <div className="space-y-6">
-      <Link href={`/${locale}/admin/creators`} className="text-sm text-muted-foreground hover:text-foreground">
-        ← {t("creatorManagement")}
-      </Link>
-      <h1 className="h1-acp">{result.data.user.displayName ?? result.data.user.username}</h1>
+    <div>
+      <AdminPageHeader
+        title={result.data.user.displayName ?? result.data.user.username}
+        description={`@${result.data.user.username} · ${result.data.user.email}`}
+        section={tc("section")}
+        parent={{ label: t("creatorManagement"), href: `/${locale}/admin/creators` }}
+      />
       <CreatorAdminPanel locale={locale} creator={result.data} />
     </div>
   );

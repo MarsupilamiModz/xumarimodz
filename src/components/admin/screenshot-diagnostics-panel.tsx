@@ -2,21 +2,17 @@
 
 import Link from "next/link";
 import { useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
+import { HelpCircle, ImageOff, RefreshCw, Wrench } from "lucide-react";
 import { getScreenshotDiagnostics, repairScreenshotLinks } from "@/actions/admin/screenshot-diagnostics";
 import type { ScreenshotDiagnosticRow } from "@/lib/media-diagnostics";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { DataTable } from "@/components/ui/data-table";
+import { EmptyState } from "@/components/ui/empty-state";
+import { KpiTile } from "@/components/ui/kpi-tile";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { useAppToast } from "@/hooks/use-app-toast";
-import { RefreshCw, Wrench, CheckCircle2, XCircle, HelpCircle } from "lucide-react";
+import { formatNumber } from "@/lib/format-locale";
 
 type Props = {
   locale: string;
@@ -34,29 +30,8 @@ type Props = {
   };
 };
 
-function StatusBadge({ ok }: { ok: boolean | null }) {
-  if (ok === true) {
-    return (
-      <Badge variant="outline" className="gap-1 border-success/40 text-success">
-        <CheckCircle2 className="h-3 w-3" /> Reachable
-      </Badge>
-    );
-  }
-  if (ok === false) {
-    return (
-      <Badge variant="outline" className="gap-1 border-destructive/40 text-destructive">
-        <XCircle className="h-3 w-3" /> Broken
-      </Badge>
-    );
-  }
-  return (
-    <Badge variant="outline" className="gap-1">
-      <HelpCircle className="h-3 w-3" /> Unknown
-    </Badge>
-  );
-}
-
 export function ScreenshotDiagnosticsPanel({ locale, initial }: Props) {
+  const t = useTranslations("admin.screenshotDiag");
   const appToast = useAppToast();
   const [data, setData] = useState(initial);
   const [pending, startTransition] = useTransition();
@@ -73,111 +48,103 @@ export function ScreenshotDiagnosticsPanel({ locale, initial }: Props) {
     startTransition(async () => {
       const r = await repairScreenshotLinks();
       if (r.success) {
-        appToast.saved(`Repaired ${r.data.repaired} screenshot links`);
+        appToast.saved(t("repaired", { count: r.data.repaired }));
         refresh();
       } else appToast.error(r.error);
     });
   }
 
   const { summary, rows } = data;
+  const failed = summary.broken + summary.missingUrl;
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="h1-acp">Screenshot Diagnostics</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Verify database records, storage paths, and public URL reachability for mod screenshots.
-        </p>
-      </div>
-
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="p-4">
-          <p className="text-xs text-muted-foreground">Scanned</p>
-          <p className="text-2xl font-bold">{summary.total}</p>
-        </Card>
-        <Card className="p-4">
-          <p className="text-xs text-muted-foreground">Reachable</p>
-          <p className="text-2xl font-bold text-success">{summary.ok}</p>
-        </Card>
-        <Card className="p-4">
-          <p className="text-xs text-muted-foreground">Broken / missing URL</p>
-          <p className="text-2xl font-bold text-destructive">{summary.broken + summary.missingUrl}</p>
-        </Card>
-        <Card className="p-4">
-          <p className="text-xs text-muted-foreground">Storage</p>
-          <p className="text-sm font-medium">{summary.storageProvider}</p>
-          <p className="text-xs text-muted-foreground truncate">
-            {summary.cdnUrl ?? "App proxy (/api/assets)"}
-          </p>
-        </Card>
+        <KpiTile label={t("scanned")} value={formatNumber(summary.total, locale)} />
+        <KpiTile label={t("reachable")} value={formatNumber(summary.ok, locale)} tone="success" />
+        <KpiTile label={t("brokenOrMissing")} value={formatNumber(failed, locale)} tone={failed > 0 ? "danger" : undefined} />
+        <KpiTile label={t("storage")} value={<span className="text-base">{summary.storageProvider}</span>} hint={<span className="block truncate">{summary.cdnUrl ?? t("appProxy")}</span>} />
       </div>
 
       <div className="flex flex-wrap gap-2">
-        <Button variant="outline" size="sm" disabled={pending} onClick={refresh}>
-          <RefreshCw className="h-4 w-4 mr-1" /> Refresh scan
-        </Button>
         <Button size="sm" disabled={pending} onClick={repair}>
-          <Wrench className="h-4 w-4 mr-1" /> Repair missing screenshot links
+          <Wrench className="h-4 w-4" aria-hidden /> {t("repair")}
+        </Button>
+        <Button variant="outline" size="sm" disabled={pending} onClick={refresh}>
+          <RefreshCw className="h-4 w-4" aria-hidden /> {t("refresh")}
         </Button>
         <Button variant="ghost" size="sm" asChild>
-          <Link href={`/${locale}/admin/settings/media`}>Media settings</Link>
+          <Link href={`/${locale}/admin/settings/media`}>{t("mediaSettings")}</Link>
         </Button>
       </div>
 
-      <Card className="overflow-hidden">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Mod</TableHead>
-              <TableHead>DB</TableHead>
-              <TableHead>URL</TableHead>
-              <TableHead>Storage path</TableHead>
-              <TableHead>Reachable</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {rows.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
-                  No screenshot records found.
-                </TableCell>
-              </TableRow>
-            ) : (
-              rows.map((row) => (
-                <TableRow key={row.id}>
-                  <TableCell>
-                    <Link
-                      href={`/${locale}/mods/${row.modSlug}`}
-                      className="font-medium hover:text-violet-bright line-clamp-1"
-                    >
-                      {row.modTitle}
-                    </Link>
-                    <p className="text-[10px] text-muted-foreground font-mono">{row.id.slice(0, 8)}…</p>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={row.dbStatus === "ok" ? "outline" : "destructive"}>
-                      {row.dbStatus}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="max-w-[200px]">
-                    <p className="truncate text-xs font-mono" title={row.resolvedUrl ?? undefined}>
-                      {row.resolvedUrl ?? "—"}
-                    </p>
-                  </TableCell>
-                  <TableCell className="max-w-[180px]">
-                    <p className="truncate text-xs font-mono" title={row.storagePath ?? undefined}>
-                      {row.storagePath ?? "—"}
-                    </p>
-                  </TableCell>
-                  <TableCell>
-                    <StatusBadge ok={row.reachable} />
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </Card>
+      <DataTable
+        caption={t("tableCaption")}
+        rows={rows}
+        rowKey={(row) => row.id}
+        empty={<EmptyState icon={ImageOff} title={t("emptyTitle")} description={t("emptyText")} />}
+        columns={[
+          {
+            key: "mod",
+            header: t("colMod"),
+            width: "minmax(0,1.6fr)",
+            cell: (row) => (
+              <span className="block min-w-0">
+                <Link href={`/${locale}/mods/${row.modSlug}`} className="line-clamp-1 font-medium text-ink hover:text-violet-bright">
+                  {row.modTitle}
+                </Link>
+                <span className="mono-id block">{row.id.slice(0, 8)}…</span>
+              </span>
+            ),
+          },
+          {
+            key: "db",
+            header: t("colDb"),
+            width: "130px",
+            cell: (row) =>
+              row.dbStatus === "ok" ? (
+                <StatusBadge tone="success" label={t("dbOk")} />
+              ) : (
+                <StatusBadge tone="danger" label={t("dbMissingUrl")} />
+              ),
+          },
+          {
+            key: "url",
+            header: t("colUrl"),
+            width: "minmax(0,1.4fr)",
+            hideOnMobile: true,
+            cell: (row) => (
+              <span className="mono-id block truncate" title={row.resolvedUrl ?? undefined}>
+                {row.resolvedUrl ?? "—"}
+              </span>
+            ),
+          },
+          {
+            key: "path",
+            header: t("colPath"),
+            width: "minmax(0,1.2fr)",
+            hideOnMobile: true,
+            cell: (row) => (
+              <span className="mono-id block truncate" title={row.storagePath ?? undefined}>
+                {row.storagePath ?? "—"}
+              </span>
+            ),
+          },
+          {
+            key: "reachable",
+            header: t("colReachable"),
+            width: "130px",
+            cell: (row) =>
+              row.reachable === true ? (
+                <StatusBadge tone="success" label={t("reachableYes")} />
+              ) : row.reachable === false ? (
+                <StatusBadge tone="danger" label={t("reachableNo")} />
+              ) : (
+                <StatusBadge tone="neutral" icon={HelpCircle} label={t("reachableUnknown")} />
+              ),
+          },
+        ]}
+      />
     </div>
   );
 }

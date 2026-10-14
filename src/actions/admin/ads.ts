@@ -25,7 +25,6 @@ import {
   saveHeadScriptsSettings,
   type HeadScriptsSettings,
 } from "@/lib/head-scripts";
-import { writeAdsTxtFile } from "@/lib/ads-txt-file";
 import { DEFAULT_ADSENSE_CLIENT_ID } from "@/lib/adsense-config";
 
 export async function getAdminAdDashboard() {
@@ -75,11 +74,6 @@ export async function saveAdminAdSettings(settings: AdProviderSettings) {
   const merged = { ...DEFAULT_AD_SETTINGS, ...settings };
   await saveAdSettings(merged);
   await createAuditLog({ actorId: user.id, action: "ads.settings", entityType: "SiteSetting", entityId: "ad_settings", metadata: { globalAdsEnabled: merged.globalAdsEnabled, premiumAdFree: merged.premiumAdFree } });
-  try {
-    writeAdsTxtFile(merged);
-  } catch (err) {
-    console.error("[ads] ads.txt write failed", err);
-  }
   const readiness = await getAdSenseReadinessReport();
   revalidatePath("/admin/ads");
   revalidatePath("/", "layout");

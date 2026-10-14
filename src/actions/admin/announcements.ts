@@ -16,6 +16,7 @@ import {
   buildVisibilityTargets,
 } from "@/lib/announcement-targeting";
 import { createAuditLog } from "@/lib/audit";
+import { runAfterResponse } from "@/lib/after-response";
 
 const schema = z.object({
   title: z.string().min(2).max(120),
@@ -79,9 +80,8 @@ const getCachedActiveAnnouncements = unstable_cache(
   { revalidate: 60, tags: [CACHE_TAGS.announcements] }
 );
 
-export async function getActiveAnnouncements() {
+async function activeAnnouncementsFor(viewer: Awaited<ReturnType<typeof buildViewerContext>>) {
   const now = new Date();
-  const viewer = await buildViewerContext();
 
   // Datumswerte kommen aus dem Cache als Text zurück.
   const items = (await getCachedActiveAnnouncements())
@@ -100,6 +100,16 @@ export async function getActiveAnnouncements() {
   return items.filter((item) =>
     announcementVisibleTo(item.visibilityTargets, viewer)
   ).slice(0, 3);
+}
+
+/** Für den aktuellen Betrachter (liest die Sitzung) – /api/announcements. */
+export async function getActiveAnnouncements() {
+  return activeAnnouncementsFor(await buildViewerContext());
+}
+
+/** Für Gäste, ohne Cookies: Seiten bleiben cachebar; Angemeldete laden ihre Liste im Browser nach. */
+export async function getGuestAnnouncements() {
+  return activeAnnouncementsFor(null);
 }
 
 export async function listAnnouncements() {
@@ -139,13 +149,13 @@ export async function createAnnouncement(input: z.infer<typeof schema>) {
   revalidateTag(CACHE_TAGS.announcements);
   revalidatePath("/");
 
-  void import("@/lib/translation-worker").then(({ scheduleEntityTranslation }) =>
+  runAfterResponse(import("@/lib/translation-worker").then(({ scheduleEntityTranslation }) =>
     scheduleEntityTranslation({
       entityType: "Announcement",
       entityId: item.id,
       fields: { title: item.title, content: item.content },
     })
-  );
+  ));
 
   return ok(item);
 }

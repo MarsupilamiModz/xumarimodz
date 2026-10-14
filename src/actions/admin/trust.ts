@@ -22,7 +22,7 @@ const dmcaSchema = z.object({
 
 /** Öffentliches DMCA-Formular (ohne Anmeldung); gegen Spam begrenzt auf 5 Meldungen pro Stunde und IP. */
 export async function submitDMCAClaim(input: z.infer<typeof dmcaSchema>) {
-  const ip = headers().get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+  const ip = (await headers()).get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
   if (!rateLimit(`dmca:${ip}`, 5, 60 * 60 * 1000).success) return fail("Too many submissions. Please try again later.");
   const parsed = dmcaSchema.safeParse(input);
   if (!parsed.success) return fail("Invalid DMCA submission");

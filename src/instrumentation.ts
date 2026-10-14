@@ -3,7 +3,9 @@
  * Install @sentry/nextjs and set SENTRY_DSN to enable error + performance tracking.
  */
 export async function register() {
-  if (process.env.NEXT_RUNTIME === "nodejs") {
+  // In Cloudflare Workers ist I/O außerhalb eines Requests verboten – dort kein Vorwärmen.
+  const isWorkers = typeof navigator !== "undefined" && navigator.userAgent === "Cloudflare-Workers";
+  if (process.env.NEXT_RUNTIME === "nodejs" && !isWorkers) {
     const { warmDbConnection } = await import("@/lib/db");
     await warmDbConnection().catch((err) => {
       console.error("[instrumentation] DB warm-up failed:", err instanceof Error ? err.message : err);

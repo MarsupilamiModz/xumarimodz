@@ -16,6 +16,7 @@ import {
   upsertUserMembership,
 } from "@/lib/user-membership";
 import type { UserRole } from "@prisma/client";
+import { runAfterResponse } from "@/lib/after-response";
 
 export type {
   MembershipPerks,
@@ -209,7 +210,7 @@ export async function grantMembershipPurchase(params: {
   await syncUserRoleFromMembership(params.userId);
 
   const { evaluateUserAchievements } = await import("@/lib/achievements");
-  void evaluateUserAchievements(params.userId);
+  runAfterResponse(evaluateUserAchievements(params.userId));
 
   return purchase.purchase;
 }
@@ -236,7 +237,7 @@ export async function grantMembershipSubscription(params: {
   await syncUserRoleFromMembership(params.userId);
 
   const { evaluateUserAchievements } = await import("@/lib/achievements");
-  void evaluateUserAchievements(params.userId);
+  runAfterResponse(evaluateUserAchievements(params.userId));
 }
 
 export function getPlanDiscordRoles(planSlug: string): string[] {

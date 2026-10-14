@@ -1,11 +1,16 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useId, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Handshake } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
+import { KpiTile } from "@/components/ui/kpi-tile";
+import { SectionCard } from "@/components/ui/page-header";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { Textarea } from "@/components/ui/textarea";
 import { useAppToast } from "@/hooks/use-app-toast";
 import { saveHostingPartner, deleteHostingPartner } from "@/actions/admin/partner-ads";
@@ -28,25 +33,25 @@ type Analytics = {
   clicks30d: number;
 };
 
+const EMPTY_FORM = { id: "", name: "", description: "", affiliateUrl: "", websiteUrl: "", bannerUrl: "" };
+
 export function PartnerAdsAdminPanel({
   partners,
   analytics,
+  locale,
 }: {
   partners: Partner[];
   analytics: Analytics;
+  locale: string;
 }) {
   const t = useTranslations("admin.ui.partnerAds");
+  const tp = useTranslations("admin.partnerAdsAdmin");
+  const uid = useId();
   const router = useRouter();
   const appToast = useAppToast();
   const [pending, startTransition] = useTransition();
-  const [form, setForm] = useState({
-    id: "",
-    name: "",
-    description: "",
-    affiliateUrl: "",
-    websiteUrl: "",
-    bannerUrl: "",
-  });
+  const [form, setForm] = useState(EMPTY_FORM);
+  const [deleting, setDeleting] = useState<Partner | null>(null);
 
   const save = () => {
     startTransition(async () => {
@@ -61,58 +66,119 @@ export function PartnerAdsAdminPanel({
       });
       if (r.success) {
         appToast.saved();
-        setForm({ id: "", name: "", description: "", affiliateUrl: "", websiteUrl: "", bannerUrl: "" });
+        setForm(EMPTY_FORM);
         router.refresh();
       } else appToast.error(r.error);
     });
   };
 
+  const fields: { key: "name" | "affiliateUrl" | "websiteUrl" | "bannerUrl"; label: string; mono?: boolean }[] = [
+    { key: "name", label: t("partnerNamePlaceholder") },
+    { key: "affiliateUrl", label: t("affiliateLinkPlaceholder"), mono: true },
+    { key: "websiteUrl", label: t("websiteLinkPlaceholder"), mono: true },
+    { key: "bannerUrl", label: t("bannerUrlPlaceholder"), mono: true },
+  ];
+
   return (
     <div className="space-y-6">
-      <div className="grid gap-3 sm:grid-cols-3">
-        <Stat label={t("clicksTodayLabel")} value={analytics.clicksToday} />
-        <Stat label={t("clicks7dLabel")} value={analytics.clicks7d} />
-        <Stat label={t("clicks30dLabel")} value={analytics.clicks30d} />
+      <div className="grid gap-4 sm:grid-cols-3">
+        <KpiTile label={t("clicksTodayLabel")} value={formatNumber(analytics.clicksToday, locale)} />
+        <KpiTile label={t("clicks7dLabel")} value={formatNumber(analytics.clicks7d, locale)} />
+        <KpiTile label={t("clicks30dLabel")} value={formatNumber(analytics.clicks30d, locale)} />
       </div>
 
-      <Card className="card-surface">
-        <CardHeader>
-          <CardTitle>{t("hostingPartnerTitle")}</CardTitle>
-        </CardHeader>
-        <CardContent className="grid gap-3 sm:grid-cols-2">
-          <Input placeholder={t("partnerNamePlaceholder")} value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} />
-          <Input placeholder={t("affiliateLinkPlaceholder")} value={form.affiliateUrl} onChange={(e) => setForm((f) => ({ ...f, affiliateUrl: e.target.value }))} />
-          <Input placeholder={t("websiteLinkPlaceholder")} value={form.websiteUrl} onChange={(e) => setForm((f) => ({ ...f, websiteUrl: e.target.value }))} />
-          <Input placeholder={t("bannerUrlPlaceholder")} value={form.bannerUrl} onChange={(e) => setForm((f) => ({ ...f, bannerUrl: e.target.value }))} />
-          <Textarea placeholder={t("descriptionPlaceholder")} className="sm:col-span-2" value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} />
-          <Button disabled={pending || !form.name || !form.affiliateUrl} onClick={save}>
-            {t("save")}
-          </Button>
-        </CardContent>
-      </Card>
-
-      {partners.map((p) => (
-        <Card key={p.id} className="card-surface p-4 flex flex-wrap items-center justify-between gap-3">
+      <SectionCard
+        title={form.id ? tp("editTitle", { name: form.name }) : t("hostingPartnerTitle")}
+        action={
+          form.id ? (
+            <Button size="sm" variant="ghost" onClick={() => setForm(EMPTY_FORM)}>
+              {tp("cancelEdit")}
+            </Button>
+          ) : undefined
+        }
+      >
+        <form
+          className="grid gap-4 sm:grid-cols-2"
+          onSubmit={(e) => {
+            e.preventDefault();
+            save();
+          }}
+        >
+          {fields.map((f) => (
+            <div key={f.key}>
+              <label htmlFor={`${uid}-${f.key}`} className="label-text mb-1.5 block">{f.label}</label>
+              <Input
+                id={`${uid}-${f.key}`}
+                className={f.mono ? "font-mono" : undefined}
+                value={form[f.key]}
+                onChange={(e) => setForm((prev) => ({ ...prev, [f.key]: e.target.value }))}
+              />
+            </div>
+          ))}
+          <div className="sm:col-span-2">
+            <label htmlFor={`${uid}-description`} className="label-text mb-1.5 block">{t("descriptionPlaceholder")}</label>
+            <Textarea id={`${uid}-description`} value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} />
+          </div>
           <div>
-            <p className="font-medium">{p.name}{p.isGlobal ? t("globalSuffix") : ""}</p>
-            <p className="text-xs text-muted-foreground truncate max-w-md">{p.affiliateUrl}</p>
-            <p className="text-xs text-muted-foreground">{formatNumber(p.totalClicks)} {t("clicksSuffix")}</p>
+            <Button type="submit" disabled={pending || !form.name || !form.affiliateUrl}>
+              {t("save")}
+            </Button>
           </div>
-          <div className="flex gap-2">
-            <Button size="sm" variant="outline" onClick={() => setForm({ id: p.id, name: p.name, description: p.description ?? "", affiliateUrl: p.affiliateUrl, websiteUrl: p.websiteUrl ?? "", bannerUrl: p.logoUrl ?? "" })}>{t("edit")}</Button>
-            <Button size="sm" variant="destructive" disabled={pending} onClick={() => startTransition(async () => { await deleteHostingPartner(p.id); router.refresh(); })}>{t("delete")}</Button>
-          </div>
-        </Card>
-      ))}
-    </div>
-  );
-}
+        </form>
+      </SectionCard>
 
-function Stat({ label, value }: { label: string; value: number }) {
-  return (
-    <Card className="card-surface p-4">
-      <p className="text-xs text-muted-foreground">{label}</p>
-      <p className="text-xl font-semibold">{formatNumber(value)}</p>
-    </Card>
+      <SectionCard title={tp("listTitle")}>
+        {partners.length === 0 ? (
+          <EmptyState icon={Handshake} title={tp("emptyTitle")} description={tp("emptyText")} />
+        ) : (
+          <ul className="divide-y divide-line">
+            {partners.map((p) => (
+              <li key={p.id} className="flex flex-wrap items-center justify-between gap-3 py-3 first:pt-0 last:pb-0">
+                <div className="min-w-0">
+                  <p className="flex flex-wrap items-center gap-2 font-medium text-ink">
+                    {p.name}
+                    {p.isGlobal && <StatusBadge tone="info" label={tp("global")} />}
+                  </p>
+                  <p className="mono-id max-w-md truncate">{p.affiliateUrl}</p>
+                  <p className="meta tabular-nums">{formatNumber(p.totalClicks, locale)} {t("clicksSuffix")}</p>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setForm({ id: p.id, name: p.name, description: p.description ?? "", affiliateUrl: p.affiliateUrl, websiteUrl: p.websiteUrl ?? "", bannerUrl: p.logoUrl ?? "" })}
+                  >
+                    {t("edit")}
+                  </Button>
+                  <Button size="sm" variant="ghost" className="text-danger" disabled={pending} onClick={() => setDeleting(p)}>
+                    {t("delete")}
+                  </Button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </SectionCard>
+
+      <ConfirmDialog
+        open={!!deleting}
+        onOpenChange={(open) => !open && setDeleting(null)}
+        title={tp("deleteTitle", { name: deleting?.name ?? "" })}
+        description={tp("deleteText")}
+        confirmLabel={t("delete")}
+        variant="destructive"
+        loading={pending}
+        onConfirm={() => {
+          if (!deleting) return;
+          const id = deleting.id;
+          startTransition(async () => {
+            await deleteHostingPartner(id);
+            setDeleting(null);
+            appToast.deleted();
+            router.refresh();
+          });
+        }}
+      />
+    </div>
   );
 }

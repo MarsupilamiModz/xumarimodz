@@ -1,0 +1,72 @@
+{
+  "sharedTools": {
+    "avatarCrop": {
+      "title": "Crop profile image",
+      "zoom": "Zoom",
+      "rotate": "Rotate",
+      "rotation": "Rotation",
+      "save": "Save avatar"
+    },
+    "categoryCrop": {
+      "title": "Crop category image",
+      "aspect": "Aspect ratio",
+      "preset": {
+        "square": "Square",
+        "portrait": "Portrait",
+        "landscape": "Landscape"
+      },
+      "zoom": "Zoom",
+      "rotate": "Rotate",
+      "rotation": "Rotation",
+      "cardPreview": "Card preview",
+      "preview": "Preview",
+      "categoryFallback": "Category",
+      "modCount": "{count, plural, one {# mod} other {# mods}}",
+      "save": "Save image"
+    },
+    "studioProfileUpload": {
+      "logo": "Logo",
+      "uploadLogo": "Upload logo"
+    },
+    "modVersionUpload": {
+      "versionLabel": "Version",
+      "gameVersionLabel": "Game version",
+      "channelLabel": "Release channel",
+      "changelogLabel": "Changelog",
+      "fileLabel": "File",
+      "progressLabel": "Upload progress",
+      "sessionMissing": "The upload could not be started. Please try again."
+    },
+    "soundPreview": {
+      "sessionMissing": "The upload could not be started. Please try again."
+    },
+    "soundProfile": {
+      "save": "Save metadata"
+    },
+    "modMedia": {
+      "invalidType": "{name}: file type not allowed. Allowed: {types}",
+      "tooLarge": "{name} is too large. Max {size} MB",
+      "processFailed": "{name} could not be processed",
+      "removePending": "Remove {name}",
+      "dragToReorder": "Drag to reorder",
+      "featuredSet": "Featured image set",
+      "deleteImage": "Delete screenshot",
+      "deleteVideo": "Remove video",
+      "deleteImageTitle": "Delete screenshot?",
+      "deleteVideoTitle": "Remove video?",
+      "deleteText": "It will no longer be shown on the mod page. This cannot be undone.",
+      "youtubeUrlLabel": "YouTube link"
+    },
+    "chat": {
+      "threadLabel": "Conversation",
+      "historyLabel": "Message history",
+      "messageLabel": "Message",
+      "onlineCount": "{count} online",
+      "memberCount": "{count, plural, one {# member} other {# members}}",
+      "unreadOverflow": "{max}+",
+      "messageUser": "Message {name}",
+      "typing": "{names} {count, plural, one {is typing…} other {are typing…}}",
+      "uploadingProgress": "Uploading {progress}%"
+    }
+  }
+}

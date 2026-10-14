@@ -11,7 +11,13 @@ type SearchParams = CatalogFilters & { page?: string };
 
 const FILTER_KEYS = ["q", "game", "category", "pricing", "sort", "type", "audioCategory", "genre", "view"] as const;
 
-export async function generateMetadata({ params: { locale } }: { params: { locale: Locale } }) {
+export async function generateMetadata(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   const t = await getTranslations({ locale, namespace: "mods" });
   return { title: t("title"), description: t("subtitle") };
 }
@@ -68,13 +74,19 @@ async function CatalogContent({ locale, searchParams }: { locale: Locale; search
   );
 }
 
-export default async function ModsPage({
-  params: { locale },
-  searchParams,
-}: {
-  params: { locale: Locale };
-  searchParams: SearchParams;
-}) {
+export default async function ModsPage(
+  props: {
+    params: Promise<{ locale: Locale }>;
+    searchParams: Promise<SearchParams>;
+  }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   const t = await getTranslations("mods");
 

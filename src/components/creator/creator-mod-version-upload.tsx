@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useTransition } from "react";
+import { useId, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { finalizeModVersionUpload } from "@/actions/mods";
@@ -11,14 +11,17 @@ import {
 } from "@/hooks/use-r2-multipart-upload";
 import { formatUploadErrorMessage } from "@/lib/upload-errors";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Input, controlClassName } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Card } from "@/components/ui/card";
+import { SectionCard } from "@/components/ui/page-header";
 import { toast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 import { MAX_UPLOAD_BYTES, MOD_VERSION_FILE_ACCEPT, uploadLimitLabel, logUploadDiagnostic } from "@/lib/upload-limits";
 
 export function CreatorModVersionUpload({ modId }: { modId: string }) {
   const t = useTranslations("common.cx.modVersionUpload");
+  const ts = useTranslations("sharedTools.modVersionUpload");
+  const uid = useId();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [diagnostics, setDiagnostics] = useState<string | null>(null);
@@ -31,11 +34,7 @@ export function CreatorModVersionUpload({ modId }: { modId: string }) {
   const busy = pending || uploading;
 
   return (
-    <Card className="space-y-4 p-6">
-      <h3 className="font-medium">{t("title")}</h3>
-      <p className="text-xs text-muted-foreground">
-        {t("uploadHint", { limit: uploadLimitLabel() })}
-      </p>
+    <SectionCard title={t("title")} description={t("uploadHint", { limit: uploadLimitLabel() })}>
       <form
         ref={formRef}
         onSubmit={(e) => {
@@ -64,7 +63,7 @@ export function CreatorModVersionUpload({ modId }: { modId: string }) {
                 uploadResult && typeof uploadResult === "object" && "sessionId" in uploadResult
                   ? String(uploadResult.sessionId)
                   : null;
-              if (!sid) throw new Error("Upload session missing");
+              if (!sid) throw new Error(ts("sessionMissing"));
               setSessionId(sid);
 
               const r = await finalizeModVersionUpload(sid, {
@@ -103,32 +102,54 @@ export function CreatorModVersionUpload({ modId }: { modId: string }) {
         }}
         className="space-y-3"
       >
-        <Input name="version" placeholder="1.0.0" required />
-        <Input name="gameVersion" placeholder={t("gameVersionPlaceholder")} />
-        <select
-          name="channel"
-          className="h-10 w-full rounded-md border border-input bg-background/50 px-3 text-sm"
-        >
-          <option value="STABLE">{t("channelStable")}</option>
-          <option value="BETA">{t("channelBeta")}</option>
-        </select>
-        <Textarea name="changelog" placeholder={t("changelogPlaceholder")} rows={3} />
-        <Input
-          name="file"
-          type="file"
-          required
-          accept={MOD_VERSION_FILE_ACCEPT}
-          onChange={(e) => setSelectedFile(e.target.files?.[0] ?? null)}
-        />
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="space-y-1.5">
+            <label htmlFor={`${uid}-version`} className="label-text">{ts("versionLabel")}</label>
+            <Input id={`${uid}-version`} name="version" placeholder="1.0.0" required />
+          </div>
+          <div className="space-y-1.5">
+            <label htmlFor={`${uid}-game`} className="label-text">{ts("gameVersionLabel")}</label>
+            <Input id={`${uid}-game`} name="gameVersion" placeholder={t("gameVersionPlaceholder")} />
+          </div>
+        </div>
+        <div className="space-y-1.5">
+          <label htmlFor={`${uid}-channel`} className="label-text">{ts("channelLabel")}</label>
+          <select id={`${uid}-channel`} name="channel" className={cn(controlClassName, "h-9")}>
+            <option value="STABLE">{t("channelStable")}</option>
+            <option value="BETA">{t("channelBeta")}</option>
+          </select>
+        </div>
+        <div className="space-y-1.5">
+          <label htmlFor={`${uid}-changelog`} className="label-text">{ts("changelogLabel")}</label>
+          <Textarea id={`${uid}-changelog`} name="changelog" placeholder={t("changelogPlaceholder")} rows={3} />
+        </div>
+        <div className="space-y-1.5">
+          <label htmlFor={`${uid}-file`} className="label-text">{ts("fileLabel")}</label>
+          <Input
+            id={`${uid}-file`}
+            name="file"
+            type="file"
+            required
+            accept={MOD_VERSION_FILE_ACCEPT}
+            onChange={(e) => setSelectedFile(e.target.files?.[0] ?? null)}
+          />
+        </div>
         {(uploading || progress > 0) && (
           <div className="space-y-1">
-            <div className="h-2 rounded-full bg-muted overflow-hidden">
+            <div
+              role="progressbar"
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={progress}
+              aria-label={ts("progressLabel")}
+              className="h-2 overflow-hidden rounded-full bg-elevated"
+            >
               <div
                 className="h-full bg-violet transition-all"
                 style={{ width: `${progress}%` }}
               />
             </div>
-            <div className="flex justify-between text-xs text-muted-foreground">
+            <div className="meta flex justify-between gap-3 tabular-nums">
               <span>
                 {t("progressLine", {
                   progress,
@@ -143,7 +164,7 @@ export function CreatorModVersionUpload({ modId }: { modId: string }) {
         )}
         {error && (
           <div className="space-y-2">
-            <p className="text-xs text-destructive">{error}</p>
+            <p className="text-sm text-danger" role="alert">{error}</p>
             {!uploading && (
               <Button type="button" variant="outline" size="sm" onClick={() => void retry()}>
                 {t("retryUpload")}
@@ -155,7 +176,6 @@ export function CreatorModVersionUpload({ modId }: { modId: string }) {
           type="button"
           variant="ghost"
           size="sm"
-          className="text-xs"
           onClick={() => {
             try {
               const raw = sessionStorage.getItem("xumari-upload-diagnostics");
@@ -168,7 +188,7 @@ export function CreatorModVersionUpload({ modId }: { modId: string }) {
           {t("showDiagnostics")}
         </Button>
         {diagnostics && (
-          <pre className="text-[10px] max-h-40 overflow-auto rounded border border-border/40 p-2 bg-background/50">
+          <pre className="mono-id max-h-40 overflow-auto rounded-md border border-line bg-canvas p-2 text-[11px] text-ink-muted">
             {diagnostics}
           </pre>
         )}
@@ -189,7 +209,7 @@ export function CreatorModVersionUpload({ modId }: { modId: string }) {
           {(uploading || sessionId) && (
             <Button
               type="button"
-              variant="destructive"
+              variant="ghost"
               onClick={() => void abort(sessionId ?? undefined)}
             >
               {t("cancel")}
@@ -197,6 +217,6 @@ export function CreatorModVersionUpload({ modId }: { modId: string }) {
           )}
         </div>
       </form>
-    </Card>
+    </SectionCard>
   );
 }

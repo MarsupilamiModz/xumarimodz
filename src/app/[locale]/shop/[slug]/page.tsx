@@ -8,7 +8,13 @@ import { getCurrentUser } from "@/lib/auth";
 import { ShopProductOrderPage } from "@/components/shop/enterprise-shop";
 import type { Locale } from "@/i18n/config";
 
-export async function generateMetadata({ params: { slug } }: { params: { slug: string } }): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const params = await props.params;
+
+  const {
+    slug
+  } = params;
+
   const product = await getShopProduct(slug).catch(() => null);
   if (!product) return { title: "Shop" };
   const image = product.coverImageUrl ?? product.thumbnailUrl ?? undefined;
@@ -19,7 +25,14 @@ export async function generateMetadata({ params: { slug } }: { params: { slug: s
   };
 }
 
-export default async function ShopProductPage({ params: { locale, slug } }: { params: { locale: Locale; slug: string } }) {
+export default async function ShopProductPage(props: { params: Promise<{ locale: Locale; slug: string }> }) {
+  const params = await props.params;
+
+  const {
+    locale,
+    slug
+  } = params;
+
   setRequestLocale(locale);
   const [t, product, user] = await Promise.all([
     getTranslations("shop.product"),

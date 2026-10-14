@@ -2,10 +2,13 @@
 
 import { memo, useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { ModCard } from "@/components/mods/mod-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Loader2 } from "lucide-react";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Loader2, PackageSearch } from "lucide-react";
+import { formatNumber } from "@/lib/format-locale";
 import type { ModListingItem } from "@/lib/data";
 
 type Props = {
@@ -38,7 +41,7 @@ type Props = {
 };
 
 function useDebouncedCallback<T extends (...args: never[]) => void>(fn: T, ms: number) {
-  const timer = useRef<ReturnType<typeof setTimeout>>();
+  const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   return useCallback(
     (...args: Parameters<T>) => {
       clearTimeout(timer.current);
@@ -58,6 +61,9 @@ export const GameModsExplorer = memo(function GameModsExplorer({
   labels,
   pricingLabels,
 }: Props) {
+  const t = useTranslations("mods");
+  const tCommon = useTranslations("common");
+  const tUi = useTranslations("sharedUi.explorer");
   const router = useRouter();
   const params = useSearchParams();
   const [pending, startTransition] = useTransition();
@@ -150,12 +156,14 @@ export const GameModsExplorer = memo(function GameModsExplorer({
           key={`q-${filterKey}`}
           defaultValue={params.get("q") ?? ""}
           placeholder={labels.search}
+          aria-label={t("searchLabel")}
           className="h-10 max-w-md flex-1 min-w-[180px]"
           onChange={(e) => debouncedSearch(e.target.value)}
         />
         <select
           defaultValue={productType}
-          className="h-10 rounded-md border border-input bg-background/50 px-3 text-sm"
+          aria-label={t("typeLabel")}
+          className="h-10 rounded-md border border-line-control bg-elevated px-3 text-sm text-ink"
           onChange={(e) => pushParams({ type: e.target.value || null })}
         >
           <option value="">{labels.allTypes}</option>
@@ -164,7 +172,8 @@ export const GameModsExplorer = memo(function GameModsExplorer({
         </select>
         <select
           defaultValue={params.get("pricing") ?? ""}
-          className="h-10 rounded-md border border-input bg-background/50 px-3 text-sm"
+          aria-label={t("pricingLabel")}
+          className="h-10 rounded-md border border-line-control bg-elevated px-3 text-sm text-ink"
           onChange={(e) => pushParams({ pricing: e.target.value || null })}
         >
           <option value="">{labels.allPricing}</option>
@@ -174,14 +183,15 @@ export const GameModsExplorer = memo(function GameModsExplorer({
         </select>
         <select
           defaultValue={sort}
-          className="h-10 rounded-md border border-input bg-background/50 px-3 text-sm"
+          aria-label={t("sortLabel")}
+          className="h-10 rounded-md border border-line-control bg-elevated px-3 text-sm text-ink"
           onChange={(e) => pushParams({ sort: e.target.value })}
         >
           <option value="downloads">{labels.sortDownloads}</option>
           <option value="likes">{labels.sortLikes}</option>
           <option value="date">{labels.sortDate}</option>
         </select>
-        <label className="flex h-10 items-center gap-2 rounded-md border border-input bg-background/50 px-3 text-sm cursor-pointer">
+        <label className="flex h-10 cursor-pointer items-center gap-2 rounded-md border border-line-control bg-elevated px-3 text-sm text-ink">
           <input
             type="checkbox"
             defaultChecked={params.get("verified") === "1"}
@@ -189,10 +199,10 @@ export const GameModsExplorer = memo(function GameModsExplorer({
           />
           {labels.verified}
         </label>
-        {pending && <Loader2 className="h-5 w-5 animate-spin text-muted-foreground self-center" />}
+        {pending && <Loader2 className="h-5 w-5 animate-spin self-center text-ink-muted" aria-label={tCommon("loading")} />}
       </div>
     ),
-    [debouncedSearch, filterKey, labels, params, pending, productType, pushParams, sort]
+    [debouncedSearch, filterKey, labels, params, pending, productType, pushParams, sort, t, tCommon]
   );
 
   return (
@@ -201,13 +211,15 @@ export const GameModsExplorer = memo(function GameModsExplorer({
 
       <section>
         <div className="mb-6 flex items-center justify-between gap-4">
-          <h2 className="text-xl font-bold">{labels.results}</h2>
-          <span className="text-sm text-muted-foreground">{total}</span>
+          <h2 className="section-title">{labels.results}</h2>
+          <span className="text-sm tabular-nums text-ink-muted">{formatNumber(total, locale)}</span>
         </div>
         {mods.length === 0 ? (
-          <p className="py-12 text-center text-muted-foreground">
-            {filterKey ? labels.noFilterResults : labels.noModsYet}
-          </p>
+          <EmptyState
+            icon={PackageSearch}
+            title={tUi("emptyTitle")}
+            description={filterKey ? labels.noFilterResults : labels.noModsYet}
+          />
         ) : (
           <>
             <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
@@ -223,7 +235,7 @@ export const GameModsExplorer = memo(function GameModsExplorer({
             {hasMore && (
               <div ref={sentinelRef} className="mt-8 flex justify-center">
                 <Button variant="outline" disabled={loadingMore} onClick={() => void loadMore()}>
-                  {loadingMore ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                  {loadingMore ? <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden /> : null}
                   {labels.loadMore}
                 </Button>
               </div>

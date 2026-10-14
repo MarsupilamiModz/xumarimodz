@@ -6,24 +6,33 @@ import { getModerationOverview } from "@/actions/admin/moderation";
 import { UserModerationPanel } from "@/components/admin/user-moderation-panel";
 import { Pagination } from "@/components/ui/pagination";
 
-export default async function AdminModerationPage({
-  params: { locale },
-  searchParams,
-}: {
-  params: { locale: Locale };
-  searchParams: { q?: string; page?: string };
-}) {
+export default async function AdminModerationPage(
+  props: {
+    params: Promise<{ locale: Locale }>;
+    searchParams: Promise<{ q?: string; page?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   await requirePagePermission("users.read");
-  const t = await getTranslations("admin");
+  const t = await getTranslations("admin.ui.userModeration");
   const page = Math.max(1, Number(searchParams.page) || 1);
   const result = await getModerationOverview({ search: searchParams.q, page });
   return (
     <div>
-      <AdminPageHeader title={t("nav.users")} />
+      <AdminPageHeader
+        title={t("pageTitle")}
+        description={result.success ? t("pageSubtitle", { count: result.data.flagged }) : undefined}
+      />
       {result.success ? (
         <>
-          <UserModerationPanel locale={locale} users={result.data.users} recentLogs={result.data.recentLogs} flagged={result.data.flagged} />
+          <UserModerationPanel locale={locale} users={result.data.users} recentLogs={result.data.recentLogs} search={searchParams.q} />
           <Pagination
             className="mt-8"
             page={result.data.page}

@@ -1,22 +1,7 @@
 import { prisma } from "@/lib/db";
+import { DEFAULT_MEDIA_SETTINGS, MEDIA_SETTINGS_KEY, type MediaSettings } from "@/lib/media-settings-shared";
 
-export const MEDIA_SETTINGS_KEY = "media_settings";
-
-export type MediaSettings = {
-  minScreenshots: number;
-  maxScreenshots: number;
-  allowedTypes: string[];
-  maxFileSizeMb: number;
-  imageQuality: number;
-};
-
-export const DEFAULT_MEDIA_SETTINGS: MediaSettings = {
-  minScreenshots: 0,
-  maxScreenshots: 100,
-  allowedTypes: ["image/jpeg", "image/png", "image/webp"],
-  maxFileSizeMb: 5,
-  imageQuality: 0.85,
-};
+export * from "@/lib/media-settings-shared";
 
 export async function getMediaSettings(): Promise<MediaSettings> {
   const row = await prisma.siteSetting.findUnique({ where: { key: MEDIA_SETTINGS_KEY } });

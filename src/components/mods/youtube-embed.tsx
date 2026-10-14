@@ -1,7 +1,8 @@
 "use client";
-import { Play } from "lucide-react";
 
 import { useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
+import { Play } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type YouTubeEmbedProps = {
@@ -11,7 +12,8 @@ type YouTubeEmbedProps = {
   priority?: boolean;
 };
 
-export function YouTubeEmbed({ videoId, title = "YouTube video", className, priority }: YouTubeEmbedProps) {
+export function YouTubeEmbed({ videoId, title, className, priority }: YouTubeEmbedProps) {
+  const t = useTranslations("sharedUi.media");
   const containerRef = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(priority ?? false);
 
@@ -39,16 +41,14 @@ export function YouTubeEmbed({ videoId, title = "YouTube video", className, prio
     <div
       ref={containerRef}
       className={cn(
-        "relative aspect-video w-full overflow-hidden rounded-xl border border-border/50",
-        "",
-        "",
+        "relative aspect-video w-full overflow-hidden rounded-lg border border-line bg-elevated",
         className
       )}
     >
       {visible ? (
         <iframe
           src={embedSrc}
-          title={title}
+          title={title ?? t("youtubeTitle")}
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           allowFullScreen
           loading={priority ? "eager" : "lazy"}

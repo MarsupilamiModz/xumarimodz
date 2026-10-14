@@ -1,10 +1,12 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { Card } from "@/components/ui/card";
+import { KpiTile } from "@/components/ui/kpi-tile";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function ChartSkeleton() {
-  return <div className="h-56 animate-pulse rounded-lg bg-muted/30" />;
+  // Endmaß wie die geladene Karte (Titelzeile + 224px Diagramm), damit nichts springt.
+  return <Skeleton className="h-[302px] rounded-lg" />;
 }
 
 export const RevenueChart = dynamic(
@@ -21,11 +23,7 @@ export function StatGrid({ stats }: { stats: { label: string; value: string; hin
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {stats.map((s) => (
-        <Card key={s.label} className="p-4 hover:border-line-control transition-colors">
-          <p className="text-xs text-muted-foreground uppercase tracking-wide">{s.label}</p>
-          <p className="text-2xl font-bold mt-1 text-ink">{s.value}</p>
-          {s.hint && <p className="text-xs text-muted-foreground mt-1">{s.hint}</p>}
-        </Card>
+        <KpiTile key={s.label} label={s.label} value={s.value} hint={s.hint} />
       ))}
     </div>
   );

@@ -2,6 +2,7 @@
 
 import { searchMods, getPopularTags, logSearchQuery } from "@/lib/discovery";
 import { ok, requireActionUser } from "@/lib/action-utils";
+import { runAfterResponse } from "@/lib/after-response";
 
 export async function searchModsAction(params: {
   query: string;
@@ -21,12 +22,12 @@ export async function searchModsAction(params: {
     page: params.page,
   });
 
-  void logSearchQuery({
+  runAfterResponse(logSearchQuery({
     query: params.query || "(browse)",
     filters: params,
     userId: user?.id,
     resultCount: result.total,
-  });
+  }));
 
   return ok(result);
 }

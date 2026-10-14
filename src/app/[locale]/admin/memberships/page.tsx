@@ -12,7 +12,13 @@ import { DataTable } from "@/components/ui/data-table";
 import { EmptyState } from "@/components/ui/empty-state";
 import type { Locale } from "@/i18n/config";
 
-export default async function AdminMembershipsPage({ params: { locale } }: { params: { locale: Locale } }) {
+export default async function AdminMembershipsPage(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   await requirePagePermission("settings.write");
   const [t, plansResult, pageResult, manual] = await Promise.all([

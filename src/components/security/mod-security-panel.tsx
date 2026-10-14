@@ -1,8 +1,9 @@
-import { getTranslations } from "next-intl/server";
-import { safeToLocaleDateString } from "@/lib/i18n/safe-locale";
-import { ShieldCheck, CheckCircle2 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { getLocale, getTranslations } from "next-intl/server";
+import { ShieldCheck } from "lucide-react";
+import { SectionCard } from "@/components/ui/page-header";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { SecurityBadge } from "@/components/security/security-badge";
+import { formatDate } from "@/lib/format-locale";
 import { getPublicSecurityLevel } from "@/lib/security/status";
 import type { FileScanStatus } from "@prisma/client";
 
@@ -13,53 +14,46 @@ type Props = {
   locale?: string;
 };
 
-export async function ModSecurityPanel({ scanStatus, scannedAt, isTrusted = false }: Props) {
+export async function ModSecurityPanel({ scanStatus, scannedAt, isTrusted = false, locale }: Props) {
   const t = await getTranslations("security");
+  const displayLocale = locale ?? (await getLocale());
   const levelKey = getPublicSecurityLevel(scanStatus, isTrusted);
   const verified = scanStatus === "CLEAN" || scanStatus === "APPROVED";
 
   return (
-    <Card className="border-success/20">
-      <CardHeader className="pb-3">
-        <CardTitle className="text-base flex items-center gap-2">
-          <ShieldCheck className="h-4 w-4 text-success" />
-          {t("panel.title")}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-3 text-sm">
+    <SectionCard>
+      <h2 className="section-title mb-4 flex items-center gap-2">
+        <ShieldCheck className="h-4 w-4 text-success" aria-hidden />
+        {t("panel.title")}
+      </h2>
+      <div className="space-y-3 text-sm">
         <div className="flex flex-wrap gap-2">
           {verified && (
             <>
-              <span className="text-success">{t("panel.virusTotalPassed")}</span>
-              {scanStatus === "APPROVED" && (
-                <span className="text-success">{t("panel.manuallyVerified")}</span>
-              )}
-              <span className="text-success">{t("panel.safeDownload")}</span>
-              <span className="text-success">{t("panel.secureStorage")}</span>
+              <StatusBadge tone="success" label={t("badges.virusTotalPassed")} />
+              {scanStatus === "APPROVED" && <StatusBadge tone="success" label={t("badges.manuallyVerified")} />}
+              <StatusBadge tone="success" label={t("badges.safeDownload")} />
+              <StatusBadge tone="success" label={t("badges.secureStorage")} />
             </>
           )}
           {!verified && <SecurityBadge scanStatus={scanStatus} isTrusted={isTrusted} />}
         </div>
 
-        {verified && (
-          <p className="flex items-center gap-1.5 font-medium text-success"><CheckCircle2 className="h-4 w-4" aria-hidden />{t("badges.verifiedSafe")}</p>
-        )}
+        {verified && <StatusBadge tone="success" label={t("badges.verifiedSafe")} />}
 
-        {isTrusted && verified && (
-          <p className="text-xs text-muted-foreground">{t("panel.trustedByTeam")}</p>
-        )}
+        {isTrusted && verified && <p className="meta">{t("badges.trustedByTeam")}</p>}
 
-        <div className="border-t border-border/30 pt-3 space-y-1 text-xs text-muted-foreground">
+        <div className="meta space-y-1 border-t border-line pt-3">
           {scannedAt && (
             <p>
-              {t("panel.lastScan")}: {safeToLocaleDateString(scannedAt)}
+              {t("panel.lastScan")}: {formatDate(scannedAt, displayLocale)}
             </p>
           )}
           <p>
             {t("panel.securityLevel")}: {t(`badges.${levelKey}` as `badges.${typeof levelKey}`)}
           </p>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </SectionCard>
   );
 }

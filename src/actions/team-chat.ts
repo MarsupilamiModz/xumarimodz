@@ -15,6 +15,7 @@ import {
   channelSortValue,
   type TeamChatUserLike,
 } from "@/lib/team-chat-access";
+import { runAfterResponse } from "@/lib/after-response";
 
 const attachmentSchema = z.object({
   url: z.string().url(),
@@ -401,13 +402,13 @@ export async function sendChatMessage(input: z.infer<typeof sendSchema>) {
         permissionGroupId: mentionedUser.permissionGroupId,
       });
       if (!canAccessTeamChat(mentionedUser, mentionedPerms)) continue;
-      void notifyChatMention({
+      runAfterResponse(notifyChatMention({
         userId: mentionedUser.id,
         channelId: channel.id,
         channelName: channelLabel,
         senderName: user.displayName ?? user.username,
         preview: parsed.data.content.slice(0, 160),
-      });
+      }));
     }
   }
 

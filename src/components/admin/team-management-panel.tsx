@@ -12,6 +12,7 @@ import {
   Search,
   Trash2,
   UserPlus,
+  Users,
   X,
 } from "lucide-react";
 import {
@@ -26,12 +27,14 @@ import { TeamMemberMediaUpload } from "@/components/admin/team-member-media-uplo
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { SectionCard } from "@/components/ui/page-header";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { EmptyState } from "@/components/ui/empty-state";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { SafeImage } from "@/components/ui/safe-image";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAppToast } from "@/hooks/use-app-toast";
-import { TEAM_ROLE_GROUPS, teamRoleColor, teamRoleTitle } from "@/lib/team-page";
+import { TEAM_ROLE_GROUPS, teamRoleColor } from "@/lib/team-page";
 import type { TeamRoleGroup, TeamVisibility } from "@prisma/client";
 
 type Department = {
@@ -177,6 +180,9 @@ export function TeamManagementPanel({
 }) {
   const router = useRouter();
   const t = useTranslations("admin.ui.teamManagement");
+  const tb = useTranslations("admin.teamPage");
+  const roleTitle = (group: TeamRoleGroup) => (tb.has(`roleGroup.${group}`) ? tb(`roleGroup.${group}`) : group);
+  const [confirm, setConfirm] = useState<{ kind: "profile" | "dept"; id: string; name: string } | null>(null);
   const appToast = useAppToast();
   const [pending, startTransition] = useTransition();
   const [deptName, setDeptName] = useState("");
@@ -281,12 +287,14 @@ export function TeamManagementPanel({
     });
   }
 
-  function removeProfile(id: string, name: string) {
-    if (!window.confirm(t("removeMemberConfirm", { name }))) return;
+  function confirmRemoval() {
+    if (!confirm) return;
+    const { kind, id } = confirm;
     startTransition(async () => {
-      const r = await deleteTeamProfile(id);
+      const r = kind === "profile" ? await deleteTeamProfile(id) : await deleteTeamDepartment(id);
       if (r.success) {
-        if (editingId === id) cancelEdit();
+        if (kind === "profile" && editingId === id) cancelEdit();
+        setConfirm(null);
         router.refresh();
       } else appToast.error(r.error);
     });
@@ -343,103 +351,108 @@ export function TeamManagementPanel({
       </TabsList>
 
       <TabsContent value="departments" className="mt-4 space-y-4">
-        <Card className="grid gap-3 p-4 sm:grid-cols-3">
+        <SectionCard title={t("categoriesTab")}>
+        <div className="grid gap-3 sm:grid-cols-3">
           <Input
+            aria-label={t("categoryNamePlaceholder")}
             placeholder={t("categoryNamePlaceholder")}
             value={deptName}
             onChange={(e) => setDeptName(e.target.value)}
           />
           <Input
+            aria-label={t("slugOptionalPlaceholder")}
             placeholder={t("slugOptionalPlaceholder")}
             value={deptSlug}
             onChange={(e) => setDeptSlug(e.target.value)}
+            className="mono-id"
           />
           <Button disabled={pending} onClick={saveDept}>
-            <Plus className="mr-1 h-4 w-4" /> {t("addCategoryButton")}
+            <Plus className="h-4 w-4" aria-hidden /> {t("addCategoryButton")}
           </Button>
-        </Card>
-        <div className="space-y-2">
+        </div>
+        </SectionCard>
+        {departments.length === 0 ? (
+          <EmptyState icon={Users} title={tb("noCategoriesTitle")} description={tb("noCategoriesText")} />
+        ) : (
+        <ul className="divide-y divide-line rounded-lg border border-line bg-raised">
           {departments.map((dept) => (
-            <div
+            <li
               key={dept.id}
-              className="flex items-center justify-between rounded-lg border border-border/40 p-3"
+              className="flex items-center justify-between gap-3 px-4 py-3"
             >
               <div>
-                <p className="font-medium">{dept.name}</p>
-                <p className="text-xs text-muted-foreground">
-                  {t("memberCountLabel", { count: dept._count.members })} · {dept.slug}
+                <p className="font-medium text-ink">{dept.name}</p>
+                <p className="meta">
+                  {t("memberCountLabel", { count: dept._count.members })} · <span className="mono-id">{dept.slug}</span>
                 </p>
               </div>
               <Button
                 size="sm"
                 variant="ghost"
                 disabled={pending}
-                onClick={() => {
-                  if (!window.confirm(t("deleteCategoryConfirm", { name: dept.name }))) return;
-                  startTransition(async () => {
-                    const r = await deleteTeamDepartment(dept.id);
-                    if (r.success) router.refresh();
-                    else appToast.error(r.error);
-                  });
-                }}
+                aria-label={tb("deleteCategory", { name: dept.name })}
+                onClick={() => setConfirm({ kind: "dept", id: dept.id, name: dept.name })}
               >
-                <Trash2 className="h-4 w-4" />
+                <Trash2 className="h-4 w-4" aria-hidden />
               </Button>
-            </div>
+            </li>
           ))}
-        </div>
+        </ul>
+        )}
       </TabsContent>
 
       <TabsContent value="members" className="mt-4 space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-ink-muted">
               {t("managePublicProfilesHint")}
             </p>
           </div>
           {!isEditing && (
             <Button onClick={startCreate}>
-              <UserPlus className="mr-2 h-4 w-4" />
+              <UserPlus className="h-4 w-4" aria-hidden />
               {t("addTeamMemberButton")}
             </Button>
           )}
         </div>
 
         {isEditing && (
-          <Card className="space-y-6 p-6">
+          <section className="space-y-6 rounded-lg border border-line bg-raised p-5" aria-labelledby="team-profile-editor">
             <div className="flex items-center justify-between gap-3">
-              <h3 className="text-lg font-semibold">
+              <h2 id="team-profile-editor" className="section-title">
                 {editingId === "new" ? t("addTeamMemberHeading") : t("editMemberHeading", { name: form.name })}
-              </h3>
-              <Button type="button" variant="ghost" size="icon" onClick={cancelEdit}>
-                <X className="h-4 w-4" />
+              </h2>
+              <Button type="button" variant="ghost" size="icon" aria-label={t("cancelButton")} onClick={cancelEdit}>
+                <X className="h-4 w-4" aria-hidden />
               </Button>
             </div>
 
             <section className="space-y-3">
-              <h4 className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
+              <h3 className="label-text">
                 {t("identityHeading")}
-              </h4>
+              </h3>
               <div className="grid gap-3 sm:grid-cols-2">
                 <Input
+                  aria-label={t("displayNamePlaceholder")}
                   placeholder={t("displayNamePlaceholder")}
                   value={form.name}
                   onChange={(e) => patchForm({ name: e.target.value })}
                 />
                 <Input
+                  aria-label={t("positionTitlePlaceholder")}
                   placeholder={t("positionTitlePlaceholder")}
                   value={form.position}
                   onChange={(e) => patchForm({ position: e.target.value })}
                 />
               </div>
 
-              <div className="space-y-2 rounded-lg border border-border/40 p-3">
-                <p className="text-sm font-medium">{t("linkPlatformUserLabel")}</p>
+              <div className="space-y-2 rounded-md border border-line p-3">
+                <p className="text-sm font-medium text-ink">{t("linkPlatformUserLabel")}</p>
                 {linkedUser ? (
-                  <div className="flex items-center justify-between gap-2 rounded-md bg-muted/30 px-3 py-2">
+                  <div className="flex items-center justify-between gap-2 rounded-md bg-elevated px-3 py-2">
                     <div>
-                      <p className="font-medium">{linkedUser.displayName || linkedUser.username}</p>
-                      <p className="text-xs text-muted-foreground">{linkedUser.email}</p>
+                      <p className="font-medium text-ink">{linkedUser.displayName || linkedUser.username}</p>
+                      <p className="meta">{linkedUser.email}</p>
                     </div>
                     <Button type="button" size="sm" variant="outline" onClick={unlinkUser}>
                       {t("unlinkButton")}
@@ -448,6 +461,7 @@ export function TeamManagementPanel({
                 ) : (
                   <div className="flex gap-2">
                     <Input
+                      aria-label={t("searchUsernameEmailPlaceholder")}
                       placeholder={t("searchUsernameEmailPlaceholder")}
                       value={userSearch}
                       onChange={(e) => setUserSearch(e.target.value)}
@@ -456,9 +470,10 @@ export function TeamManagementPanel({
                       type="button"
                       variant="outline"
                       disabled={pending || userSearch.trim().length < 2}
+                      aria-label={tb("searchUsers")}
                       onClick={searchUsers}
                     >
-                      <Search className="h-4 w-4" />
+                      <Search className="h-4 w-4" aria-hidden />
                     </Button>
                   </div>
                 )}
@@ -468,15 +483,15 @@ export function TeamManagementPanel({
                       <button
                         key={user.id}
                         type="button"
-                        className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-left hover:bg-muted/40"
+                        className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-left hover:bg-hover"
                         onClick={() => linkUser(user)}
                       >
-                        <div className="relative h-8 w-8 overflow-hidden rounded-full bg-muted">
+                        <div className="relative h-8 w-8 overflow-hidden rounded-full bg-elevated">
                           <SafeImage src={user.avatarUrl} alt="" fill className="object-cover" sizes="32px" />
                         </div>
                         <div>
-                          <p className="text-sm font-medium">{user.displayName || user.username}</p>
-                          <p className="text-xs text-muted-foreground">{user.email}</p>
+                          <p className="text-sm font-medium text-ink">{user.displayName || user.username}</p>
+                          <p className="meta">{user.email}</p>
                         </div>
                       </button>
                     ))}
@@ -486,12 +501,12 @@ export function TeamManagementPanel({
             </section>
 
             <section className="space-y-3">
-              <h4 className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
+              <h3 className="label-text">
                 {t("roleAndCategoryHeading")}
-              </h4>
+              </h3>
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 <select
-                  className="flex h-10 rounded-md border border-input bg-background/50 px-3 text-sm"
+                  className="flex h-9 rounded-md border border-line-control bg-raised px-3 text-sm text-ink"
                   value={form.roleGroup}
                   onChange={(e) =>
                     patchForm({
@@ -502,11 +517,12 @@ export function TeamManagementPanel({
                 >
                   {TEAM_ROLE_GROUPS.map((group) => (
                     <option key={group.key} value={group.key}>
-                      {teamRoleTitle(group.key)}
+                      {roleTitle(group.key)}
                     </option>
                   ))}
                 </select>
                 <Input
+                  aria-label={t("roleBadgePlaceholder")}
                   placeholder={t("roleBadgePlaceholder")}
                   value={form.roleBadge}
                   onChange={(e) => patchForm({ roleBadge: e.target.value })}
@@ -517,7 +533,7 @@ export function TeamManagementPanel({
                   onChange={(e) => patchForm({ roleColor: e.target.value })}
                 />
                 <select
-                  className="flex h-10 rounded-md border border-input bg-background/50 px-3 text-sm"
+                  className="flex h-9 rounded-md border border-line-control bg-raised px-3 text-sm text-ink"
                   value={form.departmentId}
                   onChange={(e) => patchForm({ departmentId: e.target.value })}
                 >
@@ -532,9 +548,9 @@ export function TeamManagementPanel({
             </section>
 
             <section className="space-y-3">
-              <h4 className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
+              <h3 className="label-text">
                 {t("mediaHeading")}
-              </h4>
+              </h3>
               <TeamMemberMediaUpload
                 avatarUrl={form.avatarUrl || null}
                 bannerUrl={form.bannerUrl || null}
@@ -546,22 +562,25 @@ export function TeamManagementPanel({
             </section>
 
             <section className="space-y-3">
-              <h4 className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
+              <h3 className="label-text">
                 {t("contactHeading")}
-              </h4>
+              </h3>
               <div className="grid gap-3 sm:grid-cols-2">
                 <Input
                   type="email"
+                  aria-label={t("emailPlaceholder")}
                   placeholder={t("emailPlaceholder")}
                   value={form.email}
                   onChange={(e) => patchForm({ email: e.target.value })}
                 />
                 <Input
+                  aria-label={t("discordUrlPlaceholder")}
                   placeholder={t("discordUrlPlaceholder")}
                   value={form.discordUrl}
                   onChange={(e) => patchForm({ discordUrl: e.target.value })}
                 />
                 <Input
+                  aria-label={t("websitePlaceholder")}
                   placeholder={t("websitePlaceholder")}
                   value={form.websiteUrl}
                   onChange={(e) => patchForm({ websiteUrl: e.target.value })}
@@ -571,31 +590,36 @@ export function TeamManagementPanel({
             </section>
 
             <section className="space-y-3">
-              <h4 className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
+              <h3 className="label-text">
                 {t("socialLinksHeading")}
-              </h4>
+              </h3>
               <div className="grid gap-3 sm:grid-cols-2">
                 <Input
+                  aria-label={t("youtubePlaceholder")}
                   placeholder={t("youtubePlaceholder")}
                   value={form.youtubeUrl}
                   onChange={(e) => patchForm({ youtubeUrl: e.target.value })}
                 />
                 <Input
+                  aria-label={t("twitchPlaceholder")}
                   placeholder={t("twitchPlaceholder")}
                   value={form.twitchUrl}
                   onChange={(e) => patchForm({ twitchUrl: e.target.value })}
                 />
                 <Input
+                  aria-label={t("tiktokPlaceholder")}
                   placeholder={t("tiktokPlaceholder")}
                   value={form.tiktokUrl}
                   onChange={(e) => patchForm({ tiktokUrl: e.target.value })}
                 />
                 <Input
+                  aria-label={t("instagramPlaceholder")}
                   placeholder={t("instagramPlaceholder")}
                   value={form.instagramUrl}
                   onChange={(e) => patchForm({ instagramUrl: e.target.value })}
                 />
                 <Input
+                  aria-label={t("xTwitterPlaceholder")}
                   placeholder={t("xTwitterPlaceholder")}
                   value={form.xUrl}
                   onChange={(e) => patchForm({ xUrl: e.target.value })}
@@ -605,9 +629,9 @@ export function TeamManagementPanel({
 
             <section className="space-y-3">
               <div className="flex items-center justify-between">
-                <h4 className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
+                <h3 className="label-text">
                   {t("customLinksHeading")}
-                </h4>
+                </h3>
                 <Button
                   type="button"
                   size="sm"
@@ -616,16 +640,17 @@ export function TeamManagementPanel({
                     patchForm({ customLinks: [...form.customLinks, { label: "", url: "" }] })
                   }
                 >
-                  <Link2 className="mr-1 h-4 w-4" /> {t("addLinkButton")}
+                  <Link2 className="h-4 w-4" aria-hidden /> {t("addLinkButton")}
                 </Button>
               </div>
               {form.customLinks.length === 0 ? (
-                <p className="text-sm text-muted-foreground">{t("noCustomLinksYet")}</p>
+                <p className="text-sm text-ink-muted">{t("noCustomLinksYet")}</p>
               ) : (
                 <div className="space-y-2">
                   {form.customLinks.map((link, index) => (
                     <div key={index} className="grid gap-2 sm:grid-cols-[1fr_1fr_auto]">
                       <Input
+                        aria-label={t("labelPlaceholder")}
                         placeholder={t("labelPlaceholder")}
                         value={link.label}
                         onChange={(e) => {
@@ -635,6 +660,7 @@ export function TeamManagementPanel({
                         }}
                       />
                       <Input
+                        aria-label={t("urlPlaceholder")}
                         placeholder={t("urlPlaceholder")}
                         value={link.url}
                         onChange={(e) => {
@@ -647,13 +673,14 @@ export function TeamManagementPanel({
                         type="button"
                         size="icon"
                         variant="ghost"
+                        aria-label={tb("removeLink")}
                         onClick={() =>
                           patchForm({
                             customLinks: form.customLinks.filter((_, i) => i !== index),
                           })
                         }
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Trash2 className="h-4 w-4" aria-hidden />
                       </Button>
                     </div>
                   ))}
@@ -662,10 +689,11 @@ export function TeamManagementPanel({
             </section>
 
             <section className="space-y-3">
-              <h4 className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
+              <h3 className="label-text">
                 {t("biographyHeading")}
-              </h4>
+              </h3>
               <Textarea
+                aria-label={t("biographyPlaceholder")}
                 placeholder={t("biographyPlaceholder")}
                 rows={4}
                 value={form.description}
@@ -675,7 +703,7 @@ export function TeamManagementPanel({
 
             <section className="grid gap-3 sm:grid-cols-3">
               <select
-                className="flex h-10 rounded-md border border-input bg-background/50 px-3 text-sm"
+                className="flex h-9 rounded-md border border-line-control bg-raised px-3 text-sm text-ink"
                 value={form.visibility}
                 onChange={(e) => patchForm({ visibility: e.target.value as TeamVisibility })}
               >
@@ -685,11 +713,12 @@ export function TeamManagementPanel({
               </select>
               <Input
                 type="number"
+                aria-label={t("sortOrderPlaceholder")}
                 placeholder={t("sortOrderPlaceholder")}
                 value={form.sortOrder}
                 onChange={(e) => patchForm({ sortOrder: Number(e.target.value) || 0 })}
               />
-              <label className="flex items-center gap-2 rounded-md border border-border/40 px-3 text-sm">
+              <label className="flex items-center gap-2 rounded-md border border-line px-3 text-sm text-ink">
                 <input
                   type="checkbox"
                   checked={form.isActive}
@@ -707,21 +736,19 @@ export function TeamManagementPanel({
                 {t("cancelButton")}
               </Button>
             </div>
-          </Card>
+          </section>
         )}
 
         <div className="space-y-2">
           {profiles.length === 0 ? (
-            <Card className="p-8 text-center text-muted-foreground">
-              {t("noTeamMembersYet")}
-            </Card>
+            <EmptyState icon={Users} title={t("noTeamMembersYet")} description={tb("noProfilesText")} />
           ) : (
             profiles.map((profile, index) => (
               <div
                 key={profile.id}
-                className="flex flex-wrap items-center gap-3 rounded-lg border border-border/40 p-3"
+                className="flex flex-wrap items-center gap-3 rounded-lg border border-line bg-raised p-3"
               >
-                <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full bg-muted/40">
+                <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full bg-elevated">
                   <SafeImage
                     src={profile.avatarUrl}
                     alt=""
@@ -732,45 +759,51 @@ export function TeamManagementPanel({
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
-                    <p className="font-medium">{profile.name}</p>
-                    {!profile.isActive && <Badge variant="destructive">{t("inactiveBadge")}</Badge>}
-                    {profile.user && (
-                      <Badge variant="outline">@{profile.user.username}</Badge>
-                    )}
+                    <p className="font-medium text-ink">{profile.name}</p>
+                    {!profile.isActive && <StatusBadge tone="neutral" label={t("inactiveBadge")} />}
+                    {profile.user && <span className="meta">@{profile.user.username}</span>}
                   </div>
-                  <p className="text-sm text-muted-foreground">
-                    {teamRoleTitle(profile.roleGroup)} · {profile.position}
+                  <p className="text-sm text-ink-muted">
+                    {roleTitle(profile.roleGroup)} · {profile.position}
                     {profile.department && ` · ${profile.department.name}`}
                   </p>
                 </div>
                 {profile.roleBadge && (
-                  <Badge style={{ borderColor: teamRoleColor(profile.roleGroup, profile.roleColor) }}>
+                  <span
+                    className="rounded-sm border px-2 py-0.5 text-xs font-semibold text-ink"
+                    style={{ borderColor: teamRoleColor(profile.roleGroup, profile.roleColor) }}
+                  >
                     {profile.roleBadge}
-                  </Badge>
+                  </span>
                 )}
-                <Badge variant="outline">
-                  {profile.visibility === "PUBLIC"
-                    ? t("visibilityPublic")
-                    : profile.visibility === "INTERNAL"
-                      ? t("visibilityInternal")
-                      : t("visibilityHidden")}
-                </Badge>
+                <StatusBadge
+                  tone={profile.visibility === "PUBLIC" ? "success" : "neutral"}
+                  label={
+                    profile.visibility === "PUBLIC"
+                      ? t("visibilityPublic")
+                      : profile.visibility === "INTERNAL"
+                        ? t("visibilityInternal")
+                        : t("visibilityHidden")
+                  }
+                />
                 <div className="flex gap-1">
                   <Button
                     size="icon"
                     variant="ghost"
                     disabled={pending || index === 0}
+                    aria-label={tb("moveUp", { name: profile.name })}
                     onClick={() => moveProfile(profile.id, -1)}
                   >
-                    <ChevronUp className="h-4 w-4" />
+                    <ChevronUp className="h-4 w-4" aria-hidden />
                   </Button>
                   <Button
                     size="icon"
                     variant="ghost"
                     disabled={pending || index === profiles.length - 1}
+                    aria-label={tb("moveDown", { name: profile.name })}
                     onClick={() => moveProfile(profile.id, 1)}
                   >
-                    <ChevronDown className="h-4 w-4" />
+                    <ChevronDown className="h-4 w-4" aria-hidden />
                   </Button>
                   <Button size="sm" variant="outline" onClick={() => startEdit(profile)}>
                     {t("editButton")}
@@ -779,9 +812,10 @@ export function TeamManagementPanel({
                     size="sm"
                     variant="ghost"
                     disabled={pending}
-                    onClick={() => removeProfile(profile.id, profile.name)}
+                    aria-label={tb("removeMember", { name: profile.name })}
+                    onClick={() => setConfirm({ kind: "profile", id: profile.id, name: profile.name })}
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <Trash2 className="h-4 w-4" aria-hidden />
                   </Button>
                 </div>
               </div>
@@ -789,6 +823,21 @@ export function TeamManagementPanel({
           )}
         </div>
       </TabsContent>
+
+      <ConfirmDialog
+        open={!!confirm}
+        onOpenChange={(open) => !open && setConfirm(null)}
+        title={
+          confirm?.kind === "dept"
+            ? t("deleteCategoryConfirm", { name: confirm.name })
+            : t("removeMemberConfirm", { name: confirm?.name ?? "" })
+        }
+        description={confirm?.kind === "dept" ? tb("deleteCategoryText") : tb("removeMemberText")}
+        confirmLabel={tb("confirmDelete")}
+        variant="destructive"
+        loading={pending}
+        onConfirm={confirmRemoval}
+      />
     </Tabs>
   );
 }

@@ -70,7 +70,7 @@ export function AdSlot({ ad, className, lazy = true }: AdSlotProps) {
     <div
       ref={ref}
       className={cn(
-        "ad-slot relative overflow-hidden rounded-lg border border-border/30 bg-muted/10",
+        "ad-slot relative overflow-hidden rounded-lg border border-line bg-raised",
         ad.mobileOnly && "md:hidden",
         ad.desktopOnly && "hidden md:block",
         className
@@ -106,7 +106,7 @@ export function AdSlot({ ad, className, lazy = true }: AdSlotProps) {
           data-full-width-responsive="true"
         />
       ) : (
-        <div className="flex h-full min-h-[inherit] items-center justify-center p-4 text-center text-xs text-muted-foreground">
+        <div className="flex h-full min-h-[inherit] items-center justify-center p-4 text-center text-xs text-ink-faint">
           {ad.name}
         </div>
       )}

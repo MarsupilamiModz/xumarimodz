@@ -1,6 +1,7 @@
 import "server-only";
 import { prisma } from "@/lib/db";
 import { sendEmail, type SendEmailParams } from "@/lib/email/send";
+import { runAfterResponse } from "@/lib/after-response";
 
 const MAX_ATTEMPTS = 5;
 const RETRY_DELAY_MS = 60_000;
@@ -24,9 +25,9 @@ export async function queueEmail(params: QueuedEmailJob) {
     },
   });
 
-  void deliverQueuedEmail(log.id, params).catch((err) =>
+  runAfterResponse(deliverQueuedEmail(log.id, params).catch((err) =>
     console.error("[email-queue]", err)
-  );
+  ));
 
   return log.id;
 }
@@ -51,7 +52,7 @@ async function deliverQueuedEmail(logId: string, params: QueuedEmailJob) {
       data: { status: "PENDING", attempts },
     });
     setTimeout(() => {
-      void deliverQueuedEmail(logId, params);
+      runAfterResponse(deliverQueuedEmail(logId, params));
     }, RETRY_DELAY_MS * attempts);
     return;
   }

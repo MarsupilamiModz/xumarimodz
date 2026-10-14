@@ -18,6 +18,7 @@ import { computeSlaDueDates, isSlaOverdue } from "@/lib/sla";
 import { categoryToDepartment } from "@/lib/ticket-labels";
 import { queueWhere, type TicketQueue } from "@/lib/ticket-queues";
 import { randomBytes } from "crypto";
+import { runAfterResponse } from "@/lib/after-response";
 
 async function notifyWatchers(
   ticketId: string,
@@ -28,14 +29,14 @@ async function notifyWatchers(
   locale = "en"
 ) {
   const { notifyTicketWatchers } = await import("@/lib/notifications-service");
-  void notifyTicketWatchers({
+  runAfterResponse(notifyTicketWatchers({
     ticketId,
     ticketNumber,
     subject,
     body,
     excludeUserId,
     locale,
-  });
+  }));
 }
 
 const createTicketSchema = z.object({
@@ -103,21 +104,21 @@ export async function createTicket(input: {
     },
   });
 
-  void sendTicketNotification({
+  runAfterResponse(sendTicketNotification({
     type: "created",
     ticketNumber: ticket.ticketNumber,
     subject: ticket.subject,
     message: parsed.data.message,
     username: ticket.user.displayName ?? ticket.user.username,
     userEmail: ticket.user.email,
-  });
+  }));
 
-  void notifyStaffNewTicket({
+  runAfterResponse(notifyStaffNewTicket({
     ticketId: ticket.id,
     ticketNumber: ticket.ticketNumber,
     subject: ticket.subject,
     department: categoryToDepartment(parsed.data.category),
-  });
+  }));
 
   revalidatePath("/dashboard/support");
   return ok({ ticketId: ticket.id, ticketNumber: ticket.ticketNumber });
@@ -182,7 +183,7 @@ export async function replyToTicket(
   });
 
   if (!isInternal) {
-    void sendTicketNotification({
+    runAfterResponse(sendTicketNotification({
       type: "reply",
       ticketNumber: ticket.ticketNumber,
       subject: ticket.subject,
@@ -191,24 +192,24 @@ export async function replyToTicket(
         ? user.displayName ?? user.username
         : ticket.user.displayName ?? ticket.user.username,
       userEmail: isStaff ? ticket.user.email : undefined,
-    });
+    }));
 
     if (isStaff) {
-      void notifyTicketReply({
+      runAfterResponse(notifyTicketReply({
         userId: ticket.user.id,
         ticketNumber: ticket.ticketNumber,
         subject: ticket.subject,
         ticketId,
-      });
+      }));
     }
 
-    void notifyWatchers(
+    runAfterResponse(notifyWatchers(
       ticketId,
       ticket.ticketNumber,
       ticket.subject,
       isStaff ? "Staff replied" : "Customer replied",
       user.id
-    );
+    ));
   }
 
   revalidatePath(`/dashboard/support/${ticketId}`);
@@ -237,14 +238,14 @@ export async function updateTicketStatus(
     },
   });
 
-  void sendTicketNotification({
+  runAfterResponse(sendTicketNotification({
     type: "updated",
     ticketNumber: ticket.ticketNumber,
     subject: ticket.subject,
     message: `Ticket status changed to ${status.replace(/_/g, " ")}`,
     username: ticket.user.displayName ?? ticket.user.username,
     userEmail: ticket.user.email,
-  });
+  }));
 
   await createAuditLog({
     actorId: user.id,
@@ -254,13 +255,13 @@ export async function updateTicketStatus(
     metadata: { from: ticket.status, to: status },
   });
 
-  void notifyWatchers(
+  runAfterResponse(notifyWatchers(
     ticketId,
     ticket.ticketNumber,
     ticket.subject,
     `Status changed to ${status.replace(/_/g, " ")}`,
     user.id
-  );
+  ));
 
   revalidatePath(`/admin/tickets/${ticketId}`);
   revalidatePath("/admin/tickets");
@@ -286,13 +287,13 @@ export async function assignTicket(
   });
 
   if (assigneeId) {
-    void notifyTicketAssigned({
+    runAfterResponse(notifyTicketAssigned({
       assigneeId,
       ticketId,
       ticketNumber: ticket.ticketNumber,
       subject: ticket.subject,
       assignedBy: user.username,
-    });
+    }));
   }
 
   await createAuditLog({
@@ -303,13 +304,13 @@ export async function assignTicket(
     metadata: { assigneeId },
   });
 
-  void notifyWatchers(
+  runAfterResponse(notifyWatchers(
     ticketId,
     ticket.ticketNumber,
     ticket.subject,
     assigneeId ? "Ticket reassigned" : "Ticket unassigned",
     user.id
-  );
+  ));
 
   revalidatePath(`/admin/tickets/${ticketId}`);
   return ok(undefined);
@@ -346,7 +347,7 @@ export async function updateTicketPriority(
     metadata: { to: priority },
   });
 
-  void notifyWatchers(ticketId, ticket.ticketNumber, ticket.subject, `Priority set to ${priority}`, user.id);
+  runAfterResponse(notifyWatchers(ticketId, ticket.ticketNumber, ticket.subject, `Priority set to ${priority}`, user.id));
 
   revalidatePath(`/admin/tickets/${ticketId}`);
   return ok(undefined);
@@ -622,7 +623,7 @@ export async function escalateTicket(ticketId: string) {
     entityId: ticketId,
   });
 
-  void notifyWatchers(ticketId, ticket.ticketNumber, ticket.subject, "Ticket escalated", user.id);
+  runAfterResponse(notifyWatchers(ticketId, ticket.ticketNumber, ticket.subject, "Ticket escalated", user.id));
 
   revalidatePath(`/admin/tickets/${ticketId}`);
   return ok(undefined);
@@ -652,7 +653,7 @@ export async function addTicketTags(ticketId: string, tags: string[]) {
     metadata: { tags: cleaned },
   });
 
-  void notifyWatchers(ticketId, ticket.ticketNumber, ticket.subject, "Tags updated", user.id);
+  runAfterResponse(notifyWatchers(ticketId, ticket.ticketNumber, ticket.subject, "Tags updated", user.id));
 
   revalidatePath(`/admin/tickets/${ticketId}`);
   return ok(undefined);
@@ -712,13 +713,13 @@ export async function transferTicketDepartment(
     select: { ticketNumber: true, subject: true },
   });
   if (ticket) {
-    void notifyWatchers(
+    runAfterResponse(notifyWatchers(
       ticketId,
       ticket.ticketNumber,
       ticket.subject,
       `Transferred to ${department.replace(/_/g, " ")}`,
       user.id
-    );
+    ));
   }
 
   revalidatePath(`/admin/tickets/${ticketId}`);

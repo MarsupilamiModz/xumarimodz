@@ -18,6 +18,7 @@ import { isTurnstileEnabled, verifyTurnstileToken } from "@/lib/turnstile";
 import { uniqueUsername } from "@/lib/user-sync";
 import { REFERRAL_COOKIE, normalizeReferralCode } from "@/lib/referral-cookie";
 import { findActiveReferral, redeemReferralForUser } from "@/lib/referral";
+import { runAfterResponse } from "@/lib/after-response";
 
 const registerSchema = z.object({
   email: z.string().email().max(255),
@@ -29,8 +30,8 @@ const registerSchema = z.object({
   promoCode: z.string().max(32).optional(),
 });
 
-function clientIp() {
-  return headers().get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+async function clientIp() {
+  return (await headers()).get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
 }
 
 async function queueVerification(params: {
@@ -50,7 +51,7 @@ async function queueVerification(params: {
       userId: params.userId,
     });
   } catch (err) {
-    void logPlatformError("auth:register-verification-queue", err);
+    runAfterResponse(logPlatformError("auth:register-verification-queue", err));
   }
 }
 
@@ -69,13 +70,13 @@ async function resendForExistingUser(params: {
   }
 
   const username = existing?.displayName ?? existing?.username ?? params.email.split("@")[0];
-  void queueVerification({
+  runAfterResponse(queueVerification({
     email: params.email,
     password: params.password,
     locale: params.locale,
     username,
     userId: existing?.id,
-  });
+  }));
 
   return ok({ status: "pending_verification" as const });
 }
@@ -119,10 +120,10 @@ export async function registerUser(
     return ok({ status: "pending_verification" });
   }
 
-  const ip = clientIp();
+  const ip = await clientIp();
   const ipLimit = rateLimit(`register:ip:${ip}`, 8, 60 * 60 * 1000);
   if (!ipLimit.success) {
-    void logPlatformError("auth:register-rate-limit", new Error(`IP rate limit: ${ip}`));
+    runAfterResponse(logPlatformError("auth:register-rate-limit", new Error(`IP rate limit: ${ip}`)));
     return ok({ status: "pending_verification" });
   }
 
@@ -133,14 +134,14 @@ export async function registerUser(
 
   const emailLimit = rateLimit(`register:email:${email}`, 3, 60 * 60 * 1000);
   if (!emailLimit.success) {
-    void logPlatformError("auth:register-email-rate-limit", new Error(`Email rate limit: ${email}`));
+    runAfterResponse(logPlatformError("auth:register-email-rate-limit", new Error(`Email rate limit: ${email}`)));
     return ok({ status: "pending_verification" });
   }
 
   if (isTurnstileEnabled()) {
     const valid = await verifyTurnstileToken(turnstileToken ?? "", ip);
     if (!valid) {
-      void logPlatformError("auth:register-turnstile", new Error(`Turnstile failed for ${ip}`));
+      runAfterResponse(logPlatformError("auth:register-turnstile", new Error(`Turnstile failed for ${ip}`)));
       return fail(userFriendlyAuthCodeMessage("bot_detected", locale));
     }
   }
@@ -158,12 +159,12 @@ export async function registerUser(
     select: { id: true, username: true, displayName: true },
   });
   if (existingPending) {
-    void queueVerification({
+    runAfterResponse(queueVerification({
       email,
       locale,
       username: existingPending.displayName ?? existingPending.username,
       userId: existingPending.id,
-    });
+    }));
     return ok({ status: "pending_verification" });
   }
 
@@ -195,7 +196,7 @@ export async function registerUser(
   });
 
   if (authError) {
-    void logPlatformError("auth:register-create-user", authError);
+    runAfterResponse(logPlatformError("auth:register-create-user", authError));
     const code = classifyAuthError(authError.message);
     if (code === "user_exists") {
       return resendForExistingUser({ email, locale, password });
@@ -221,24 +222,24 @@ export async function registerUser(
       },
     });
   } catch (err) {
-    void logPlatformError("auth:register-prisma-create", err);
+    runAfterResponse(logPlatformError("auth:register-prisma-create", err));
     await admin.auth.admin.deleteUser(authData.user.id).catch(() => undefined);
     return ok({ status: "pending_verification" });
   }
 
-  void queueVerification({ email, password, locale, username, userId: dbUser.id });
+  runAfterResponse(queueVerification({ email, password, locale, username, userId: dbUser.id }));
 
   if (referralCode) {
-    void redeemReferralForUser(dbUser.id, referralCode).finally(() => {
+    runAfterResponse(redeemReferralForUser(dbUser.id, referralCode).finally(() => {
       try {
         cookieStore.delete(REFERRAL_COOKIE);
       } catch {
         // cookie cleanup best-effort
       }
-    });
+    }));
   }
 
-  void import("@/lib/notifications-service")
+  runAfterResponse(import("@/lib/notifications-service")
     .then(({ notifyOwnerPlatformEvent }) =>
       notifyOwnerPlatformEvent({
         title: "New registration",
@@ -247,7 +248,7 @@ export async function registerUser(
         category: "registrations",
       })
     )
-    .catch(() => undefined);
+    .catch(() => undefined));
 
   return ok({ status: "pending_verification" });
 }

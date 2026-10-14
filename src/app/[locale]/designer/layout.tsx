@@ -16,13 +16,20 @@ const nav = [
   { href: "/new", icon: Plus, labelKey: "newAsset" as const },
 ];
 
-export default async function DesignerLayout({
-  children,
-  params: { locale },
-}: {
-  children: React.ReactNode;
-  params: { locale: Locale };
-}) {
+export default async function DesignerLayout(
+  props: {
+    children: React.ReactNode;
+    params: Promise<{ locale: string }>;
+  }
+) {
+  const params = await props.params;
+
+  const locale = params.locale as Locale;
+
+  const {
+    children
+  } = props;
+
   const user = await requireDesigner();
   const t = await getTranslations("designer");
 

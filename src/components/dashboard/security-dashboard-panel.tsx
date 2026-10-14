@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
 import {
   enrollMfa,
   verifyAndEnableMfa,
@@ -8,13 +9,16 @@ import {
   regenerateBackupCodes,
   listMfaFactors,
 } from "@/actions/security";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { SectionCard } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { DataTable } from "@/components/ui/data-table";
+import { EmptyState } from "@/components/ui/empty-state";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { toast } from "@/hooks/use-toast";
-import { safeToLocaleDateString } from "@/lib/i18n/safe-locale";
-import { Shield, Key } from "lucide-react";
+import { formatDate, formatDateTime } from "@/lib/format-locale";
+import { Key, ShieldCheck } from "lucide-react";
 
 type Dashboard = {
   mfaEnabled: boolean;
@@ -37,12 +41,14 @@ export function SecurityDashboardPanel({
   locale: string;
   initial: Dashboard;
 }) {
+  const t = useTranslations("accountPages.security");
   const [dashboard] = useState(initial);
   const [pending, startTransition] = useTransition();
   const [enrollData, setEnrollData] = useState<{ factorId: string; qrCode: string; secret: string } | null>(null);
   const [verifyCode, setVerifyCode] = useState("");
   const [backupCodes, setBackupCodes] = useState<string[] | null>(null);
   const [factorId, setFactorId] = useState<string | null>(null);
+  const [confirmDisable, setConfirmDisable] = useState(false);
 
   function startEnroll() {
     startTransition(async () => {
@@ -100,101 +106,149 @@ export function SecurityDashboardPanel({
   }
 
   return (
-    <div className="space-y-6 max-w-2xl">
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Shield className="h-5 w-5 text-violet-bright" />
-            Two-Factor Authentication
-            {dashboard.mfaRequired && !dashboard.mfaEnabled && (
-              <Badge variant="destructive" className="ml-2">Required</Badge>
-            )}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <p className="text-sm text-muted-foreground">
-            {dashboard.mfaEnabled
-              ? "Your account is protected with an authenticator app."
-              : "Add an extra layer of security with TOTP (Google Authenticator, Authy, etc.)."}
-          </p>
+    <div className="max-w-2xl space-y-6">
+      <SectionCard
+        title={t("mfaTitle")}
+        description={dashboard.mfaEnabled ? t("mfaOnText") : t("mfaOffText")}
+        action={
+          dashboard.mfaEnabled ? (
+            <StatusBadge tone="success" label={t("enabled")} />
+          ) : dashboard.mfaRequired ? (
+            <StatusBadge tone="danger" label={t("required")} />
+          ) : (
+            <StatusBadge tone="neutral" label={t("notEnabled")} />
+          )
+        }
+      >
+        <div className="space-y-4">
           {dashboard.mfaEnabledAt && (
-            <p className="text-xs text-muted-foreground">
-              Enabled {safeToLocaleDateString(new Date(dashboard.mfaEnabledAt), locale, { dateStyle: "medium" })}
-            </p>
+            <p className="meta">{t("enabledSince", { date: formatDate(dashboard.mfaEnabledAt, locale) })}</p>
           )}
 
           {!dashboard.mfaEnabled && !enrollData && (
             <Button disabled={pending} onClick={startEnroll}>
-              Enable authenticator app
+              <ShieldCheck className="h-4 w-4" aria-hidden />
+              {t("enable")}
             </Button>
           )}
 
           {enrollData && (
-            <div className="space-y-3 rounded-lg border border-border/40 p-4">
-              <p className="text-sm">Scan this QR code with your authenticator app:</p>
-              <div className="bg-qr-background p-2 inline-block rounded" dangerouslySetInnerHTML={{ __html: enrollData.qrCode }} />
-              <p className="text-xs font-mono text-muted-foreground break-all">Secret: {enrollData.secret}</p>
-              <Input
-                placeholder="Enter 6-digit code"
-                value={verifyCode}
-                onChange={(e) => setVerifyCode(e.target.value)}
-                maxLength={6}
+            <div className="space-y-3 rounded-lg border border-line p-4">
+              <p className="text-sm text-ink">{t("scanQr")}</p>
+              <div
+                role="img"
+                aria-label={t("qrLabel")}
+                className="inline-block rounded bg-qr-background p-2"
+                dangerouslySetInnerHTML={{ __html: enrollData.qrCode }}
               />
-              <Button disabled={pending || verifyCode.length < 6} onClick={confirmEnroll}>
-                Verify & enable
-              </Button>
+              <div>
+                <p className="label-text">{t("secretLabel")}</p>
+                <p className="mono-id mt-1 break-all">{enrollData.secret}</p>
+              </div>
+              <form
+                className="space-y-3"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (verifyCode.length >= 6) confirmEnroll();
+                }}
+              >
+                <div className="space-y-1.5">
+                  <label htmlFor="mfa-code" className="label-text">
+                    {t("codeLabel")}
+                  </label>
+                  <Input
+                    id="mfa-code"
+                    placeholder={t("codePlaceholder")}
+                    value={verifyCode}
+                    onChange={(e) => setVerifyCode(e.target.value)}
+                    maxLength={6}
+                    inputMode="numeric"
+                    autoComplete="one-time-code"
+                  />
+                </div>
+                <Button type="submit" disabled={pending || verifyCode.length < 6}>
+                  {t("verify")}
+                </Button>
+              </form>
             </div>
           )}
 
           {dashboard.mfaEnabled && (
             <div className="flex flex-wrap gap-2">
               <Button variant="outline" size="sm" disabled={pending} onClick={regenCodes}>
-                <Key className="h-4 w-4 mr-1" />
-                Regenerate backup codes ({dashboard.backupCodesRemaining} left)
+                <Key className="h-4 w-4" aria-hidden />
+                {t("regenerate", { count: dashboard.backupCodesRemaining })}
               </Button>
               {!dashboard.mfaRequired && (
-                <Button variant="outline" size="sm" disabled={pending} onClick={disable}>
-                  Disable 2FA
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={pending}
+                  onClick={() => {
+                    if (!factorId) loadFactors();
+                    setConfirmDisable(true);
+                  }}
+                >
+                  {t("disable")}
                 </Button>
               )}
             </div>
           )}
 
           {backupCodes && (
-            <div className="rounded-lg border border-warning/30 bg-warning/10 p-4">
-              <p className="text-sm font-medium mb-2">Save these backup codes — shown once:</p>
-              <ul className="grid grid-cols-2 gap-1 font-mono text-xs">
+            <div className="rounded-lg bg-warning-soft p-4">
+              <p className="mb-2 text-sm font-medium text-ink">{t("backupTitle")}</p>
+              <ul className="mono-id grid grid-cols-2 gap-1 text-ink">
                 {backupCodes.map((c) => (
                   <li key={c}>{c}</li>
                 ))}
               </ul>
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </SectionCard>
 
-      <Card>
-        <CardHeader><CardTitle className="text-sm">Security activity</CardTitle></CardHeader>
-        <CardContent>
-          <p className="text-xs text-muted-foreground mb-3">
-            Failed login attempts (recent): {dashboard.failedLoginAttempts}
-          </p>
-          {dashboard.recentEvents.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No security events yet.</p>
-          ) : (
-            <ul className="space-y-2 text-xs max-h-48 overflow-y-auto">
-              {dashboard.recentEvents.map((e) => (
-                <li key={e.id} className="flex justify-between border-b border-border/30 pb-1">
-                  <span>{e.eventType.replace(/_/g, " ")}</span>
-                  <span className="text-muted-foreground">
-                    {safeToLocaleDateString(new Date(e.createdAt), locale, { timeStyle: "short", dateStyle: "short" })}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </CardContent>
-      </Card>
+      <SectionCard
+        title={t("activityTitle")}
+        description={t("failedLogins", { count: dashboard.failedLoginAttempts })}
+      >
+        <DataTable
+          caption={t("activityTitle")}
+          rows={dashboard.recentEvents}
+          rowKey={(e) => e.id}
+          empty={<EmptyState title={t("emptyTitle")} description={t("emptyText")} />}
+          columns={[
+            {
+              key: "event",
+              header: t("colEvent"),
+              width: "minmax(0,1fr)",
+              cell: (e) =>
+                t.has(`event.${e.eventType}`) ? t(`event.${e.eventType}`) : e.eventType.replace(/_/g, " "),
+            },
+            {
+              key: "date",
+              header: t("colDate"),
+              width: "160px",
+              align: "right",
+              cell: (e) => <span className="text-ink-muted">{formatDateTime(e.createdAt, locale)}</span>,
+            },
+          ]}
+        />
+      </SectionCard>
+
+      <ConfirmDialog
+        open={confirmDisable}
+        onOpenChange={setConfirmDisable}
+        title={t("disableTitle")}
+        description={t("disableText")}
+        confirmLabel={t("disableConfirm")}
+        variant="destructive"
+        loading={pending}
+        onConfirm={() => {
+          disable();
+          if (factorId) setConfirmDisable(false);
+        }}
+      />
     </div>
   );
 }

@@ -2,11 +2,12 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Package, AlertTriangle } from "lucide-react";
+import { SectionCard } from "@/components/ui/page-header";
+import { AlertTriangle, XCircle } from "lucide-react";
 import type { Locale } from "@/i18n/config";
 
 type Dep = {
@@ -33,6 +34,7 @@ type Props = {
 };
 
 export function ModDependenciesPanel({ locale, required, optional, conflicts = [], missing }: Props) {
+  const t = useTranslations("sharedUi.dependencies");
   const [pending, startTransition] = useTransition();
   const [showMissing, setShowMissing] = useState(missing.length > 0);
 
@@ -63,27 +65,21 @@ export function ModDependenciesPanel({ locale, required, optional, conflicts = [
   if (required.length === 0 && optional.length === 0 && conflicts.length === 0) return null;
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Package className="h-5 w-5" />
-          Dependencies
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
+    <SectionCard title={t("title")}>
+      <div className="space-y-4">
         {conflicts.length > 0 && (
-          <div className="rounded-lg border border-destructive/40 bg-destructive/10 p-4">
+          <div className="rounded-lg border border-danger/40 bg-danger-soft p-4">
             <div className="flex items-start gap-2">
-              <AlertTriangle className="h-4 w-4 text-destructive mt-0.5" />
+              <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-danger" aria-hidden />
               <div>
-                <p className="text-sm font-medium text-destructive">Incompatible mods</p>
+                <p className="text-sm font-medium text-danger">{t("incompatible")}</p>
                 <ul className="mt-2 space-y-1 text-sm">
                   {conflicts.map((d) => (
                     <li key={d.id}>
-                      <Link href={`/${locale}/mods/${d.dependency.slug}`} className="hover:underline">
+                      <Link href={`/${locale}/mods/${d.dependency.slug}`} className="link">
                         {d.dependency.title}
                       </Link>
-                      {d.notes && <span className="text-muted-foreground"> — {d.notes}</span>}
+                      {d.notes && <span className="text-ink-muted"> – {d.notes}</span>}
                     </li>
                   ))}
                 </ul>
@@ -92,34 +88,25 @@ export function ModDependenciesPanel({ locale, required, optional, conflicts = [
           </div>
         )}
         {showMissing && missing.length > 0 && (
-          <div className="rounded-lg border border-warning/30 bg-warning/10 p-4">
+          <div className="rounded-lg border border-warning/40 bg-warning-soft p-4">
             <div className="flex items-start gap-2">
-              <AlertTriangle className="h-4 w-4 text-warning mt-0.5" />
+              <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-warning" aria-hidden />
               <div className="flex-1">
-                <p className="text-sm font-medium">This mod requires:</p>
+                <p className="text-sm font-medium text-ink">{t("requires")}</p>
                 <ul className="mt-2 space-y-1 text-sm">
                   {missing.map((d) => (
                     <li key={d.id}>
-                      <Link
-                        href={`/${locale}/mods/${d.dependency.slug}`}
-                        className="text-violet-bright hover:underline"
-                      >
+                      <Link href={`/${locale}/mods/${d.dependency.slug}`} className="link">
                         {d.dependency.title}
                       </Link>
                       {d.minVersion && (
-                        <span className="text-muted-foreground"> (min v{d.minVersion})</span>
+                        <span className="text-ink-muted"> {t("minVersionHint", { version: d.minVersion })}</span>
                       )}
                     </li>
                   ))}
                 </ul>
-                <Button
-                  size="sm"
-                  className="mt-3"
-                 
-                  disabled={pending}
-                  onClick={downloadDependencies}
-                >
-                  Download required dependencies
+                <Button size="sm" className="mt-3" disabled={pending} onClick={downloadDependencies}>
+                  {t("downloadRequired")}
                 </Button>
               </div>
             </div>
@@ -128,7 +115,7 @@ export function ModDependenciesPanel({ locale, required, optional, conflicts = [
 
         {required.length > 0 && (
           <div>
-            <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2">Required</p>
+            <p className="label-text mb-2">{t("required")}</p>
             <ul className="space-y-2">
               {required.map((d) => (
                 <DependencyRow key={d.id} locale={locale} dep={d} />
@@ -139,7 +126,7 @@ export function ModDependenciesPanel({ locale, required, optional, conflicts = [
 
         {optional.length > 0 && (
           <div>
-            <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2">Optional</p>
+            <p className="label-text mb-2">{t("optional")}</p>
             <ul className="space-y-2">
               {optional.map((d) => (
                 <DependencyRow key={d.id} locale={locale} dep={d} />
@@ -147,25 +134,26 @@ export function ModDependenciesPanel({ locale, required, optional, conflicts = [
             </ul>
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </SectionCard>
   );
 }
 
 function DependencyRow({ locale, dep }: { locale: Locale; dep: Dep }) {
+  const t = useTranslations("sharedUi.dependencies");
   const v = dep.dependency.versions[0];
   return (
-    <li className="flex items-center justify-between text-sm border-b border-border/20 pb-2">
+    <li className="flex items-center justify-between border-b border-line pb-2 text-sm last:border-0">
       <Link
         href={`/${locale}/mods/${dep.dependency.slug}`}
-        className="font-medium hover:text-violet-bright"
+        className="font-medium text-ink hover:text-violet-bright"
       >
         {dep.dependency.title}
       </Link>
-      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-        {v && <span>v{v.version}</span>}
+      <div className="flex items-center gap-2 text-xs text-ink-muted">
+        {v && <span>{t("version", { version: v.version })}</span>}
         {v?.gameVersion && <Badge variant="outline">{v.gameVersion}</Badge>}
-        {dep.minVersion && <span>min {dep.minVersion}</span>}
+        {dep.minVersion && <span>{t("minVersion", { version: dep.minVersion })}</span>}
       </div>
     </li>
   );

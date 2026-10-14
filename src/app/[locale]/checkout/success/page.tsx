@@ -13,7 +13,16 @@ import type { Locale } from "@/i18n/config";
 export const dynamic = "force-dynamic";
 
 /** W7 Bestellung fertig: zeigt die Bestellungen der Stripe-Session; „bezahlt“ erst nach bestätigtem Webhook. */
-export default async function CheckoutSuccessPage({ params: { locale }, searchParams }: { params: { locale: Locale }; searchParams: { session_id?: string } }) {
+export default async function CheckoutSuccessPage(
+  props: { params: Promise<{ locale: Locale }>; searchParams: Promise<{ session_id?: string }> }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   await requireAuth(`/${locale}/login`);
   const t = await getTranslations("shop");

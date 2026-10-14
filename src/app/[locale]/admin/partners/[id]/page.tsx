@@ -2,32 +2,46 @@ import { requirePagePermission } from "@/lib/auth";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { ExternalLink } from "lucide-react";
 import { getPartnerAdmin } from "@/actions/admin/partners";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { PartnerAdminPanel } from "@/components/admin/partner-admin-panel";
+import { Button } from "@/components/ui/button";
 import type { Locale } from "@/i18n/config";
 
-export default async function AdminPartnerDetailPage({
-  params: { locale, id },
-}: {
-  params: { locale: Locale; id: string };
-}) {
+export default async function AdminPartnerDetailPage(
+  props: {
+    params: Promise<{ locale: Locale; id: string }>;
+  }
+) {
+  const params = await props.params;
+
+  const {
+    locale,
+    id
+  } = params;
+
   await requirePagePermission("users.read");
   setRequestLocale(locale);
-  const t = await getTranslations("ecosystem");
-  const result = await getPartnerAdmin(id);
+  const [t, ta, result] = await Promise.all([getTranslations("ecosystem"), getTranslations("admin"), getPartnerAdmin(id)]);
   if (!result.success) notFound();
 
   return (
-    <div className="space-y-6">
-      <Link href={`/${locale}/admin/partners`} className="text-sm text-muted-foreground hover:text-foreground">
-        ← {t("partnerManagement")}
-      </Link>
-      <div className="flex items-center justify-between">
-        <h1 className="h1-acp">{result.data.user.displayName ?? result.data.user.username}</h1>
-        <Link href={`/${locale}/partners/${result.data.slug}`} className="text-sm text-ink-muted hover:underline">
-          {t("viewPublicProfile")}
-        </Link>
-      </div>
+    <div>
+      <AdminPageHeader
+        title={result.data.user.displayName ?? result.data.user.username}
+        description={`@${result.data.user.username} · ${result.data.user.email}`}
+        section={ta("partnerDetail.section")}
+        parent={{ label: t("partnerManagement"), href: `/${locale}/admin/partners` }}
+        actions={
+          <Button variant="outline" size="sm" asChild>
+            <Link href={`/${locale}/partners/${result.data.slug}`}>
+              <ExternalLink className="h-4 w-4" aria-hidden />
+              {t("viewPublicProfile")}
+            </Link>
+          </Button>
+        }
+      />
       <PartnerAdminPanel locale={locale} partner={result.data} />
     </div>
   );

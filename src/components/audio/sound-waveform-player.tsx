@@ -1,6 +1,6 @@
 "use client";
 
-
+import { useTranslations } from "next-intl";
 import { colors } from "@/styles/tokens";
 import { useEffect, useRef, useState } from "react";
 import { Pause, Play, Volume2 } from "lucide-react";
@@ -43,6 +43,7 @@ export function SoundWaveformPlayer({
     getCurrentTime: () => number;
     setTime?: (t: number) => void;
   } | null>(null);
+  const t = useTranslations("sharedUi.audio");
   const global = useOptionalAudioPlayer();
   const [localPlaying, setLocalPlaying] = useState(false);
   const [localTime, setLocalTime] = useState(0);
@@ -172,42 +173,42 @@ export function SoundWaveformPlayer({
       ? previewLimitSeconds
       : duration;
 
-  const errorMessage = global?.playError ?? (waveError ? "Audio failed to load" : null);
+  const errorMessage = global?.playError ? t(`playError.${global.playError}`) : waveError ? t("loadFailed") : null;
 
   return (
-    <div className={cn("rounded-xl border border-border/50 bg-background/40 p-4 space-y-3", className)}>
+    <div className={cn("space-y-3 rounded-lg border border-line bg-raised p-4", className)}>
       <div className="flex items-center gap-3">
         <button
           type="button"
           onClick={togglePlay}
           className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-violet text-violet-on hover:bg-violet-hover transition-colors duration-fast"
-          aria-label={isPlaying ? "Pause" : "Play"}
+          aria-label={isPlaying ? t("pause") : t("play")}
         >
-          {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5 ml-0.5" />}
+          {isPlaying ? <Pause className="h-5 w-5" aria-hidden /> : <Play className="ml-0.5 h-5 w-5" aria-hidden />}
         </button>
         <div className="min-w-0 flex-1">
-          <p className="font-medium truncate">{title}</p>
-          {artist && <p className="text-xs text-muted-foreground truncate">{artist}</p>}
+          <p className="truncate font-medium text-ink">{title}</p>
+          {artist && <p className="truncate text-xs text-ink-muted">{artist}</p>}
         </div>
-        <span className="text-xs tabular-nums text-muted-foreground">
+        <span className="text-xs tabular-nums text-ink-muted">
           {formatDuration(progress)} / {formatDuration(displayDuration)}
         </span>
       </div>
 
       <div ref={containerRef} className="w-full min-h-[72px] rounded-md overflow-hidden relative">
         {!waveReady && !waveError && (
-          <div className="absolute inset-0 flex items-center justify-center text-xs text-muted-foreground animate-pulse">
-            Loading waveform…
+          <div className="absolute inset-0 flex items-center justify-center animate-pulse text-xs text-ink-faint">
+            {t("loadingWaveform")}
           </div>
         )}
       </div>
 
       {errorMessage && (
-        <p className="text-xs text-destructive/90">{errorMessage}</p>
+        <p className="text-xs text-danger" role="alert">{errorMessage}</p>
       )}
 
-      <div className="flex items-center gap-2 text-muted-foreground">
-        <Volume2 className="h-4 w-4" />
+      <div className="flex items-center gap-2 text-ink-muted">
+        <Volume2 className="h-4 w-4" aria-hidden />
         <input
           type="range"
           min={0}
@@ -220,6 +221,7 @@ export function SoundWaveformPlayer({
             global?.setVolume(v);
           }}
           className="flex-1 accent-violet"
+          aria-label={t("volume")}
         />
       </div>
     </div>

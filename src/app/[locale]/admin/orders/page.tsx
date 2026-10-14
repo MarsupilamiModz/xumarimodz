@@ -26,7 +26,16 @@ function tone(status: string): StatusTone {
   return "pending";
 }
 
-export default async function AdminOrdersPage({ params: { locale }, searchParams }: { params: { locale: Locale }; searchParams: { group?: string; page?: string } }) {
+export default async function AdminOrdersPage(
+  props: { params: Promise<{ locale: Locale }>; searchParams: Promise<{ group?: string; page?: string }> }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   await requirePagePermission("orders.read");
   const t = await getTranslations("admin.or");

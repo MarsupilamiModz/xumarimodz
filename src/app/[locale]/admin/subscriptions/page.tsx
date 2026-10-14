@@ -39,7 +39,16 @@ function DetailPanel({ title, children }: { title: string; children: React.React
   );
 }
 
-export default async function AdminBillingPage({ params: { locale }, searchParams }: { params: { locale: Locale }; searchParams: Params }) {
+export default async function AdminBillingPage(
+  props: { params: Promise<{ locale: Locale }>; searchParams: Promise<Params> }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
   const viewer = await requirePagePermission("subscriptions.read");
   const t = await getTranslations("admin.bi");

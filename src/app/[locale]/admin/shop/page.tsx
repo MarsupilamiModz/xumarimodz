@@ -1,13 +1,23 @@
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { requirePagePermission } from "@/lib/auth";
 import { listAdminShopProducts } from "@/actions/admin/shop";
 import { getAdminPaymentSettings, listRecentStripeCheckouts } from "@/actions/admin/payments";
+import { AdminPageHeader, AdminLoadError } from "@/components/admin/admin-page-header";
 import { ShopAdminPanel } from "@/components/admin/shop-admin-panel";
 import { PaymentStatusOverview } from "@/components/admin/payment-status-overview";
 import type { Locale } from "@/i18n/config";
 
-export default async function AdminShopPage({ params: { locale } }: { params: { locale: Locale } }) {
+export default async function AdminShopPage(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
+  setRequestLocale(locale);
   await requirePagePermission("settings.write");
-  const [result, settingsResult, txResult] = await Promise.all([
+  const [t, result, settingsResult, txResult] = await Promise.all([
+    getTranslations("admin.shopPage"),
     listAdminShopProducts(),
     getAdminPaymentSettings(),
     listRecentStripeCheckouts(5),
@@ -31,15 +41,8 @@ export default async function AdminShopPage({ params: { locale } }: { params: { 
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="h1-acp">Shop Management</h1>
-        <p className="text-muted-foreground">Manage credit packs, products, prices, and featured items.</p>
-      </div>
-      {loadError && (
-        <div className="rounded-lg border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-          {loadError}
-        </div>
-      )}
+      <AdminPageHeader title={t("title")} description={t("subtitle")} />
+      {loadError && <AdminLoadError message={loadError} />}
       <PaymentStatusOverview settings={settings} transactions={transactions} locale={locale} compact />
       <ShopAdminPanel products={products} locale={locale} />
     </div>

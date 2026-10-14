@@ -1,5 +1,5 @@
 import { HeadBucketCommand, S3Client } from "@aws-sdk/client-s3";
-import os from "node:os";
+import { hostMetrics } from "@/lib/host-metrics";
 import { prisma } from "@/lib/db";
 import { checkDbHealth } from "@/lib/db";
 import { getEmailSettingsPublic } from "@/lib/email/settings";
@@ -612,8 +612,9 @@ export async function runSystemHealthMonitor(): Promise<SystemHealthSnapshot> {
 
   const slowQueries = await listPerfSamples(15);
   const cache = getCacheStats();
-  const totalMem = os.totalmem();
-  const freeMem = os.freemem();
+  const host = hostMetrics();
+  const totalMem = host.totalMem;
+  const freeMem = host.freeMem;
   const usedMem = totalMem - freeMem;
   const slowAvg =
     slowQueries.length > 0
@@ -627,8 +628,8 @@ export async function runSystemHealthMonitor(): Promise<SystemHealthSnapshot> {
     memoryCacheEntries: cache.memoryEntries,
     serverRamUsedGb: Math.round((usedMem / 1024 ** 3) * 10) / 10,
     serverRamTotalGb: Math.round((totalMem / 1024 ** 3) * 10) / 10,
-    serverRamUsedPercent: Math.round((usedMem / totalMem) * 100),
-    cpuCount: os.cpus().length,
+    serverRamUsedPercent: totalMem ? Math.round((usedMem / totalMem) * 100) : 0,
+    cpuCount: host.cpuCount,
     avgSlowQueryMs: slowAvg,
     slowQueryCount: slowQueries.length,
   };

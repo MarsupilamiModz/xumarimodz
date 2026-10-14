@@ -24,6 +24,7 @@ export function formatZodError(error: ZodError): string {
 }
 
 import { formatActionError } from "@/lib/error-diagnostics";
+import { runAfterResponse } from "@/lib/after-response";
 
 export { prismaErrorMessage } from "@/lib/errors";
 
@@ -36,7 +37,7 @@ export async function actionTry<T>(
   } catch (err) {
     if (context) {
       const { logPlatformError } = await import("@/lib/platform-log");
-      void logPlatformError(context, err);
+      runAfterResponse(logPlatformError(context, err));
     }
     return fail(formatActionError(err, context));
   }

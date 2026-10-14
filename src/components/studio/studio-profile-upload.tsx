@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Loader2, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { SectionCard } from "@/components/ui/page-header";
 import { SafeImage } from "@/components/ui/safe-image";
 import { AvatarCropUpload } from "@/components/upload/avatar-crop-upload";
 import { useAppToast } from "@/hooks/use-app-toast";
@@ -35,6 +35,7 @@ export function StudioProfileUpload({
   showLogo = false,
 }: StudioProfileUploadProps) {
   const t = useTranslations("media");
+  const ts = useTranslations("sharedTools.studioProfileUpload");
   const appToast = useAppToast();
   const router = useRouter();
   const bannerRef = useRef<HTMLInputElement>(null);
@@ -66,12 +67,11 @@ export function StudioProfileUpload({
   }
 
   return (
-    <Card className="space-y-4 p-6">
-      <h3 className="font-medium">{t("profileMedia")}</h3>
+    <SectionCard title={t("profileMedia")}>
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
-          <p className="text-sm text-muted-foreground">{t("avatar")}</p>
-          <div className="relative mx-auto h-24 w-24 overflow-hidden rounded-full border border-border/50">
+          <p className="label-text">{t("avatar")}</p>
+          <div className="relative mx-auto h-24 w-24 overflow-hidden rounded-full border border-line bg-elevated">
             <SafeImage src={avatar} alt="" fill className="object-cover" sizes="96px" fallbackLabel="" />
           </div>
           <AvatarCropUpload
@@ -83,8 +83,8 @@ export function StudioProfileUpload({
 
         {showBanner && bannerPurpose && (
           <div className="space-y-2">
-            <p className="text-sm text-muted-foreground">{t("banner")}</p>
-            <div className="relative aspect-[3/1] overflow-hidden rounded-lg border border-border/50">
+            <p className="label-text">{t("banner")}</p>
+            <div className="relative aspect-[3/1] overflow-hidden rounded-lg border border-line bg-elevated">
               <SafeImage src={banner} alt="" fill className="object-cover" sizes="300px" fallbackLabel="" />
             </div>
             <input
@@ -106,7 +106,7 @@ export function StudioProfileUpload({
               disabled={uploading === "banner"}
               onClick={() => bannerRef.current?.click()}
             >
-              {uploading === "banner" ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Upload className="mr-2 h-4 w-4" />}
+              {uploading === "banner" ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <Upload className="h-4 w-4" aria-hidden />}
               {t("uploadBanner")}
             </Button>
           </div>
@@ -114,8 +114,8 @@ export function StudioProfileUpload({
 
         {showLogo && logoPurpose && (
           <div className="space-y-2 sm:col-span-2">
-            <p className="text-sm text-muted-foreground">Logo</p>
-            <div className="relative mx-auto h-16 w-16 overflow-hidden rounded-xl border border-border/50">
+            <p className="label-text">{ts("logo")}</p>
+            <div className="relative mx-auto h-16 w-16 overflow-hidden rounded-lg border border-line bg-elevated">
               <SafeImage src={logo} alt="" fill className="object-cover" sizes="64px" fallbackLabel="" />
             </div>
             <input
@@ -130,19 +130,28 @@ export function StudioProfileUpload({
               }}
             />
             <Button type="button" variant="outline" size="sm" disabled={uploading === "logo"} onClick={() => logoRef.current?.click()}>
-              Upload logo
+              {uploading === "logo" ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <Upload className="h-4 w-4" aria-hidden />}
+              {ts("uploadLogo")}
             </Button>
           </div>
         )}
       </div>
 
       {uploading && (
-        <div className="space-y-1">
-          <div className="h-1.5 overflow-hidden rounded-full bg-muted">
+        <div className="mt-4 space-y-1">
+          <div
+            role="progressbar"
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={progress}
+            aria-label={t("uploading", { progress })}
+            className="h-1.5 overflow-hidden rounded-full bg-elevated"
+          >
             <div className={cn("h-full bg-violet transition-all duration-200")} style={{ width: `${progress}%` }} />
           </div>
+          <p className="meta tabular-nums">{t("uploading", { progress })}</p>
         </div>
       )}
-    </Card>
+    </SectionCard>
   );
 }

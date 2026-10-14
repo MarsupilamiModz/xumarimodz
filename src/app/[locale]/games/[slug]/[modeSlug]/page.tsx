@@ -10,16 +10,24 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Pagination } from "@/components/ui/pagination";
 import { AdLocationSlot } from "@/components/ads/ad-location-slot";
 import { SITE } from "@/lib/site";
-import { cn } from "@/lib/utils";
+import { PageHeader } from "@/components/ui/page-header";
+import { ChipTabs } from "@/components/ui/chip-tabs";
 import type { Locale } from "@/i18n/config";
 
 const SORTS = ["", "date", "likes"] as const;
 
-export async function generateMetadata({
-  params: { slug, modeSlug },
-}: {
-  params: { slug: string; modeSlug: string };
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: {
+    params: Promise<{ slug: string; modeSlug: string }>;
+  }
+): Promise<Metadata> {
+  const params = await props.params;
+
+  const {
+    slug,
+    modeSlug
+  } = params;
+
   const mode = await getGameModeBySlug(slug, modeSlug).catch(() => null);
   if (!mode) return { title: "Mods" };
   const title = `${mode.name} – ${mode.game.name} Mods`;
@@ -31,13 +39,21 @@ export async function generateMetadata({
 }
 
 /** Katalog eines Spielbereichs (Ziel der Spielkarten, der Bereichsauswahl und des Spiele-Menüs). */
-export default async function GameModePage({
-  params: { locale, slug, modeSlug },
-  searchParams,
-}: {
-  params: { locale: Locale; slug: string; modeSlug: string };
-  searchParams: { sort?: string; page?: string };
-}) {
+export default async function GameModePage(
+  props: {
+    params: Promise<{ locale: Locale; slug: string; modeSlug: string }>;
+    searchParams: Promise<{ sort?: string; page?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
+
+  const {
+    locale,
+    slug,
+    modeSlug
+  } = params;
+
   setRequestLocale(locale);
   const mode = await getGameModeBySlug(slug, modeSlug).catch(() => null);
   if (!mode) notFound();
@@ -64,32 +80,23 @@ export default async function GameModePage({
 
   return (
     <div className="page-section pt-8 md:pt-10">
-      <Link href={`/${locale}/games/${slug}`} className="inline-flex items-center gap-1 text-sm text-ink-muted hover:text-ink">
-        <ChevronLeft className="h-4 w-4" aria-hidden />
+      <Link href={`/${locale}/games/${slug}`} className="meta mb-6 inline-flex items-center gap-1.5 hover:text-ink">
+        <ChevronLeft className="h-3.5 w-3.5" aria-hidden />
         {tg("modeBack", { game: mode.game.name })}
       </Link>
-      <h1 className="h1-display mt-4">{mode.name}</h1>
-      <p className="mt-3 max-w-2xl text-ink-muted">
-        {mode.description ?? tg("modeSubtitle", { mode: mode.name, game: mode.game.name })}
-      </p>
+      <PageHeader
+        title={mode.name}
+        description={mode.description ?? tg("modeSubtitle", { mode: mode.name, game: mode.game.name })}
+      />
 
-      <div className="mt-8 flex flex-wrap items-center justify-between gap-4">
+      <div className="flex flex-wrap items-center justify-between gap-4">
         <p className="meta tabular-nums">{t("resultsCount", { count: total })}</p>
-        <nav aria-label={t("sortLabel")} className="flex flex-wrap gap-1">
-          {SORTS.map((s) => (
-            <Link
-              key={s || "popular"}
-              href={hrefFor(1, s)}
-              aria-current={sort === s ? "true" : undefined}
-              className={cn(
-                "inline-flex h-9 items-center rounded-md px-3 text-sm font-semibold transition-colors duration-fast",
-                sort === s ? "bg-violet-soft text-violet-bright" : "text-ink-muted hover:bg-hover hover:text-ink"
-              )}
-            >
-              {sortLabel[s]}
-            </Link>
-          ))}
-        </nav>
+        <ChipTabs
+          label={t("sortLabel")}
+          options={SORTS.map((s) => ({ value: s, label: sortLabel[s] }))}
+          value={sort}
+          hrefFor={(s) => hrefFor(1, s)}
+        />
       </div>
 
       <AdLocationSlot location="listing" className="mt-6" />

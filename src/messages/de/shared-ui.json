@@ -1,0 +1,71 @@
+{
+  "sharedUi": {
+    "rankBadge": {
+      "BRONZE": "Bronze",
+      "SILVER": "Silber",
+      "GOLD": "Gold",
+      "DIAMOND": "Diamant",
+      "ELITE": "Elite",
+      "LEGENDARY": "Legendär"
+    },
+    "charts": {
+      "revenue": "Umsatz (Cent)",
+      "clicks": "Klicks",
+      "conversions": "Conversions"
+    },
+    "audio": {
+      "previous": "Vorheriger Titel",
+      "next": "Nächster Titel",
+      "play": "Abspielen",
+      "pause": "Pausieren",
+      "volume": "Lautstärke",
+      "playbackSpeed": "Wiedergabegeschwindigkeit",
+      "speedValue": "{rate}x",
+      "loadingWaveform": "Wellenform lädt…",
+      "loadFailed": "Audio konnte nicht geladen werden",
+      "playError": {
+        "loadFailed": "Audio konnte nicht geladen werden – bitte Seite neu laden.",
+        "autoplayBlocked": "Zum Abspielen auf Play tippen (der Browser hat Autoplay blockiert).",
+        "playFailed": "Wiedergabe fehlgeschlagen – Audio ist eventuell nicht verfügbar."
+      }
+    },
+    "hosting": {
+      "bannerLabel": "Hosting-Partner: {name}",
+      "ctaTitle": "Passenden Server mieten",
+      "ctaText": "Starte einen Gameserver, der zu diesem Modpack passt – bereit für Installation und Spiel.",
+      "startServer": "Server für dieses Modpack starten",
+      "oneClick": "Installation mit einem Klick verfügbar",
+      "startFailed": "Der Server konnte nicht gestartet werden"
+    },
+    "dependencies": {
+      "title": "Abhängigkeiten",
+      "incompatible": "Inkompatible Mods",
+      "requires": "Dieser Mod benötigt:",
+      "minVersionHint": "(mind. v{version})",
+      "minVersion": "mind. {version}",
+      "version": "v{version}",
+      "downloadRequired": "Benötigte Abhängigkeiten herunterladen",
+      "required": "Erforderlich",
+      "optional": "Optional"
+    },
+    "media": {
+      "noMediaTitle": "Keine Medien",
+      "noMediaText": "Für diesen Mod gibt es noch keine Bilder oder Videos.",
+      "videos": "Videos",
+      "youtubeTitle": "YouTube-Video"
+    },
+    "versions": {
+      "latest": "Aktuell",
+      "beta": "Beta",
+      "legacy": "Ältere Versionen",
+      "legacyBadge": "Älter",
+      "version": "v{version}",
+      "downloads": "{count} Downloads",
+      "download": "Herunterladen",
+      "rollback": "Diese Version laden"
+    },
+    "explorer": {
+      "emptyTitle": "Keine Mods"
+    }
+  }
+}

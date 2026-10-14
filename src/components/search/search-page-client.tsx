@@ -6,7 +6,9 @@ import { useTranslations } from "next-intl";
 import { Loader2, Search, SearchX } from "lucide-react";
 import { searchModsAction } from "@/actions/search";
 import { ModCard } from "@/components/mods/mod-card";
-import { Input } from "@/components/ui/input";
+import { Input, controlClassName } from "@/components/ui/input";
+import { ChipTabs } from "@/components/ui/chip-tabs";
+import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -16,8 +18,7 @@ type ModRow = Parameters<typeof ModCard>[0]["mod"];
 type Sort = "downloads" | "trending" | "rating" | "newest" | "updated" | "likes";
 const SORTS: Sort[] = ["downloads", "trending", "rating", "likes", "newest", "updated"];
 
-const selectClass =
-  "h-10 rounded-md border border-line-control bg-elevated px-3 text-sm text-ink transition-colors duration-fast hover:border-ink-faint";
+const selectClass = cn(controlClassName, "h-10 w-auto");
 
 export function SearchPageClient({
   locale,
@@ -96,12 +97,11 @@ export function SearchPageClient({
 
   return (
     <div className="page-section">
-      <h1 className="h1-display">{t("pageTitle")}</h1>
-      <p className="mt-3 text-ink-muted">{t("pageSubtitle")}</p>
+      <PageHeader title={t("pageTitle")} description={t("pageSubtitle")} />
 
       <form
         role="search"
-        className="mt-8 flex flex-col gap-3 sm:flex-row"
+        className="flex flex-col gap-3 sm:flex-row"
         onSubmit={(e) => {
           e.preventDefault();
           const q = query.trim();
@@ -149,28 +149,14 @@ export function SearchPageClient({
 
       {popularTags.length > 0 && (
         <div className="mt-6">
-          <p className="text-[13px] font-semibold text-ink-muted">{t("tagsLabel")}</p>
-          <ul className="mt-2 flex flex-wrap gap-2">
-            {popularTags.map((pt) => {
-              const active = tag === pt.name;
-              return (
-                <li key={pt.name}>
-                  <button
-                    type="button"
-                    aria-pressed={active}
-                    onClick={() => setTag(active ? "" : pt.name)}
-                    className={cn(
-                      "inline-flex h-8 items-center gap-1.5 rounded-sm border px-2.5 text-[13px] transition-colors duration-fast",
-                      active ? "border-violet-bright bg-violet-soft text-violet-bright" : "border-line text-ink-muted hover:border-line-control hover:text-ink"
-                    )}
-                  >
-                    {pt.name}
-                    <span className="tabular-nums text-ink-faint">{pt.count}</span>
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
+          <p className="label-text">{t("tagsLabel")}</p>
+          <ChipTabs
+            className="mt-2"
+            label={t("tagsLabel")}
+            options={popularTags.map((pt) => ({ value: pt.name, label: pt.name, count: pt.count }))}
+            value={tag}
+            onChange={(name) => setTag(tag === name ? "" : name)}
+          />
         </div>
       )}
 

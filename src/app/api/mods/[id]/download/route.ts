@@ -8,11 +8,10 @@ import { evaluateUserAchievements } from "@/lib/achievements";
 import { rateLimit } from "@/lib/rate-limit";
 import { checkMissingDependencies } from "@/lib/mod-dependencies";
 import { createHash } from "crypto";
+import { runAfterResponse } from "@/lib/after-response";
 
-export async function POST(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
+export async function POST(req: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const user = await getCurrentUser();
   const ip = req.headers.get("x-forwarded-for") ?? "unknown";
   const ipHash = createHash("sha256").update(ip).digest("hex").slice(0, 16);
@@ -109,7 +108,7 @@ export async function POST(
   ]);
 
   if (user?.id) {
-    void evaluateUserAchievements(user.id);
+    runAfterResponse(evaluateUserAchievements(user.id));
   }
 
   return NextResponse.json({ url, token, versionId: version.id });

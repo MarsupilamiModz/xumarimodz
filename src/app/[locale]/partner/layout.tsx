@@ -6,13 +6,20 @@ import { StudioNav } from "@/components/studio/studio-nav";
 import { isPartner } from "@/lib/permissions";
 import type { Locale } from "@/i18n/config";
 
-export default async function PartnerLayout({
-  children,
-  params: { locale },
-}: {
-  children: React.ReactNode;
-  params: { locale: Locale };
-}) {
+export default async function PartnerLayout(
+  props: {
+    children: React.ReactNode;
+    params: Promise<{ locale: string }>;
+  }
+) {
+  const params = await props.params;
+
+  const locale = params.locale as Locale;
+
+  const {
+    children
+  } = props;
+
   setRequestLocale(locale);
   const t = await getTranslations("ecosystem");
   const user = await requireAuth(`/${locale}/login`);

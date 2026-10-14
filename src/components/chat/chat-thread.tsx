@@ -6,10 +6,10 @@ import { ImageIcon, Paperclip } from "lucide-react";
 import { UserAvatar } from "@/components/ui/user-avatar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
 import { SafeImage } from "@/components/ui/safe-image";
 import { formatDisplayName } from "@/lib/display-name";
-import { safeToLocaleDateString } from "@/lib/i18n/safe-locale";
+import { formatDateTime } from "@/lib/format-locale";
+import { formatBytes } from "@/lib/file-size";
 import { useR2MultipartUpload } from "@/hooks/use-r2-multipart-upload";
 import { cn } from "@/lib/utils";
 
@@ -42,7 +42,7 @@ function renderContent(content: string) {
   const parts = content.split(/(@[a-zA-Z0-9_]{2,32})/g);
   return parts.map((part, i) =>
     part.startsWith("@") ? (
-      <span key={i} className="text-violet-bright font-medium">
+      <span key={i} className="font-medium text-violet-bright">
         {part}
       </span>
     ) : (
@@ -83,6 +83,8 @@ export function ChatThread({
   onTyping: (isTyping: boolean) => void;
 }) {
   const t = useTranslations("chat");
+  const ts = useTranslations("sharedTools.chat");
+  const tr = useTranslations("status.role");
   const [content, setContent] = useState("");
   const [files, setFiles] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -123,9 +125,9 @@ export function ChatThread({
 
   return (
     <>
-      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+      <div className="min-h-0 flex-1 space-y-3 overflow-y-auto p-4" role="log" aria-label={ts("historyLabel")}>
         {messages.length === 0 ? (
-          <p className="text-sm text-muted-foreground text-center py-8">{t("emptyChannel")}</p>
+          <p className="py-8 text-center text-sm text-ink-muted">{t("emptyChannel")}</p>
         ) : (
           messages.map((msg) => {
             const mine = msg.sender.id === userId;
@@ -145,30 +147,25 @@ export function ChatThread({
                   name={formatDisplayName(msg.sender)}
                   className="h-8 w-8 shrink-0"
                 />
-                <div className={cn("max-w-[75%] min-w-0", mine && "text-right")}>
-                  <div className={cn("flex items-center gap-2 mb-0.5", mine && "justify-end")}>
-                    <span className="text-xs font-medium">{formatDisplayName(msg.sender)}</span>
-                    <Badge variant="outline" className="text-[9px] px-1 py-0">
-                      {msg.sender.role}
-                    </Badge>
-                    <span className="text-[10px] text-muted-foreground">
-                      {safeToLocaleDateString(new Date(msg.createdAt), locale, {
-                        dateStyle: "short",
-                        timeStyle: "short",
-                      })}
+                <div className={cn("min-w-0 max-w-[75%]", mine && "text-right")}>
+                  <div className={cn("mb-0.5 flex flex-wrap items-center gap-2", mine && "justify-end")}>
+                    <span className="text-xs font-medium text-ink">{formatDisplayName(msg.sender)}</span>
+                    <span className="rounded-sm border border-line px-1.5 text-[11px] font-medium text-ink-muted">
+                      {tr.has(msg.sender.role) ? tr(msg.sender.role) : msg.sender.role}
                     </span>
+                    <time className="meta tabular-nums" dateTime={new Date(msg.createdAt).toISOString()}>
+                      {formatDateTime(msg.createdAt, locale)}
+                    </time>
                   </div>
                   {msg.replyTo && (
-                    <p className="text-[10px] text-muted-foreground mb-1 border-l-2 border-violet-bright/40 pl-2">
+                    <p className="meta mb-1 border-l-2 border-line-control pl-2">
                       {formatDisplayName(msg.replyTo.sender)}: {msg.replyTo.content.slice(0, 80)}
                     </p>
                   )}
                   <div
                     className={cn(
-                      "rounded-lg border px-3 py-2 text-sm whitespace-pre-wrap",
-                      mine
-                        ? "border-violet-bright/30 bg-violet-soft"
-                        : "border-border/50 bg-card/40"
+                      "whitespace-pre-wrap break-words rounded-lg border px-3 py-2 text-left text-sm text-ink",
+                      mine ? "border-line bg-hover" : "border-line bg-elevated"
                     )}
                   >
                     {renderContent(msg.content)}
@@ -176,7 +173,7 @@ export function ChatThread({
                   {msg.attachments.length > 0 && (
                     <div className="mt-2 space-y-2">
                       {msg.attachments.map((attachment) => (
-                        <div key={attachment.key} className="rounded-lg border border-border/50 bg-card/30 p-2">
+                        <div key={attachment.key} className="rounded-lg border border-line bg-elevated p-2 text-left">
                           {attachment.mimeType.startsWith("image/") ? (
                             <a href={attachment.url} target="_blank" rel="noreferrer" className="block">
                               <SafeImage
@@ -192,10 +189,13 @@ export function ChatThread({
                               href={attachment.url}
                               target="_blank"
                               rel="noreferrer"
-                              className="flex items-center gap-2 text-sm hover:text-violet-bright"
+                              className="flex items-center gap-2 text-sm text-ink transition-colors duration-fast hover:text-violet-bright"
                             >
-                              <Paperclip className="h-4 w-4" />
+                              <Paperclip className="h-4 w-4" aria-hidden />
                               <span className="truncate">{attachment.fileName}</span>
+                              {attachment.fileSize > 0 && (
+                                <span className="meta shrink-0 tabular-nums">{formatBytes(attachment.fileSize, locale)}</span>
+                              )}
                             </a>
                           )}
                         </div>
@@ -203,7 +203,7 @@ export function ChatThread({
                     </div>
                   )}
                   {mine && readers.length > 0 && (
-                    <p className="mt-1 text-[10px] text-muted-foreground">
+                    <p className="meta mt-1">
                       {t("readBy")}: {readers.map((reader) => formatDisplayName(reader)).join(", ")}
                     </p>
                   )}
@@ -215,13 +215,14 @@ export function ChatThread({
         <div ref={bottomRef} />
       </div>
 
-      <div className="border-t border-border/40 p-3 space-y-2">
+      <div className="space-y-2 border-t border-line p-3">
         {typingUsers.length > 0 && (
-          <p className="text-[11px] text-muted-foreground">
-            {typingUsers.map((user) => user.name).join(", ")} {t("typing")}
+          <p className="meta" aria-live="polite">
+            {ts("typing", { names: typingUsers.map((user) => user.name).join(", "), count: typingUsers.length })}
           </p>
         )}
         <Textarea
+          aria-label={ts("messageLabel")}
           placeholder={t("messagePlaceholder")}
           value={content}
           onChange={(e) => {
@@ -248,36 +249,33 @@ export function ChatThread({
           onChange={(e) => setFiles(Array.from(e.target.files ?? []))}
         />
         {files.length > 0 && (
-          <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
+          <div className="flex flex-wrap gap-2 text-xs text-ink-muted">
             {files.map((file) => (
-              <span key={`${file.name}-${file.size}`} className="rounded border border-border/40 px-2 py-0.5">
-                {file.name}
+              <span key={`${file.name}-${file.size}`} className="rounded-sm border border-line px-2 py-0.5">
+                {file.name} <span className="tabular-nums">· {formatBytes(file.size, locale)}</span>
               </span>
             ))}
           </div>
         )}
-        {uploadError && <p className="text-xs text-destructive">{uploadError}</p>}
-        <div className="flex justify-between items-center">
-          <div className="space-y-1">
-            <p className="text-[10px] text-muted-foreground">{t("mentionHint")}</p>
+        {uploadError && <p className="text-sm text-danger" role="alert">{uploadError}</p>}
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="space-y-0.5">
+            <p className="meta">{t("mentionHint")}</p>
             {onlineUserIds.length > 0 && (
-              <p className="text-[10px] text-muted-foreground">
-                {onlineUserIds.length} {t("online")}
-              </p>
+              <p className="meta tabular-nums">{ts("onlineCount", { count: onlineUserIds.length })}</p>
             )}
           </div>
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" type="button" onClick={() => fileInputRef.current?.click()}>
-              <ImageIcon className="mr-1 h-4 w-4" />
+              <ImageIcon className="h-4 w-4" aria-hidden />
               {t("attach")}
             </Button>
             <Button
-             
               size="sm"
               disabled={pending || uploading || (!content.trim() && files.length === 0)}
               onClick={submit}
             >
-              {uploading ? `${t("uploading")} ${progress}%` : t("send")}
+              {uploading ? ts("uploadingProgress", { progress }) : t("send")}
             </Button>
           </div>
         </div>

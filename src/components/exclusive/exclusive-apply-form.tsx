@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
 import { applyToExclusiveProgram } from "@/actions/exclusive";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
+import { SectionCard } from "@/components/ui/page-header";
+import { StatusBadge, type StatusTone } from "@/components/ui/status-badge";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { useAppToast } from "@/hooks/use-app-toast";
@@ -28,6 +30,13 @@ type Application = {
   status: string;
 } | null;
 
+const STATUS_TONE: Record<string, StatusTone> = {
+  PENDING: "pending",
+  APPROVED: "success",
+  REJECTED: "danger",
+  WAITLIST: "info",
+};
+
 export function ExclusiveApplyForm({
   program,
   existingApplication,
@@ -35,20 +44,35 @@ export function ExclusiveApplyForm({
   program: Program;
   existingApplication: Application;
 }) {
+  const t = useTranslations("publicPages.exclusive");
+  const tx = useTranslations("common.cx.exclusiveProgram");
   const appToast = useAppToast();
   const [pending, startTransition] = useTransition();
   const [message, setMessage] = useState("");
   const [inviteCode, setInviteCode] = useState("");
   const [ndaAccepted, setNdaAccepted] = useState(false);
 
+  const statusLabel: Record<string, string> = {
+    PENDING: tx("statusPending"),
+    APPROVED: tx("statusApproved"),
+    REJECTED: tx("statusRejected"),
+    WAITLIST: tx("statusWaitlist"),
+  };
+  const typeLabel: Record<string, string> = {
+    CLOSED_ALPHA: tx("programTypeClosedAlpha"),
+    CLOSED_BETA: tx("programTypeClosedBeta"),
+    INVITE_ONLY: tx("programTypeInviteOnly"),
+  };
+
   if (existingApplication) {
     return (
-      <Card className="p-6 text-center space-y-2">
-        <Badge variant="premium">{existingApplication.status}</Badge>
-        <p className="text-sm text-muted-foreground">
-          You have already applied to this program. Status: {existingApplication.status.replace("_", " ")}
-        </p>
-      </Card>
+      <SectionCard>
+        <StatusBadge
+          tone={STATUS_TONE[existingApplication.status] ?? "neutral"}
+          label={statusLabel[existingApplication.status] ?? existingApplication.status}
+        />
+        <p className="mt-3 text-sm text-ink-muted">{t("alreadyApplied")}</p>
+      </SectionCard>
     );
   }
 
@@ -67,44 +91,46 @@ export function ExclusiveApplyForm({
   const atCapacity = program.maxSlots != null && program.currentCount >= program.maxSlots;
 
   return (
-    <Card className="p-6 space-y-4 max-w-lg">
+    <SectionCard className="space-y-4">
       <div className="flex flex-wrap gap-2">
-        <Badge variant="premium">{program.type.replace("_", " ")}</Badge>
-        {atCapacity && program.waitlistEnabled && <Badge variant="outline">Waitlist open</Badge>}
+        <Badge variant="secondary">{typeLabel[program.type] ?? program.type}</Badge>
+        {atCapacity && program.waitlistEnabled && <StatusBadge tone="info" label={t("waitlistOpen")} />}
         {program.maxSlots != null && (
-          <Badge variant="outline">{program.currentCount}/{program.maxSlots} slots</Badge>
+          <Badge variant="outline" className="tabular-nums">
+            {tx("slotsFilled", { current: program.currentCount, max: program.maxSlots })}
+          </Badge>
         )}
       </div>
-      <h2 className="text-xl font-semibold">{program.title}</h2>
-      <p className="text-sm text-muted-foreground">
-        {program.mod.title} · {program.mod.game.name} · by {program.author.displayName ?? program.author.username}
-      </p>
-      {program.description && <p className="text-sm">{program.description}</p>}
+      {program.description && <p className="whitespace-pre-wrap text-sm text-ink-muted">{program.description}</p>}
 
-      {program.discordRequired && (
-        <p className="text-xs text-warning">Discord account must be linked in your settings.</p>
-      )}
+      {program.discordRequired && <StatusBadge tone="warning" label={t("discordRequired")} />}
 
-      <div>
-        <label className="text-sm font-medium">Why do you want access?</label>
-        <Textarea value={message} onChange={(e) => setMessage(e.target.value)} className="mt-1" rows={4} />
+      <div className="space-y-1.5">
+        <label htmlFor="exclusive-message" className="label-text">{t("messageLabel")}</label>
+        <Textarea id="exclusive-message" value={message} onChange={(e) => setMessage(e.target.value)} rows={4} />
       </div>
 
-      <div>
-        <label className="text-sm font-medium">Invite code (optional)</label>
-        <Input value={inviteCode} onChange={(e) => setInviteCode(e.target.value)} className="mt-1 font-mono" placeholder="EX-XXXXXXXX" />
+      <div className="space-y-1.5">
+        <label htmlFor="exclusive-invite" className="label-text">{t("inviteCodeLabel")}</label>
+        <Input
+          id="exclusive-invite"
+          value={inviteCode}
+          onChange={(e) => setInviteCode(e.target.value)}
+          className="font-mono"
+          placeholder="EX-XXXXXXXX"
+        />
       </div>
 
       {program.ndaRequired && (
-        <label className="flex items-start gap-2 text-sm">
-          <Switch checked={ndaAccepted} onCheckedChange={setNdaAccepted} />
-          <span>I accept the NDA and agree not to share builds or details publicly.</span>
+        <label htmlFor="exclusive-nda" className="flex items-start gap-3 text-sm text-ink">
+          <Switch id="exclusive-nda" checked={ndaAccepted} onCheckedChange={setNdaAccepted} />
+          <span>{t("ndaLabel")}</span>
         </label>
       )}
 
       <Button disabled={pending} onClick={submit} className="w-full">
-        {atCapacity && program.waitlistEnabled ? "Join waitlist" : "Apply for access"}
+        {atCapacity && program.waitlistEnabled ? t("joinWaitlist") : t("apply")}
       </Button>
-    </Card>
+    </SectionCard>
   );
 }

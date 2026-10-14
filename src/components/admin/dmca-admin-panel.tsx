@@ -1,11 +1,14 @@
 "use client";
 
-import { useTransition } from "react";
-import { safeToLocaleDateString } from "@/lib/i18n/safe-locale";
+import { useId, useTransition } from "react";
+import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { ShieldCheck } from "lucide-react";
 import { DMCAStatus } from "@prisma/client";
 import { updateDMCAStatus } from "@/actions/admin/trust";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
+import { SectionCard } from "@/components/ui/page-header";
+import { StatusBadge, type StatusTone } from "@/components/ui/status-badge";
 import {
   Select,
   SelectContent,
@@ -14,6 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
+import { formatDate } from "@/lib/format-locale";
 
 type Claim = {
   id: string;
@@ -27,8 +31,49 @@ type Claim = {
 };
 
 const STATUSES: DMCAStatus[] = ["SUBMITTED", "LEGAL_REVIEW", "ACCEPTED", "REMOVED", "REJECTED"];
+const TONES: Record<DMCAStatus, StatusTone> = {
+  SUBMITTED: "pending",
+  LEGAL_REVIEW: "warning",
+  ACCEPTED: "info",
+  REMOVED: "success",
+  REJECTED: "neutral",
+};
 
-export function DMCAAdminPanel({ claims }: { claims: Claim[] }) {
+function ClaimCard({ claim, locale, pending, onStatus }: { claim: Claim; locale: string; pending: boolean; onStatus: (status: DMCAStatus) => void }) {
+  const t = useTranslations("admin.dmcaAdmin");
+  const uid = useId();
+  return (
+    <SectionCard
+      title={claim.companyName}
+      description={`${claim.contactEmail} · ${formatDate(claim.createdAt, locale)}`}
+      action={<StatusBadge tone={TONES[claim.status]} label={t(`status.${claim.status}`)} />}
+    >
+      <dl className="grid gap-3 text-sm sm:grid-cols-[160px_minmax(0,1fr)]">
+        <dt className="label-text">{t("legalName")}</dt>
+        <dd className="text-ink">{claim.legalName}</dd>
+        <dt className="label-text">{t("infringingUrl")}</dt>
+        <dd className="break-all font-mono text-xs text-ink">{claim.infringingUrl}</dd>
+        <dt className="label-text">{t("description")}</dt>
+        <dd className="whitespace-pre-wrap text-ink-muted">{claim.description}</dd>
+      </dl>
+      <div className="mt-4">
+        <label htmlFor={`${uid}-status`} className="label-text mb-1.5 block">{t("changeStatus")}</label>
+        <Select value={claim.status} onValueChange={(v) => onStatus(v as DMCAStatus)} disabled={pending}>
+          <SelectTrigger id={`${uid}-status`} className="w-[220px]"><SelectValue /></SelectTrigger>
+          <SelectContent>
+            {STATUSES.map((s) => (
+              <SelectItem key={s} value={s}>{t(`status.${s}`)}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+    </SectionCard>
+  );
+}
+
+export function DMCAAdminPanel({ claims, locale }: { claims: Claim[]; locale: string }) {
+  const t = useTranslations("admin.dmcaAdmin");
+  const router = useRouter();
   const [pending, startTransition] = useTransition();
 
   function setStatus(id: string, status: DMCAStatus) {
@@ -36,42 +81,19 @@ export function DMCAAdminPanel({ claims }: { claims: Claim[] }) {
       const r = await updateDMCAStatus(id, status);
       if (r.success) {
         toast({ title: "toast.dmcaUpdated" });
-        window.location.reload();
+        router.refresh();
       } else toast({ title: "toast.error", description: r.error, variant: "destructive" });
     });
   }
 
   if (claims.length === 0) {
-    return <p className="text-sm text-muted-foreground">No DMCA claims.</p>;
+    return <EmptyState icon={ShieldCheck} title={t("emptyTitle")} description={t("emptyText")} />;
   }
 
   return (
     <div className="space-y-4">
       {claims.map((c) => (
-        <Card key={c.id}>
-          <CardHeader className="pb-2">
-            <div className="flex flex-wrap gap-2 items-center">
-              <CardTitle className="text-sm">{c.companyName}</CardTitle>
-              <Badge variant="outline">{c.status}</Badge>
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {c.contactEmail} · {safeToLocaleDateString(new Date(c.createdAt))}
-            </p>
-          </CardHeader>
-          <CardContent className="space-y-2 text-sm">
-            <p><span className="text-muted-foreground">Legal name:</span> {c.legalName}</p>
-            <p><span className="text-muted-foreground">URL:</span> {c.infringingUrl}</p>
-            <p className="whitespace-pre-wrap">{c.description}</p>
-            <Select value={c.status} onValueChange={(v) => setStatus(c.id, v as DMCAStatus)} disabled={pending}>
-              <SelectTrigger className="w-[200px]"><SelectValue /></SelectTrigger>
-              <SelectContent>
-                {STATUSES.map((s) => (
-                  <SelectItem key={s} value={s}>{s.replace(/_/g, " ")}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </CardContent>
-        </Card>
+        <ClaimCard key={c.id} claim={c} locale={locale} pending={pending} onStatus={(s) => setStatus(c.id, s)} />
       ))}
     </div>
   );

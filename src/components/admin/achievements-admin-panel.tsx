@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import { Loader2, Plus } from "lucide-react";
 import type { AchievementCategory, AchievementRarity } from "@prisma/client";
 import { deleteAchievement, saveAchievement } from "@/actions/admin/achievements";
-import { AchievementBadge } from "@/components/achievements/achievement-badge";
+import { AchievementBadge, RARITY_CLASS } from "@/components/achievements/achievement-badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ChipTabs } from "@/components/ui/chip-tabs";
@@ -16,7 +16,6 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useAppToast } from "@/hooks/use-app-toast";
-import { RARITY_STYLES } from "@/lib/achievement-constants";
 import { cn } from "@/lib/utils";
 
 export type AdminAchievement = {
@@ -182,7 +181,7 @@ export function AchievementsAdminPanel({ achievements }: { achievements: AdminAc
               <AchievementBadge name={editing.name || "…"} description={editing.description} icon={editing.icon} rarity={editing.rarity} size="lg" />
               <div className="min-w-0 text-sm">
                 <p className="label-text text-ink-muted">{t("preview")}</p>
-                <p className="font-semibold" style={{ color: RARITY_STYLES[editing.rarity].color }}>{t(`rar.${editing.rarity}`)}</p>
+                <p className={cn("font-semibold", RARITY_CLASS[editing.rarity].text)}>{t(`rar.${editing.rarity}`)}</p>
                 {editing.title && <p className="meta">„{editing.title}“</p>}
               </div>
             </div>

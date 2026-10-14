@@ -1,5 +1,7 @@
 import { getSiteSetting, setSiteSettingSafe } from "@/lib/site-settings";
 
+export { bpsToPercent } from "@/lib/revenue-sharing-shared";
+
 export type RevenueShareSettings = {
   creatorShareBps: number;
   designerShareBps: number;
@@ -50,6 +52,3 @@ export function resolveCreatorShareBps(
   return global.creatorShareBps;
 }
 
-export function bpsToPercent(bps: number): string {
-  return (bps / 100).toFixed(1);
-}
