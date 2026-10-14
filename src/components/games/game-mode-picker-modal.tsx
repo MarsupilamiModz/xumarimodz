@@ -29,6 +29,7 @@ export const GameModePickerModal = memo(function GameModePickerModal({
   picker,
 }: Props) {
   const t = useTranslations("games");
+  const tUi = useTranslations("ui");
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
   const dragY = useRef(0);
@@ -99,7 +100,7 @@ export const GameModePickerModal = memo(function GameModePickerModal({
     >
       <button
         type="button"
-        aria-label="Close"
+        aria-label={tUi("close")}
         tabIndex={open ? 0 : -1}
         className={cn(
           "absolute inset-0 bg-canvas/90 transition-opacity duration-100",
@@ -143,10 +144,10 @@ export const GameModePickerModal = memo(function GameModePickerModal({
               onClose();
             }}
             className="absolute right-3 top-3 z-30 flex h-10 w-10 items-center justify-center rounded-full border border-line-control bg-canvas/60 text-ink hover:bg-canvas/80"
-            aria-label="Close"
+            aria-label={tUi("close")}
             tabIndex={open ? 0 : -1}
           >
-            <X className="h-5 w-5" />
+            <X className="h-5 w-5" aria-hidden />
           </button>
 
           <div className="relative min-h-[380px] flex-1 overflow-hidden">
@@ -169,10 +170,10 @@ export const GameModePickerModal = memo(function GameModePickerModal({
 
             <div className="relative z-10 flex max-h-[92vh] flex-col">
               <div className="border-b border-line px-6 pb-5 pt-10 sm:p-8">
-                <h2 id="game-mode-picker-title" className="text-2xl font-bold tracking-tight sm:text-3xl">
+                <h2 id="game-mode-picker-title" className="text-2xl font-bold tracking-tight text-ink sm:text-3xl">
                   {gameName}
                 </h2>
-                <p className="mt-2 text-base text-muted-foreground">{t("choosePlatform")}</p>
+                <p className="mt-2 text-base text-ink-muted">{t("choosePlatform")}</p>
               </div>
 
               <div
@@ -192,7 +193,7 @@ export const GameModePickerModal = memo(function GameModePickerModal({
                 ))}
               </div>
 
-              <p className="border-t border-line px-6 py-4 text-center text-sm text-muted-foreground sm:px-8">
+              <p className="border-t border-line px-6 py-4 text-center text-sm text-ink-muted sm:px-8">
                 {t("modesAvailable", { count: modes.length })}
               </p>
             </div>

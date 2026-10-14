@@ -1,6 +1,5 @@
 "use client";
 
-import { colors } from "@/styles/tokens";
 import { memo } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
@@ -32,7 +31,8 @@ export const GameModeSelectionCard = memo(function GameModeSelectionCard({
   const t = useTranslations("games");
   const banner = mode.backgroundUrl ?? mode.bannerUrl ?? mode.thumbnailUrl;
   const href = `/${locale}/games/${gameSlug}/${mode.slug}`;
-  const accent = mode.accentColor ?? colors.violet;
+  // Akzentfarbe des Bereichs (aus dem ACP) nur als Rahmen; ohne Wert der normale Token-Rahmen.
+  const accent = mode.accentColor;
 
   return (
     <Link
@@ -48,11 +48,7 @@ export const GameModeSelectionCard = memo(function GameModeSelectionCard({
           "transition-colors duration-fast",
           "hover:border-line-control"
         )}
-        style={
-          {
-            borderColor: `${accent}44`,
-          } as React.CSSProperties
-        }
+        style={accent ? { borderColor: accent } : undefined}
       >
         <div className="relative aspect-[16/9] overflow-hidden">
           {banner ? (
@@ -64,14 +60,12 @@ export const GameModeSelectionCard = memo(function GameModeSelectionCard({
               sizes="(max-width: 640px) 100vw, 400px"
             />
           ) : (
-            <div
-              className="absolute inset-0"
-              style={{ backgroundColor: `${accent}33` }}
-            />
+            <div className="absolute inset-0 flex items-center justify-center bg-elevated">
+              <Layers className="h-8 w-8 text-ink-faint" aria-hidden />
+            </div>
           )}
-          <div className="absolute inset-0" />
           {(mode.logoUrl || mode.iconUrl) && (
-            <div className="absolute left-3 top-3 flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl border border-line-control bg-background/80 p-1">
+            <div className="absolute left-3 top-3 flex h-10 w-10 items-center justify-center overflow-hidden rounded-lg border border-line-control bg-canvas/80 p-1">
               <SafeImage
                 src={mode.logoUrl ?? mode.iconUrl!}
                 alt=""
@@ -83,13 +77,13 @@ export const GameModeSelectionCard = memo(function GameModeSelectionCard({
           )}
         </div>
         <div className="p-4">
-          <h3 className="text-lg font-bold transition-colors group-hover:text-violet-bright">
+          <h3 className="text-lg font-bold text-ink transition-colors duration-fast group-hover:text-violet-bright">
             {mode.name}
           </h3>
           {mode.description && (
-            <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{mode.description}</p>
+            <p className="mt-1 line-clamp-2 text-xs text-ink-muted">{mode.description}</p>
           )}
-          <p className="mt-2 text-xs" style={{ color: accent }}>
+          <p className="meta mt-2">
             {t("modsCount", { count: mode.modCount })}
           </p>
         </div>
@@ -100,11 +94,11 @@ export const GameModeSelectionCard = memo(function GameModeSelectionCard({
 
 export const GameModeSelectionCardSkeleton = memo(function GameModeSelectionCardSkeleton() {
   return (
-    <Card className="overflow-hidden rounded-lg border-border/40 animate-pulse bg-background/30">
-      <div className="aspect-[16/9] bg-muted/40" />
+    <Card className="animate-pulse overflow-hidden" aria-hidden>
+      <div className="aspect-[16/9] bg-elevated" />
       <div className="space-y-2 p-4">
-        <div className="h-5 w-2/3 rounded bg-muted/50" />
-        <div className="h-3 w-full rounded bg-muted/30" />
+        <div className="h-5 w-2/3 rounded bg-elevated" />
+        <div className="h-3 w-full rounded bg-elevated" />
       </div>
     </Card>
   );
@@ -112,8 +106,8 @@ export const GameModeSelectionCardSkeleton = memo(function GameModeSelectionCard
 
 export const GameModeEmptyIcon = memo(function GameModeEmptyIcon() {
   return (
-    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-muted/30">
-      <Layers className="h-6 w-6 text-muted-foreground/50" />
+    <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-elevated">
+      <Layers className="h-6 w-6 text-ink-faint" aria-hidden />
     </div>
   );
 });

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import type { ResolvedHostingPartner } from "@/lib/hosting/resolve";
 
 type Props = {
@@ -26,6 +27,7 @@ export function HostingBannerWidget({
   size = "responsive",
   className = "",
 }: Props) {
+  const t = useTranslations("sharedUi.hosting");
   const bannerUrl = partner.bannerAvifUrl ?? partner.bannerWebpUrl ?? partner.bannerUrl;
   if (!bannerUrl) return null;
 
@@ -48,8 +50,8 @@ export function HostingBannerWidget({
     <button
       type="button"
       onClick={trackAndOpen}
-      className={`block overflow-hidden rounded-lg border border-border/40 hover:border-line-control transition-colors ${SIZE_CLASS[size]} ${className}`}
-      aria-label={`Hosting partner: ${partner.name}`}
+      className={`block overflow-hidden rounded-lg border border-line transition-colors duration-fast hover:border-line-control ${SIZE_CLASS[size]} ${className}`}
+      aria-label={t("bannerLabel", { name: partner.name })}
     >
       <picture>
         {partner.bannerAvifUrl ? (

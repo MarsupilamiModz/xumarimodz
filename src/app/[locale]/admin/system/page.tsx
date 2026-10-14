@@ -79,6 +79,7 @@ export default async function AdminSystemPage(
     console.error("[admin/system] record checks", err);
   }
   const metrics = serverMetrics();
+  const serverless = metrics.platformNote === "serverless";
 
   const today = new Date();
   const days = Array.from({ length: 30 }, (_, i) => {
@@ -188,12 +189,18 @@ export default async function AdminSystemPage(
             <KpiTile
               label={t("cpu")}
               value={metrics.platformNote ? "—" : `${metrics.cpuLoadPct} %`}
-              hint={metrics.platformNote ? t("loadUnavailable") : undefined}
+              hint={metrics.platformNote ? (serverless ? t("hostUnavailable") : t("loadUnavailable")) : undefined}
               tone={metrics.cpuLoadPct > 85 ? "danger" : metrics.cpuLoadPct > 65 ? "warning" : undefined}
             />
-            <KpiTile label={t("memory")} value={`${metrics.memoryUsedPct} %`} tone={metrics.memoryUsedPct > 90 ? "danger" : metrics.memoryUsedPct > 75 ? "warning" : undefined} />
-            <KpiTile label={t("process")} value={`${metrics.processMemoryMb} MB`} />
-            <KpiTile label={t("processUptime")} value={formatUptime(metrics.uptimeSeconds)} />
+            {/* In Cloudflare Workers gibt es keine Host-Kennzahlen (host-metrics: platformNote "serverless"). */}
+            <KpiTile
+              label={t("memory")}
+              value={serverless ? "—" : `${metrics.memoryUsedPct} %`}
+              hint={serverless ? t("hostUnavailable") : undefined}
+              tone={!serverless && metrics.memoryUsedPct > 90 ? "danger" : !serverless && metrics.memoryUsedPct > 75 ? "warning" : undefined}
+            />
+            <KpiTile label={t("process")} value={serverless ? "—" : `${metrics.processMemoryMb} MB`} hint={serverless ? t("hostUnavailable") : undefined} />
+            <KpiTile label={t("processUptime")} value={serverless ? "—" : formatUptime(metrics.uptimeSeconds)} hint={serverless ? t("hostUnavailable") : undefined} />
           </div>
         </section>
 

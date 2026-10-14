@@ -10,7 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { PageHeader, SectionCard } from "@/components/ui/page-header";
 import { PageSkeleton } from "@/components/ui/page-skeleton";
-import { StatusBadge, type StatusTone } from "@/components/ui/status-badge";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { orderTone } from "@/lib/status-tones";
 import { ClientOrderPaymentPanel } from "@/components/orders/client-order-payment-panel";
 import { UserIdentity } from "@/components/user/user-identity";
 import { toast } from "@/hooks/use-toast";
@@ -34,13 +35,6 @@ type Order = {
 };
 
 /** Farbton je Auftragsstatus (wie in der Auftragsliste). */
-function orderTone(status: string): StatusTone {
-  if (status === "COMPLETED" || status === "DELIVERED") return "success";
-  if (status === "CANCELED" || status === "REFUNDED") return "neutral";
-  if (status === "WAITING_FOR_CUSTOMER" || status === "REVISION_REQUESTED" || status === "QUOTED") return "warning";
-  return "pending";
-}
-
 export default function OrderDetailPage() {
   const params = useParams();
   const locale = params.locale as string;

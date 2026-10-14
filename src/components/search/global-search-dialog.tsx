@@ -3,7 +3,7 @@
 import { memo, useCallback, useEffect, useRef, useState, useTransition } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Gamepad2, Loader2, X } from "lucide-react";
+import { Gamepad2, Loader2, SearchX, X } from "lucide-react";
 import {
   globalSearchAction,
   type GlobalSearchGroups,
@@ -11,9 +11,9 @@ import {
 } from "@/actions/global-search";
 import { useGlobalSearch } from "@/components/search/global-search-provider";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
 import { SafeImage } from "@/components/ui/safe-image";
-import { cn } from "@/lib/utils";
 
 const EMPTY: GlobalSearchGroups = {
   mods: [],
@@ -46,19 +46,19 @@ function ResultRow({ item, onSelect }: { item: GlobalSearchItem; onSelect: () =>
       onClick={onSelect}
       className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-hover"
     >
-      <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md bg-muted/30">
+      <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md bg-elevated">
         {item.thumbnailUrl ? (
           <SafeImage src={item.thumbnailUrl} alt="" fill className="object-cover" sizes="40px" />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
-            <Gamepad2 className="h-4 w-4 text-muted-foreground/50" />
+            <Gamepad2 className="h-4 w-4 text-ink-faint" aria-hidden />
           </div>
         )}
       </div>
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-medium">{item.title}</p>
+        <p className="truncate text-sm font-medium text-ink">{item.title}</p>
         {item.subtitle && (
-          <p className="truncate text-xs text-muted-foreground">{item.subtitle}</p>
+          <p className="truncate text-xs text-ink-muted">{item.subtitle}</p>
         )}
       </div>
     </Link>
@@ -120,35 +120,36 @@ export const GlobalSearchDialog = memo(function GlobalSearchDialog({ locale }: {
     <Dialog open={open} onOpenChange={(v) => (v ? setOpen(true) : close())}>
       <DialogContent hideClose className="max-w-2xl gap-0 overflow-hidden p-0 sm:rounded-lg">
         <DialogTitle className="sr-only">{t("title")}</DialogTitle>
-        <div className="flex items-center gap-2 border-b border-border/50 px-4 py-3">
+        <div className="flex items-center gap-2 border-b border-line px-4 py-3">
           <Input
             ref={inputRef}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={t("placeholder")}
+            aria-label={t("searchLabel")}
             className="border-0 bg-transparent focus-visible:ring-0"
           />
-          {pending && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground shrink-0" />}
-          <button type="button" onClick={close} className="rounded-md p-1 hover:bg-hover shrink-0" aria-label={t("close")}>
-            <X className="h-4 w-4" />
+          {pending && <Loader2 className="h-4 w-4 shrink-0 animate-spin text-ink-muted" aria-label={t("loading")} />}
+          <button type="button" onClick={close} className="shrink-0 rounded-md p-1 text-ink-muted hover:bg-hover hover:text-ink" aria-label={t("close")}>
+            <X className="h-4 w-4" aria-hidden />
           </button>
         </div>
 
         <div className="max-h-[min(70vh,520px)] overflow-y-auto p-2">
           {query.trim().length < 2 ? (
-            <p className="px-3 py-8 text-center text-sm text-muted-foreground">{t("hint")}</p>
+            <p className="px-3 py-8 text-center text-sm text-ink-faint">{t("hint")}</p>
           ) : !pending && !hasResults ? (
-            <p className="px-3 py-8 text-center text-sm text-muted-foreground">{t("noResults")}</p>
+            <EmptyState icon={SearchX} title={t("noResults")} description={t("noResultsText")} className="border-0 py-8" />
           ) : (
             GROUP_ORDER.map((key) => {
               const items = groups[key];
               if (!items.length) return null;
               return (
                 <div key={key} className="mb-3">
-                  <p className="px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  <p className="label-text px-3 py-1.5">
                     {groupLabels[key]}
                   </p>
-                  <div className={cn("space-y-0.5")}>
+                  <div className="space-y-0.5">
                     {items.map((item) => (
                       <ResultRow key={`${key}-${item.id}`} item={item} onSelect={close} />
                     ))}
@@ -159,9 +160,9 @@ export const GlobalSearchDialog = memo(function GlobalSearchDialog({ locale }: {
           )}
         </div>
 
-        <div className="flex items-center justify-between border-t border-border/50 px-4 py-2 text-[11px] text-muted-foreground">
+        <div className="flex items-center justify-between border-t border-line px-4 py-2 text-[11px] text-ink-faint">
           <span>{t("shortcutHint")}</span>
-          <Link href={`/${locale}/search?q=${encodeURIComponent(query)}`} onClick={close} className="hover:text-violet-bright">
+          <Link href={`/${locale}/search?q=${encodeURIComponent(query)}`} onClick={close} className="text-violet-bright hover:underline">
             {t("viewAll")}
           </Link>
         </div>

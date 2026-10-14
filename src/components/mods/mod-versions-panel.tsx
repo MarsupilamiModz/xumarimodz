@@ -1,14 +1,15 @@
 "use client";
 
 import { useTransition } from "react";
-import { safeToLocaleString } from "@/lib/i18n/safe-locale";
-import { formatDistanceToNow } from "date-fns";
+import { useLocale, useTranslations } from "next-intl";
 import { Download, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { SectionCard } from "@/components/ui/page-header";
+import { StatusBadge } from "@/components/ui/status-badge";
 import type { VersionChannel } from "@prisma/client";
 import { formatBytes } from "@/lib/file-size";
+import { formatDate, formatNumber } from "@/lib/format-locale";
 
 type Version = {
   id: string;
@@ -29,6 +30,8 @@ type Props = {
 };
 
 export function ModVersionsPanel({ modId, versions }: Props) {
+  const t = useTranslations("sharedUi.versions");
+  const tMods = useTranslations("mods");
   const [pending, startTransition] = useTransition();
 
   function downloadVersion(versionId: string) {
@@ -49,24 +52,21 @@ export function ModVersionsPanel({ modId, versions }: Props) {
   if (versions.length === 0) return null;
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Versions</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-3">
+    <SectionCard title={tMods("versions")}>
+      <div className="space-y-3">
         {active.map((v) => (
           <VersionRow key={v.id} version={v} pending={pending} onDownload={downloadVersion} />
         ))}
         {archived.length > 0 && (
           <>
-            <p className="text-xs uppercase tracking-wider text-muted-foreground pt-2">Legacy</p>
+            <p className="label-text pt-2">{t("legacy")}</p>
             {archived.map((v) => (
               <VersionRow key={v.id} version={v} pending={pending} onDownload={downloadVersion} legacy />
             ))}
           </>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </SectionCard>
   );
 }
 
@@ -81,28 +81,30 @@ function VersionRow({
   onDownload: (id: string) => void;
   legacy?: boolean;
 }) {
+  const t = useTranslations("sharedUi.versions");
+  const locale = useLocale();
   return (
-    <div className="flex flex-wrap items-start justify-between gap-2 border-b border-border/30 py-3 last:border-0">
+    <div className="flex flex-wrap items-start justify-between gap-2 border-b border-line py-3 last:border-0">
       <div>
         <div className="flex items-center gap-2">
-          <span className="font-medium">v{version.version}</span>
-          {version.isPrimary && <Badge variant="default">Latest</Badge>}
-          {version.channel === "BETA" && <Badge variant="outline">Beta</Badge>}
+          <span className="font-medium text-ink">{t("version", { version: version.version })}</span>
+          {version.isPrimary && <StatusBadge tone="success" label={t("latest")} />}
+          {version.channel === "BETA" && <Badge variant="outline">{t("beta")}</Badge>}
           {legacy && (
             <Badge variant="outline" className="gap-1">
-              <RotateCcw className="h-3 w-3" /> Legacy
+              <RotateCcw className="h-3 w-3" aria-hidden /> {t("legacyBadge")}
             </Badge>
           )}
         </div>
-        <p className="text-xs text-muted-foreground mt-1">
-          {formatDistanceToNow(new Date(version.createdAt), { addSuffix: true })}
+        <p className="meta mt-1">
+          {formatDate(version.createdAt, locale)}
           {" · "}
-          {formatBytes(version.fileSize)}
+          {formatBytes(version.fileSize, locale)}
           {version.gameVersion && ` · ${version.gameVersion}`}
-          {` · ${safeToLocaleString(version.downloadCount)} downloads`}
+          {` · ${t("downloads", { count: formatNumber(version.downloadCount, locale) })}`}
         </p>
         {version.changelog && (
-          <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{version.changelog}</p>
+          <p className="mt-1 line-clamp-2 text-sm text-ink-muted">{version.changelog}</p>
         )}
       </div>
       <Button
@@ -111,8 +113,8 @@ function VersionRow({
         disabled={pending}
         onClick={() => onDownload(version.id)}
       >
-        <Download className="h-4 w-4 mr-1" />
-        {version.isPrimary ? "Download" : "Rollback"}
+        <Download className="mr-1 h-4 w-4" aria-hidden />
+        {version.isPrimary ? t("download") : t("rollback")}
       </Button>
     </div>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-
+import { useTranslations } from "next-intl";
 import { colors } from "@/styles/tokens";
 import {
   Area,
@@ -13,7 +13,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { Card } from "@/components/ui/card";
+import { SectionCard } from "@/components/ui/page-header";
 
 export function RevenueChart({
   data,
@@ -22,9 +22,9 @@ export function RevenueChart({
   data: { date: string; revenue: number; conversions: number }[];
   title: string;
 }) {
+  const t = useTranslations("sharedUi.charts");
   return (
-    <Card className="p-4">
-      <h3 className="text-sm font-medium mb-4 text-muted-foreground">{title}</h3>
+    <SectionCard title={title}>
       <div className="h-56">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data}>
@@ -34,11 +34,11 @@ export function RevenueChart({
             <Tooltip
               contentStyle={{ background: colors.bgRaised, border: `1px solid ${colors.line}`, borderRadius: 8, color: colors.ink }}
             />
-            <Area type="monotone" dataKey="revenue" stroke={colors.violet} fill={colors.violet} fillOpacity={0.16} name="Revenue (¢)" />
+            <Area type="monotone" dataKey="revenue" stroke={colors.violet} fill={colors.violet} fillOpacity={0.16} name={t("revenue")} />
           </AreaChart>
         </ResponsiveContainer>
       </div>
-    </Card>
+    </SectionCard>
   );
 }
 
@@ -49,9 +49,9 @@ export function ConversionChart({
   data: { date: string; clicks: number; conversions: number }[];
   title: string;
 }) {
+  const t = useTranslations("sharedUi.charts");
   return (
-    <Card className="p-4">
-      <h3 className="text-sm font-medium mb-4 text-muted-foreground">{title}</h3>
+    <SectionCard title={title}>
       <div className="h-56">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data}>
@@ -61,11 +61,11 @@ export function ConversionChart({
             <Tooltip
               contentStyle={{ background: colors.bgRaised, border: `1px solid ${colors.line}`, borderRadius: 8, color: colors.ink }}
             />
-            <Bar dataKey="clicks" fill={colors.inkFaint} name="Clicks" radius={[4, 4, 0, 0]} />
-            <Bar dataKey="conversions" fill={colors.violet} name="Conversions" radius={[4, 4, 0, 0]} />
+            <Bar dataKey="clicks" fill={colors.inkFaint} name={t("clicks")} radius={[4, 4, 0, 0]} />
+            <Bar dataKey="conversions" fill={colors.violet} name={t("conversions")} radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>
-    </Card>
+    </SectionCard>
   );
 }

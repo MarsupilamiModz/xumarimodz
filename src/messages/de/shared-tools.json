@@ -1,3 +1,72 @@
 {
-  "sharedTools": {}
+  "sharedTools": {
+    "avatarCrop": {
+      "title": "Profilbild zuschneiden",
+      "zoom": "Zoom",
+      "rotate": "Drehen",
+      "rotation": "Drehung",
+      "save": "Profilbild speichern"
+    },
+    "categoryCrop": {
+      "title": "Kategoriebild zuschneiden",
+      "aspect": "Seitenverhältnis",
+      "preset": {
+        "square": "Quadratisch",
+        "portrait": "Hochformat",
+        "landscape": "Querformat"
+      },
+      "zoom": "Zoom",
+      "rotate": "Drehen",
+      "rotation": "Drehung",
+      "cardPreview": "Kartenvorschau",
+      "preview": "Vorschau",
+      "categoryFallback": "Kategorie",
+      "modCount": "{count, plural, one {# Mod} other {# Mods}}",
+      "save": "Bild speichern"
+    },
+    "studioProfileUpload": {
+      "logo": "Logo",
+      "uploadLogo": "Logo hochladen"
+    },
+    "modVersionUpload": {
+      "versionLabel": "Version",
+      "gameVersionLabel": "Spielversion",
+      "channelLabel": "Kanal",
+      "changelogLabel": "Änderungen",
+      "fileLabel": "Datei",
+      "progressLabel": "Fortschritt des Uploads",
+      "sessionMissing": "Der Upload konnte nicht gestartet werden. Bitte erneut versuchen."
+    },
+    "soundPreview": {
+      "sessionMissing": "Der Upload konnte nicht gestartet werden. Bitte erneut versuchen."
+    },
+    "soundProfile": {
+      "save": "Metadaten speichern"
+    },
+    "modMedia": {
+      "invalidType": "{name}: Dateityp nicht erlaubt. Erlaubt: {types}",
+      "tooLarge": "{name} ist zu groß. Max. {size} MB",
+      "processFailed": "{name} konnte nicht verarbeitet werden",
+      "removePending": "{name} entfernen",
+      "dragToReorder": "Zum Sortieren ziehen",
+      "featuredSet": "Titelbild gesetzt",
+      "deleteImage": "Screenshot löschen",
+      "deleteVideo": "Video entfernen",
+      "deleteImageTitle": "Screenshot löschen?",
+      "deleteVideoTitle": "Video entfernen?",
+      "deleteText": "Es wird nicht mehr auf der Mod-Seite angezeigt. Das lässt sich nicht rückgängig machen.",
+      "youtubeUrlLabel": "YouTube-Link"
+    },
+    "chat": {
+      "threadLabel": "Unterhaltung",
+      "historyLabel": "Nachrichtenverlauf",
+      "messageLabel": "Nachricht",
+      "onlineCount": "{count} online",
+      "memberCount": "{count, plural, one {# Mitglied} other {# Mitglieder}}",
+      "unreadOverflow": "{max}+",
+      "messageUser": "{name} anschreiben",
+      "typing": "{names} {count, plural, one {tippt…} other {tippen…}}",
+      "uploadingProgress": "Lädt hoch {progress} %"
+    }
+  }
 }

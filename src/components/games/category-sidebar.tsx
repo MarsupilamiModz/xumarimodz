@@ -76,30 +76,27 @@ function CategoryRow({
         href={href}
         scroll={false}
         className={cn(
-          "group flex flex-col items-center gap-2 rounded-lg border p-3 transition-all duration-200",
+          "group flex flex-col items-center gap-2 rounded-lg border p-3 transition-colors duration-fast",
           isActive
-            ? "border-violet-bright/60 bg-violet-soft scale-[1.02]"
-            : "border-border/40 bg-background/30 hover:border-line-control hover:bg-background/50"
+            ? "border-violet-bright bg-violet-soft"
+            : "border-line bg-raised hover:border-line-control hover:bg-hover"
         )}
         style={{
           marginLeft: depth * 8,
           ...(category.accentColor && isActive ? { borderColor: category.accentColor } : {}),
         }}
       >
-        <div
-          className="relative h-32 w-32 shrink-0 overflow-hidden rounded-xl border border-border/50 bg-muted/30 transition-transform duration-200"
-          style={category.accentColor ? { boxShadow: `0 0 16px ${category.accentColor}33` } : undefined}
-        >
+        <div className="relative h-32 w-32 shrink-0 overflow-hidden rounded-lg border border-line bg-elevated">
           {thumb ? (
             <SafeImage src={thumb} alt={category.name} fill className="object-cover" sizes="128px" />
           ) : (
             <div className="flex h-full w-full items-center justify-center">
-              <Layers className="h-8 w-8 text-muted-foreground/50" />
+              <Layers className="h-8 w-8 text-ink-faint" aria-hidden />
             </div>
           )}
         </div>
         <div className="w-full text-center min-w-0">
-          <p className="font-semibold text-sm leading-tight truncate">{category.name}</p>
+          <p className="truncate text-sm font-semibold leading-tight text-ink">{category.name}</p>
           <p className="mt-1 text-xs text-ink-muted">
             {t("modsCount", { count: category.modCount })}
           </p>
@@ -133,17 +130,17 @@ export const CategorySidebar = memo(function CategorySidebar({
 
   return (
     <nav className="space-y-4" aria-label={t("categories")}>
-      <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+      <h2 className="section-title">
         {t("categories")}
       </h2>
       <Link
         href={buildHref(locale, gameSlug, modeSlug, params, { category: null, subcategory: null })}
         scroll={false}
         className={cn(
-          "flex items-center justify-center rounded-xl border px-3 py-2.5 text-sm font-medium transition-all",
+          "flex items-center justify-center rounded-lg border px-3 py-2.5 text-sm font-medium text-ink transition-colors duration-fast",
           !hasFilter
-            ? "border-violet-bright/60 bg-violet-soft"
-            : "border-border/40 hover:border-line-control"
+            ? "border-violet-bright bg-violet-soft"
+            : "border-line hover:border-line-control hover:bg-hover"
         )}
       >
         {t("allCategories")}

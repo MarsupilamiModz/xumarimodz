@@ -31,3 +31,10 @@ export function reportTone(status: string): StatusTone {
   if (status === "SUBMITTED") return "warning";
   return "pending";
 }
+
+export function orderTone(status: string): StatusTone {
+  if (status === "COMPLETED" || status === "DELIVERED") return "success";
+  if (status === "CANCELED" || status === "REFUNDED") return "neutral";
+  if (status === "WAITING_FOR_CUSTOMER" || status === "REVISION_REQUESTED" || status === "QUOTED") return "warning";
+  return "pending";
+}

@@ -1,7 +1,9 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { SafeImage } from "@/components/ui/safe-image";
-import { Play } from "lucide-react";
+import { EmptyState } from "@/components/ui/empty-state";
+import { ImageOff, Play } from "lucide-react";
 import { ModGallery } from "@/components/mods/mod-gallery";
 import { YouTubeEmbed } from "@/components/mods/youtube-embed";
 import type { ModMediaItem } from "@/lib/mod-media";
@@ -24,6 +26,7 @@ export function ModDetailMedia({
   featuredVideoId,
   excludeVideoId,
 }: ModDetailMediaProps) {
+  const t = useTranslations("sharedUi.media");
   const galleryImages = getGalleryImages(media);
   const videos = getYouTubeVideos(media).filter(
     (v) => v.youtubeVideoId && v.youtubeVideoId !== excludeVideoId
@@ -31,7 +34,7 @@ export function ModDetailMedia({
 
   return (
     <div className="space-y-8">
-      <div className="relative aspect-video overflow-hidden rounded-xl border border-border/50">
+      <div className="relative aspect-video overflow-hidden rounded-lg border border-line bg-elevated">
         {featuredIsVideo && featuredVideoId ? (
           <YouTubeEmbed videoId={featuredVideoId} title={title} priority />
         ) : featuredUrl ? (
@@ -44,13 +47,16 @@ export function ModDetailMedia({
             priority
           />
         ) : (
-          <div className="flex h-full items-center justify-center text-muted-foreground">
-            No media
-          </div>
+          <EmptyState
+            icon={ImageOff}
+            title={t("noMediaTitle")}
+            description={t("noMediaText")}
+            className="h-full rounded-none border-0"
+          />
         )}
         {featuredIsVideo && featuredUrl && !featuredVideoId && (
           <div className="absolute inset-0 flex items-center justify-center">
-            <Play className="h-12 w-12 text-ink/80" />
+            <Play className="h-12 w-12 text-ink/80" aria-hidden />
           </div>
         )}
       </div>
@@ -59,7 +65,7 @@ export function ModDetailMedia({
 
       {videos.length > 0 && (
         <section className="space-y-4">
-          <h2 className="text-lg font-semibold">Videos</h2>
+          <h2 className="section-title">{t("videos")}</h2>
           <div className="space-y-4">
             {videos.map((v) =>
               v.youtubeVideoId ? (

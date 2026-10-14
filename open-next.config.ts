@@ -12,6 +12,8 @@ import doQueue from "@opennextjs/cloudflare/overrides/queue/do-queue";
  */
 export default defineCloudflareConfig({
   incrementalCache: withRegionalCache(r2IncrementalCache, { mode: "long-lived" }),
-  tagCache: doShardedTagCache({ baseShardSize: 4 }),
+  // regionalCache: Tag-Abfragen 5 s im Cache API des Rechenzentrums halten, statt bei jedem Seiten- und
+  // unstable_cache-Treffer das Durable Object zu fragen (sonst ein Round-Trip pro Zugriff).
+  tagCache: doShardedTagCache({ baseShardSize: 4, regionalCache: true, regionalCacheTtlSec: 5 }),
   queue: doQueue,
 });

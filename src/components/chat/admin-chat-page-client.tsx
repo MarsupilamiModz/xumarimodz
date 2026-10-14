@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
+import { cn } from "@/lib/utils";
 import type { ChatChannelType } from "@prisma/client";
 import {
   getChatMessages,
@@ -59,6 +60,10 @@ type MessageRow = {
   }>;
 };
 
+/** Mindesthöhe des Chats und Abstand zum unteren Fensterrand (entspricht py-8 der Seiten). */
+const MIN_HEIGHT = 480;
+const BOTTOM_GAP = 32;
+
 function normalizeMessageRows(rows: unknown[]): MessageRow[] {
   return rows.map((row) => {
     const value = row as MessageRow & { attachments?: unknown };
@@ -94,6 +99,10 @@ export function AdminChatPageClient({
   initialChannelId?: string;
 }) {
   const t = useTranslations("chat");
+  const tc = useTranslations("common");
+  const ts = useTranslations("sharedTools.chat");
+  const rootRef = useRef<HTMLDivElement>(null);
+  const [height, setHeight] = useState<number | null>(null);
   const [channels, setChannels] = useState(initialChannels);
   const [staff] = useState(initialStaff);
   const [activeChannelId, setActiveChannelId] = useState(
@@ -118,6 +127,21 @@ export function AdminChatPageClient({
   const [loadingMessages, setLoadingMessages] = useState(false);
   const [pending, startTransition] = useTransition();
   const loadingRef = useRef(false);
+
+  // Höhe aus der tatsächlichen Position im Fenster: /admin/chat hat einen Seitenkopf darüber,
+  // /team-chat nicht. So füllt der Chat auf beiden Seiten den Rest des Fensters, und nur der
+  // Verlauf scrollt (keine zweite Scrollleiste der Seite). Vor dem Messen gilt die CSS-Höhe.
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el) return;
+    const update = () => {
+      const top = el.getBoundingClientRect().top + window.scrollY;
+      setHeight(Math.max(MIN_HEIGHT, Math.floor(window.innerHeight - top - BOTTOM_GAP)));
+    };
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
 
   const refreshChannels = useCallback(async () => {
     const result = await listChatChannelsForUser();
@@ -191,7 +215,11 @@ export function AdminChatPageClient({
   const activeChannel = channels.find((c) => c.id === activeChannelId);
 
   return (
-    <div className="flex h-[calc(100vh-8rem)] min-h-[480px] gap-4">
+    <div
+      ref={rootRef}
+      className={cn("flex min-h-[480px] gap-4", height === null && "h-[calc(100dvh-var(--header-height)-4rem)]")}
+      style={height === null ? undefined : { height }}
+    >
       <ChatSidebar
         locale={locale}
         channels={channels}
@@ -202,22 +230,25 @@ export function AdminChatPageClient({
         pending={pending}
         onlineUserIds={onlineUserIds}
       />
-      <div className="flex-1 min-w-0 rounded-xl flex flex-col overflow-hidden">
+      <section
+        aria-label={channelMeta?.name ?? activeChannel?.name ?? ts("threadLabel")}
+        className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-lg border border-line bg-raised"
+      >
         {activeChannel && (channelMeta || loadingMessages) ? (
           <>
-            <div className="border-b border-border/40 px-4 py-3">
+            <div className="border-b border-line px-4 py-3">
               <div className="flex items-center justify-between gap-4">
-                <div>
-                  <h2 className="font-semibold">{channelMeta?.name ?? activeChannel.name}</h2>
+                <div className="min-w-0">
+                  <h2 className="section-title truncate">{channelMeta?.name ?? activeChannel.name}</h2>
                   {(channelMeta?.description ?? activeChannel.description) && (
-                    <p className="mt-0.5 text-xs text-muted-foreground">
+                    <p className="meta mt-0.5 truncate">
                       {channelMeta?.description ?? activeChannel.description}
                     </p>
                   )}
                 </div>
-                <div className="text-right text-xs text-muted-foreground">
-                  <p>{onlineUserIds.length} {t("online")}</p>
-                  <p>{participants.length} {t("members")}</p>
+                <div className="meta shrink-0 text-right tabular-nums">
+                  <p>{ts("onlineCount", { count: onlineUserIds.length })}</p>
+                  <p>{ts("memberCount", { count: participants.length })}</p>
                 </div>
               </div>
             </div>
@@ -234,17 +265,17 @@ export function AdminChatPageClient({
                 onTyping={sendTyping}
               />
             ) : (
-              <div className="flex flex-1 items-center justify-center text-sm text-muted-foreground">
-                Loading…
+              <div className="flex flex-1 items-center justify-center text-sm text-ink-muted" role="status">
+                {tc("loading")}
               </div>
             )}
           </>
         ) : (
-          <div className="flex flex-1 items-center justify-center text-sm text-muted-foreground">
+          <div className="flex flex-1 items-center justify-center p-6 text-center text-sm text-ink-muted">
             {t("selectChannel")}
           </div>
         )}
-      </div>
+      </section>
     </div>
   );
 }

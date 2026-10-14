@@ -3,6 +3,7 @@
 import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { Mail } from "lucide-react";
 import {
   updateAdminEmailSettings,
   testAdminEmailConnection,
@@ -11,11 +12,14 @@ import {
 } from "@/actions/admin/email";
 import type { EmailSettingsPublic } from "@/lib/email/settings";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Input, controlClassName } from "@/components/ui/input";
+import { SectionCard } from "@/components/ui/page-header";
+import { DataTable, type DataColumn } from "@/components/ui/data-table";
+import { EmptyState } from "@/components/ui/empty-state";
+import { StatusBadge, type StatusTone } from "@/components/ui/status-badge";
 import { useAppToast } from "@/hooks/use-app-toast";
 import { formatDateTime } from "@/lib/format-locale";
+import { cn } from "@/lib/utils";
 
 type EmailLog = {
   id: string;
@@ -28,6 +32,8 @@ type EmailLog = {
   sentAt: Date | null;
   createdAt: Date;
 };
+
+const LOG_TONE: Record<string, StatusTone> = { SENT: "success", FAILED: "danger", PENDING: "pending" };
 
 function readEmailForm(form: HTMLFormElement) {
   const fd = new FormData(form);
@@ -66,6 +72,18 @@ function readEmailForm(form: HTMLFormElement) {
   };
 }
 
+/** Feld mit sichtbarem Label. */
+function Field({ id, label, className, children }: { id: string; label: string; className?: string; children: React.ReactNode }) {
+  return (
+    <div className={cn("space-y-1.5", className)}>
+      <label htmlFor={id} className="label-text">{label}</label>
+      {children}
+    </div>
+  );
+}
+
+const selectClass = cn(controlClassName, "h-9");
+
 export function EmailSettingsPanel({
   settings,
   logs,
@@ -76,28 +94,103 @@ export function EmailSettingsPanel({
   locale: string;
 }) {
   const t = useTranslations("admin.ui.emailSettings");
+  const tp = useTranslations("admin.panelEmailSettings");
   const appToast = useAppToast();
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
   const [pending, startTransition] = useTransition();
   const [testTo, setTestTo] = useState(settings.senderEmail || "");
 
+  const encryptionOptions = (
+    <>
+      <option value="STARTTLS">{t("encryptionStarttls")}</option>
+      <option value="TLS">{t("encryptionTls")}</option>
+      <option value="SSL">{t("encryptionSsl")}</option>
+      <option value="NONE">{t("encryptionNone")}</option>
+    </>
+  );
+
+  const checkbox = (name: string, label: string, checked: boolean) => (
+    <label className="flex items-center gap-2 text-sm text-ink sm:col-span-2">
+      <input type="checkbox" name={name} defaultChecked={checked} /> {label}
+    </label>
+  );
+
+  const groupTitle = (label: string) => (
+    <h3 className="border-t border-line pt-4 text-sm font-semibold text-ink sm:col-span-2">{label}</h3>
+  );
+
+  const columns: DataColumn<EmailLog>[] = [
+    {
+      key: "subject",
+      header: tp("colMessage"),
+      width: "minmax(0,3fr)",
+      cell: (log) => (
+        <div className="min-w-0">
+          <p className="truncate font-medium text-ink">{log.subject}</p>
+          <p className="meta truncate">{log.to}</p>
+          {log.error && <p className="text-xs text-danger">{log.error}</p>}
+        </div>
+      ),
+    },
+    {
+      key: "status",
+      header: tp("colStatus"),
+      width: "130px",
+      cell: (log) => (
+        <StatusBadge
+          tone={LOG_TONE[log.status] ?? "neutral"}
+          label={LOG_TONE[log.status] ? tp(`logStatus.${log.status}`) : log.status}
+        />
+      ),
+    },
+    {
+      key: "createdAt",
+      header: tp("colCreated"),
+      width: "150px",
+      hideOnMobile: true,
+      cell: (log) => <span className="meta tabular-nums">{formatDateTime(log.createdAt, locale)}</span>,
+    },
+    {
+      key: "action",
+      header: tp("colAction"),
+      width: "130px",
+      align: "right",
+      cell: (log) =>
+        log.status === "FAILED" ? (
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={pending}
+            onClick={() =>
+              startTransition(async () => {
+                const r = await retryAdminEmailLog(log.id);
+                if (r.success) router.refresh();
+                else appToast.error(r.error);
+              })
+            }
+          >
+            {t("retry")}
+          </Button>
+        ) : null,
+    },
+  ];
+
   return (
     <div className="space-y-6">
-      <Card className="p-6 space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h3 className="font-semibold">{t("title")}</h3>
-            <p className="text-xs text-muted-foreground mt-1">{t("providerChainHint")}</p>
-          </div>
-          <Badge variant={settings.configured ? "premium" : "outline"}>
-            {settings.configured ? t("configured") : t("notConfigured")}
-          </Badge>
-        </div>
-
+      <SectionCard
+        title={t("title")}
+        description={t("providerChainHint")}
+        action={
+          <StatusBadge
+            tone={settings.configured ? "success" : "warning"}
+            label={settings.configured ? t("configured") : t("notConfigured")}
+          />
+        }
+      >
         <form
           ref={formRef}
-          className="grid gap-3 sm:grid-cols-2"
+          className="grid gap-4 sm:grid-cols-2"
           onSubmit={(e) => {
             e.preventDefault();
             startTransition(async () => {
@@ -109,88 +202,131 @@ export function EmailSettingsPanel({
             });
           }}
         >
-          <label className="flex items-center gap-2 text-sm sm:col-span-2">
-            <input type="checkbox" name="enabled" defaultChecked={settings.enabled} /> {t("enableOutboundEmail")}
-          </label>
-          <select name="authMode" defaultValue={settings.authMode ?? "smtp"} className="h-10 rounded-md border border-input bg-background/50 px-3 text-sm sm:col-span-2">
-            <option value="smtp">{t("authModeSmtp")}</option>
-            <option value="microsoft">{t("authModeMicrosoft")}</option>
-            <option value="graph">{t("authModeGraph")}</option>
-          </select>
-          <Input name="smtpHost" defaultValue={settings.smtpHost} placeholder={t("smtpHostPlaceholder")} />
-          <Input name="smtpPort" type="number" defaultValue={settings.smtpPort} placeholder={t("portPlaceholder")} />
-          <Input name="smtpUser" defaultValue={settings.smtpUser} placeholder={t("smtpUserPlaceholder")} />
-          <Input name="smtpPassword" type="password" placeholder={settings.smtpPasswordSet ? t("unchangedPlaceholder") : t("smtpPasswordPlaceholder")} />
-          <Input name="microsoftTenantId" defaultValue={settings.microsoftTenantId} placeholder={t("microsoftTenantIdPlaceholder")} />
-          <Input name="microsoftClientId" defaultValue={settings.microsoftClientId} placeholder={t("microsoftClientIdPlaceholder")} />
-          <Input
-            name="microsoftClientSecret"
-            type="password"
-            placeholder={settings.microsoftSecretSet ? t("unchangedPlaceholder") : t("microsoftClientSecretPlaceholder")}
-          />
-          <Input name="senderEmail" type="email" defaultValue={settings.senderEmail} placeholder={t("senderEmailPlaceholder")} />
-          <Input name="senderName" defaultValue={settings.senderName} placeholder={t("senderNamePlaceholder")} />
-          <Input name="replyToEmail" type="email" defaultValue={settings.replyToEmail ?? ""} placeholder={t("replyToPlaceholder")} />
-          <select name="encryption" defaultValue={settings.encryption} className="h-10 rounded-md border border-input bg-background/50 px-3 text-sm">
-            <option value="STARTTLS">{t("encryptionStarttls")}</option>
-            <option value="TLS">{t("encryptionTls")}</option>
-            <option value="SSL">{t("encryptionSsl")}</option>
-            <option value="NONE">{t("encryptionNone")}</option>
-          </select>
+          {checkbox("enabled", t("enableOutboundEmail"), settings.enabled)}
+          <Field id="email-auth-mode" label={tp("authMode")} className="sm:col-span-2">
+            <select id="email-auth-mode" name="authMode" defaultValue={settings.authMode ?? "smtp"} className={selectClass}>
+              <option value="smtp">{t("authModeSmtp")}</option>
+              <option value="microsoft">{t("authModeMicrosoft")}</option>
+              <option value="graph">{t("authModeGraph")}</option>
+            </select>
+          </Field>
+          <Field id="email-smtp-host" label={t("smtpHostPlaceholder")}>
+            <Input id="email-smtp-host" name="smtpHost" defaultValue={settings.smtpHost} />
+          </Field>
+          <Field id="email-smtp-port" label={t("portPlaceholder")}>
+            <Input id="email-smtp-port" name="smtpPort" type="number" defaultValue={settings.smtpPort} className="tabular-nums" />
+          </Field>
+          <Field id="email-smtp-user" label={t("smtpUserPlaceholder")}>
+            <Input id="email-smtp-user" name="smtpUser" defaultValue={settings.smtpUser} />
+          </Field>
+          <Field id="email-smtp-password" label={t("smtpPasswordPlaceholder")}>
+            <Input
+              id="email-smtp-password"
+              name="smtpPassword"
+              type="password"
+              placeholder={settings.smtpPasswordSet ? t("unchangedPlaceholder") : undefined}
+            />
+          </Field>
+          <Field id="email-ms-tenant" label={t("microsoftTenantIdPlaceholder")}>
+            <Input id="email-ms-tenant" name="microsoftTenantId" defaultValue={settings.microsoftTenantId} className="mono-id" />
+          </Field>
+          <Field id="email-ms-client" label={t("microsoftClientIdPlaceholder")}>
+            <Input id="email-ms-client" name="microsoftClientId" defaultValue={settings.microsoftClientId} className="mono-id" />
+          </Field>
+          <Field id="email-ms-secret" label={t("microsoftClientSecretPlaceholder")}>
+            <Input
+              id="email-ms-secret"
+              name="microsoftClientSecret"
+              type="password"
+              placeholder={settings.microsoftSecretSet ? t("unchangedPlaceholder") : undefined}
+            />
+          </Field>
+          <Field id="email-sender" label={t("senderEmailPlaceholder")}>
+            <Input id="email-sender" name="senderEmail" type="email" defaultValue={settings.senderEmail} />
+          </Field>
+          <Field id="email-sender-name" label={t("senderNamePlaceholder")}>
+            <Input id="email-sender-name" name="senderName" defaultValue={settings.senderName} />
+          </Field>
+          <Field id="email-reply-to" label={t("replyToPlaceholder")}>
+            <Input id="email-reply-to" name="replyToEmail" type="email" defaultValue={settings.replyToEmail ?? ""} />
+          </Field>
+          <Field id="email-encryption" label={tp("encryption")}>
+            <select id="email-encryption" name="encryption" defaultValue={settings.encryption} className={selectClass}>
+              {encryptionOptions}
+            </select>
+          </Field>
 
-          <div className="sm:col-span-2 pt-2 border-t border-border/40">
-            <p className="text-sm font-medium mb-2">{t("fallbackSesTitle")}</p>
-          </div>
-          <label className="flex items-center gap-2 text-sm sm:col-span-2">
-            <input type="checkbox" name="fallbackSesEnabled" defaultChecked={settings.fallbackSes.enabled} /> {t("enableSesFallback")}
-          </label>
-          <Input name="fallbackSesHost" defaultValue={settings.fallbackSes.smtpHost} placeholder="email-smtp.region.amazonaws.com" />
-          <Input name="fallbackSesPort" type="number" defaultValue={settings.fallbackSes.smtpPort} placeholder="587" />
-          <Input name="fallbackSesUser" defaultValue={settings.fallbackSes.smtpUser} placeholder={t("sesUserPlaceholder")} />
-          <Input
-            name="fallbackSesPassword"
-            type="password"
-            placeholder={settings.fallbackSes.passwordSet ? t("unchangedPlaceholder") : t("sesPasswordPlaceholder")}
-          />
-          <select name="fallbackSesEncryption" defaultValue={settings.fallbackSes.encryption} className="h-10 rounded-md border border-input bg-background/50 px-3 text-sm sm:col-span-2">
-            <option value="STARTTLS">{t("encryptionStarttls")}</option>
-            <option value="TLS">{t("encryptionTls")}</option>
-            <option value="SSL">{t("encryptionSsl")}</option>
-            <option value="NONE">{t("encryptionNone")}</option>
-          </select>
+          {groupTitle(t("fallbackSesTitle"))}
+          {checkbox("fallbackSesEnabled", t("enableSesFallback"), settings.fallbackSes.enabled)}
+          <Field id="email-ses-host" label={tp("smtpHost")}>
+            <Input id="email-ses-host" name="fallbackSesHost" defaultValue={settings.fallbackSes.smtpHost} placeholder={tp("sesHostPlaceholder")} />
+          </Field>
+          <Field id="email-ses-port" label={t("portPlaceholder")}>
+            <Input id="email-ses-port" name="fallbackSesPort" type="number" defaultValue={settings.fallbackSes.smtpPort} placeholder={tp("portExample")} className="tabular-nums" />
+          </Field>
+          <Field id="email-ses-user" label={t("sesUserPlaceholder")}>
+            <Input id="email-ses-user" name="fallbackSesUser" defaultValue={settings.fallbackSes.smtpUser} />
+          </Field>
+          <Field id="email-ses-password" label={t("sesPasswordPlaceholder")}>
+            <Input
+              id="email-ses-password"
+              name="fallbackSesPassword"
+              type="password"
+              placeholder={settings.fallbackSes.passwordSet ? t("unchangedPlaceholder") : undefined}
+            />
+          </Field>
+          <Field id="email-ses-encryption" label={tp("encryption")} className="sm:col-span-2">
+            <select id="email-ses-encryption" name="fallbackSesEncryption" defaultValue={settings.fallbackSes.encryption} className={selectClass}>
+              {encryptionOptions}
+            </select>
+          </Field>
 
-          <div className="sm:col-span-2 pt-2 border-t border-border/40">
-            <p className="text-sm font-medium mb-2">{t("fallbackBrevoTitle")}</p>
-          </div>
-          <label className="flex items-center gap-2 text-sm sm:col-span-2">
-            <input type="checkbox" name="fallbackBrevoEnabled" defaultChecked={settings.fallbackBrevo.enabled} /> {t("enableBrevoFallback")}
-          </label>
-          <Input name="fallbackBrevoHost" defaultValue={settings.fallbackBrevo.smtpHost} placeholder="smtp-relay.brevo.com" />
-          <Input name="fallbackBrevoPort" type="number" defaultValue={settings.fallbackBrevo.smtpPort} placeholder="587" />
-          <Input name="fallbackBrevoUser" defaultValue={settings.fallbackBrevo.smtpUser} placeholder={t("brevoUserPlaceholder")} />
-          <Input
-            name="fallbackBrevoPassword"
-            type="password"
-            placeholder={settings.fallbackBrevo.passwordSet ? t("unchangedPlaceholder") : t("brevoPasswordPlaceholder")}
-          />
-          <select name="fallbackBrevoEncryption" defaultValue={settings.fallbackBrevo.encryption} className="h-10 rounded-md border border-input bg-background/50 px-3 text-sm sm:col-span-2">
-            <option value="STARTTLS">{t("encryptionStarttls")}</option>
-            <option value="TLS">{t("encryptionTls")}</option>
-            <option value="SSL">{t("encryptionSsl")}</option>
-            <option value="NONE">{t("encryptionNone")}</option>
-          </select>
+          {groupTitle(t("fallbackBrevoTitle"))}
+          {checkbox("fallbackBrevoEnabled", t("enableBrevoFallback"), settings.fallbackBrevo.enabled)}
+          <Field id="email-brevo-host" label={tp("smtpHost")}>
+            <Input id="email-brevo-host" name="fallbackBrevoHost" defaultValue={settings.fallbackBrevo.smtpHost} placeholder={tp("brevoHostPlaceholder")} />
+          </Field>
+          <Field id="email-brevo-port" label={t("portPlaceholder")}>
+            <Input id="email-brevo-port" name="fallbackBrevoPort" type="number" defaultValue={settings.fallbackBrevo.smtpPort} placeholder={tp("portExample")} className="tabular-nums" />
+          </Field>
+          <Field id="email-brevo-user" label={t("brevoUserPlaceholder")}>
+            <Input id="email-brevo-user" name="fallbackBrevoUser" defaultValue={settings.fallbackBrevo.smtpUser} />
+          </Field>
+          <Field id="email-brevo-password" label={t("brevoPasswordPlaceholder")}>
+            <Input
+              id="email-brevo-password"
+              name="fallbackBrevoPassword"
+              type="password"
+              placeholder={settings.fallbackBrevo.passwordSet ? t("unchangedPlaceholder") : undefined}
+            />
+          </Field>
+          <Field id="email-brevo-encryption" label={tp("encryption")} className="sm:col-span-2">
+            <select id="email-brevo-encryption" name="fallbackBrevoEncryption" defaultValue={settings.fallbackBrevo.encryption} className={selectClass}>
+              {encryptionOptions}
+            </select>
+          </Field>
 
-          <div className="sm:col-span-2 pt-2 border-t border-border/40">
-            <p className="text-sm font-medium mb-2">{t("notificationTargetsTitle")}</p>
-          </div>
-          <Input name="supportEmail" type="email" defaultValue={settings.supportEmail} placeholder={t("supportEmailPlaceholder")} />
-          <Input name="ticketNotificationEmail" type="email" defaultValue={settings.ticketNotificationEmail} placeholder={t("ticketNotificationPlaceholder")} />
-          <Input name="customOrderEmail" type="email" defaultValue={settings.customOrderEmail} placeholder={t("customOrderEmailPlaceholder")} />
-          <Input name="paymentNotificationEmail" type="email" defaultValue={settings.paymentNotificationEmail} placeholder={t("paymentNotificationPlaceholder")} />
-          <Input name="adminNotificationEmail" type="email" defaultValue={settings.adminNotificationEmail} placeholder={t("adminNotificationPlaceholder")} />
-          <Input name="contactFormEmail" type="email" defaultValue={settings.contactFormEmail} placeholder={t("contactFormEmailPlaceholder")} />
+          {groupTitle(t("notificationTargetsTitle"))}
+          <Field id="email-support" label={t("supportEmailPlaceholder")}>
+            <Input id="email-support" name="supportEmail" type="email" defaultValue={settings.supportEmail} />
+          </Field>
+          <Field id="email-tickets" label={t("ticketNotificationPlaceholder")}>
+            <Input id="email-tickets" name="ticketNotificationEmail" type="email" defaultValue={settings.ticketNotificationEmail} />
+          </Field>
+          <Field id="email-orders" label={t("customOrderEmailPlaceholder")}>
+            <Input id="email-orders" name="customOrderEmail" type="email" defaultValue={settings.customOrderEmail} />
+          </Field>
+          <Field id="email-payments" label={t("paymentNotificationPlaceholder")}>
+            <Input id="email-payments" name="paymentNotificationEmail" type="email" defaultValue={settings.paymentNotificationEmail} />
+          </Field>
+          <Field id="email-admin" label={t("adminNotificationPlaceholder")}>
+            <Input id="email-admin" name="adminNotificationEmail" type="email" defaultValue={settings.adminNotificationEmail} />
+          </Field>
+          <Field id="email-contact" label={t("contactFormEmailPlaceholder")}>
+            <Input id="email-contact" name="contactFormEmail" type="email" defaultValue={settings.contactFormEmail} />
+          </Field>
 
-          <div className="sm:col-span-2 flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 sm:col-span-2">
             <Button type="submit" disabled={pending}>{t("saveSettings")}</Button>
             <Button
               type="button"
@@ -211,70 +347,45 @@ export function EmailSettingsPanel({
           </div>
         </form>
 
-        <div className="flex flex-wrap gap-2 items-end pt-2 border-t border-border/40">
-          <Input
-            value={testTo}
-            onChange={(e) => setTestTo(e.target.value)}
-            placeholder={t("testRecipientPlaceholder")}
-            className="max-w-xs"
-          />
-          <Button
-            type="button"
-            variant="outline"
-            disabled={pending || !testTo}
-            onClick={() =>
-              startTransition(async () => {
-                const r = await sendAdminTestEmail(testTo);
-                if (r.success) appToast.saved();
-                else appToast.error(r.error);
-              })
-            }
-          >
-            {t("sendTestEmail")}
-          </Button>
+        <div className="mt-6 border-t border-line pt-4">
+          <Field id="email-test-to" label={t("testRecipientPlaceholder")}>
+            <div className="flex flex-wrap items-center gap-2">
+              <Input
+                id="email-test-to"
+                type="email"
+                value={testTo}
+                onChange={(e) => setTestTo(e.target.value)}
+                className="max-w-xs"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                disabled={pending || !testTo}
+                onClick={() =>
+                  startTransition(async () => {
+                    const r = await sendAdminTestEmail(testTo);
+                    if (r.success) appToast.saved();
+                    else appToast.error(r.error);
+                  })
+                }
+              >
+                {t("sendTestEmail")}
+              </Button>
+            </div>
+          </Field>
         </div>
-      </Card>
+      </SectionCard>
 
-      <Card className="p-6">
-        <h3 className="font-semibold mb-4">{t("emailLogsTitle")}</h3>
-        {logs.length === 0 ? (
-          <p className="text-sm text-muted-foreground">{t("noEmailLogs")}</p>
-        ) : (
-          <div className="space-y-2 max-h-96 overflow-y-auto">
-            {logs.map((log) => (
-              <div key={log.id} className="flex flex-wrap justify-between gap-2 text-sm border-b border-border/30 py-2 last:border-0">
-                <div className="min-w-0">
-                  <p className="font-medium truncate">{log.subject}</p>
-                  <p className="text-xs text-muted-foreground">{log.to}</p>
-                  {log.error && <p className="text-xs text-destructive">{log.error}</p>}
-                </div>
-                <div className="flex items-center gap-2 shrink-0">
-                  <Badge variant={log.status === "SENT" ? "premium" : log.status === "FAILED" ? "destructive" : "outline"}>
-                    {log.status}
-                  </Badge>
-                  <span className="text-xs text-muted-foreground">{formatDateTime(log.createdAt, locale)}</span>
-                  {log.status === "FAILED" && (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      disabled={pending}
-                      onClick={() =>
-                        startTransition(async () => {
-                          const r = await retryAdminEmailLog(log.id);
-                          if (r.success) router.refresh();
-                          else appToast.error(r.error);
-                        })
-                      }
-                    >
-                      {t("retry")}
-                    </Button>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </Card>
+      <section className="space-y-3">
+        <h2 className="section-title">{t("emailLogsTitle")}</h2>
+        <DataTable
+          caption={t("emailLogsTitle")}
+          columns={columns}
+          rows={logs}
+          rowKey={(log) => log.id}
+          empty={<EmptyState icon={Mail} title={t("noEmailLogs")} />}
+        />
+      </section>
     </div>
   );
 }

@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useId, useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { SectionCard } from "@/components/ui/page-header";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { updateSoundProfile } from "@/actions/sounds";
 import { SOUND_CATEGORIES, PREVIEW_TYPES } from "@/lib/sound";
@@ -23,6 +23,8 @@ type Profile = {
 
 export function SoundProfileEditor({ modId, profile }: { modId: string; profile: Profile | null }) {
   const ts = useTranslations("sounds");
+  const t = useTranslations("sharedTools.soundProfile");
+  const uid = useId();
   const [pending, startTransition] = useTransition();
   const [form, setForm] = useState({
     artist: profile?.artist ?? "",
@@ -66,22 +68,19 @@ export function SoundProfileEditor({ modId, profile }: { modId: string; profile:
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-base">{ts("metadata")}</CardTitle>
-      </CardHeader>
-      <CardContent className="grid gap-3 sm:grid-cols-2">
-        <div>
-          <label className="text-sm">{ts("artist")}</label>
-          <Input value={form.artist} onChange={(e) => setForm((f) => ({ ...f, artist: e.target.value }))} />
+    <SectionCard title={ts("metadata")}>
+      <div className="grid gap-3 sm:grid-cols-2">
+        <div className="space-y-1.5">
+          <label htmlFor={`${uid}-artist`} className="label-text">{ts("artist")}</label>
+          <Input id={`${uid}-artist`} value={form.artist} onChange={(e) => setForm((f) => ({ ...f, artist: e.target.value }))} />
         </div>
-        <div>
-          <label className="text-sm">{ts("audioCategory")}</label>
+        <div className="space-y-1.5">
+          <label htmlFor={`${uid}-audioCategory`} className="label-text">{ts("audioCategory")}</label>
           <Select
             value={form.audioCategory}
             onValueChange={(v) => setForm((f) => ({ ...f, audioCategory: v as SoundAudioCategory }))}
           >
-            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectTrigger id={`${uid}-audioCategory`}><SelectValue /></SelectTrigger>
             <SelectContent>
               {SOUND_CATEGORIES.map((c) => (
                 <SelectItem key={c.value} value={c.value}>
@@ -91,29 +90,31 @@ export function SoundProfileEditor({ modId, profile }: { modId: string; profile:
             </SelectContent>
           </Select>
         </div>
-        <div>
-          <label className="text-sm">{ts("duration")}</label>
+        <div className="space-y-1.5">
+          <label htmlFor={`${uid}-duration`} className="label-text">{ts("duration")}</label>
           <Input
+            id={`${uid}-duration`}
             type="number"
+            className="tabular-nums"
             value={form.durationSeconds}
             onChange={(e) => setForm((f) => ({ ...f, durationSeconds: e.target.value }))}
           />
         </div>
-        <div>
-          <label className="text-sm">{ts("bpm")}</label>
-          <Input value={form.bpm} onChange={(e) => setForm((f) => ({ ...f, bpm: e.target.value }))} />
+        <div className="space-y-1.5">
+          <label htmlFor={`${uid}-bpm`} className="label-text">{ts("bpm")}</label>
+          <Input id={`${uid}-bpm`} inputMode="numeric" value={form.bpm} onChange={(e) => setForm((f) => ({ ...f, bpm: e.target.value }))} />
         </div>
-        <div>
-          <label className="text-sm">{ts("genre")}</label>
-          <Input value={form.genre} onChange={(e) => setForm((f) => ({ ...f, genre: e.target.value }))} />
+        <div className="space-y-1.5">
+          <label htmlFor={`${uid}-genre`} className="label-text">{ts("genre")}</label>
+          <Input id={`${uid}-genre`} value={form.genre} onChange={(e) => setForm((f) => ({ ...f, genre: e.target.value }))} />
         </div>
-        <div>
-          <label className="text-sm">{ts("previewType")}</label>
+        <div className="space-y-1.5">
+          <label htmlFor={`${uid}-previewType`} className="label-text">{ts("previewType")}</label>
           <Select
             value={form.previewType}
             onValueChange={(v) => setForm((f) => ({ ...f, previewType: v as SoundPreviewType }))}
           >
-            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectTrigger id={`${uid}-previewType`}><SelectValue /></SelectTrigger>
             <SelectContent>
               {PREVIEW_TYPES.map((p) => (
                 <SelectItem key={p.value} value={p.value}>
@@ -124,10 +125,12 @@ export function SoundProfileEditor({ modId, profile }: { modId: string; profile:
           </Select>
         </div>
         {form.previewType === "CUSTOM" && (
-          <div>
-            <label className="text-sm">{ts("previewCustomSeconds")}</label>
+          <div className="space-y-1.5">
+            <label htmlFor={`${uid}-previewCustomSeconds`} className="label-text">{ts("previewCustomSeconds")}</label>
             <Input
+              id={`${uid}-previewCustomSeconds`}
               type="number"
+              className="tabular-nums"
               value={form.previewCustomSeconds}
               onChange={(e) => setForm((f) => ({ ...f, previewCustomSeconds: e.target.value }))}
             />
@@ -135,10 +138,10 @@ export function SoundProfileEditor({ modId, profile }: { modId: string; profile:
         )}
         <div className="sm:col-span-2">
           <Button onClick={save} disabled={pending} size="sm">
-            Save metadata
+            {t("save")}
           </Button>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </SectionCard>
   );
 }

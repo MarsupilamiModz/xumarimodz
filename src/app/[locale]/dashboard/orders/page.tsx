@@ -6,19 +6,13 @@ import { getUserOrders } from "@/actions/orders";
 import { PageHeader } from "@/components/ui/page-header";
 import { DataTable } from "@/components/ui/data-table";
 import { EmptyState } from "@/components/ui/empty-state";
-import { StatusBadge, type StatusTone } from "@/components/ui/status-badge";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { orderTone } from "@/lib/status-tones";
 import { Button } from "@/components/ui/button";
 import { formatNumber } from "@/lib/format-locale";
 import type { Locale } from "@/i18n/config";
 
 /** Farbton je Auftragsstatus (wie im ACP). */
-function orderTone(status: string): StatusTone {
-  if (status === "COMPLETED" || status === "DELIVERED") return "success";
-  if (status === "CANCELED" || status === "REFUNDED") return "neutral";
-  if (status === "WAITING_FOR_CUSTOMER" || status === "REVISION_REQUESTED" || status === "QUOTED") return "warning";
-  return "pending";
-}
-
 export default async function OrdersPage(props: { params: Promise<{ locale: Locale }> }) {
   const params = await props.params;
 

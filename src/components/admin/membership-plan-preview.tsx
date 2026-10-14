@@ -1,11 +1,11 @@
 "use client";
 
 import { EntityIcon } from "@/components/ui/entity-icon";
-import { colors } from "@/styles/tokens";
 import { useMemo } from "react";
+import { useTranslations } from "next-intl";
 import { Crown, Check } from "lucide-react";
-import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 import { formatPlanPrice, getEffectivePlanPrice, getSaleTimeRemaining, type MembershipPlanData } from "@/lib/membership-pricing";
 
 const PLAN_ICONS: Record<string, string> = {
@@ -14,6 +14,10 @@ const PLAN_ICONS: Record<string, string> = {
   "premium-max": "gem",
 };
 
+/**
+ * Vorschau einer Plankarte im ACP – gleicher Aufbau wie die Karte auf /premium
+ * (Tokens statt Akzentfarbe; die gespeicherte Akzentfarbe bleibt im Plan erhalten).
+ */
 export function MembershipPlanPreview({
   plan,
   locale,
@@ -21,52 +25,55 @@ export function MembershipPlanPreview({
   plan: Partial<MembershipPlanData> & { name: string; priceCents: number; currency: string; features: string[] };
   locale: string;
 }) {
+  const t = useTranslations("premium");
+  const tp = useTranslations("admin.panelPlanPreview");
   const fullPlan = plan as MembershipPlanData;
   const pricing = useMemo(() => getEffectivePlanPrice(fullPlan), [fullPlan]);
   const timeLeft = getSaleTimeRemaining(fullPlan);
-  const accent = plan.cardStyle?.accentColor ?? plan.perks?.accentColor ?? colors.violet;
   const icon = plan.iconKey ?? plan.cardStyle?.iconKey ?? PLAN_ICONS[plan.slug ?? ""] ?? "crown";
 
   return (
-    <Card
-      className="p-5 flex flex-col max-w-xs mx-auto"
-      style={{
-        borderColor: `${accent}50`,
-      }}
+    <article
+      className={cn(
+        "mx-auto flex max-w-xs flex-col rounded-lg border bg-raised p-5",
+        plan.isFeatured ? "border-violet-bright" : "border-line"
+      )}
     >
-      <div className="flex items-start justify-between mb-3">
-        <div>
-          <EntityIcon value={icon} fallback={Crown} className="h-6 w-6 text-ink" />
-          <h4 className="font-semibold mt-1">{plan.name}</h4>
-          <div className="flex items-baseline gap-2 mt-1">
-            <p className="text-2xl font-bold" style={{ color: accent }}>
-              {formatPlanPrice(pricing.priceCents, plan.currency, locale)}
-            </p>
-            {pricing.onSale && pricing.originalCents && (
-              <p className="text-sm line-through text-muted-foreground">
-                {formatPlanPrice(pricing.originalCents, plan.currency, locale)}
-              </p>
-            )}
-          </div>
-          {pricing.onSale && (
-            <Badge variant="premium" className="mt-1">-{pricing.discountPercent}%</Badge>
+      <div className="flex items-start justify-between gap-3">
+        <h4 className="flex items-center gap-2 font-semibold text-ink">
+          <EntityIcon value={icon} fallback={Crown} className="h-5 w-5 text-ink-muted" />
+          {plan.name}
+        </h4>
+        {plan.isFeatured && <Badge variant="premium">{t("popular")}</Badge>}
+      </div>
+      <div className="mt-3 flex flex-wrap items-baseline gap-x-2">
+        <p className="text-2xl font-bold tabular-nums text-ink">
+          {formatPlanPrice(pricing.priceCents, plan.currency, locale)}
+        </p>
+        {pricing.onSale && pricing.originalCents && (
+          <s className="text-sm tabular-nums text-ink-faint">
+            {formatPlanPrice(pricing.originalCents, plan.currency, locale)}
+          </s>
+        )}
+      </div>
+      {(pricing.onSale || (timeLeft != null && timeLeft > 0)) && (
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          {pricing.onSale && <Badge variant="warning">{t("saleBadge", { percent: pricing.discountPercent })}</Badge>}
+          {timeLeft != null && timeLeft > 0 && (
+            <Badge variant="warning">{t("saleEnds", { hours: Math.ceil(timeLeft / 3_600_000) })}</Badge>
           )}
         </div>
-        {plan.isFeatured && <Crown className="h-5 w-5 text-violet-bright" />}
-      </div>
-      {timeLeft != null && timeLeft > 0 && (
-        <p className="text-xs text-warning mb-2">Sale ends in {Math.ceil(timeLeft / 3600000)}h</p>
       )}
-      <ul className="space-y-1 flex-1">
+      <ul className="mt-4 flex-1 space-y-1.5">
         {plan.features.slice(0, 4).map((f) => (
-          <li key={f} className="flex gap-1.5 text-xs text-muted-foreground">
-            <Check className="h-3 w-3 shrink-0 text-ink-muted" /> {f}
+          <li key={f} className="flex gap-1.5 text-xs text-ink-muted">
+            <Check className="h-3 w-3 shrink-0 text-success" aria-hidden /> {f}
           </li>
         ))}
       </ul>
-      <div className="mt-4 rounded-lg py-2 text-center text-sm font-medium" style={{ background: `${accent}20`, color: accent }}>
-        {plan.cardStyle?.ctaText ?? "Buy lifetime access"}
+      <div className="mt-4 rounded-md border border-line py-2 text-center text-sm font-medium text-ink">
+        {plan.cardStyle?.ctaText || tp("defaultCta")}
       </div>
-    </Card>
+    </article>
   );
 }

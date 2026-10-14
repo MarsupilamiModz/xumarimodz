@@ -22,6 +22,8 @@ export type AudioTrack = {
   waveformPeaks?: number[] | null;
 };
 
+export type AudioPlayError = "loadFailed" | "autoplayBlocked" | "playFailed";
+
 type AudioPlayerContextValue = {
   current: AudioTrack | null;
   queue: AudioTrack[];
@@ -30,7 +32,8 @@ type AudioPlayerContextValue = {
   duration: number;
   volume: number;
   playbackRate: number;
-  playError: string | null;
+  /** Fehlercode; die Anzeige übersetzt ihn (sharedUi.audio.playError.<code>). */
+  playError: AudioPlayError | null;
   playTrack: (track: AudioTrack, queue?: AudioTrack[]) => void;
   toggle: () => void;
   pause: () => void;
@@ -54,7 +57,7 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
   const [duration, setDuration] = useState(0);
   const [volume, setVolumeState] = useState(0.85);
   const [playbackRate, setPlaybackRateState] = useState(1);
-  const [playError, setPlayError] = useState<string | null>(null);
+  const [playError, setPlayError] = useState<AudioPlayError | null>(null);
 
   currentRef.current = current;
 
@@ -96,7 +99,7 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
 
     const onError = () => {
       setIsPlaying(false);
-      setPlayError("Audio failed to load — try refreshing the page.");
+      setPlayError("loadFailed");
     };
 
     audio.addEventListener("timeupdate", onTime);
@@ -150,11 +153,7 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
       .then(() => setIsPlaying(true))
       .catch((err: DOMException) => {
         setIsPlaying(false);
-        setPlayError(
-          err.name === "NotAllowedError"
-            ? "Tap play to start audio (browser blocked autoplay)."
-            : "Playback failed — audio may be unavailable."
-        );
+        setPlayError(err.name === "NotAllowedError" ? "autoplayBlocked" : "playFailed");
       });
   }, []);
 
@@ -171,7 +170,7 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
         .then(() => setIsPlaying(true))
         .catch(() => {
           setIsPlaying(false);
-          setPlayError("Playback failed.");
+          setPlayError("playFailed");
         });
     }
   }, [isPlaying]);

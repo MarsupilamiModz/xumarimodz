@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { X } from "lucide-react";
 import type { SiteBannerFrequency } from "@prisma/client";
 import { SafeImage } from "@/components/ui/safe-image";
@@ -59,6 +60,7 @@ function markBannerSeen(banner: SiteBannerData) {
 }
 
 export function SiteBannerRail({ banners }: { banners: SiteBannerData[] }) {
+  const t = useTranslations();
   const [visible, setVisible] = useState<SiteBannerData[]>([]);
 
   useEffect(() => {
@@ -77,7 +79,7 @@ export function SiteBannerRail({ banners }: { banners: SiteBannerData[] }) {
       {visible.map((banner) => (
         <div
           key={banner.id}
-          className="relative border-b border-violet-bright/20"
+          className="relative border-b border-line bg-raised"
         >
           <div className="page-container flex items-center gap-4 py-3">
             {banner.imageUrl && (
@@ -86,23 +88,23 @@ export function SiteBannerRail({ banners }: { banners: SiteBannerData[] }) {
               </div>
             )}
             <div className="min-w-0 flex-1">
-              <p className="font-semibold text-sm">{banner.title}</p>
+              <p className="text-sm font-semibold text-ink">{banner.title}</p>
               {banner.description && (
-                <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{banner.description}</p>
+                <p className="mt-0.5 line-clamp-2 text-xs text-ink-muted">{banner.description}</p>
               )}
             </div>
             {banner.linkUrl && (
               <Button variant="outline" size="sm" asChild className="shrink-0">
-                <Link href={banner.linkUrl}>{banner.buttonText ?? "Learn more"}</Link>
+                <Link href={banner.linkUrl}>{banner.buttonText ?? t("common.learnMore")}</Link>
               </Button>
             )}
             <button
               type="button"
-              aria-label="Dismiss"
-              className="shrink-0 rounded-md p-1 hover:bg-hover"
+              aria-label={t("ui.dismiss")}
+              className="shrink-0 rounded-md p-1 text-ink-muted hover:bg-hover hover:text-ink"
               onClick={() => dismiss(banner)}
             >
-              <X className="h-4 w-4" />
+              <X className="h-4 w-4" aria-hidden />
             </button>
           </div>
         </div>

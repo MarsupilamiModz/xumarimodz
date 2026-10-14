@@ -4,7 +4,7 @@ import type { LeaderboardMetric, LeaderboardPeriod } from "@prisma/client";
 import { requirePagePermission } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { PUBLIC_LEADERBOARD_METRICS, getHiddenLeaderboardCreators, getLeaderboard, getLeaderboardWeights } from "@/lib/leaderboards";
-import { RANK_CONFIG } from "@/lib/creator-ranking";
+import { CreatorRankBadge } from "@/components/leaderboards/creator-rank-badge";
 import { formatNumber } from "@/lib/format-locale";
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { LeaderboardRowActions, LeaderboardWeightsForm, UnhideButton } from "@/components/admin/leaderboards-admin-panel";
@@ -104,7 +104,7 @@ export default async function AdminLeaderboardsPage(
                     </span>
                     <span className="meta block">/{e.slug}</span>
                   </td>
-                  <td className="px-4 py-2" style={{ color: RANK_CONFIG[e.rankTier].color }}>{RANK_CONFIG[e.rankTier].label}</td>
+                  <td className="px-4 py-2"><CreatorRankBadge tier={e.rankTier} size="sm" /></td>
                   <td className="px-4 py-2 text-right tabular-nums text-ink-muted">{formatNumber(Math.round(e.score), locale)}</td>
                   <td className="px-4 py-2">
                     <LeaderboardRowActions creatorId={e.creatorId} name={e.name} pinned={e.isPinned} />

@@ -3,6 +3,7 @@
 import { useCallback, useState } from "react";
 import Cropper, { type Area } from "react-easy-crop";
 import { Loader2, RotateCw, ZoomIn } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -29,6 +30,8 @@ export function AvatarCropUpload({
   className,
   disabled,
 }: AvatarCropUploadProps) {
+  const t = useTranslations("sharedTools.avatarCrop");
+  const tc = useTranslations("common");
   const [open, setOpen] = useState(false);
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -90,11 +93,11 @@ export function AvatarCropUpload({
       </label>
 
       <Dialog open={open} onOpenChange={(v) => !saving && setOpen(v)}>
-        <DialogContent className="max-w-md border-violet-bright/30">
+        <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Crop profile image</DialogTitle>
+            <DialogTitle>{t("title")}</DialogTitle>
           </DialogHeader>
-          <div className="relative h-64 w-full rounded-xl overflow-hidden bg-canvas/60 border border-border/40">
+          <div className="relative h-64 w-full overflow-hidden rounded-lg border border-line bg-canvas">
             {imageSrc && (
               <Cropper
                 image={imageSrc}
@@ -112,7 +115,7 @@ export function AvatarCropUpload({
             )}
           </div>
           <div className="flex items-center gap-3 px-1">
-            <ZoomIn className="h-4 w-4 text-muted-foreground shrink-0" />
+            <ZoomIn className="h-4 w-4 shrink-0 text-ink-muted" aria-hidden />
             <input
               type="range"
               min={1}
@@ -120,6 +123,7 @@ export function AvatarCropUpload({
               step={0.05}
               value={zoom}
               onChange={(e) => setZoom(Number(e.target.value))}
+              aria-label={t("zoom")}
               className="w-full accent-violet"
             />
           </div>
@@ -130,8 +134,8 @@ export function AvatarCropUpload({
               size="sm"
               onClick={() => setRotation((r) => (r + 90) % 360)}
             >
-              <RotateCw className="h-4 w-4 mr-1" />
-              Rotate
+              <RotateCw className="h-4 w-4" aria-hidden />
+              {t("rotate")}
             </Button>
             <input
               type="range"
@@ -140,16 +144,17 @@ export function AvatarCropUpload({
               step={1}
               value={rotation}
               onChange={(e) => setRotation(Number(e.target.value))}
+              aria-label={t("rotation")}
               className="w-full accent-violet"
             />
           </div>
           <DialogFooter className="gap-2">
             <Button variant="ghost" onClick={() => setOpen(false)} disabled={saving}>
-              Cancel
+              {tc("cancel")}
             </Button>
             <Button onClick={() => void save()} disabled={saving || !croppedArea}>
-              {saving ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : null}
-              Save avatar
+              {saving ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : null}
+              {t("save")}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -1,5 +1,5 @@
 import createMiddleware from "next-intl/middleware";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, type NextFetchEvent } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 import { selfFetch } from "@/lib/self-fetch";
 import { locales, defaultLocale, localeRegex } from "@/i18n/config";
@@ -93,16 +93,21 @@ async function loadBans(origin: string) {
   }
 }
 
-async function isIpBanned(request: NextRequest) {
+async function isIpBanned(request: NextRequest, event: NextFetchEvent) {
   const ip =
     request.headers.get("cf-connecting-ip") ??
     request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? request.headers.get("x-real-ip");
   if (!ip) return false;
   if (!banCache || Date.now() - banCache.at > BAN_TTL_MS) {
-    // Kein über Requests geteiltes Promise (in Workers unzulässig): Zeitstempel sofort setzen, damit
-    // pro Instanz und Minute nur ein Request nachlädt; die übrigen nutzen solange die alte Liste.
-    if (banCache) banCache.at = Date.now();
-    await loadBans(request.nextUrl.origin);
+    // Erster Aufruf wartet auf die Liste. Danach im Hintergrund nachladen (waitUntil, gehört zu diesem
+    // Request – kein über Requests geteiltes Promise) und solange die alte Liste nutzen; der Zeitstempel
+    // wird sofort gesetzt, damit pro Instanz und Minute nur ein Request nachlädt.
+    if (!banCache) {
+      await loadBans(request.nextUrl.origin);
+    } else {
+      banCache.at = Date.now();
+      event.waitUntil(loadBans(request.nextUrl.origin));
+    }
   }
   if (!banCache?.hashes.size) return false;
   return banCache.hashes.has(await sha256Hex(`${ipBanSalt()}:${ip.toLowerCase()}`));
@@ -127,13 +132,13 @@ function withPathnameHeader(request: NextRequest, pathname: string) {
   return new NextRequest(request.url, { headers: requestHeaders });
 }
 
-export async function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest, event: NextFetchEvent) {
   const pathname = request.nextUrl.pathname;
 
   // Webhooks, Health-Check und die Sperrliste selbst nie sperren.
   const banExempt =
     pathname === "/api/health" || pathname.startsWith("/api/stripe/webhook") || pathname === "/api/security/ip-bans";
-  if (!banExempt && (await isIpBanned(request))) {
+  if (!banExempt && (await isIpBanned(request, event))) {
     return bannedResponse();
   }
 

@@ -10,16 +10,21 @@ export const RANK_TIERS: CreatorRankTier[] = [
   "LEGENDARY",
 ];
 
+/**
+ * Anzeige je Rang: `className` (Rahmen + Schrift über Tokens) für CreatorRankBadge.
+ * Der Rangname kommt aus `sharedUi.rankBadge.<TIER>` (übersetzt); `label` ist nur noch der
+ * englische Ersatztext und `color` der Token-Wert für ältere Aufrufer (ACP-Bestenliste).
+ */
 export const RANK_CONFIG: Record<
   CreatorRankTier,
-  { minScore: number; color: string; border: string; glow: string; label: string }
+  { minScore: number; color: string; className: string; label: string }
 > = {
-  BRONZE: { minScore: 0, color: colors.inkFaint, border: "border-line-control", glow: "", label: "Bronze" },
-  SILVER: { minScore: 100, color: colors.inkMuted, border: "border-line-control", glow: "", label: "Silver" },
-  GOLD: { minScore: 500, color: colors.warning, border: "border-warning/50", glow: "", label: "Gold" },
-  DIAMOND: { minScore: 2000, color: colors.violetBright, border: "border-violet-bright/50", glow: "", label: "Diamond" },
-  ELITE: { minScore: 10000, color: colors.violetBright, border: "border-violet-bright/50", glow: "", label: "Elite" },
-  LEGENDARY: { minScore: 50000, color: colors.warning, border: "border-warning/50", glow: "", label: "Legendary" },
+  BRONZE: { minScore: 0, color: colors.inkFaint, className: "border-line-control text-ink-faint", label: "Bronze" },
+  SILVER: { minScore: 100, color: colors.inkMuted, className: "border-line-control text-ink-muted", label: "Silver" },
+  GOLD: { minScore: 500, color: colors.warning, className: "border-warning/50 text-warning", label: "Gold" },
+  DIAMOND: { minScore: 2000, color: colors.violetBright, className: "border-violet-bright/50 text-violet-bright", label: "Diamond" },
+  ELITE: { minScore: 10000, color: colors.violetBright, className: "border-violet-bright/50 text-violet-bright", label: "Elite" },
+  LEGENDARY: { minScore: 50000, color: colors.warning, className: "border-warning/50 text-warning", label: "Legendary" },
 };
 
 export function scoreToRankTier(score: number): CreatorRankTier {
