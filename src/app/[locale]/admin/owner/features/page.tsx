@@ -14,10 +14,10 @@ export default async function OwnerFeaturesPage(props: { params: Promise<{ local
 
   setRequestLocale(locale);
   await requireOwner();
-  const result = await getOwnerFeatureFlags();
+  const [t, result] = await Promise.all([getTranslations("admin.ownerFeatures"), getOwnerFeatureFlags()]);
   return (
     <div>
-      <AdminPageHeader title="Feature-Flags" />
+      <AdminPageHeader title={t("title")} description={t("subtitle")} />
       {result.success ? <FeatureFlagsPanel initial={result.data} /> : <AdminLoadError message={result.error} />}
     </div>
   );

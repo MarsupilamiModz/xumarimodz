@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import {
   Globe,
   Instagram,
@@ -8,14 +9,17 @@ import {
   MessageCircle,
   Twitch,
   Twitter,
+  Users,
   Youtube,
 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { EmptyState } from "@/components/ui/empty-state";
+import { PageHeader } from "@/components/ui/page-header";
 import { SafeImage } from "@/components/ui/safe-image";
-import { cn } from "@/lib/utils";
 import type { PublicTeamMember } from "@/lib/team-profiles";
-import { TEAM_ROLE_GROUPS, teamRoleColor, teamRoleTitle } from "@/lib/team-page";
+import { TEAM_ROLE_GROUPS, teamRoleColor } from "@/lib/team-page";
 
 type Dept = { id: string; name: string; slug: string; description: string | null };
 
@@ -25,7 +29,25 @@ type Props = {
   contactTicketHref?: string;
 };
 
+/** Profilbild mit Rahmen in der Rollenfarbe (aus den Teameinstellungen). */
+function MemberAvatar({ member, size }: { member: PublicTeamMember; size: "sm" | "lg" }) {
+  const color = teamRoleColor(member.roleGroup, member.roleColor);
+  const box = size === "sm" ? "h-16 w-16 border-2" : "h-24 w-24 border-4";
+  return (
+    <div className={`relative overflow-hidden rounded-full bg-raised ${box}`} style={{ borderColor: color }}>
+      {member.avatarUrl ? (
+        <SafeImage src={member.avatarUrl} alt="" fill className="object-cover" sizes={size === "sm" ? "64px" : "96px"} />
+      ) : (
+        <div className={`flex h-full items-center justify-center font-bold text-ink ${size === "sm" ? "text-xl" : "text-3xl"}`} aria-hidden>
+          {member.name.charAt(0)}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function TeamPageClient({ members, contactTicketHref }: Props) {
+  const t = useTranslations("publicPages.team");
   const [selected, setSelected] = useState<PublicTeamMember | null>(null);
 
   const grouped = useMemo(
@@ -37,111 +59,85 @@ export function TeamPageClient({ members, contactTicketHref }: Props) {
     [members]
   );
 
+  const roleBadge = (member: PublicTeamMember) => member.roleBadge || t(`role.${member.roleGroup}`);
+
   return (
-    <div className="relative min-h-screen">
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 left-1/4 h-96 w-96 rounded-full bg-violet-soft blur-[120px]" />
-        <div className="absolute top-1/3 right-0 h-80 w-80 rounded-full bg-elevated blur-[100px]" />
-      </div>
+    <div className="page-section">
+      <PageHeader title={t("title")} description={t("subtitle")} />
 
-      <div className="page-container relative py-16">
-        <header className="mb-16 space-y-4 text-center">
-          <p className="text-sm uppercase tracking-[0.3em] text-violet-bright">Xumari Modz</p>
-          <h1 className="h1-display">
-            Our Team
-          </h1>
-          <p className="mx-auto max-w-3xl text-muted-foreground">
-            Meet the people leading the platform, supporting the community, building the product, and creating the content behind Xumari Modz.
-          </p>
-        </header>
+      {grouped.length === 0 ? (
+        <EmptyState icon={Users} title={t("emptyTitle")} description={t("emptyText")} />
+      ) : (
+        <div className="space-y-12">
+          {grouped.map((group) => (
+            <section key={group.key} aria-labelledby={`team-${group.key}`} className="space-y-4">
+              <h2 id={`team-${group.key}`} className="text-lg font-semibold text-ink">
+                {t(`group.${group.key}`)}
+              </h2>
 
-        {grouped.length === 0 ? (
-          <p className="py-20 text-center text-muted-foreground">Team profiles coming soon.</p>
-        ) : (
-          <div className="space-y-14">
-            {grouped.map((group) => (
-              <section key={group.key} className="space-y-6">
-                <div className="space-y-3">
-                  <div className="h-px w-full" />
-                  <div className="flex items-center justify-center gap-4">
-                    <span className="h-px flex-1 bg-line" />
-                    <h2 className="text-center text-xl font-bold tracking-[0.28em] text-ink sm:text-2xl">
-                      {teamRoleTitle(group.key)}
-                    </h2>
-                    <span className="h-px flex-1 bg-line" />
-                  </div>
-                  <div className="h-px w-full" />
-                </div>
-
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                  {group.members.map((member) => (
-                    <button
-                      key={member.id}
-                      type="button"
-                      onClick={() => setSelected(member)}
-                      className="group overflow-hidden rounded-lg border border-line bg-background/40 text-left transition-all duration-base hover:border-line-control"
+              <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {group.members.map((member) => (
+                  <li
+                    key={member.id}
+                    className="relative overflow-hidden rounded-lg border border-line bg-raised transition-colors duration-fast hover:border-line-control focus-within:border-line-control"
+                  >
+                    <div
+                      className="relative h-24"
+                      style={{ backgroundColor: `${teamRoleColor(member.roleGroup, member.roleColor)}33` }}
                     >
-                      <div
-                        className="relative h-24"
-                        style={{ backgroundColor: `${teamRoleColor(member.roleGroup, member.roleColor)}33` }}
-                      >
-                        {member.bannerUrl && (
-                          <SafeImage src={member.bannerUrl} alt="" fill className="object-cover opacity-60" sizes="400px" />
-                        )}
-                        <div className="absolute -bottom-8 left-4 h-16 w-16 overflow-hidden rounded-full border-2 bg-background" style={{ borderColor: teamRoleColor(member.roleGroup, member.roleColor) }}>
-                          {member.avatarUrl ? (
-                            <SafeImage src={member.avatarUrl} alt={member.name} fill className="object-cover" sizes="64px" />
-                          ) : (
-                            <div className="flex h-full items-center justify-center text-xl font-bold" style={{ color: teamRoleColor(member.roleGroup, member.roleColor) }}>
-                              {member.name.charAt(0)}
-                            </div>
-                          )}
-                        </div>
+                      {member.bannerUrl && (
+                        <SafeImage src={member.bannerUrl} alt="" fill className="object-cover opacity-60" sizes="400px" />
+                      )}
+                      <div className="absolute -bottom-8 left-4">
+                        <MemberAvatar member={member} size="sm" />
                       </div>
-                      <div className="space-y-2 p-4 pt-10">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <p className="font-semibold transition-colors group-hover:text-ink">{member.name}</p>
-                          <span
-                            className="rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-ink"
-                            style={{ backgroundColor: teamRoleColor(member.roleGroup, member.roleColor) }}
+                    </div>
+                    <div className="space-y-2 p-4 pt-10">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h3 className="font-semibold text-ink">
+                          {/* Ganze Karte öffnet das Profil; Kontakt-Links liegen darüber. */}
+                          <button
+                            type="button"
+                            onClick={() => setSelected(member)}
+                            aria-label={t("openProfile", { name: member.name })}
+                            className="text-left outline-none after:absolute after:inset-0 after:content-[''] focus-visible:after:rounded-lg focus-visible:after:outline focus-visible:after:outline-2 focus-visible:after:outline-offset-2 focus-visible:after:outline-violet-bright"
                           >
-                            {member.roleBadge || teamRoleTitle(member.roleGroup).replace(/S$/, "")}
-                          </span>
-                        </div>
-                        <p className="text-sm" style={{ color: teamRoleColor(member.roleGroup, member.roleColor) }}>
-                          {member.position}
-                        </p>
-                        {member.description && (
-                          <p className="line-clamp-3 text-sm text-muted-foreground">{member.description}</p>
-                        )}
-                        <div className="flex flex-wrap gap-2 pt-2">
+                            {member.name}
+                          </button>
+                        </h3>
+                        <Badge variant="secondary">{roleBadge(member)}</Badge>
+                      </div>
+                      {member.position && <p className="text-sm text-ink-muted">{member.position}</p>}
+                      {member.description && <p className="line-clamp-3 text-sm text-ink-muted">{member.description}</p>}
+                      {(member.discordUrl || member.email) && (
+                        <div className="relative z-10 flex flex-wrap gap-2 pt-2">
                           {member.discordUrl && (
                             <Button variant="outline" size="sm" asChild>
                               <a href={member.discordUrl} target="_blank" rel="noopener noreferrer">
-                                <MessageCircle className="mr-1 h-4 w-4" /> Discord
+                                <MessageCircle className="h-4 w-4" aria-hidden /> {t("discord")}
                               </a>
                             </Button>
                           )}
                           {member.email && (
                             <Button variant="outline" size="sm" asChild>
                               <a href={`mailto:${member.email}`}>
-                                <Mail className="mr-1 h-4 w-4" /> Email
+                                <Mail className="h-4 w-4" aria-hidden /> {t("email")}
                               </a>
                             </Button>
                           )}
                         </div>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </section>
-            ))}
-          </div>
-        )}
-      </div>
+                      )}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))}
+        </div>
+      )}
 
       <Dialog open={!!selected} onOpenChange={(open) => !open && setSelected(null)}>
-        <DialogContent className="max-w-2xl border-violet-bright/30 overflow-hidden p-0">
+        <DialogContent className="max-w-2xl overflow-hidden p-0">
           {selected && (
             <>
               <div
@@ -154,59 +150,44 @@ export function TeamPageClient({ members, contactTicketHref }: Props) {
               </div>
               <div className="relative p-6">
                 <div className="-mt-20 mb-4 flex items-end gap-4">
-                  <div className="relative h-24 w-24 overflow-hidden rounded-full border-4 bg-background" style={{ borderColor: teamRoleColor(selected.roleGroup, selected.roleColor) }}>
-                    {selected.avatarUrl ? (
-                      <SafeImage src={selected.avatarUrl} alt={selected.name} fill className="object-cover" sizes="96px" />
-                    ) : (
-                      <div className="flex h-full items-center justify-center text-3xl font-bold" style={{ color: teamRoleColor(selected.roleGroup, selected.roleColor) }}>
-                        {selected.name.charAt(0)}
-                      </div>
-                    )}
-                  </div>
+                  <MemberAvatar member={selected} size="lg" />
                   <div className="pb-2">
                     <DialogHeader className="space-y-2 text-left">
-                      <DialogTitle className="text-2xl">{selected.name}</DialogTitle>
+                      <DialogTitle className="text-xl font-semibold text-ink">{selected.name}</DialogTitle>
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className="text-sm" style={{ color: teamRoleColor(selected.roleGroup, selected.roleColor) }}>
-                          {selected.position}
-                        </span>
-                        <span
-                          className="rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-ink"
-                          style={{ backgroundColor: teamRoleColor(selected.roleGroup, selected.roleColor) }}
-                        >
-                          {selected.roleBadge || teamRoleTitle(selected.roleGroup).replace(/S$/, "")}
-                        </span>
+                        {selected.position && <span className="text-sm text-ink-muted">{selected.position}</span>}
+                        <Badge variant="secondary">{roleBadge(selected)}</Badge>
                       </div>
                     </DialogHeader>
                   </div>
                 </div>
 
                 {selected.description && (
-                  <p className="mb-5 whitespace-pre-wrap text-sm text-muted-foreground">{selected.description}</p>
+                  <p className="mb-5 whitespace-pre-wrap text-sm text-ink-muted">{selected.description}</p>
                 )}
 
                 <div className="mb-5 flex flex-wrap gap-2">
-                  <SocialLinks member={selected} />
+                  <SocialLinks member={selected} websiteLabel={t("website")} />
                 </div>
 
-                <div className="flex flex-wrap gap-2 border-t border-border/30 pt-4">
+                <div className="flex flex-wrap gap-2 border-t border-line pt-4">
                   {selected.email && (
                     <Button variant="outline" size="sm" asChild>
                       <a href={`mailto:${selected.email}`}>
-                        <Mail className="mr-1 h-4 w-4" /> Email
+                        <Mail className="h-4 w-4" aria-hidden /> {t("email")}
                       </a>
                     </Button>
                   )}
                   {selected.discordUrl && (
                     <Button variant="outline" size="sm" asChild>
                       <a href={selected.discordUrl} target="_blank" rel="noopener noreferrer">
-                        <MessageCircle className="mr-1 h-4 w-4" /> Discord
+                        <MessageCircle className="h-4 w-4" aria-hidden /> {t("discord")}
                       </a>
                     </Button>
                   )}
                   {contactTicketHref && (
                     <Button size="sm" asChild>
-                      <a href={contactTicketHref}>Open support ticket</a>
+                      <a href={contactTicketHref}>{t("openTicket")}</a>
                     </Button>
                   )}
                 </div>
@@ -219,9 +200,9 @@ export function TeamPageClient({ members, contactTicketHref }: Props) {
   );
 }
 
-function SocialLinks({ member }: { member: PublicTeamMember }) {
+function SocialLinks({ member, websiteLabel }: { member: PublicTeamMember; websiteLabel: string }) {
   const links = [
-    { url: member.websiteUrl, icon: Globe, label: "Website" },
+    { url: member.websiteUrl, icon: Globe, label: websiteLabel },
     { url: member.youtubeUrl, icon: Youtube, label: "YouTube" },
     { url: member.twitchUrl, icon: Twitch, label: "Twitch" },
     { url: member.instagramUrl, icon: Instagram, label: "Instagram" },
@@ -236,12 +217,10 @@ function SocialLinks({ member }: { member: PublicTeamMember }) {
           href={url!}
           target="_blank"
           rel="noopener noreferrer"
-          className={cn(
-            "flex h-9 w-9 items-center justify-center rounded-lg border border-border/40 transition-colors hover:border-line-control hover:text-violet-bright"
-          )}
+          className="flex h-9 w-9 items-center justify-center rounded-md border border-line text-ink-muted transition-colors duration-fast hover:border-line-control hover:text-ink"
           aria-label={label}
         >
-          <Icon className="h-4 w-4" />
+          <Icon className="h-4 w-4" aria-hidden />
         </a>
       ))}
       {member.customLinks?.map((link) => (
@@ -250,7 +229,7 @@ function SocialLinks({ member }: { member: PublicTeamMember }) {
           href={link.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="rounded-lg border border-border/40 px-3 py-1.5 text-xs hover:border-line-control"
+          className="inline-flex h-9 items-center rounded-md border border-line px-3 text-xs text-ink-muted transition-colors duration-fast hover:border-line-control hover:text-ink"
         >
           {link.label}
         </a>

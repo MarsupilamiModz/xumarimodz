@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { CreatorSettingsForm } from "@/components/creator/creator-settings-form";
 import { CreatorProfileUpload } from "@/components/creator/creator-profile-upload";
+import { PageHeader } from "@/components/ui/page-header";
 import { requireAuth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import type { Locale } from "@/i18n/config";
@@ -15,6 +16,7 @@ export default async function CreatorSettingsPage(props: { params: Promise<{ loc
 
   setRequestLocale(locale);
   const t = await getTranslations("ecosystem");
+  const tp = await getTranslations("creatorPages.settings");
   const user = await requireAuth(`/${locale}/login`);
 
   const profile = await prisma.creatorProfile.findUnique({
@@ -24,10 +26,12 @@ export default async function CreatorSettingsPage(props: { params: Promise<{ loc
   if (!profile) notFound();
 
   return (
-    <div className="space-y-8">
-      <h2 className="text-lg font-semibold">{t("profileSettings")}</h2>
-      <CreatorProfileUpload avatarUrl={profile.user.avatarUrl} bannerUrl={profile.bannerUrl} />
-      <CreatorSettingsForm locale={locale} />
+    <div>
+      <PageHeader level="h2" title={t("profileSettings")} description={tp("description")} />
+      <div className="space-y-6">
+        <CreatorProfileUpload avatarUrl={profile.user.avatarUrl} bannerUrl={profile.bannerUrl} />
+        <CreatorSettingsForm locale={locale} />
+      </div>
     </div>
   );
 }

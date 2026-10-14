@@ -1,3 +1,87 @@
 {
-  "partnerPages": {}
+  "partnerPages": {
+    "partnerOverview": {
+      "description": "Klicks, Abschlüsse und Provisionen deines Partnercodes auf einen Blick.",
+      "affiliateCodeHint": "Teile diesen Code – Käufe damit werden dir als Provision gutgeschrieben."
+    },
+    "partnerAnalytics": {
+      "description": "Entwicklung deiner Klicks, Abschlüsse und Code-Nutzungen der letzten 14 Tage."
+    },
+    "partnerCodes": {
+      "description": "Deine Partnercodes mit Klicks, Abschlüssen und Umsatz.",
+      "colStatus": "Status",
+      "emptyTitle": "Keine Partnercodes",
+      "emptyText": "Sobald dir das Team einen Code zuweist, erscheint er hier."
+    },
+    "partnerPayouts": {
+      "description": "Offene Provisionen und bisherige Auszahlungen.",
+      "colAmount": "Betrag",
+      "colStatus": "Status",
+      "colMethod": "Methode",
+      "colDate": "Datum",
+      "emptyText": "Auszahlungen erscheinen hier, sobald Provisionen ausgezahlt werden.",
+      "status": {
+        "PENDING": "Ausstehend",
+        "PROCESSING": "In Bearbeitung",
+        "PAID": "Ausgezahlt",
+        "FAILED": "Fehlgeschlagen",
+        "CANCELLED": "Storniert"
+      }
+    },
+    "partnerSettings": {
+      "description": "Avatar, Banner und Logo deines Partnerprofils.",
+      "noProfileTitle": "Kein Partnerprofil",
+      "noProfileText": "Für dein Konto gibt es noch kein Partnerprofil. Wende dich an das Team."
+    },
+    "designerOverview": {
+      "viewAll": "Alle anzeigen",
+      "emptyUploadsTitle": "Noch keine Assets",
+      "emptyOrdersTitle": "Keine Aufträge"
+    },
+    "designerUploads": {
+      "description": "Deine Design-Assets mit Status, Downloads und Versionen.",
+      "colAsset": "Asset",
+      "colGame": "Spiel",
+      "colDownloads": "Downloads",
+      "colVersions": "Versionen",
+      "colStatus": "Status",
+      "colUpdated": "Aktualisiert"
+    },
+    "designerOrders": {
+      "description": "Aufträge, die dir zugewiesen sind.",
+      "colOrder": "Auftrag",
+      "colClient": "Kunde",
+      "colStatus": "Status",
+      "colUpdated": "Aktualisiert",
+      "messages": "{count, plural, one {# Nachricht} other {# Nachrichten}}"
+    },
+    "designerNew": {
+      "description": "Lade ein neues Design-Asset hoch – das Team prüft es vor der Veröffentlichung."
+    },
+    "designerAsset": {
+      "description": "Details, Medien und Versionen deines Assets bearbeiten."
+    },
+    "designerSettings": {
+      "description": "Avatar und Banner deines Studioprofils."
+    },
+    "orderStatus": {
+      "PENDING": "Neu",
+      "PAID": "Bezahlt",
+      "QUOTED": "Angebot",
+      "IN_REVIEW": "In Prüfung",
+      "ACCEPTED": "Angenommen",
+      "ASSIGNED": "Zugewiesen",
+      "IN_PROGRESS": "In Arbeit",
+      "WAITING_FOR_CUSTOMER": "Wartet auf Kunde",
+      "REVISION_REQUESTED": "Änderung gewünscht",
+      "REVIEW": "Abnahme",
+      "COMPLETED": "Abgeschlossen",
+      "DELIVERED": "Geliefert",
+      "CANCELED": "Storniert",
+      "REFUNDED": "Erstattet"
+    },
+    "teamChat": {
+      "title": "Team-Chat"
+    }
+  }
 }

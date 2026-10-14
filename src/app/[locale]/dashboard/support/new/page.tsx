@@ -1,7 +1,9 @@
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { requireAuth } from "@/lib/auth";
 import { CreateTicketForm } from "@/components/tickets/create-ticket-form";
+import { PageHeader } from "@/components/ui/page-header";
 import type { Locale } from "@/i18n/config";
 
 export default async function NewTicketPage(props: { params: Promise<{ locale: Locale }> }) {
@@ -11,20 +13,23 @@ export default async function NewTicketPage(props: { params: Promise<{ locale: L
     locale
   } = params;
 
+  setRequestLocale(locale);
   await requireAuth(`/${locale}/login`);
+  const [t, ta, tn] = await Promise.all([
+    getTranslations("support"),
+    getTranslations("accountPages.support"),
+    getTranslations("accountPages.supportNew"),
+  ]);
 
   return (
     <div className="max-w-xl">
       <Link
         href={`/${locale}/dashboard/support`}
-        className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6"
+        className="mb-4 inline-flex items-center gap-1 text-sm text-ink-muted hover:text-ink"
       >
-        <ArrowLeft className="h-4 w-4" /> Back
+        <ChevronLeft className="h-4 w-4" aria-hidden /> {ta("back")}
       </Link>
-      <h1 className="h1-acp">New Support Ticket</h1>
-      <p className="mt-1 text-sm text-muted-foreground mb-6">
-        We typically respond within 24–48 hours.
-      </p>
+      <PageHeader title={t("newTicket")} description={tn("description")} />
       <CreateTicketForm locale={locale} />
     </div>
   );

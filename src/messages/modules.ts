@@ -29,4 +29,7 @@ export const MESSAGE_MODULES = [
   "partner-pages",
   "acp-a",
   "acp-b",
+  "shared-ui",
+  "shared-tools",
+  "acp-c",
 ] as const;

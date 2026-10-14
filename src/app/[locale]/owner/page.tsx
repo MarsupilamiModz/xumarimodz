@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-/** Kurzlink: /owner führt ins Owner-Center im ACP. */
+/** Kurzlink: /owner führt ins ACP (eine eigene Seite /admin/owner gibt es nicht – vorher 404). */
 export default async function OwnerRedirectPage(props: { params: Promise<{ locale: string }> }) {
   const params = await props.params;
 
@@ -8,5 +8,5 @@ export default async function OwnerRedirectPage(props: { params: Promise<{ local
     locale
   } = params;
 
-  redirect(`/${locale}/admin/owner`);
+  redirect(`/${locale}/admin`);
 }

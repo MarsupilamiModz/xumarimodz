@@ -2,7 +2,10 @@ import { requireAuth } from "@/lib/auth";
 import { getFollowedCreators } from "@/lib/follows";
 import { getInlineBadgesForUsers } from "@/lib/user-badges";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { Card } from "@/components/ui/card";
+import { Users } from "lucide-react";
+import { PageHeader } from "@/components/ui/page-header";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Button } from "@/components/ui/button";
 import { SafeImage } from "@/components/ui/safe-image";
 import { AchievementBadge } from "@/components/achievements/achievement-badge";
 import { formatDisplayName } from "@/lib/display-name";
@@ -18,7 +21,7 @@ export default async function FollowingPage(props: { params: Promise<{ locale: L
   } = params;
 
   setRequestLocale(locale);
-  const t = await getTranslations("dashboard");
+  const [t, ta] = await Promise.all([getTranslations("dashboard"), getTranslations("accountPages.following")]);
   const user = await requireAuth(`/${locale}/login`);
   const followed = await getFollowedCreators(user.id);
   const badgeMap = await getInlineBadgesForUsers(
@@ -27,57 +30,60 @@ export default async function FollowingPage(props: { params: Promise<{ locale: L
   );
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="h1-acp">{t("following")}</h1>
-        <p className="text-muted-foreground">{t("following")}</p>
-      </div>
+    <div>
+      <PageHeader title={t("following")} description={ta("description")} />
       {followed.length === 0 ? (
-        <Card className="p-8 text-center text-muted-foreground">
-          {t("emptyFollowing")}{" "}
-          <Link href={`/${locale}/creators`} className="text-violet-bright hover:underline">
-            {t("discoverCreators")}
-          </Link>
-        </Card>
+        <EmptyState
+          icon={Users}
+          title={t("emptyFollowing")}
+          description={ta("emptyText")}
+          action={
+            <Button variant="outline" size="sm" asChild>
+              <Link href={`/${locale}/creators`}>{t("discoverCreators")}</Link>
+            </Button>
+          }
+        />
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {followed.map((c) => {
             const badges = badgeMap.get(c.id) ?? [];
             return (
-              <Link key={c.id} href={`/${locale}/creators/${c.creatorProfile!.slug}`}>
-                <Card className="p-4 flex items-center gap-3 hover:border-line-control transition-colors">
-                  <div className="relative h-12 w-12 rounded-xl overflow-hidden shrink-0">
-                    <SafeImage
-                      src={resolveAssetUrl(c.avatarUrl)}
-                      alt=""
-                      fill
-                      className="object-cover"
-                      sizes="48px"
-                    />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="font-medium truncate">{formatDisplayName(c)}</p>
-                    <p className="text-xs text-muted-foreground truncate">{c.creatorProfile?.tagline}</p>
-                    {badges.length > 0 && (
-                      <div className="flex gap-1 mt-1">
-                        {badges.map((b) => (
-                          <AchievementBadge
-                            key={b.id}
-                            name={b.name}
-                            description={b.description}
-                            icon={b.icon}
-                            rarity={b.rarity}
-                            animated={b.animated}
-                            glowEffect={b.glowEffect}
-                            unlockedAt={b.unlockedAt}
-                            size="sm"
-                            className="scale-75 origin-left"
-                          />
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </Card>
+              <Link
+                key={c.id}
+                href={`/${locale}/creators/${c.creatorProfile!.slug}`}
+                className="flex items-center gap-3 rounded-lg border border-line bg-raised p-4 transition-colors duration-fast hover:border-line-control"
+              >
+                <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg">
+                  <SafeImage
+                    src={resolveAssetUrl(c.avatarUrl)}
+                    alt=""
+                    fill
+                    className="object-cover"
+                    sizes="48px"
+                  />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate font-medium text-ink">{formatDisplayName(c)}</p>
+                  {c.creatorProfile?.tagline && <p className="truncate text-xs text-ink-muted">{c.creatorProfile.tagline}</p>}
+                  {badges.length > 0 && (
+                    <div className="mt-1 flex gap-1">
+                      {badges.map((b) => (
+                        <AchievementBadge
+                          key={b.id}
+                          name={b.name}
+                          description={b.description}
+                          icon={b.icon}
+                          rarity={b.rarity}
+                          animated={b.animated}
+                          glowEffect={b.glowEffect}
+                          unlockedAt={b.unlockedAt}
+                          size="sm"
+                          className="origin-left scale-75"
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
               </Link>
             );
           })}

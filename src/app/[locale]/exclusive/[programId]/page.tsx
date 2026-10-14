@@ -1,9 +1,13 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import { LogIn } from "lucide-react";
 import { getPublicExclusiveProgram, getUserExclusiveApplication } from "@/actions/exclusive";
 import { getCurrentUser } from "@/lib/auth";
 import { ExclusiveApplyForm } from "@/components/exclusive/exclusive-apply-form";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { PageHeader } from "@/components/ui/page-header";
+import { EmptyState } from "@/components/ui/empty-state";
 import type { Locale } from "@/i18n/config";
 
 export default async function PublicExclusivePage(
@@ -18,25 +22,42 @@ export default async function PublicExclusivePage(
     programId
   } = params;
 
+  setRequestLocale(locale);
   const result = await getPublicExclusiveProgram(programId);
   if (!result.success) notFound();
 
   const user = await getCurrentUser();
   const appResult = user ? await getUserExclusiveApplication(programId) : null;
   const existingApplication = appResult?.success ? appResult.data : null;
+  const t = await getTranslations("publicPages.exclusive");
+  const program = result.data;
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 space-y-6">
-      {!user ? (
-        <div className="rounded-xl p-8 text-center space-y-4">
-          <p className="text-muted-foreground">Sign in to apply for exclusive access.</p>
-          <Button asChild>
-            <Link href={`/${locale}/login?next=/${locale}/exclusive/${programId}`}>Sign in</Link>
-          </Button>
-        </div>
-      ) : (
-        <ExclusiveApplyForm program={result.data} existingApplication={existingApplication} />
-      )}
+    <div className="page-section">
+      <div className="max-w-2xl">
+        <PageHeader
+          title={program.title}
+          description={t("byline", {
+            mod: program.mod.title,
+            game: program.mod.game.name,
+            author: program.author.displayName ?? program.author.username,
+          })}
+        />
+        {!user ? (
+          <EmptyState
+            icon={LogIn}
+            title={t("signInTitle")}
+            description={t("signInText")}
+            action={
+              <Button asChild>
+                <Link href={`/${locale}/login?next=/${locale}/exclusive/${programId}`}>{t("signIn")}</Link>
+              </Button>
+            }
+          />
+        ) : (
+          <ExclusiveApplyForm program={program} existingApplication={existingApplication} />
+        )}
+      </div>
     </div>
   );
 }

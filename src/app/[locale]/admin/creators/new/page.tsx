@@ -1,5 +1,6 @@
 import { requirePagePermission } from "@/lib/auth";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import NewCreatorForm from "./new-creator-form";
 import type { Locale } from "@/i18n/config";
 
@@ -12,10 +13,14 @@ export default async function NewCreatorPage(props: { params: Promise<{ locale: 
 
   await requirePagePermission("users.write");
   setRequestLocale(locale);
-  const t = await getTranslations("ecosystem");
+  const [t, tn] = await Promise.all([getTranslations("ecosystem"), getTranslations("admin.creatorNew")]);
   return (
-    <div className="space-y-4">
-      <h1 className="h1-acp">{t("createCreator")}</h1>
+    <div>
+      <AdminPageHeader
+        title={t("createCreator")}
+        description={tn("subtitle")}
+        parent={{ label: t("creatorManagement"), href: `/${locale}/admin/creators` }}
+      />
       <NewCreatorForm locale={locale} />
     </div>
   );

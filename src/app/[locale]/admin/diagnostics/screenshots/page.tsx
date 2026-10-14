@@ -14,11 +14,18 @@ export default async function AdminScreenshotDiagnosticsPage(props: { params: Pr
 
   setRequestLocale(locale);
   await requirePagePermission("settings.write");
-  const t = await getTranslations("admin");
-  const result = await getScreenshotDiagnostics();
+  const [t, ts, result] = await Promise.all([
+    getTranslations("admin"),
+    getTranslations("admin.screenshotDiag"),
+    getScreenshotDiagnostics(),
+  ]);
   return (
     <div>
-      <AdminPageHeader title={t("nav.media")} />
+      <AdminPageHeader
+        title={ts("title")}
+        description={ts("subtitle")}
+        parent={{ label: t("nav.media"), href: `/${locale}/admin/media` }}
+      />
       {result.success ? <ScreenshotDiagnosticsPanel locale={locale} initial={result.data} /> : <AdminLoadError message={result.error} />}
     </div>
   );

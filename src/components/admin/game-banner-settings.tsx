@@ -1,15 +1,17 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useId, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import type { BannerAlign, BannerDisplayType } from "@prisma/client";
 import { updateGameBannerSettings } from "@/actions/admin/games";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
+import { ChipTabs } from "@/components/ui/chip-tabs";
+import { Input, controlClassName } from "@/components/ui/input";
+import { SectionCard } from "@/components/ui/page-header";
 import { useAppToast } from "@/hooks/use-app-toast";
 import { SafeImage } from "@/components/ui/safe-image";
+import { cn } from "@/lib/utils";
 import {
   BANNER_HEIGHT_PRESETS,
   bannerImageStyle,
@@ -32,6 +34,7 @@ type Props = {
 
 export function GameBannerSettings({ gameId, bannerUrl, coverUrl, settings }: Props) {
   const t = useTranslations("admin.ui.gameBanner");
+  const uid = useId();
   const appToast = useAppToast();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -76,22 +79,16 @@ export function GameBannerSettings({ gameId, bannerUrl, coverUrl, settings }: Pr
   }
 
   return (
-    <Card className="p-6 space-y-6">
-      <div>
-        <h3 className="font-semibold">{t("heading")}</h3>
-        <p className="text-xs text-muted-foreground mt-1">
-          {t("hint")}
-        </p>
-      </div>
-
+    <SectionCard title={t("heading")} description={t("hint")}>
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="space-y-4">
           <div>
-            <label className="text-sm font-medium">{t("displayType")}</label>
+            <label htmlFor={`${uid}-type`} className="label-text mb-1.5 block">{t("displayType")}</label>
             <select
+              id={`${uid}-type`}
               value={displayType}
               onChange={(e) => setDisplayType(e.target.value as BannerDisplayType)}
-              className="mt-1 h-10 w-full rounded-md border border-input bg-background/50 px-3 text-sm"
+              className={cn(controlClassName, "h-9")}
             >
               <option value="SMALL">{t("displayTypeSmall")}</option>
               <option value="FEATURED">{t("displayTypeFeatured")}</option>
@@ -101,21 +98,17 @@ export function GameBannerSettings({ gameId, bannerUrl, coverUrl, settings }: Pr
 
           {displayType === "CUSTOM" && (
             <div>
-              <label className="text-sm font-medium">{t("heightPx")}</label>
-              <div className="flex flex-wrap gap-2 mt-2 mb-2">
-                {BANNER_HEIGHT_PRESETS.map((h) => (
-                  <Button
-                    key={h}
-                    type="button"
-                    size="sm"
-                    variant={heightPx === h ? "default" : "outline"}
-                    onClick={() => setHeightPx(h)}
-                  >
-                    {h}px
-                  </Button>
-                ))}
-              </div>
+              <label htmlFor={`${uid}-height`} className="label-text mb-1.5 block">{t("heightPx")}</label>
+              <ChipTabs
+                className="mb-2"
+                label={t("heightPx")}
+                value={String(heightPx)}
+                options={BANNER_HEIGHT_PRESETS.map((h) => ({ value: String(h), label: `${h}px` }))}
+                onChange={(v) => setHeightPx(Number(v))}
+              />
               <Input
+                id={`${uid}-height`}
+                className="tabular-nums"
                 type="number"
                 min={120}
                 max={800}
@@ -126,11 +119,12 @@ export function GameBannerSettings({ gameId, bannerUrl, coverUrl, settings }: Pr
           )}
 
           <div>
-            <label className="text-sm font-medium">{t("alignment")}</label>
+            <label htmlFor={`${uid}-align`} className="label-text mb-1.5 block">{t("alignment")}</label>
             <select
+              id={`${uid}-align`}
               value={align}
               onChange={(e) => setAlign(e.target.value as BannerAlign)}
-              className="mt-1 h-10 w-full rounded-md border border-input bg-background/50 px-3 text-sm"
+              className={cn(controlClassName, "h-9")}
             >
               <option value="CENTER">{t("alignCenter")}</option>
               <option value="TOP">{t("alignTop")}</option>
@@ -142,39 +136,39 @@ export function GameBannerSettings({ gameId, bannerUrl, coverUrl, settings }: Pr
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs text-muted-foreground">{t("focusX", { value: focusX })}</label>
+              <label htmlFor={`${uid}-fx`} className="label-text mb-1.5 block tabular-nums">{t("focusX", { value: focusX })}</label>
               <Input
+                id={`${uid}-fx`}
                 type="range"
                 min={0}
                 max={100}
                 value={focusX}
                 onChange={(e) => setFocusX(Number(e.target.value))}
-                className="mt-1"
               />
             </div>
             <div>
-              <label className="text-xs text-muted-foreground">{t("focusY", { value: focusY })}</label>
+              <label htmlFor={`${uid}-fy`} className="label-text mb-1.5 block tabular-nums">{t("focusY", { value: focusY })}</label>
               <Input
+                id={`${uid}-fy`}
                 type="range"
                 min={0}
                 max={100}
                 value={focusY}
                 onChange={(e) => setFocusY(Number(e.target.value))}
-                className="mt-1"
               />
             </div>
           </div>
 
           <div>
-            <label className="text-xs text-muted-foreground">{t("zoom", { value: zoom.toFixed(2) })}</label>
+            <label htmlFor={`${uid}-zoom`} className="label-text mb-1.5 block tabular-nums">{t("zoom", { value: zoom.toFixed(2) })}</label>
             <Input
+              id={`${uid}-zoom`}
               type="range"
               min={1}
               max={2}
               step={0.05}
               value={zoom}
               onChange={(e) => setZoom(Number(e.target.value))}
-              className="mt-1"
             />
           </div>
 
@@ -184,9 +178,9 @@ export function GameBannerSettings({ gameId, bannerUrl, coverUrl, settings }: Pr
         </div>
 
         <div>
-          <p className="text-xs text-muted-foreground mb-2">{t("livePreview")}</p>
+          <p className="label-text mb-2">{t("livePreview")}</p>
           <div
-            className="relative rounded-xl overflow-hidden border border-border/50 bg-muted/20"
+            className="relative overflow-hidden rounded-lg border border-line bg-elevated"
             style={{ height: Math.min(previewHeight, 320) }}
           >
             {imageSrc ? (
@@ -199,17 +193,17 @@ export function GameBannerSettings({ gameId, bannerUrl, coverUrl, settings }: Pr
                 sizes="400px"
               />
             ) : (
-              <div className="absolute inset-0 flex items-center justify-center text-xs text-muted-foreground">
+              <div className="absolute inset-0 flex items-center justify-center text-xs text-ink-faint">
                 {t("uploadToPreview")}
               </div>
             )}
             <div className="absolute inset-0" />
-            <div className="absolute bottom-3 left-3 text-xs font-medium">
+            <div className="absolute bottom-3 left-3 rounded-sm bg-canvas/80 px-2 py-0.5 text-xs font-medium tabular-nums text-ink">
               {t("previewDimensions", { height: previewHeight, displayType })}
             </div>
           </div>
         </div>
       </div>
-    </Card>
+    </SectionCard>
   );
 }

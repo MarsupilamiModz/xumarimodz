@@ -1,9 +1,13 @@
+import { Ticket } from "lucide-react";
 import { requireAuth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { formatCents } from "@/lib/affiliate";
+import { DataTable } from "@/components/ui/data-table";
+import { EmptyState } from "@/components/ui/empty-state";
+import { PageHeader } from "@/components/ui/page-header";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { formatMoneyFromCents } from "@/lib/currency";
+import { formatNumber } from "@/lib/format-locale";
 import type { Locale } from "@/i18n/config";
 
 export default async function CreatorCodesPage(props: { params: Promise<{ locale: Locale }> }) {
@@ -15,6 +19,7 @@ export default async function CreatorCodesPage(props: { params: Promise<{ locale
 
   setRequestLocale(locale);
   const t = await getTranslations("ecosystem");
+  const tp = await getTranslations("creatorPages.codes");
   const user = await requireAuth();
 
   const coupons = await prisma.coupon.findMany({
@@ -23,28 +28,71 @@ export default async function CreatorCodesPage(props: { params: Promise<{ locale
   });
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-lg font-semibold">{t("codes")}</h2>
-      {coupons.length === 0 ? (
-        <Card className="p-8 text-center text-muted-foreground">{t("noCodes")}</Card>
-      ) : (
-        coupons.map((c) => (
-          <Card key={c.id} className="p-4 flex flex-wrap justify-between gap-3">
-            <div>
-              <p className="font-mono text-violet-bright">{c.code}</p>
-              <p className="text-xs text-muted-foreground mt-1">
-                {c.type === "PERCENT" ? `${c.value / 100}%` : formatCents(c.value, locale)} · {c.affiliateType}
-              </p>
-            </div>
-            <div className="flex flex-wrap gap-4 text-sm">
-              <span>{c.clickCount} {t("clicks")}</span>
-              <span>{c.usedCount} {t("uses")}</span>
-              <span>{formatCents(c.revenueCents, locale)} {t("revenue")}</span>
-              <Badge variant={c.isActive ? "default" : "outline"}>{c.isActive ? t("active") : t("inactive")}</Badge>
-            </div>
-          </Card>
-        ))
-      )}
+    <div>
+      <PageHeader level="h2" title={t("codes")} description={tp("description")} />
+      <DataTable
+        caption={t("codes")}
+        rows={coupons}
+        rowKey={(c) => c.id}
+        empty={<EmptyState icon={Ticket} title={t("noCodes")} description={tp("emptyText")} />}
+        columns={[
+          {
+            key: "code",
+            header: tp("colCode"),
+            width: "minmax(0,1.4fr)",
+            cell: (c) => <span className="mono-id block truncate text-ink">{c.code}</span>,
+          },
+          {
+            key: "discount",
+            header: tp("colDiscount"),
+            width: "100px",
+            align: "right",
+            cell: (c) =>
+              c.type === "PERCENT"
+                ? tp("percent", { value: formatNumber(c.value / 100, locale) })
+                : formatMoneyFromCents(c.value, locale),
+          },
+          {
+            key: "type",
+            header: tp("colType"),
+            width: "110px",
+            hideOnMobile: true,
+            cell: (c) => <span className="text-ink-muted">{tp(`type.${c.affiliateType}`)}</span>,
+          },
+          {
+            key: "clicks",
+            header: tp("colClicks"),
+            width: "90px",
+            align: "right",
+            hideOnMobile: true,
+            cell: (c) => formatNumber(c.clickCount, locale),
+          },
+          {
+            key: "uses",
+            header: tp("colUses"),
+            width: "90px",
+            align: "right",
+            hideOnMobile: true,
+            cell: (c) => formatNumber(c.usedCount, locale),
+          },
+          {
+            key: "revenue",
+            header: tp("colRevenue"),
+            width: "120px",
+            align: "right",
+            hideOnMobile: true,
+            cell: (c) => formatMoneyFromCents(c.revenueCents, locale),
+          },
+          {
+            key: "status",
+            header: tp("colStatus"),
+            width: "110px",
+            cell: (c) => (
+              <StatusBadge tone={c.isActive ? "success" : "neutral"} label={c.isActive ? t("active") : t("inactive")} />
+            ),
+          },
+        ]}
+      />
     </div>
   );
 }

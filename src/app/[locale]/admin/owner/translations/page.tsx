@@ -18,7 +18,7 @@ export default async function OwnerTranslationsPage(props: { params: Promise<{ l
   const result = await getOwnerTranslationCenter();
   return (
     <div>
-      <AdminPageHeader title={t("nav.localization")} />
+      <AdminPageHeader title={t("translationCenter")} description={t("translationCenterHint")} />
       {result.success ? <TranslationCenterPanel {...result.data} /> : <AdminLoadError message={result.error} />}
     </div>
   );

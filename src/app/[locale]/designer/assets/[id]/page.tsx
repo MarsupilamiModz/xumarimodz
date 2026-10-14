@@ -1,7 +1,9 @@
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { getGamesAndCategories } from "@/lib/data";
 import { getModForEdit } from "@/actions/mods";
 import { ModAdminPanel } from "@/components/admin/mod-admin-panel";
+import { PageHeader } from "@/components/ui/page-header";
 import type { Locale } from "@/i18n/config";
 
 export default async function DesignerAssetPage(
@@ -16,15 +18,23 @@ export default async function DesignerAssetPage(
     id
   } = params;
 
-  const [result, games] = await Promise.all([getModForEdit(id), getGamesAndCategories()]);
+  const [result, games, tp] = await Promise.all([
+    getModForEdit(id),
+    getGamesAndCategories(),
+    getTranslations("partnerPages.designerAsset"),
+  ]);
   if (!result.success) notFound();
 
   return (
-    <ModAdminPanel
-      locale={locale}
-      games={games}
-      mod={result.data}
-      redirectBase="/designer/assets"
-    />
+    <div>
+      <PageHeader title={result.data.title} description={tp("description")} />
+      <ModAdminPanel
+        locale={locale}
+        games={games}
+        mod={result.data}
+        redirectBase="/designer/assets"
+        showTitle={false}
+      />
+    </div>
   );
 }

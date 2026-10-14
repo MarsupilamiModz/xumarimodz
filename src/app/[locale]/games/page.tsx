@@ -1,18 +1,19 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { Gamepad2 } from "lucide-react";
 import { getAllGames } from "@/lib/data";
 import { GameCard } from "@/components/games/game-card";
-import { Card } from "@/components/ui/card";
+import { PageHeader } from "@/components/ui/page-header";
+import { EmptyState } from "@/components/ui/empty-state";
 import type { Locale } from "@/i18n/config";
 import type { Metadata } from "next";
-import { REVALIDATE } from "@/lib/cache";
-import { SITE } from "@/lib/site";
 
 export const revalidate = 60; // REVALIDATE.catalog – Next verlangt ein Literal
 
-export const metadata: Metadata = {
-  title: "Games",
-  description: `Browse all supported games on ${SITE.name} and discover premium mods.`,
-};
+export async function generateMetadata(props: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
+  const { locale } = await props.params;
+  const t = await getTranslations({ locale, namespace: "games" });
+  return { title: t("title"), description: t("subtitle") };
+}
 
 export default async function GamesPage(props: { params: Promise<{ locale: Locale }> }) {
   const params = await props.params;
@@ -26,18 +27,19 @@ export default async function GamesPage(props: { params: Promise<{ locale: Local
   const games = await getAllGames().catch(() => []);
 
   return (
-    <div className="page-container py-12">
-      <h1 className="h1-display">{t("title")}</h1>
-      <p className="mt-2 text-muted-foreground">{t("subtitle")}</p>
-      <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {games.length === 0 ? (
-          <Card className="col-span-full p-12 text-center text-muted-foreground">
-            {t("empty")}
-          </Card>
-        ) : (
-          games.map((game) => <GameCard key={game.id} locale={locale} game={game} />)
-        )}
-      </div>
+    <div className="page-section">
+      <PageHeader title={t("title")} description={t("subtitle")} />
+      {games.length === 0 ? (
+        <EmptyState icon={Gamepad2} title={t("empty")} />
+      ) : (
+        <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {games.map((game) => (
+            <li key={game.id}>
+              <GameCard locale={locale} game={game} />
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

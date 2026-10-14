@@ -2,11 +2,13 @@
 
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Input, controlClassName } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { SectionCard } from "@/components/ui/page-header";
+import { cn } from "@/lib/utils";
 import { submitPartnerApplication } from "@/actions/applications";
 import type { PartnerFormField } from "@/lib/partner-form-config";
 
@@ -39,21 +41,15 @@ export function PartnerApplicationForm({
   username: string;
   applicationId?: string;
 }) {
+  const t = useTranslations("publicPages.becomePartner");
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const defaults = { username, email: userEmail };
 
   return (
-    <Card className="max-w-2xl">
-      <CardHeader>
-        <CardTitle>{applicationId ? "Update your application" : "Become a Partner"}</CardTitle>
-        <p className="text-sm text-muted-foreground">
-          Submit your application for admin review. Partner profiles are created only after approval.
-        </p>
-      </CardHeader>
-      <CardContent>
+    <SectionCard title={applicationId ? t("updateTitle") : undefined} description={applicationId ? t("updateText") : undefined}>
         <form
-          className="space-y-3"
+          className="space-y-4"
           onSubmit={(e) => {
             e.preventDefault();
             const fd = new FormData(e.currentTarget);
@@ -100,7 +96,7 @@ export function PartnerApplicationForm({
                 customResponses,
               });
               if (r.success) {
-                toast({ title: applicationId ? "Application updated" : "Application submitted — pending admin review" });
+                toast({ title: applicationId ? "toast.updated" : "toast.applicationSubmitted" });
                 router.refresh();
               } else toast({ title: r.error, variant: "destructive" });
             });
@@ -110,61 +106,50 @@ export function PartnerApplicationForm({
             const defaultValue = field.mapsTo
               ? defaults[field.mapsTo as keyof typeof defaults]
               : undefined;
-
-            if (field.type === "textarea") {
-              return (
-                <Textarea
-                  key={field.id}
-                  name={field.id}
-                  placeholder={field.placeholder ?? field.label}
-                  rows={3}
-                  required={field.required}
-                />
-              );
-            }
-
-            if (field.type === "select") {
-              return (
-                <select
-                  key={field.id}
-                  name={field.id}
-                  required={field.required}
-                  className="h-10 w-full rounded-md border border-input bg-background/50 px-3 text-sm"
-                  defaultValue=""
-                >
-                  <option value="" disabled>{field.placeholder ?? field.label}</option>
-                  {(field.options ?? []).map((opt) => (
-                    <option key={opt} value={opt}>{opt}</option>
-                  ))}
-                </select>
-              );
-            }
+            const id = `pa-${field.id}`;
 
             if (field.type === "checkbox") {
               return (
-                <label key={field.id} className="flex items-center gap-2 text-sm">
-                  <input type="checkbox" name={field.id} required={field.required} className="rounded border-input" />
+                <label key={field.id} className="flex items-center gap-2 text-sm text-ink">
+                  <input type="checkbox" name={field.id} required={field.required} className="h-4 w-4 rounded-sm border-line-control accent-violet" />
                   {field.label}
                 </label>
               );
             }
 
             return (
-              <Input
-                key={field.id}
-                name={field.id}
-                type={field.type === "email" ? "email" : field.type === "url" ? "url" : "text"}
-                placeholder={field.placeholder ?? field.label}
-                defaultValue={defaultValue}
-                required={field.required}
-              />
+              <div key={field.id} className="space-y-1.5">
+                <label htmlFor={id} className="label-text">
+                  {field.label}
+                </label>
+                {field.type === "textarea" ? (
+                  <Textarea id={id} name={field.id} placeholder={field.placeholder ?? undefined} rows={3} required={field.required} />
+                ) : field.type === "select" ? (
+                  <select id={id} name={field.id} required={field.required} className={cn(controlClassName, "h-9")} defaultValue="">
+                    <option value="" disabled>
+                      {field.placeholder ?? t("selectPlaceholder")}
+                    </option>
+                    {(field.options ?? []).map((opt) => (
+                      <option key={opt} value={opt}>{opt}</option>
+                    ))}
+                  </select>
+                ) : (
+                  <Input
+                    id={id}
+                    name={field.id}
+                    type={field.type === "email" ? "email" : field.type === "url" ? "url" : "text"}
+                    placeholder={field.placeholder ?? undefined}
+                    defaultValue={defaultValue}
+                    required={field.required}
+                  />
+                )}
+              </div>
             );
           })}
           <Button type="submit" disabled={pending}>
-            {applicationId ? "Resubmit application" : "Submit application"}
+            {applicationId ? t("resubmit") : t("submit")}
           </Button>
         </form>
-      </CardContent>
-    </Card>
+    </SectionCard>
   );
 }

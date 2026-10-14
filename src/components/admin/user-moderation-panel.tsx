@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useId, useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { History, UserSearch, Users } from "lucide-react";
 import type { ModerationAction } from "@/lib/moderation-types";
 import type { ModerationLogRow, ModerationUserRow } from "@/lib/moderation-store";
 import {
@@ -18,30 +19,37 @@ import {
   moderateUnsuspendUser,
   moderateWarnUser,
 } from "@/actions/admin/moderation";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { EmptyState } from "@/components/ui/empty-state";
+import { controlClassName } from "@/components/ui/input";
+import { SectionCard } from "@/components/ui/page-header";
+import { SearchField } from "@/components/ui/search-field";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import { formatDateTime } from "@/lib/format-locale";
 import { formatDisplayName } from "@/lib/display-name";
+import { cn } from "@/lib/utils";
 
 type LogRow = ModerationLogRow;
+type Confirm = "ban" | "suspend" | "delete" | null;
 
 export function UserModerationPanel({
   locale,
   users,
   recentLogs,
-  flagged,
+  search,
 }: {
   locale: string;
   users: ModerationUserRow[];
   recentLogs: LogRow[];
-  flagged: number;
+  search?: string;
 }) {
   const router = useRouter();
+  const uid = useId();
   const t = useTranslations("admin.ui.userModeration");
+  const tm = useTranslations("admin.moderationAdmin");
   const ACTION_LABELS: Record<ModerationAction, string> = {
     BAN_PERMANENT: t("actionBanPermanent"),
     BAN_TEMPORARY: t("actionBanTemporary"),
@@ -61,9 +69,10 @@ export function UserModerationPanel({
   const [reason, setReason] = useState("");
   const [internalNote, setInternalNote] = useState("");
   const [duration, setDuration] = useState<"1d" | "3d" | "7d" | "30d" | "permanent">("7d");
-  const [search, setSearch] = useState("");
+  const [confirm, setConfirm] = useState<Confirm>(null);
 
   const selected = users.find((u) => u.id === selectedId) ?? null;
+  const reasonOk = reason.length >= 3;
 
   function run(action: () => Promise<{ success: boolean; error?: string }>, successMsg: string) {
     startTransition(async () => {
@@ -72,264 +81,218 @@ export function UserModerationPanel({
         toast({ title: "toast.error", description: result.error, variant: "destructive" });
         return;
       }
+      setConfirm(null);
       toast({ title: successMsg });
       router.refresh();
     });
   }
 
+  const selectedName = selected ? formatDisplayName(selected) : "";
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="h1-acp">{t("pageTitle")}</h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          {t("pageSubtitle", { count: flagged })}
-        </p>
-      </div>
-
-      <div className="grid lg:grid-cols-[1fr_340px] gap-6">
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base">{t("usersHeading")}</CardTitle>
-            <Input
-              placeholder={t("searchPlaceholder")}
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  router.push(`/${locale}/admin/moderation?search=${encodeURIComponent(search)}`);
-                }
-              }}
-            />
-          </CardHeader>
-          <CardContent className="p-0">
-            <div className="divide-y divide-border/40 max-h-[520px] overflow-y-auto">
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
+        <SectionCard title={t("usersHeading")}>
+          <form method="get" action={`/${locale}/admin/moderation`} className="mb-4">
+            <SearchField label={t("searchPlaceholder")} name="q" defaultValue={search} />
+          </form>
+          {users.length === 0 ? (
+            <EmptyState icon={Users} title={tm("emptyTitle")} description={tm("emptyText")} />
+          ) : (
+            <ul className="-mx-5 max-h-[520px] divide-y divide-line overflow-y-auto border-t border-line">
               {users.map((u) => (
-                <button
-                  key={u.id}
-                  type="button"
-                  onClick={() => setSelectedId(u.id)}
-                  className={`w-full text-left px-4 py-3 hover:bg-accent/10 transition-colors ${
-                    selectedId === u.id ? "bg-accent/20" : ""
-                  }`}
-                >
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="min-w-0">
-                      <p className="font-medium truncate">{formatDisplayName(u)}</p>
-                      <p className="text-xs text-muted-foreground truncate">{u.email}</p>
+                <li key={u.id}>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedId(u.id)}
+                    aria-pressed={selectedId === u.id}
+                    className={cn(
+                      "w-full px-5 py-3 text-left transition-colors duration-fast",
+                      selectedId === u.id ? "bg-violet-soft" : "hover:bg-row-hover"
+                    )}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="min-w-0">
+                        <p className="truncate font-medium text-ink">{formatDisplayName(u)}</p>
+                        <p className="truncate text-xs text-ink-faint">{u.email}</p>
+                      </div>
+                      <div className="flex shrink-0 flex-wrap justify-end gap-1">
+                        {u.isBanned && <StatusBadge tone="danger" label={t("badgeBanned")} />}
+                        {u.isSuspended && <StatusBadge tone="warning" label={t("badgeSuspended")} />}
+                        {u.isMuted && <StatusBadge tone="neutral" label={t("badgeMuted")} />}
+                        {u.warningCount > 0 && (
+                          <StatusBadge tone="warning" label={t("warningCountBadge", { count: u.warningCount })} />
+                        )}
+                      </div>
                     </div>
-                    <div className="flex flex-wrap gap-1 justify-end shrink-0">
-                      {u.isBanned && <Badge variant="destructive">{t("badgeBanned")}</Badge>}
-                      {u.isSuspended && <Badge variant="secondary">{t("badgeSuspended")}</Badge>}
-                      {u.isMuted && <Badge variant="outline">{t("badgeMuted")}</Badge>}
-                      {u.warningCount > 0 && (
-                        <Badge variant="outline">{t("warningCountBadge", { count: u.warningCount })}</Badge>
-                      )}
-                    </div>
-                  </div>
-                </button>
+                  </button>
+                </li>
               ))}
+            </ul>
+          )}
+        </SectionCard>
+
+        <SectionCard title={t("moderationActionsHeading")}>
+          {!selected ? (
+            <EmptyState icon={UserSearch} title={tm("noSelection")} description={t("selectUserHint")} className="py-8" />
+          ) : (
+            <div className="space-y-4">
+              <div>
+                <p className="font-medium text-ink">{selectedName}</p>
+                <Link href={`/${locale}/admin/users/${selected.id}`} className="link text-xs">
+                  {t("viewFullProfile")}
+                </Link>
+              </div>
+
+              <div>
+                <label htmlFor={`${uid}-reason`} className="label-text mb-1.5 block">
+                  {t("reasonVisibleLabel")}
+                </label>
+                <Textarea
+                  id={`${uid}-reason`}
+                  value={reason}
+                  onChange={(e) => setReason(e.target.value)}
+                  placeholder={t("describeViolationPlaceholder")}
+                  aria-describedby={`${uid}-reason-hint`}
+                  rows={2}
+                />
+                <p id={`${uid}-reason-hint`} className="meta mt-1">{tm("reasonHint")}</p>
+              </div>
+              <div>
+                <label htmlFor={`${uid}-note`} className="label-text mb-1.5 block">
+                  {t("internalNoteLabel")}
+                </label>
+                <Textarea
+                  id={`${uid}-note`}
+                  value={internalNote}
+                  onChange={(e) => setInternalNote(e.target.value)}
+                  placeholder={t("staffOnlyContextPlaceholder")}
+                  rows={2}
+                />
+              </div>
+              <div>
+                <label htmlFor={`${uid}-duration`} className="label-text mb-1.5 block">
+                  {t("banDurationLabel")}
+                </label>
+                <select
+                  id={`${uid}-duration`}
+                  value={duration}
+                  onChange={(e) => setDuration(e.target.value as typeof duration)}
+                  className={cn(controlClassName, "h-9")}
+                >
+                  <option value="1d">{t("duration1Day")}</option>
+                  <option value="3d">{t("duration3Days")}</option>
+                  <option value="7d">{t("duration7Days")}</option>
+                  <option value="30d">{t("duration30Days")}</option>
+                  <option value="permanent">{t("durationPermanent")}</option>
+                </select>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <Button variant="outline" size="sm" className="text-danger" disabled={pending || !reasonOk} onClick={() => setConfirm("ban")}>
+                  {t("banButton")}
+                </Button>
+                <Button variant="outline" size="sm" disabled={pending} onClick={() => run(() => moderateUnbanUser(selected.id), t("banLiftedMsg"))}>
+                  {t("unbanButton")}
+                </Button>
+                <Button variant="outline" size="sm" disabled={pending || !reasonOk} onClick={() => setConfirm("suspend")}>
+                  {t("suspendButton")}
+                </Button>
+                <Button variant="outline" size="sm" disabled={pending} onClick={() => run(() => moderateUnsuspendUser(selected.id), t("suspensionLiftedMsg"))}>
+                  {t("unsuspendButton")}
+                </Button>
+                <Button variant="outline" size="sm" disabled={pending} onClick={() => run(() => moderateMuteUser(selected.id, reason), t("userMutedMsg"))}>
+                  {t("muteButton")}
+                </Button>
+                <Button variant="outline" size="sm" disabled={pending} onClick={() => run(() => moderateUnmuteUser(selected.id), t("userUnmutedMsg"))}>
+                  {t("unmuteButton")}
+                </Button>
+                <Button variant="outline" size="sm" disabled={pending || !reasonOk} onClick={() => run(() => moderateWarnUser(selected.id, reason), t("warningIssuedMsg"))}>
+                  {t("warnButton")}
+                </Button>
+                <Button variant="outline" size="sm" disabled={pending} onClick={() => run(() => moderateResetWarnings(selected.id), t("warningsResetMsg"))}>
+                  {t("resetWarningsButton")}
+                </Button>
+                <Button variant="ghost" size="sm" className="text-danger" disabled={pending || !reasonOk} onClick={() => setConfirm("delete")}>
+                  {t("deleteButton")}
+                </Button>
+                <Button variant="outline" size="sm" disabled={pending} onClick={() => run(() => moderateRestoreUser(selected.id), t("accountRestoredMsg"))}>
+                  {t("restoreButton")}
+                </Button>
+              </div>
             </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">{t("moderationActionsHeading")}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {!selected ? (
-              <p className="text-sm text-muted-foreground">{t("selectUserHint")}</p>
-            ) : (
-              <>
-                <div>
-                  <p className="font-medium">{formatDisplayName(selected)}</p>
-                  <Link
-                    href={`/${locale}/admin/users/${selected.id}`}
-                    className="text-xs text-violet-bright hover:underline"
-                  >
-                    {t("viewFullProfile")}
-                  </Link>
-                </div>
-
-                <div className="space-y-2">
-                  <label htmlFor="ban-reason" className="text-sm font-medium">
-                    {t("reasonVisibleLabel")}
-                  </label>
-                  <Textarea
-                    id="ban-reason"
-                    value={reason}
-                    onChange={(e) => setReason(e.target.value)}
-                    placeholder={t("describeViolationPlaceholder")}
-                    rows={2}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label htmlFor="internal-note" className="text-sm font-medium">
-                    {t("internalNoteLabel")}
-                  </label>
-                  <Textarea
-                    id="internal-note"
-                    value={internalNote}
-                    onChange={(e) => setInternalNote(e.target.value)}
-                    placeholder={t("staffOnlyContextPlaceholder")}
-                    rows={2}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label htmlFor="ban-duration" className="text-sm font-medium">
-                    {t("banDurationLabel")}
-                  </label>
-                  <select
-                    id="ban-duration"
-                    value={duration}
-                    onChange={(e) => setDuration(e.target.value as typeof duration)}
-                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                  >
-                    <option value="1d">{t("duration1Day")}</option>
-                    <option value="3d">{t("duration3Days")}</option>
-                    <option value="7d">{t("duration7Days")}</option>
-                    <option value="30d">{t("duration30Days")}</option>
-                    <option value="permanent">{t("durationPermanent")}</option>
-                  </select>
-                </div>
-
-                <div className="grid grid-cols-2 gap-2">
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    disabled={pending || reason.length < 3}
-                    onClick={() =>
-                      run(
-                        () =>
-                          moderateBanUser({
-                            userId: selected.id,
-                            reason,
-                            internalNote: internalNote || undefined,
-                            duration,
-                          }),
-                        t("userBannedMsg")
-                      )
-                    }
-                  >
-                    {t("banButton")}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    disabled={pending}
-                    onClick={() => run(() => moderateUnbanUser(selected.id), t("banLiftedMsg"))}
-                  >
-                    {t("unbanButton")}
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    disabled={pending || reason.length < 3}
-                    onClick={() =>
-                      run(() => moderateSuspendUser(selected.id, reason), t("userSuspendedMsg"))
-                    }
-                  >
-                    {t("suspendButton")}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    disabled={pending}
-                    onClick={() => run(() => moderateUnsuspendUser(selected.id), t("suspensionLiftedMsg"))}
-                  >
-                    {t("unsuspendButton")}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    disabled={pending}
-                    onClick={() => run(() => moderateMuteUser(selected.id, reason), t("userMutedMsg"))}
-                  >
-                    {t("muteButton")}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    disabled={pending}
-                    onClick={() => run(() => moderateUnmuteUser(selected.id), t("userUnmutedMsg"))}
-                  >
-                    {t("unmuteButton")}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    disabled={pending || reason.length < 3}
-                    onClick={() => run(() => moderateWarnUser(selected.id, reason), t("warningIssuedMsg"))}
-                  >
-                    {t("warnButton")}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    disabled={pending}
-                    onClick={() => run(() => moderateResetWarnings(selected.id), t("warningsResetMsg"))}
-                  >
-                    {t("resetWarningsButton")}
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    disabled={pending || reason.length < 3}
-                    onClick={() =>
-                      run(() => moderateSoftDeleteUser(selected.id, reason), t("accountDeletedMsg"))
-                    }
-                  >
-                    {t("deleteButton")}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    disabled={pending}
-                    onClick={() => run(() => moderateRestoreUser(selected.id), t("accountRestoredMsg"))}
-                  >
-                    {t("restoreButton")}
-                  </Button>
-                </div>
-              </>
-            )}
-          </CardContent>
-        </Card>
+          )}
+        </SectionCard>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">{t("recentLogHeading")}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2 text-sm">
-            {recentLogs.length === 0 ? (
-              <p className="text-muted-foreground">{t("noEventsRecorded")}</p>
-            ) : (
-              recentLogs.map((log) => (
-                <div
-                  key={log.id}
-                  className="flex flex-wrap items-center justify-between gap-2 border-b border-border/30 pb-2"
-                >
-                  <div>
-                    <span className="font-medium">{ACTION_LABELS[log.action]}</span>
-                    <span className="text-muted-foreground">
-                      {" "}
-                      · {log.user.username}
-                      {log.actor ? ` · ${t("byUsername", { username: log.actor.username })}` : ""}
-                    </span>
-                    {log.reason && (
-                      <p className="text-xs text-muted-foreground mt-0.5">{log.reason}</p>
-                    )}
-                  </div>
-                  <span className="text-xs text-muted-foreground tabular-nums">
-                    {formatDateTime(log.createdAt, locale)}
+      <SectionCard title={t("recentLogHeading")}>
+        {recentLogs.length === 0 ? (
+          <EmptyState icon={History} title={t("noEventsRecorded")} className="py-8" />
+        ) : (
+          <ul className="divide-y divide-line text-sm">
+            {recentLogs.map((log) => (
+              <li key={log.id} className="flex flex-wrap items-center justify-between gap-2 py-2 first:pt-0 last:pb-0">
+                <div className="min-w-0">
+                  <span className="font-medium text-ink">{ACTION_LABELS[log.action]}</span>
+                  <span className="text-ink-muted">
+                    {" "}
+                    · {log.user.username}
+                    {log.actor ? ` · ${t("byUsername", { username: log.actor.username })}` : ""}
                   </span>
+                  {log.reason && <p className="meta mt-0.5">{log.reason}</p>}
                 </div>
-              ))
-            )}
-          </div>
-        </CardContent>
-      </Card>
+                <span className="text-xs tabular-nums text-ink-faint">{formatDateTime(log.createdAt, locale)}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </SectionCard>
+
+      {selected && (
+        <>
+          <ConfirmDialog
+            open={confirm === "ban"}
+            onOpenChange={(open) => !open && setConfirm(null)}
+            title={tm("banTitle", { name: selectedName })}
+            description={duration === "permanent" ? tm("banTextPermanent") : tm("banText")}
+            confirmLabel={t("banButton")}
+            variant="destructive"
+            loading={pending}
+            onConfirm={() =>
+              run(
+                () =>
+                  moderateBanUser({
+                    userId: selected.id,
+                    reason,
+                    internalNote: internalNote || undefined,
+                    duration,
+                  }),
+                t("userBannedMsg")
+              )
+            }
+          />
+          <ConfirmDialog
+            open={confirm === "suspend"}
+            onOpenChange={(open) => !open && setConfirm(null)}
+            title={tm("suspendTitle", { name: selectedName })}
+            description={tm("suspendText")}
+            confirmLabel={t("suspendButton")}
+            variant="destructive"
+            loading={pending}
+            onConfirm={() => run(() => moderateSuspendUser(selected.id, reason), t("userSuspendedMsg"))}
+          />
+          <ConfirmDialog
+            open={confirm === "delete"}
+            onOpenChange={(open) => !open && setConfirm(null)}
+            title={tm("deleteTitle", { name: selectedName })}
+            description={tm("deleteText")}
+            confirmLabel={t("deleteButton")}
+            variant="destructive"
+            loading={pending}
+            onConfirm={() => run(() => moderateSoftDeleteUser(selected.id, reason), t("accountDeletedMsg"))}
+          />
+        </>
+      )}
     </div>
   );
 }

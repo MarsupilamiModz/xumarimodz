@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
 import type { TicketCategory } from "@prisma/client";
 import { createTicket } from "@/actions/tickets";
 import { Button } from "@/components/ui/button";
@@ -14,11 +15,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Card } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
-import { TICKET_CATEGORY_LABELS, TICKET_CREATE_CATEGORIES } from "@/lib/ticket-labels";
+import { TICKET_CREATE_CATEGORIES } from "@/lib/ticket-labels";
 
 export function CreateTicketForm({ locale }: { locale: string }) {
+  const t = useTranslations("support");
+  const tn = useTranslations("accountPages.supportNew");
+  const ts = useTranslations("status");
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [category, setCategory] = useState<TicketCategory>("GENERAL_SUPPORT");
@@ -42,42 +45,42 @@ export function CreateTicketForm({ locale }: { locale: string }) {
   }
 
   return (
-    <Card className="p-6">
+    <div className="rounded-lg border border-line bg-raised p-5">
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="text-sm font-medium">Category</label>
+        <div className="space-y-1.5">
+          <label htmlFor="ticket-category" className="label-text">{tn("categoryLabel")}</label>
           <Select value={category} onValueChange={(v) => setCategory(v as TicketCategory)}>
-            <SelectTrigger className="mt-1">
+            <SelectTrigger id="ticket-category">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
               {TICKET_CREATE_CATEGORIES.map((c) => (
                 <SelectItem key={c} value={c}>
-                  {TICKET_CATEGORY_LABELS[c]}
+                  {ts(`category.${c}`)}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
-        <div>
-          <label className="text-sm font-medium">Subject</label>
-          <Input name="subject" required minLength={5} className="mt-1" placeholder="Brief summary" />
+        <div className="space-y-1.5">
+          <label htmlFor="ticket-subject" className="label-text">{t("subject")}</label>
+          <Input id="ticket-subject" name="subject" required minLength={5} placeholder={tn("subjectPlaceholder")} />
         </div>
-        <div>
-          <label className="text-sm font-medium">Message</label>
+        <div className="space-y-1.5">
+          <label htmlFor="ticket-message" className="label-text">{t("message")}</label>
           <Textarea
+            id="ticket-message"
             name="message"
             required
             minLength={10}
             rows={6}
-            className="mt-1"
-            placeholder="Describe your issue in detail..."
+            placeholder={tn("messagePlaceholder")}
           />
         </div>
-        <Button type="submit" disabled={pending} className="w-full">
-          {pending ? "Creating..." : "Submit Ticket"}
+        <Button type="submit" disabled={pending} aria-busy={pending} className="w-full">
+          {pending ? tn("sending") : t("submit")}
         </Button>
       </form>
-    </Card>
+    </div>
   );
 }

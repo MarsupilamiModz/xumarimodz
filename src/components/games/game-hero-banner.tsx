@@ -46,10 +46,9 @@ export function GameHeroBanner({
 
   return (
     <section
-      className="relative border-b border-border/40 overflow-hidden"
+      className="relative overflow-hidden border-b border-line"
       style={{ minHeight: height, ...gradientStyle }}
     >
-      <div className="absolute inset-0" />
       {imageSrc && (
         <div className="absolute inset-0 overflow-hidden">
           <SafeImage
@@ -66,8 +65,8 @@ export function GameHeroBanner({
       <div className="page-container relative py-10 sm:py-16">
         <div className="flex flex-wrap items-end gap-4 sm:gap-6">
           {iconUrl ? (
-            <div className="relative h-16 w-16 sm:h-24 sm:w-24 rounded-lg overflow-hidden border border-violet-bright/30 shrink-0">
-              <SafeImage src={iconUrl} alt={name} fill className="object-cover" sizes="96px" priority />
+            <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg border border-line sm:h-24 sm:w-24">
+              <SafeImage src={iconUrl} alt="" fill className="object-cover" sizes="96px" priority />
             </div>
           ) : null}
           <div className="min-w-0 flex-1">
@@ -78,13 +77,13 @@ export function GameHeroBanner({
             )}
             <h1 className="h1-display">{name}</h1>
             {blurb && (
-              <p className="mt-2 max-w-2xl text-sm sm:text-base text-muted-foreground leading-relaxed">
+              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink-muted sm:text-base">
                 {blurb}
               </p>
             )}
-            <div className="mt-4 flex flex-wrap gap-4 text-sm">
-              <span className="text-ink-muted">{modsLabel}</span>
-              <span className="text-violet-bright">{creatorsLabel}</span>
+            <div className="meta mt-4 flex flex-wrap gap-4 text-sm tabular-nums">
+              <span>{modsLabel}</span>
+              <span>{creatorsLabel}</span>
             </div>
           </div>
         </div>

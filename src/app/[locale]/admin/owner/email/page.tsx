@@ -14,11 +14,11 @@ export default async function OwnerEmailPage(props: { params: Promise<{ locale: 
 
   setRequestLocale(locale);
   await requireOwner();
-  const t = await getTranslations("admin");
+  const t = await getTranslations("admin.ui.emailMonitor");
   const result = await getOwnerEmailMonitor();
   return (
     <div>
-      <AdminPageHeader title={t("nav.email")} />
+      <AdminPageHeader title={t("title")} description={t("subtitle")} />
       {result.success ? <EmailMonitorPanel data={result.data} locale={locale} /> : <AdminLoadError message={result.error} />}
     </div>
   );

@@ -1,3 +1,327 @@
 {
-  "admin": {}
+  "admin": {
+    "ownerFeatures": {
+      "title": "Feature flags",
+      "subtitle": "Turn platform features on and off without redeploying.",
+      "cardTitle": "Features",
+      "cardText": "Disabled features are hidden for all users right away.",
+      "save": "Save feature flags",
+      "flag": {
+        "shop": "Shop",
+        "sounds": "Sounds",
+        "creator": "Creator program",
+        "partner": "Partner program",
+        "premium": "Premium memberships",
+        "ads": "Advertising",
+        "teamChat": "Team chat",
+        "tickets": "Support tickets",
+        "collections": "Collections",
+        "modpacks": "Modpacks"
+      }
+    },
+    "ownerTranslations": {
+      "provider": "Active provider: {provider}",
+      "noMissing": "No texts are missing in any language.",
+      "missingCount": "{count} missing"
+    },
+    "ownerHealth": {
+      "subtitle": "Live infrastructure status: active users, upload queues, storage, payments and integrations.",
+      "ownerOnly": "Owner only",
+      "refresh": "Refresh",
+      "overall": "Overall status",
+      "countsLabel": "Services by status",
+      "countHealthy": "{count} healthy",
+      "countWarning": "{count} with warnings",
+      "countCritical": "{count} critical",
+      "autoRefresh": "Refreshes every 15 seconds",
+      "lastChecked": "Last checked: {time}",
+      "services": "Services",
+      "level": {
+        "healthy": "Healthy",
+        "warning": "Warning",
+        "critical": "Critical"
+      },
+      "service": {
+        "database": "Database",
+        "api": "API",
+        "upload": "Upload",
+        "storage": "Storage",
+        "email": "Email",
+        "discord_oauth": "Discord sign-in",
+        "virustotal": "VirusTotal",
+        "r2": "R2 storage",
+        "platform": "Platform"
+      },
+      "perfTitle": "Performance",
+      "perfText": "Cache, server resources and slow queries.",
+      "cacheHitRate": "Cache hit rate",
+      "cacheHits": "{hits} hits / {misses} misses",
+      "serverRam": "Server RAM",
+      "ramUsage": "{used} GB of {total} GB",
+      "hostUnavailable": "Not available on Cloudflare Workers",
+      "dbLatency": "Database latency",
+      "cpuCores": "{count, plural, one {# CPU core} other {# CPU cores}}",
+      "slowQueries": "Slow queries (recent)",
+      "avgMs": "Average {ms} ms",
+      "slowQueriesCaption": "Slowest queries",
+      "colLabel": "Label",
+      "colType": "Type",
+      "colDuration": "Duration",
+      "kind": {
+        "query": "Query",
+        "api": "API",
+        "action": "Action"
+      }
+    },
+    "ownerEmail": {
+      "emptyText": "Emails appear here as soon as they are sent.",
+      "status": {
+        "SENT": "Sent",
+        "FAILED": "Failed",
+        "PENDING": "Pending"
+      }
+    },
+    "ownerAchievements": {
+      "noData": "No data yet.",
+      "massText": "Grants the selected achievement to a whole group or to individual user IDs.",
+      "achievement": "Achievement",
+      "grantToGroup": "Grant to group"
+    },
+    "ownerUserDetail": {
+      "section": "Owner view",
+      "role": "Role",
+      "banScope": "Ban scope",
+      "noMembership": "No membership",
+      "nothingYet": "No entries yet.",
+      "lifted": "Lifted",
+      "banTitle": "Ban @{username}",
+      "banText": "The ban is permanent and saved with its reason in the audit log. You can lift it later.",
+      "disableTitle": "Disable @{username}'s account",
+      "disableText": "The account is hidden and can no longer sign in. It can be restored.",
+      "scope": {
+        "ACCOUNT": "Account",
+        "UPLOAD": "Uploads",
+        "COMMENT": "Comments",
+        "IP": "IP"
+      },
+      "banType": {
+        "PERMANENT": "Permanent",
+        "TEMPORARY": "Temporary"
+      },
+      "membershipStatus": {
+        "ACTIVE": "Active",
+        "CANCELED": "Canceled",
+        "PAST_DUE": "Past due",
+        "TRIALING": "Trial",
+        "INCOMPLETE": "Incomplete",
+        "EXPIRED": "Expired"
+      }
+    },
+    "userAchievements": {
+      "title": "Achievements",
+      "earned": "{count} earned",
+      "grantLabel": "Grant achievement",
+      "choose": "Choose achievement …",
+      "hidden": "hidden",
+      "grant": "Grant",
+      "emptyTitle": "No achievements yet",
+      "emptyText": "Grant one above or wait until the account unlocks one.",
+      "grantedBy": "by @{username}",
+      "showcased": "shown on profile",
+      "remove": "Revoke",
+      "removeTitle": "Revoke “{name}”?",
+      "removeText": "The achievement is removed from the profile. You can grant it again later."
+    },
+    "userDetail": {
+      "discordId": "ID",
+      "discordName": "Name"
+    },
+    "membershipManagerB": {
+      "plan": "Plan",
+      "tier": "Set tier directly",
+      "cancelTitle": "Cancel membership?",
+      "cancelText": "A Stripe subscription ends at the end of the current period; other memberships end immediately."
+    },
+    "partnerDetail": {
+      "section": "Partner profile",
+      "profile": "Profile",
+      "levelLabel": "Level",
+      "level": {
+        "UNVERIFIED": "Unverified",
+        "VERIFIED": "Verified",
+        "TRUSTED": "Trusted",
+        "ELITE": "Elite",
+        "OFFICIAL_PARTNER": "Official partner"
+      },
+      "dangerZone": "Delete partner profile",
+      "dangerText": "Removes the partner profile. The user account stays.",
+      "deleteText": "Profile, code and settings are removed. This cannot be undone."
+    },
+    "partnerNew": {
+      "title": "Create partner",
+      "subtitle": "Pick an existing account and create a partner profile for it.",
+      "userStep": "Choose account",
+      "userStepText": "Search by email, username or display name.",
+      "noUsers": "No matching account found.",
+      "profileStep": "Partner profile",
+      "website": "Website",
+      "pickUserFirst": "Choose an account above first.",
+      "submit": "Create partner"
+    },
+    "referralsPage": {
+      "subtitle": "Create and track invite links with a premium reward.",
+      "code": "Code",
+      "tier": "Premium tier",
+      "emptyText": "Create the first link above.",
+      "copyLink": "Copy link",
+      "copied": "Copied",
+      "reward": "{days, plural, one {# day} other {# days}} {tier}",
+      "saveDays": "Save",
+      "cancel": "Cancel",
+      "deleteText": "The link stops working. Existing registrations are kept."
+    },
+    "shopPage": {
+      "title": "Shop management",
+      "subtitle": "Manage credit packs, products, prices and featured items.",
+      "stripePriceId": "Stripe price ID",
+      "categoryLabel": "Category",
+      "typeLabel": "Product type",
+      "products": "Products",
+      "emptyTitle": "No products yet",
+      "emptyText": "Create the first product above.",
+      "colProduct": "Product",
+      "colType": "Category · type",
+      "colPrice": "Price",
+      "colSales": "Sales",
+      "colActions": "Actions",
+      "editProduct": "Edit {name}",
+      "deleteProduct": "Delete {name}",
+      "deleteTitle": "Delete “{name}”?",
+      "deleteText": "The product is removed from the shop. Existing purchases are kept.",
+      "category": {
+        "CREDITS": "Credits",
+        "MEMBERSHIP": "Membership",
+        "MODS": "Mods",
+        "EXCLUSIVE": "Exclusive",
+        "BUNDLES": "Bundles",
+        "ACCESS": "Access"
+      },
+      "type": {
+        "CREDIT_PACK": "Credit pack",
+        "MEMBERSHIP": "Membership",
+        "MOD": "Mod",
+        "EXCLUSIVE": "Exclusive",
+        "BUNDLE": "Bundle",
+        "SUBSCRIPTION": "Subscription",
+        "ACCESS": "Access"
+      }
+    },
+    "teamPage": {
+      "title": "Team",
+      "subtitle": "Maintain the public team page and assign roles, departments and groups to staff.",
+      "tabs": "Choose section",
+      "tabPage": "Team page",
+      "tabStaff": "Staff and roles",
+      "addText": "New members start with the Support role.",
+      "addUser": "Add {name} to the team",
+      "noUsers": "No matching account found.",
+      "emptyText": "Search for an account above and add it to the team.",
+      "role": "Role",
+      "department": "Department",
+      "group": "Permission group",
+      "removeText": "{name} loses the team role and becomes a regular user again.",
+      "searchUsers": "Search users",
+      "deleteCategory": "Delete category {name}",
+      "removeMember": "Remove {name}",
+      "removeLink": "Remove link",
+      "moveUp": "Move {name} up",
+      "moveDown": "Move {name} down",
+      "noCategoriesTitle": "No categories yet",
+      "noCategoriesText": "Categories structure the team page, e.g. support or moderation.",
+      "noProfilesText": "Create the first profile for the public team page.",
+      "deleteCategoryText": "Members of this category are kept but end up without a category.",
+      "removeMemberText": "The profile disappears from the team page. A linked user account stays.",
+      "confirmDelete": "Delete",
+      "roleGroup": {
+        "OWNER": "Owner",
+        "ADMINISTRATOR": "Administrators",
+        "MANAGER": "Managers",
+        "SUPPORT": "Support",
+        "MODERATOR": "Moderators",
+        "DESIGNER": "Designers",
+        "CREATOR": "Creators"
+      },
+      "media": {
+        "avatar": "Avatar",
+        "banner": "Banner",
+        "uploadAvatar": "Upload avatar",
+        "uploadBanner": "Upload banner",
+        "uploading": "Uploading … {progress} %",
+        "failed": "Upload failed"
+      }
+    },
+    "trustPage": {
+      "subtitle": "Reports, malware notices, DMCA cases and search signals at a glance.",
+      "statsLabel": "Key figures",
+      "open": "Open",
+      "stat": {
+        "openReports": "Open reports",
+        "malwareReports": "Malware reports",
+        "openDMCA": "Open DMCA cases",
+        "resolvedReports": "Resolved reports",
+        "searchQueries": "Search queries",
+        "recommendationClicks": "Recommendation clicks"
+      }
+    },
+    "tutorialsAdmin": {
+      "subtitle": "Create and publish guides and their categories.",
+      "tabs": "Choose section",
+      "tabTutorials": "Tutorials",
+      "tabCategories": "Categories",
+      "createTitle": "Create tutorial",
+      "titleLabel": "Title",
+      "typeLabel": "Type",
+      "levelLabel": "Level",
+      "categoryLabel": "Category",
+      "noCategory": "None",
+      "statusLabel": "Status",
+      "youtubeLabel": "YouTube URL",
+      "videoUrlLabel": "Video URL (R2, mp4/webm)",
+      "videoFileLabel": "Upload video",
+      "uploading": "Uploading …",
+      "videoReady": "Video ready",
+      "descriptionLabel": "Short description",
+      "contentLabel": "Article content",
+      "save": "Save",
+      "listTitle": "All tutorials",
+      "emptyTitle": "No tutorials yet",
+      "emptyText": "Create the first tutorial above.",
+      "colTitle": "Title",
+      "colType": "Type",
+      "colStatus": "Status",
+      "colViews": "Views",
+      "colActions": "Actions",
+      "deleteLabel": "Delete {title}",
+      "deleteTitle": "Delete “{title}”?",
+      "deleteText": "The tutorial is removed and no longer publicly available.",
+      "delete": "Delete",
+      "categoriesTitle": "Create category",
+      "categoryName": "Category name",
+      "add": "Add",
+      "seedDefaults": "Create default categories",
+      "noCategoriesTitle": "No categories yet",
+      "noCategoriesText": "Create a category or use the default categories.",
+      "type": {
+        "YOUTUBE": "YouTube",
+        "VIDEO": "Video",
+        "ARTICLE": "Article",
+        "MIXED": "Mixed"
+      },
+      "status": {
+        "DRAFT": "Draft",
+        "PUBLISHED": "Published",
+        "ARCHIVED": "Archived"
+      }
+    }
+  }
 }

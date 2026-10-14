@@ -85,6 +85,9 @@ eine H1 setzen, beginnt die Seite mit H2 (`PageHeader level="h2"`).
 | Partner- und Designer-Studio | `partner-pages.json` | `partnerPages.<seite>` |
 | ACP Teil A | `acp-a.json` | `admin.<seite>` |
 | ACP Teil B | `acp-b.json` | `admin.<seite>` |
+| geteilte Bausteine (Mods, Spiele, Suche, Audio, Banner) | `shared-ui.json` | `sharedUi.<baustein>` |
+| Uploads und Chat | `shared-tools.json` | `sharedTools.<baustein>` |
+| ACP-Panels (Runde 2) | `acp-c.json` | `admin.<panel>` |
 
   ACP-Texte stehen unter `admin.*`, weil nur /admin und /designer sie geladen bekommen (Test
   `admin-messages-scope`). Vor neuen `admin.<seite>`-Namen in `admin.json` nachsehen, ob es ihn gibt.

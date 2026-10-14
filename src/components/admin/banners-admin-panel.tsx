@@ -1,8 +1,9 @@
 "use client";
 
-import { useTransition } from "react";
+import { useId, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { Loader2, Megaphone } from "lucide-react";
 import {
   createSiteBanner,
   deleteSiteBanner,
@@ -10,10 +11,13 @@ import {
 } from "@/actions/admin/banners";
 import type { getAdminSiteBanners } from "@/actions/admin/banners";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Input, controlClassName } from "@/components/ui/input";
+import { SectionCard } from "@/components/ui/page-header";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { useAppToast } from "@/hooks/use-app-toast";
+import { cn } from "@/lib/utils";
 import { SiteBannerFrequency, SiteBannerType } from "@prisma/client";
 
 type BannerRow = Extract<
@@ -30,21 +34,35 @@ const FREQUENCIES: SiteBannerFrequency[] = [
   "ONCE_DAY",
 ];
 
+function Field({ id, label, children, className }: { id: string; label: string; children: React.ReactNode; className?: string }) {
+  return (
+    <div className={className}>
+      <label htmlFor={id} className="label-text mb-1.5 block">{label}</label>
+      {children}
+    </div>
+  );
+}
+
 export function BannersAdminPanel({ banners }: { banners: BannerRow[] }) {
   const t = useTranslations("admin.ui.bannersAdmin");
+  const tp = useTranslations("admin.siteBanners");
+  const uid = useId();
   const router = useRouter();
   const appToast = useAppToast();
   const [pending, startTransition] = useTransition();
+  const [deleting, setDeleting] = useState<BannerRow | null>(null);
+
+  const selectClass = cn(controlClassName, "h-9");
 
   return (
     <div className="space-y-6">
-      <Card className="p-6 space-y-4">
-        <h3 className="font-semibold">{t("createBannerTitle")}</h3>
+      <SectionCard title={t("createBannerTitle")}>
         <form
-          className="grid gap-3 sm:grid-cols-2"
+          className="grid gap-4 sm:grid-cols-2"
           onSubmit={(e) => {
             e.preventDefault();
-            const fd = new FormData(e.currentTarget);
+            const formEl = e.currentTarget;
+            const fd = new FormData(formEl);
             startTransition(async () => {
               const r = await createSiteBanner({
                 type: fd.get("type") as SiteBannerType,
@@ -61,88 +79,122 @@ export function BannersAdminPanel({ banners }: { banners: BannerRow[] }) {
               if (r.success) {
                 appToast.saved();
                 router.refresh();
-                e.currentTarget.reset();
+                formEl.reset();
               } else appToast.error(r.error);
             });
           }}
         >
-          <select name="type" defaultValue="GLOBAL" className="h-10 rounded-md border border-input bg-background/50 px-3 text-sm">
-            {TYPES.map((type) => (
-              <option key={type} value={type}>{type}</option>
-            ))}
-          </select>
-          <select name="frequency" defaultValue="ALWAYS" className="h-10 rounded-md border border-input bg-background/50 px-3 text-sm">
-            {FREQUENCIES.map((f) => (
-              <option key={f} value={f}>{f.replace(/_/g, " ")}</option>
-            ))}
-          </select>
-          <Input name="title" placeholder={t("titlePlaceholder")} required className="sm:col-span-2" />
-          <Input name="description" placeholder={t("descriptionPlaceholder")} className="sm:col-span-2" />
-          <Input name="imageUrl" placeholder={t("imageUrlPlaceholder")} />
-          <Input name="linkUrl" placeholder={t("linkUrlPlaceholder")} />
-          <Input name="buttonText" placeholder={t("buttonTextPlaceholder")} />
-          <Input name="priority" type="number" defaultValue={0} placeholder={t("priorityPlaceholder")} />
-          <Input name="gameId" placeholder={t("gameIdPlaceholder")} />
-          <Input name="gameCategoryId" placeholder={t("gameCategoryIdPlaceholder")} />
-          <Button type="submit" disabled={pending} className="sm:col-span-2">
-            {t("createBanner")}
-          </Button>
+          <Field id={`${uid}-type`} label={tp("type")}>
+            <select id={`${uid}-type`} name="type" defaultValue="GLOBAL" className={selectClass}>
+              {TYPES.map((type) => (
+                <option key={type} value={type}>{tp(`types.${type}`)}</option>
+              ))}
+            </select>
+          </Field>
+          <Field id={`${uid}-frequency`} label={tp("frequency")}>
+            <select id={`${uid}-frequency`} name="frequency" defaultValue="ALWAYS" className={selectClass}>
+              {FREQUENCIES.map((f) => (
+                <option key={f} value={f}>{tp(`frequencies.${f}`)}</option>
+              ))}
+            </select>
+          </Field>
+          <Field id={`${uid}-title`} label={t("titlePlaceholder")} className="sm:col-span-2">
+            <Input id={`${uid}-title`} name="title" required />
+          </Field>
+          <Field id={`${uid}-description`} label={t("descriptionPlaceholder")} className="sm:col-span-2">
+            <Input id={`${uid}-description`} name="description" />
+          </Field>
+          <Field id={`${uid}-image`} label={t("imageUrlPlaceholder")}>
+            <Input id={`${uid}-image`} name="imageUrl" />
+          </Field>
+          <Field id={`${uid}-link`} label={t("linkUrlPlaceholder")}>
+            <Input id={`${uid}-link`} name="linkUrl" />
+          </Field>
+          <Field id={`${uid}-button`} label={t("buttonTextPlaceholder")}>
+            <Input id={`${uid}-button`} name="buttonText" />
+          </Field>
+          <Field id={`${uid}-priority`} label={t("priorityPlaceholder")}>
+            <Input id={`${uid}-priority`} name="priority" type="number" defaultValue={0} className="tabular-nums" />
+          </Field>
+          <Field id={`${uid}-game`} label={t("gameIdPlaceholder")}>
+            <Input id={`${uid}-game`} name="gameId" className="font-mono" />
+          </Field>
+          <Field id={`${uid}-category`} label={t("gameCategoryIdPlaceholder")}>
+            <Input id={`${uid}-category`} name="gameCategoryId" className="font-mono" />
+          </Field>
+          <div className="sm:col-span-2">
+            <Button type="submit" disabled={pending}>
+              {pending && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}
+              {t("createBanner")}
+            </Button>
+          </div>
         </form>
-      </Card>
+      </SectionCard>
 
-      <Card className="p-6">
-        <h3 className="font-semibold mb-4">{t("activeBannersTitle")}</h3>
-        <div className="space-y-3">
-          {banners.map((banner) => (
-            <div key={banner.id} className="rounded-lg border border-border/40 p-4">
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <div>
-                  <p className="font-medium">{banner.title}</p>
-                  <p className="text-xs text-muted-foreground">{banner.type} · {banner.frequency}</p>
+      <SectionCard title={tp("listTitle")}>
+        {banners.length === 0 ? (
+          <EmptyState icon={Megaphone} title={t("noBanners")} description={tp("emptyText")} />
+        ) : (
+          <ul className="divide-y divide-line">
+            {banners.map((banner) => (
+              <li key={banner.id} className="py-4 first:pt-0 last:pb-0">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="font-medium text-ink">{banner.title}</p>
+                    <p className="meta">
+                      {tp(`types.${banner.type}`)} · {tp(`frequencies.${banner.frequency}`)}
+                    </p>
+                  </div>
+                  <StatusBadge tone={banner.isActive ? "success" : "neutral"} label={banner.isActive ? t("statusActive") : t("statusOff")} />
                 </div>
-                <Badge variant={banner.isActive ? "premium" : "outline"}>
-                  {banner.isActive ? t("statusActive") : t("statusOff")}
-                </Badge>
-              </div>
-              {banner.description && (
-                <p className="text-sm text-muted-foreground mt-2">{banner.description}</p>
-              )}
-              <div className="flex gap-2 mt-3">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  disabled={pending}
-                  onClick={() =>
-                    startTransition(async () => {
-                      const r = await toggleSiteBanner(banner.id, !banner.isActive);
-                      if (r.success) router.refresh();
-                    })
-                  }
-                >
-                  {banner.isActive ? t("disable") : t("enable")}
-                </Button>
-                <Button
-                  size="sm"
-                  variant="destructive"
-                  disabled={pending}
-                  onClick={() => {
-                    if (!confirm(t("deleteConfirm"))) return;
-                    startTransition(async () => {
-                      const r = await deleteSiteBanner(banner.id);
-                      if (r.success) router.refresh();
-                    });
-                  }}
-                >
-                  {t("delete")}
-                </Button>
-              </div>
-            </div>
-          ))}
-          {banners.length === 0 && (
-            <p className="text-sm text-muted-foreground">{t("noBanners")}</p>
-          )}
-        </div>
-      </Card>
+                {banner.description && <p className="mt-2 text-sm text-ink-muted">{banner.description}</p>}
+                <div className="mt-3 flex gap-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    disabled={pending}
+                    onClick={() =>
+                      startTransition(async () => {
+                        const r = await toggleSiteBanner(banner.id, !banner.isActive);
+                        if (r.success) {
+                          appToast.updated();
+                          router.refresh();
+                        } else appToast.error(r.error);
+                      })
+                    }
+                  >
+                    {banner.isActive ? t("disable") : t("enable")}
+                  </Button>
+                  <Button size="sm" variant="ghost" className="text-danger" disabled={pending} onClick={() => setDeleting(banner)}>
+                    {t("delete")}
+                  </Button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </SectionCard>
+
+      <ConfirmDialog
+        open={!!deleting}
+        onOpenChange={(open) => !open && setDeleting(null)}
+        title={t("deleteConfirm")}
+        description={tp("deleteText", { title: deleting?.title ?? "" })}
+        confirmLabel={t("delete")}
+        variant="destructive"
+        loading={pending}
+        onConfirm={() => {
+          if (!deleting) return;
+          startTransition(async () => {
+            const r = await deleteSiteBanner(deleting.id);
+            if (r.success) {
+              appToast.deleted();
+              setDeleting(null);
+              router.refresh();
+            } else appToast.error(r.error);
+          });
+        }}
+      />
     </div>
   );
 }

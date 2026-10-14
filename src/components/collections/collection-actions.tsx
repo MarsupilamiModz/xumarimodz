@@ -1,6 +1,8 @@
 "use client";
 
 import { useTransition } from "react";
+import { useTranslations } from "next-intl";
+import { Download } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { followCollection, unfollowCollection, bulkDownloadCollection } from "@/actions/collections";
@@ -14,6 +16,7 @@ export function CollectionActions({
   modIds: string[];
   initialFollowing: boolean;
 }) {
+  const t = useTranslations("publicPages.collections");
   const [pending, startTransition] = useTransition();
 
   function toggleFollow() {
@@ -29,7 +32,7 @@ export function CollectionActions({
     startTransition(async () => {
       const r = await bulkDownloadCollection(collectionId);
       if (r.success) {
-        toast({ title: `${r.data.count} mods added to library` });
+        toast({ title: t("addedToLibrary", { count: r.data.count }) });
         for (const id of modIds) {
           const res = await fetch(`/api/mods/${id}/download?skipDeps=1`, { method: "POST" });
           if (res.ok) {
@@ -44,10 +47,11 @@ export function CollectionActions({
   return (
     <div className="flex flex-wrap gap-2">
       <Button disabled={pending} onClick={installAll}>
-        Download entire collection
+        <Download className="h-4 w-4" aria-hidden />
+        {t("downloadAll")}
       </Button>
       <Button variant="outline" disabled={pending} onClick={toggleFollow}>
-        {initialFollowing ? "Unfollow" : "Follow collection"}
+        {initialFollowing ? t("unfollow") : t("follow")}
       </Button>
     </div>
   );

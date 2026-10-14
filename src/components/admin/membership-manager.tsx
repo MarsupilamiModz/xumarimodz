@@ -2,10 +2,11 @@
 
 import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
-import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { SectionCard } from "@/components/ui/page-header";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { useAppToast } from "@/hooks/use-app-toast";
 import {
   adminAssignMembership,
   adminCancelMembership,
@@ -51,53 +52,56 @@ export function MembershipManager({
   billingHistory: BillingRow[];
 }) {
   const t = useTranslations("admin.ui.membershipManager");
+  const tStatus = useTranslations("admin.ownerUserDetail.membershipStatus");
+  const tb = useTranslations("admin.membershipManagerB");
+  const appToast = useAppToast();
   const [pending, startTransition] = useTransition();
   const [selectedPlan, setSelectedPlan] = useState("");
+  const [confirmCancel, setConfirmCancel] = useState(false);
 
-  function run(action: () => Promise<{ success: boolean; error?: string }>, msg: string) {
+  function run(action: () => Promise<{ success: boolean; error?: string }>, msg: string, done?: () => void) {
     startTransition(async () => {
       const r = await action();
-      if (r.success) toast({ title: msg });
-      else toast({ title: r.error ?? t("failed"), variant: "destructive" });
+      if (r.success) {
+        appToast.updated(msg);
+        done?.();
+      } else appToast.error(r.error ?? t("failed"));
     });
   }
 
-  const statusColor =
-    state.status === "ACTIVE" ? "default" : state.status === "CANCELED" ? "destructive" : "secondary";
+  const statusTone = state.status === "ACTIVE" ? "success" : state.status === "CANCELED" ? "danger" : "neutral";
+  const statusLabel = tStatus.has(state.status) ? tStatus(state.status) : state.status;
 
   return (
-    <Card className="lg:col-span-2">
-      <CardHeader>
-        <CardTitle>{t("heading")}</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <div>
-            <p className="text-xs text-muted-foreground">{t("currentPlan")}</p>
-            <p className="font-medium">{state.planSlug ?? state.membershipType}</p>
-          </div>
-          <div>
-            <p className="text-xs text-muted-foreground">{t("status")}</p>
-            <Badge variant={statusColor}>{state.status}</Badge>
-            {state.isLifetime && <Badge variant="outline" className="ml-1">{t("lifetime")}</Badge>}
-          </div>
-          <div>
-            <p className="text-xs text-muted-foreground">{t("renewalDate")}</p>
-            <p className="text-sm">
-              {state.renewalDate ? formatDate(state.renewalDate) : "—"}
-            </p>
-          </div>
-          <div>
-            <p className="text-xs text-muted-foreground">{t("cancelDate")}</p>
-            <p className="text-sm">
-              {state.cancelDate ? formatDate(state.cancelDate) : "—"}
-            </p>
-          </div>
+    <SectionCard title={t("heading")} className="lg:col-span-2">
+      <dl className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div>
+          <dt className="label-text">{t("currentPlan")}</dt>
+          <dd className="mt-1 text-sm font-medium text-ink">{state.planSlug ?? t(`tier.${state.membershipType}`)}</dd>
         </div>
+        <div>
+          <dt className="label-text">{t("status")}</dt>
+          <dd className="mt-1 flex flex-wrap gap-1">
+            <StatusBadge tone={statusTone} label={statusLabel} />
+            {state.isLifetime && <StatusBadge tone="info" label={t("lifetime")} />}
+          </dd>
+        </div>
+        <div>
+          <dt className="label-text">{t("renewalDate")}</dt>
+          <dd className="mt-1 text-sm tabular-nums text-ink">{state.renewalDate ? formatDate(state.renewalDate, locale) : "—"}</dd>
+        </div>
+        <div>
+          <dt className="label-text">{t("cancelDate")}</dt>
+          <dd className="mt-1 text-sm tabular-nums text-ink">{state.cancelDate ? formatDate(state.cancelDate, locale) : "—"}</dd>
+        </div>
+      </dl>
 
-        <div className="flex flex-wrap gap-2 border-t border-border/30 pt-4">
+      <div className="mt-4 flex flex-wrap items-end gap-2 border-t border-line pt-4">
+        <div className="space-y-1.5">
+          <label htmlFor={`membership-plan-${userId}`} className="label-text">{tb("plan")}</label>
           <select
-            className="h-9 rounded-md border border-input bg-background/50 px-2 text-sm"
+            id={`membership-plan-${userId}`}
+            className="h-9 rounded-md border border-line-control bg-raised px-2 text-sm text-ink"
             value={selectedPlan}
             onChange={(e) => setSelectedPlan(e.target.value)}
           >
@@ -108,49 +112,48 @@ export function MembershipManager({
               </option>
             ))}
           </select>
-          <Button
-            size="sm"
-            variant="outline"
-            disabled={pending || !selectedPlan}
-            onClick={() => run(() => adminAssignMembership(userId, selectedPlan), t("toast.assigned"))}
-          >
-            {t("assignUpgrade")}
-          </Button>
+        </div>
+        <Button
+          size="sm"
+          variant="outline"
+          disabled={pending || !selectedPlan}
+          onClick={() => run(() => adminAssignMembership(userId, selectedPlan), t("toast.assigned"))}
+        >
+          {t("assignUpgrade")}
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
+          disabled={pending}
+          onClick={() => run(() => adminExtendMembership(userId, 30), t("toast.extended"))}
+        >
+          {t("extend30Days")}
+        </Button>
+        {state.status === "CANCELED" ? (
           <Button
             size="sm"
             variant="outline"
             disabled={pending}
-            onClick={() => run(() => adminExtendMembership(userId, 30), t("toast.extended"))}
+            onClick={() => run(() => adminResumeMembership(userId), t("toast.resumed"))}
           >
-            {t("extend30Days")}
+            {t("resume")}
           </Button>
-          {state.status === "CANCELED" ? (
-            <Button
-              size="sm"
-              variant="outline"
-              disabled={pending}
-              onClick={() => run(() => adminResumeMembership(userId), t("toast.resumed"))}
-            >
-              {t("resume")}
-            </Button>
-          ) : (
-            <Button
-              size="sm"
-              variant="destructive"
-              disabled={pending}
-              onClick={() => run(() => adminCancelMembership(userId), t("toast.canceled"))}
-            >
-              {t("cancel")}
-            </Button>
-          )}
-        </div>
+        ) : (
+          <Button size="sm" variant="ghost" className="text-danger" disabled={pending} onClick={() => setConfirmCancel(true)}>
+            {t("cancel")}
+          </Button>
+        )}
+      </div>
 
-        <div className="flex flex-wrap gap-2">
+      <div className="mt-4 space-y-1.5">
+        <p className="label-text">{tb("tier")}</p>
+        <div className="flex flex-wrap gap-2" role="group" aria-label={tb("tier")}>
           {TIERS.map((tier) => (
             <Button
               key={tier}
               size="sm"
-              variant={state.membershipType === tier ? "default" : "ghost"}
+              variant={state.membershipType === tier ? "secondary" : "ghost"}
+              aria-pressed={state.membershipType === tier}
               disabled={pending}
               onClick={() => run(() => adminSetMembershipTier(userId, tier), t("toast.setTo", { tier: t(`tier.${tier}`) }))}
             >
@@ -158,26 +161,36 @@ export function MembershipManager({
             </Button>
           ))}
         </div>
+      </div>
 
-        <div>
-          <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2">{t("billingHistory")}</p>
-          {billingHistory.length === 0 ? (
-            <p className="text-sm text-muted-foreground">{t("noBillingRecords")}</p>
-          ) : (
-            <ul className="space-y-2 text-sm max-h-48 overflow-y-auto">
-              {billingHistory.map((row) => (
-                <li key={row.id} className="flex justify-between border-b border-border/20 pb-2">
-                  <span>{row.plan.name}</span>
-                  <span className="text-muted-foreground">
-                    {formatMoneyFromCents(row.amountCents, locale)} ·{" "}
-                    {formatDate(row.createdAt)}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      </CardContent>
-    </Card>
+      <div className="mt-4">
+        <h3 className="label-text mb-2">{t("billingHistory")}</h3>
+        {billingHistory.length === 0 ? (
+          <p className="text-sm text-ink-muted">{t("noBillingRecords")}</p>
+        ) : (
+          <ul className="max-h-48 divide-y divide-line overflow-y-auto text-[13px]">
+            {billingHistory.map((row) => (
+              <li key={row.id} className="flex justify-between gap-3 py-2">
+                <span className="text-ink">{row.plan.name}</span>
+                <span className="tabular-nums text-ink-muted">
+                  {formatMoneyFromCents(row.amountCents, locale)} · {formatDate(row.createdAt, locale)}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      <ConfirmDialog
+        open={confirmCancel}
+        onOpenChange={setConfirmCancel}
+        title={tb("cancelTitle")}
+        description={tb("cancelText")}
+        confirmLabel={t("cancel")}
+        variant="destructive"
+        loading={pending}
+        onConfirm={() => run(() => adminCancelMembership(userId), t("toast.canceled"), () => setConfirmCancel(false))}
+      />
+    </SectionCard>
   );
 }

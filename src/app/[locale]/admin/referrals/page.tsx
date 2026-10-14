@@ -14,10 +14,10 @@ export default async function AdminReferralsPage(props: { params: Promise<{ loca
 
   setRequestLocale(locale);
   await requirePagePermission("settings.write");
-  const result = await getAdminReferrals();
+  const [t, result] = await Promise.all([getTranslations("admin"), getAdminReferrals()]);
   return (
     <div>
-      <AdminPageHeader title="Referrals" />
+      <AdminPageHeader title={t("referrals")} description={t("referralsPage.subtitle")} />
       {result.success ? <ReferralsAdminPanel data={result.data} locale={locale} /> : <AdminLoadError message={result.error} />}
     </div>
   );

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Loader2, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { SectionCard } from "@/components/ui/page-header";
 import { SafeImage } from "@/components/ui/safe-image";
 import { useAppToast } from "@/hooks/use-app-toast";
 import { AvatarCropUpload } from "@/components/upload/avatar-crop-upload";
@@ -51,13 +51,11 @@ export function CreatorProfileUpload({ avatarUrl, bannerUrl }: CreatorProfileUpl
   }
 
   return (
-    <Card className="space-y-4 p-6">
-      <h3 className="font-medium">{t("profileMedia")}</h3>
-
+    <SectionCard title={t("profileMedia")}>
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
-          <p className="text-sm text-muted-foreground">{t("avatar")}</p>
-          <div className="relative mx-auto h-24 w-24 overflow-hidden rounded-full border border-border/50">
+          <p className="label-text text-ink-muted">{t("avatar")}</p>
+          <div className="relative mx-auto h-24 w-24 overflow-hidden rounded-full border border-line">
             <SafeImage
               src={avatar}
               alt=""
@@ -75,8 +73,8 @@ export function CreatorProfileUpload({ avatarUrl, bannerUrl }: CreatorProfileUpl
         </div>
 
         <div className="space-y-2">
-          <p className="text-sm text-muted-foreground">{t("banner")}</p>
-          <div className="relative aspect-[3/1] overflow-hidden rounded-lg border border-border/50">
+          <p className="label-text text-ink-muted">{t("banner")}</p>
+          <div className="relative aspect-[3/1] overflow-hidden rounded-lg border border-line">
             <SafeImage
               src={banner}
               alt=""
@@ -106,9 +104,9 @@ export function CreatorProfileUpload({ avatarUrl, bannerUrl }: CreatorProfileUpl
             onClick={() => bannerRef.current?.click()}
           >
             {uploading === "banner" ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
             ) : (
-              <Upload className="mr-2 h-4 w-4" />
+              <Upload className="h-4 w-4" aria-hidden />
             )}
             {t("uploadBanner")}
           </Button>
@@ -116,16 +114,16 @@ export function CreatorProfileUpload({ avatarUrl, bannerUrl }: CreatorProfileUpl
       </div>
 
       {uploading && (
-        <div className="space-y-1">
-          <div className="h-1.5 overflow-hidden rounded-full bg-muted">
+        <div className="mt-4 space-y-1" role="status">
+          <div className="h-1.5 overflow-hidden rounded-full bg-elevated">
             <div
               className={cn("h-full bg-violet transition-all duration-200")}
               style={{ width: `${progress}%` }}
             />
           </div>
-          <p className="text-xs text-muted-foreground">{t("uploading", { progress })}</p>
+          <p className="meta">{t("uploading", { progress })}</p>
         </div>
       )}
-    </Card>
+    </SectionCard>
   );
 }

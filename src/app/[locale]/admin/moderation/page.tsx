@@ -21,15 +21,18 @@ export default async function AdminModerationPage(
 
   setRequestLocale(locale);
   await requirePagePermission("users.read");
-  const t = await getTranslations("admin");
+  const t = await getTranslations("admin.ui.userModeration");
   const page = Math.max(1, Number(searchParams.page) || 1);
   const result = await getModerationOverview({ search: searchParams.q, page });
   return (
     <div>
-      <AdminPageHeader title={t("nav.users")} />
+      <AdminPageHeader
+        title={t("pageTitle")}
+        description={result.success ? t("pageSubtitle", { count: result.data.flagged }) : undefined}
+      />
       {result.success ? (
         <>
-          <UserModerationPanel locale={locale} users={result.data.users} recentLogs={result.data.recentLogs} flagged={result.data.flagged} />
+          <UserModerationPanel locale={locale} users={result.data.users} recentLogs={result.data.recentLogs} search={searchParams.q} />
           <Pagination
             className="mt-8"
             page={result.data.page}

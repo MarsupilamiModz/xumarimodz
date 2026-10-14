@@ -2,9 +2,11 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { saveAdminRevenueShareSettings } from "@/actions/admin/revenue-sharing";
-import { Card } from "@/components/ui/card";
+import { SectionCard } from "@/components/ui/page-header";
+import { KpiTile } from "@/components/ui/kpi-tile";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useAppToast } from "@/hooks/use-app-toast";
@@ -24,6 +26,7 @@ type Dashboard = {
 
 export function RevenueSharingPanel({ data }: { data: Dashboard }) {
   const t = useTranslations("admin.ui.revenueSharing");
+  const locale = useLocale();
   const router = useRouter();
   const appToast = useAppToast();
   const [pending, startTransition] = useTransition();
@@ -60,38 +63,26 @@ export function RevenueSharingPanel({ data }: { data: Dashboard }) {
     });
   }
 
+  const ok = Math.abs(total - 100) < 0.01;
+
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="h1-acp">{t("heading")}</h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          {t("subheading")}
-        </p>
+    <div className="space-y-6">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <KpiTile label={t("revenueToday")} value={formatCents(data.revenueTodayCents, locale)} />
+        <KpiTile label={t("revenue30d")} value={formatCents(data.revenue30dCents, locale)} />
+        <KpiTile
+          label={t("openCommissions")}
+          value={formatCents(data.openCommissionCents, locale)}
+          hint={t("entriesCount", { count: data.openCommissionCount })}
+        />
+        <KpiTile
+          label={t("pendingPayouts")}
+          value={formatCents(data.pendingPayoutCents, locale)}
+          hint={t("payoutsCount", { count: data.pendingPayoutCount })}
+        />
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="p-4">
-          <p className="text-xs uppercase text-muted-foreground">{t("revenueToday")}</p>
-          <p className="text-2xl font-bold tabular-nums">{formatCents(data.revenueTodayCents)}</p>
-        </Card>
-        <Card className="p-4">
-          <p className="text-xs uppercase text-muted-foreground">{t("revenue30d")}</p>
-          <p className="text-2xl font-bold tabular-nums">{formatCents(data.revenue30dCents)}</p>
-        </Card>
-        <Card className="p-4">
-          <p className="text-xs uppercase text-muted-foreground">{t("openCommissions")}</p>
-          <p className="text-2xl font-bold tabular-nums">{formatCents(data.openCommissionCents)}</p>
-          <p className="text-xs text-muted-foreground">{t("entriesCount", { count: data.openCommissionCount })}</p>
-        </Card>
-        <Card className="p-4">
-          <p className="text-xs uppercase text-muted-foreground">{t("pendingPayouts")}</p>
-          <p className="text-2xl font-bold tabular-nums">{formatCents(data.pendingPayoutCents)}</p>
-          <p className="text-xs text-muted-foreground">{t("payoutsCount", { count: data.pendingPayoutCount })}</p>
-        </Card>
-      </div>
-
-      <Card className="p-6 max-w-xl">
-        <h2 className="font-semibold mb-4">{t("globalRevenueSplit")}</h2>
+      <SectionCard title={t("globalRevenueSplit")} className="max-w-xl">
         <form onSubmit={save} className="space-y-4">
           {(
             [
@@ -101,23 +92,24 @@ export function RevenueSharingPanel({ data }: { data: Dashboard }) {
               ["platform", t("platformShare")],
             ] as const
           ).map(([key, label]) => (
-            <div key={key}>
-              <label className="text-sm font-medium">{label}</label>
+            <div key={key} className="space-y-1.5">
+              <label htmlFor={`share-${key}`} className="label-text">{label}</label>
               <Input
+                id={`share-${key}`}
                 type="number"
                 min={0}
                 max={100}
                 step={0.1}
                 value={form[key]}
                 onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
-                className="mt-1"
+                className="tabular-nums"
               />
             </div>
           ))}
-          <p className={`text-sm ${Math.abs(total - 100) < 0.01 ? "text-success" : "text-destructive"}`}>
-            {t("totalMustEqual", { total: total.toFixed(1) })}
-          </p>
-          <p className="text-xs text-muted-foreground">
+          <div aria-live="polite">
+            <StatusBadge tone={ok ? "success" : "danger"} label={t("totalMustEqual", { total: total.toFixed(1) })} />
+          </div>
+          <p className="meta">
             {t("currentSplit", {
               creator: bpsToPercent(data.settings.creatorShareBps),
               designer: bpsToPercent(data.settings.designerShareBps),
@@ -129,7 +121,7 @@ export function RevenueSharingPanel({ data }: { data: Dashboard }) {
             {t("savePayoutSettings")}
           </Button>
         </form>
-      </Card>
+      </SectionCard>
     </div>
   );
 }

@@ -11,7 +11,8 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { SafeImage } from "@/components/ui/safe-image";
 import { CoverPlaceholder } from "@/components/ui/cover-placeholder";
 import { ShopPrice } from "@/components/shop/shop-price";
-import { cn } from "@/lib/utils";
+import { PageHeader } from "@/components/ui/page-header";
+import { ChipTabs } from "@/components/ui/chip-tabs";
 import type { Locale } from "@/i18n/config";
 
 export async function generateMetadata(props: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
@@ -52,20 +53,13 @@ export default async function ShopPage(
   const txt = (field: string, fallback: string) => resolvePageContent(cms.pageContent, "shop", locale, field, fallback);
   const { products, categories } = catalog;
 
-  const pill = (active: boolean) =>
-    cn(
-      "inline-flex h-9 items-center rounded-md border px-3 text-sm font-semibold transition-colors duration-fast",
-      active ? "border-violet-bright bg-violet-soft text-violet-bright" : "border-line text-ink-muted hover:border-line-control hover:text-ink"
-    );
-
   return (
     <div className="page-section">
-      <h1 className="h1-display">{txt("heroTitle", t("title"))}</h1>
-      <p className="mt-3 max-w-2xl text-ink-muted">{txt("heroSubtitle", t("subtitle"))}</p>
+      <PageHeader title={txt("heroTitle", t("title"))} description={txt("heroSubtitle", t("subtitle"))} />
 
       <Link
         href={`/${locale}/premium`}
-        className="mt-10 flex flex-col gap-4 rounded-xl border border-line bg-raised p-6 transition-colors duration-fast hover:border-line-control sm:flex-row sm:items-center sm:justify-between"
+        className="flex flex-col gap-4 rounded-lg border border-line bg-raised p-6 transition-colors duration-fast hover:border-line-control sm:flex-row sm:items-center sm:justify-between"
       >
         <span className="flex items-center gap-4">
           <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-elevated text-ink">
@@ -83,26 +77,13 @@ export default async function ShopPage(
       </Link>
 
       {categories.length > 0 && (
-        <nav aria-label={t("categoriesLabel")} className="mt-10">
-          <ul className="flex flex-wrap gap-2">
-            <li>
-              <Link href={`/${locale}/shop`} aria-current={!activeCategory ? "page" : undefined} className={pill(!activeCategory)}>
-                {t("allCategories")}
-              </Link>
-            </li>
-            {categories.map((c) => (
-              <li key={c.id}>
-                <Link
-                  href={`/${locale}/shop?category=${c.slug}`}
-                  aria-current={activeCategory === c.slug ? "page" : undefined}
-                  className={pill(activeCategory === c.slug)}
-                >
-                  {c.name}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
+        <ChipTabs
+          className="mt-8"
+          label={t("categoriesLabel")}
+          options={[{ value: "", label: t("allCategories") }, ...categories.map((c) => ({ value: c.slug, label: c.name }))]}
+          value={activeCategory ?? ""}
+          hrefFor={(slug) => (slug ? `/${locale}/shop?category=${slug}` : `/${locale}/shop`)}
+        />
       )}
 
       {products.length === 0 ? (

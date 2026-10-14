@@ -1,8 +1,10 @@
 import Link from "next/link";
-import { setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import { Layers } from "lucide-react";
 import { listPublicCollections } from "@/lib/collections-data";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { PageHeader } from "@/components/ui/page-header";
+import { EmptyState } from "@/components/ui/empty-state";
 import type { Locale } from "@/i18n/config";
 
 export const dynamic = "force-dynamic";
@@ -19,40 +21,36 @@ export default async function CollectionsPage(
   } = params;
 
   setRequestLocale(locale);
+  const [t, te] = await Promise.all([getTranslations("publicPages.collections"), getTranslations("ecosystem")]);
   const { items } = await listPublicCollections(1, 24);
 
   return (
-    <div className="page-container py-12">
-      <div className="mb-8">
-        <h1 className="h1-display">Collections & Modpacks</h1>
-        <p className="text-muted-foreground mt-2">
-          Curated mod lists from creators and the community.
-        </p>
-      </div>
+    <div className="page-section">
+      <PageHeader title={t("title")} description={t("subtitle")} />
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {items.map((c) => (
-          <Link key={c.id} href={`/${locale}/collections/${c.slug}`}>
-            <Card className="h-full hover:border-line-control transition-colors">
-              <CardHeader>
-                <div className="flex items-center gap-2">
-                  <CardTitle className="text-lg">{c.title}</CardTitle>
-                  {c.isFeatured && <Badge>Featured</Badge>}
+      {items.length === 0 ? (
+        <EmptyState icon={Layers} title={t("emptyTitle")} description={t("emptyText")} />
+      ) : (
+        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {items.map((c) => (
+            <li key={c.id}>
+              <Link
+                href={`/${locale}/collections/${c.slug}`}
+                className="flex h-full flex-col rounded-lg border border-line bg-raised p-5 transition-colors duration-fast hover:border-line-control"
+              >
+                <div className="flex flex-wrap items-center gap-2">
+                  <h2 className="section-title">{c.title}</h2>
+                  {c.isFeatured && <Badge variant="outline">{te("featured")}</Badge>}
                 </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground line-clamp-2">
-                  {c.description ?? "No description"}
+                <p className="mt-2 line-clamp-2 text-sm text-ink-muted">{c.description ?? te("noDescription")}</p>
+                <p className="meta mt-auto pt-4 tabular-nums">
+                  {t("stats", { mods: c._count.items, followers: c._count.followers, downloads: c.downloadCount })}
                 </p>
-                <p className="text-xs text-muted-foreground mt-3">
-                  {c._count.items} mods · {c._count.followers} followers ·{" "}
-                  {c.downloadCount} downloads
-                </p>
-              </CardContent>
-            </Card>
-          </Link>
-        ))}
-      </div>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

@@ -14,11 +14,14 @@ export default async function AdminBannersPage(props: { params: Promise<{ locale
 
   setRequestLocale(locale);
   await requirePagePermission("settings.write");
-  const t = await getTranslations("admin");
-  const result = await getAdminSiteBanners();
+  const [t, tp, result] = await Promise.all([
+    getTranslations("admin"),
+    getTranslations("admin.siteBanners"),
+    getAdminSiteBanners(),
+  ]);
   return (
     <div>
-      <AdminPageHeader title={t("nav.announcements")} />
+      <AdminPageHeader title={t("nav.announcements")} description={tp("subtitle")} />
       {result.success ? <BannersAdminPanel banners={result.data} /> : <AdminLoadError message={result.error} />}
     </div>
   );

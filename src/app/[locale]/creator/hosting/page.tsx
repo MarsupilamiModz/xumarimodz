@@ -1,8 +1,9 @@
-import { setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ServerCog } from "lucide-react";
 import { getCreatorHostingSettings } from "@/actions/creator/hosting";
 import { CreatorHostingPanel } from "@/components/creator/creator-hosting-panel";
 import { EmptyState } from "@/components/ui/empty-state";
+import { PageHeader } from "@/components/ui/page-header";
 import type { Locale } from "@/i18n/config";
 
 export default async function CreatorHostingPage(props: { params: Promise<{ locale: Locale }> }) {
@@ -13,9 +14,17 @@ export default async function CreatorHostingPage(props: { params: Promise<{ loca
   } = params;
 
   setRequestLocale(locale);
+  const tp = await getTranslations("creatorPages.hosting");
   const result = await getCreatorHostingSettings();
-  if (!result.success) {
-    return <EmptyState icon={ServerCog} title={result.error} />;
-  }
-  return <CreatorHostingPanel profile={result.data.profile} platformSettings={result.data.platformSettings} />;
+
+  return (
+    <div>
+      <PageHeader level="h2" title={tp("title")} description={tp("description")} />
+      {result.success ? (
+        <CreatorHostingPanel profile={result.data.profile} platformSettings={result.data.platformSettings} />
+      ) : (
+        <EmptyState icon={ServerCog} title={result.error} />
+      )}
+    </div>
+  );
 }

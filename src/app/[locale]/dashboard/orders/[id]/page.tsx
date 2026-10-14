@@ -3,11 +3,14 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
+import { ChevronLeft } from "lucide-react";
 import { getOrderDetail, sendOrderMessage } from "@/actions/orders";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { PageHeader, SectionCard } from "@/components/ui/page-header";
+import { PageSkeleton } from "@/components/ui/page-skeleton";
+import { StatusBadge, type StatusTone } from "@/components/ui/status-badge";
 import { ClientOrderPaymentPanel } from "@/components/orders/client-order-payment-panel";
 import { UserIdentity } from "@/components/user/user-identity";
 import { toast } from "@/hooks/use-toast";
@@ -30,10 +33,19 @@ type Order = {
   }[];
 };
 
+/** Farbton je Auftragsstatus (wie in der Auftragsliste). */
+function orderTone(status: string): StatusTone {
+  if (status === "COMPLETED" || status === "DELIVERED") return "success";
+  if (status === "CANCELED" || status === "REFUNDED") return "neutral";
+  if (status === "WAITING_FOR_CUSTOMER" || status === "REVISION_REQUESTED" || status === "QUOTED") return "warning";
+  return "pending";
+}
+
 export default function OrderDetailPage() {
   const params = useParams();
   const locale = params.locale as string;
   const orderId = params.id as string;
+  const t = useTranslations("accountPages.orders");
   const [order, setOrder] = useState<Order | null>(null);
   const [content, setContent] = useState("");
   const [pending, startTransition] = useTransition();
@@ -50,49 +62,77 @@ export default function OrderDetailPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orderId]);
 
-  if (!order) return <p className="text-muted-foreground">Loading...</p>;
+  if (!order) return <PageSkeleton />;
 
   return (
     <div className="max-w-2xl">
-      <Link href={`/${locale}/dashboard/orders`} className="text-sm text-muted-foreground hover:text-foreground">
-        ← Back
+      <Link
+        href={`/${locale}/dashboard/orders`}
+        className="mb-4 inline-flex items-center gap-1 text-sm text-ink-muted hover:text-ink"
+      >
+        <ChevronLeft className="h-4 w-4" aria-hidden />
+        {t("back")}
       </Link>
-      <div className="mt-4 flex items-center gap-2">
-        <h1 className="h1-acp">{order.title}</h1>
-        <Badge variant="outline">{order.status}</Badge>
-      </div>
+      <PageHeader
+        title={order.title}
+        actions={
+          <StatusBadge
+            tone={orderTone(order.status)}
+            label={t.has(`status.${order.status}`) ? t(`status.${order.status}`) : order.status}
+          />
+        }
+      />
 
-      <ClientOrderPaymentPanel order={order} locale={locale} />
+      <div className="space-y-6">
+        <ClientOrderPaymentPanel order={order} locale={locale} />
 
-      <div className="mt-6 space-y-3">
-        {order.messages.map((m) => (
-          <Card key={m.id} className="p-4">
-            <div className="mb-1">
-              <UserIdentity username={m.sender.username} displayName={m.sender.displayName} size="sm" />
-            </div>
-            <p className="text-sm whitespace-pre-wrap">{m.content}</p>
-          </Card>
-        ))}
+        <SectionCard title={t("conversation")}>
+          {order.messages.length === 0 ? (
+            <p className="text-sm text-ink-muted">{t("noMessages")}</p>
+          ) : (
+            <ul className="space-y-3">
+              {order.messages.map((m) => (
+                <li key={m.id} className="rounded-lg border border-line p-4">
+                  <div className="mb-1">
+                    <UserIdentity username={m.sender.username} displayName={m.sender.displayName} size="sm" />
+                  </div>
+                  <p className="whitespace-pre-wrap text-sm text-ink">{m.content}</p>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          <form
+            className="mt-4 space-y-3 border-t border-line pt-4"
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (!content.trim()) return;
+              startTransition(async () => {
+                const r = await sendOrderMessage(orderId, content);
+                if (r.success) {
+                  setContent("");
+                  load();
+                  toast({ title: "toast.messageSent" });
+                }
+              });
+            }}
+          >
+            <label htmlFor="order-reply" className="label-text">
+              {t("replyLabel")}
+            </label>
+            <Textarea
+              id="order-reply"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              placeholder={t("replyPlaceholder")}
+              rows={3}
+            />
+            <Button type="submit" disabled={pending || !content.trim()}>
+              {t("send")}
+            </Button>
+          </form>
+        </SectionCard>
       </div>
-      <Card className="mt-6 p-4 space-y-3">
-        <Textarea value={content} onChange={(e) => setContent(e.target.value)} placeholder="Reply..." rows={3} />
-        <Button
-         
-          disabled={pending || !content.trim()}
-          onClick={() =>
-            startTransition(async () => {
-              const r = await sendOrderMessage(orderId, content);
-              if (r.success) {
-                setContent("");
-                load();
-                toast({ title: "toast.messageSent" });
-              }
-            })
-          }
-        >
-          Send
-        </Button>
-      </Card>
     </div>
   );
 }

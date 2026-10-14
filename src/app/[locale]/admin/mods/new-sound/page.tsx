@@ -19,7 +19,7 @@ export default async function AdminNewSoundPage(props: { params: Promise<{ local
   const games = catalog.map((g) => ({ id: g.id, name: g.name, categories: g.categories }));
   return (
     <div>
-      <AdminPageHeader title={t("nav.mods")} />
+      <AdminPageHeader title={t("uploadSound")} parent={{ label: t("mp.title"), href: `/${locale}/admin/mods` }} />
       <AdminSoundUploadPanel locale={locale} games={games} authors={authors} />
     </div>
   );

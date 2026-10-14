@@ -1,7 +1,11 @@
-import { setRequestLocale } from "next-intl/server";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import { PageHeader, SectionCard } from "@/components/ui/page-header";
+import { DataTable, type DataColumn } from "@/components/ui/data-table";
 import { Badge } from "@/components/ui/badge";
+import { SITE } from "@/lib/site";
 import type { Locale } from "@/i18n/config";
+
+type Endpoint = { method: string; path: string; scope: string };
 
 export default async function DevelopersPage(
   props: {
@@ -15,8 +19,9 @@ export default async function DevelopersPage(
   } = params;
 
   setRequestLocale(locale);
+  const t = await getTranslations("publicPages.developers");
 
-  const endpoints = [
+  const endpoints: Endpoint[] = [
     { method: "GET", path: "/api/v1/mods?q=&game=&page=1", scope: "mods:read" },
     { method: "GET", path: "/api/v1/mods/{slug}", scope: "mods:read" },
     { method: "GET", path: "/api/v1/games", scope: "games:read" },
@@ -27,65 +32,58 @@ export default async function DevelopersPage(
     { method: "POST", path: "/api/graphql", scope: "varies" },
   ];
 
+  const columns: DataColumn<Endpoint>[] = [
+    { key: "method", header: t("colMethod"), width: "80px", cell: (e) => <Badge variant="outline">{e.method}</Badge> },
+    { key: "path", header: t("colPath"), width: "minmax(0,2fr)", cell: (e) => <code className="mono-id break-all text-ink">{e.path}</code> },
+    {
+      key: "scope",
+      header: t("colScope"),
+      hideOnMobile: true,
+      cell: (e) => <span className="mono-id">{e.scope === "varies" ? t("scopeVaries") : e.scope}</span>,
+    },
+  ];
+
+  const code = "rounded-sm bg-elevated px-1 py-0.5 font-mono text-xs text-ink";
+
   return (
-    <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
-      <h1 className="h1-display mb-2">Developer Portal</h1>
-      <p className="text-muted-foreground mb-8">
-        Public REST and GraphQL APIs for the Xumari Modz desktop client and third-party integrations.
-      </p>
+    <div className="page-section">
+      <div className="max-w-4xl space-y-6">
+        <PageHeader className="mb-0" title={t("title")} description={t("subtitle", { site: SITE.name })} />
 
-      <Card className="mb-6">
-        <CardHeader><CardTitle>Authentication</CardTitle></CardHeader>
-        <CardContent className="space-y-2 text-sm">
-          <p>Include your API key in the Authorization header:</p>
-          <code className="block p-3 rounded bg-muted text-xs">
-            Authorization: Bearer xm_&lt;your_api_key&gt;
-          </code>
-          <p className="text-muted-foreground">
-            Request keys from an administrator via Admin → API Keys. Rate limits apply per key.
-          </p>
-        </CardContent>
-      </Card>
+        <SectionCard title={t("authTitle")}>
+          <div className="space-y-3 text-sm text-ink-muted">
+            <p>{t("authText")}</p>
+            <code className="block rounded-md bg-elevated p-3 font-mono text-xs text-ink">
+              Authorization: Bearer xm_&lt;your_api_key&gt;
+            </code>
+            <p>{t("authHint")}</p>
+          </div>
+        </SectionCard>
 
-      <Card className="mb-6">
-        <CardHeader><CardTitle>Desktop Client Foundation</CardTitle></CardHeader>
-        <CardContent className="text-sm space-y-2 text-muted-foreground">
-          <p>
-            Use <code>/api/v1/download-meta</code> for install metadata (SHA256, version, game compatibility).
-          </p>
-          <p>
-            Resolve dependencies via mod detail <code>/api/v1/mods/{"{slug}"}</code> before one-click installs.
-          </p>
-          <p>Collections support bulk library sync and sequential downloads.</p>
-        </CardContent>
-      </Card>
+        <SectionCard title={t("desktopTitle")}>
+          <div className="space-y-2 text-sm text-ink-muted">
+            <p>{t.rich("desktopMeta", { path: "/api/v1/download-meta", code: (c) => <code className={code}>{c}</code> })}</p>
+            <p>{t.rich("desktopDeps", { path: "/api/v1/mods/{slug}", code: (c) => <code className={code}>{c}</code> })}</p>
+            <p>{t("desktopCollections")}</p>
+          </div>
+        </SectionCard>
 
-      <Card>
-        <CardHeader><CardTitle>REST Endpoints</CardTitle></CardHeader>
-        <CardContent className="space-y-3">
-          {endpoints.map((e) => (
-            <div key={e.path} className="flex flex-wrap items-center gap-2 text-sm border-b border-border/30 pb-2">
-              <Badge variant="outline">{e.method}</Badge>
-              <code className="text-xs">{e.path}</code>
-              <Badge className="text-[10px]">{e.scope}</Badge>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
+        <section aria-labelledby="dev-endpoints" className="space-y-3">
+          <h2 id="dev-endpoints" className="section-title">{t("endpointsTitle")}</h2>
+          <DataTable caption={t("endpointsTitle")} columns={columns} rows={endpoints} rowKey={(e) => `${e.method} ${e.path}`} />
+        </section>
 
-      <Card className="mt-6">
-        <CardHeader><CardTitle>GraphQL</CardTitle></CardHeader>
-        <CardContent className="text-sm space-y-2">
-          <p>POST <code>/api/graphql</code> with JSON body:</p>
-          <pre className="p-3 rounded bg-muted text-xs overflow-x-auto">{`{
+        <SectionCard title={t("graphqlTitle")}>
+          <div className="space-y-3 text-sm text-ink-muted">
+            <p>{t.rich("graphqlText", { path: "/api/graphql", code: (c) => <code className={code}>{c}</code> })}</p>
+            <pre className="overflow-x-auto rounded-md bg-elevated p-3 font-mono text-xs text-ink">{`{
   "query": "query { mods }",
   "variables": { "q": "redux", "page": 1 }
 }`}</pre>
-          <p className="text-muted-foreground">
-            Supported query roots: mods, games, collections, mod (with slug variable).
-          </p>
-        </CardContent>
-      </Card>
+            <p>{t("graphqlRoots")}</p>
+          </div>
+        </SectionCard>
+      </div>
     </div>
   );
 }

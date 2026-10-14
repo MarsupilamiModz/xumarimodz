@@ -3,12 +3,13 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { ChevronUp, ChevronDown, Users } from "lucide-react";
 import { reorderVisibleCreators } from "@/actions/admin/creators";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty-state";
+import { SectionCard } from "@/components/ui/page-header";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { CreatorLevelBadge } from "@/components/creator/creator-level-badge";
-import { ChevronUp, ChevronDown } from "lucide-react";
 import type { PublisherLevel } from "@prisma/client";
 import { useAppToast } from "@/hooks/use-app-toast";
 
@@ -26,6 +27,7 @@ type Row = {
 
 export function CreatorVisibilityManager({ creators: initial }: { creators: Row[] }) {
   const t = useTranslations("ecosystem");
+  const tv = useTranslations("admin.creatorVisibility");
   const appToast = useAppToast();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -46,35 +48,56 @@ export function CreatorVisibilityManager({ creators: initial }: { creators: Row[
   }
 
   return (
-    <Card className="p-4 space-y-2">
-      <h3 className="font-medium mb-2">{t("visibleCreators")}</h3>
-      <p className="text-xs text-muted-foreground mb-4">{t("visibleCreatorsHint")}</p>
-      {rows.map((c, i) => (
-        <div
-          key={c.id}
-          className="flex items-center gap-2 rounded-lg border border-border/40 bg-background/30 p-2.5"
-        >
-          <div className="flex flex-col gap-0.5">
-            <Button type="button" size="icon" variant="ghost" className="h-6 w-6" disabled={pending || i === 0} onClick={() => move(c.id, -1)}>
-              <ChevronUp className="h-3.5 w-3.5" />
-            </Button>
-            <Button type="button" size="icon" variant="ghost" className="h-6 w-6" disabled={pending || i === rows.length - 1} onClick={() => move(c.id, 1)}>
-              <ChevronDown className="h-3.5 w-3.5" />
-            </Button>
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="font-medium text-sm truncate">{c.user.displayName ?? c.user.username}</p>
-            <p className="text-xs text-muted-foreground">/{c.slug}</p>
-          </div>
-          <CreatorLevelBadge level={c.level} size="xs" />
-          <div className="flex flex-wrap gap-1">
-            {c.isFeatured && <Badge variant="premium" className="text-[10px]">{t("featured")}</Badge>}
-            {c.isHomepage && <Badge variant="outline" className="text-[10px]">HP</Badge>}
-            {c.isTrending && <Badge variant="outline" className="text-[10px]">TR</Badge>}
-            {!c.isPublic && <Badge variant="destructive" className="text-[10px]">{t("hidden")}</Badge>}
-          </div>
-        </div>
-      ))}
-    </Card>
+    <SectionCard title={tv("listTitle")} description={t("visibleCreatorsHint")}>
+      {rows.length === 0 ? (
+        <EmptyState icon={Users} title={tv("emptyTitle")} description={tv("emptyText")} />
+      ) : (
+        <ol className="space-y-2">
+          {rows.map((c, i) => {
+            const name = c.user.displayName ?? c.user.username;
+            return (
+              <li key={c.id} className="flex items-center gap-3 rounded-md border border-line bg-elevated p-2.5">
+                <span className="w-6 text-right text-xs tabular-nums text-ink-faint">{i + 1}</span>
+                <div className="flex flex-col gap-0.5">
+                  <Button
+                    type="button"
+                    size="icon"
+                    variant="ghost"
+                    className="h-6 w-6"
+                    aria-label={tv("moveUp", { name })}
+                    disabled={pending || i === 0}
+                    onClick={() => move(c.id, -1)}
+                  >
+                    <ChevronUp className="h-3.5 w-3.5" aria-hidden />
+                  </Button>
+                  <Button
+                    type="button"
+                    size="icon"
+                    variant="ghost"
+                    className="h-6 w-6"
+                    aria-label={tv("moveDown", { name })}
+                    disabled={pending || i === rows.length - 1}
+                    onClick={() => move(c.id, 1)}
+                  >
+                    <ChevronDown className="h-3.5 w-3.5" aria-hidden />
+                  </Button>
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium text-ink">{name}</p>
+                  <p className="mono-id">/{c.slug}</p>
+                </div>
+                <CreatorLevelBadge level={c.level} size="xs" />
+                <div className="flex flex-wrap justify-end gap-1">
+                  {c.isFeatured && <StatusBadge tone="success" label={t("featured")} />}
+                  {c.isHomepage && <StatusBadge tone="neutral" label={t("homepage")} />}
+                  {c.isTrending && <StatusBadge tone="neutral" label={t("trending")} />}
+                  {!c.isPublic && <StatusBadge tone="warning" label={t("hidden")} />}
+                </div>
+              </li>
+            );
+          })}
+        </ol>
+      )}
+    </SectionCard>
   );
 }

@@ -14,10 +14,10 @@ export default async function AdminTutorialsPage(props: { params: Promise<{ loca
 
   setRequestLocale(locale);
   await requireRole("OWNER", "ADMIN", "CREATOR");
-  const result = await getTutorialsAdminData();
+  const [t, result] = await Promise.all([getTranslations("admin"), getTutorialsAdminData()]);
   return (
     <div>
-      <AdminPageHeader title="Tutorials" />
+      <AdminPageHeader title={t("tutorials")} description={t("tutorialsAdmin.subtitle")} />
       {result.success ? <TutorialsAdminPanel data={result.data} /> : <AdminLoadError message={result.error} />}
     </div>
   );

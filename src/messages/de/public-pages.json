@@ -1,3 +1,197 @@
 {
-  "publicPages": {}
+  "publicPages": {
+    "banned": {
+      "label": "Konto gesperrt",
+      "title": "Dein Konto wurde gesperrt",
+      "text": "Du kannst Xumari Modz mit diesem Konto nicht mehr nutzen. Wenn du glaubst, dass das ein Fehler ist, wende dich an den Support."
+    },
+    "becomeCreator": {
+      "applicationTitle": "Deine Creator-Bewerbung",
+      "submittedOn": "Eingereicht am {date}.",
+      "note": "Hinweis vom Team: {note}",
+      "intro": "Erzähl uns von deiner Arbeit. Unser Team prüft jede Bewerbung und meldet sich per E-Mail.",
+      "email": "E-Mail-Adresse"
+    },
+    "becomePartner": {
+      "note": "Hinweis vom Team: {note}",
+      "intro": "Bewirb dich als Partner. Unser Team prüft die Bewerbung; ein Partnerprofil entsteht erst nach der Freigabe.",
+      "updateTitle": "Bewerbung überarbeiten",
+      "updateText": "Pass deine Angaben an und reich die Bewerbung erneut ein.",
+      "selectPlaceholder": "Bitte wählen",
+      "submit": "Bewerbung absenden",
+      "resubmit": "Bewerbung erneut einreichen"
+    },
+    "blog": {
+      "title": "Neuigkeiten und Updates",
+      "subtitle": "Was sich bei Xumari Modz tut: neue Funktionen, Spiele und Ankündigungen.",
+      "emptyTitle": "Noch keine Beiträge",
+      "emptyText": "Schau bald wieder vorbei.",
+      "byline": "{author} · {date}"
+    },
+    "collections": {
+      "title": "Sammlungen und Modpacks",
+      "subtitle": "Zusammengestellte Mod-Listen von Creatorn und der Community.",
+      "emptyTitle": "Noch keine Sammlungen",
+      "emptyText": "Sobald öffentliche Sammlungen da sind, erscheinen sie hier.",
+      "stats": "{mods, plural, one {# Mod} other {# Mods}} · {followers, plural, one {# Follower} other {# Follower}} · {downloads, plural, one {# Download} other {# Downloads}}",
+      "byline": "von <owner>{name}</owner> · {views, plural, one {# Aufruf} other {# Aufrufe}} · {followers, plural, one {# Follower} other {# Follower}} · {installs, plural, one {# Installation} other {# Installationen}}",
+      "addedToLibrary": "{count, plural, one {# Mod} other {# Mods}} zur Bibliothek hinzugefügt",
+      "downloadAll": "Ganze Sammlung herunterladen",
+      "follow": "Sammlung folgen",
+      "unfollow": "Nicht mehr folgen"
+    },
+    "contact": {
+      "title": "Kontakt zu {site}",
+      "subtitle": "Schreib uns – wir antworten in der Regel innerhalb von 48 Stunden.",
+      "sentTitle": "Nachricht gesendet",
+      "sentText": "Wir melden uns innerhalb von 48 Stunden per E-Mail.",
+      "name": "Name",
+      "email": "E-Mail-Adresse",
+      "message": "Nachricht",
+      "error": "Die Nachricht konnte nicht gesendet werden. Prüf deine Eingaben (Nachricht mindestens 10 Zeichen) und versuch es später erneut.",
+      "sending": "Wird gesendet…",
+      "submit": "Nachricht senden"
+    },
+    "customOrders": {
+      "toOrders": "Zu meinen Aufträgen",
+      "projectTitle": "Projekttitel",
+      "orderType": "Art des Auftrags",
+      "description": "Beschreibung",
+      "descriptionPlaceholder": "Umfang, Referenzen und Zeitplan beschreiben…",
+      "budget": "Budget in Credits (optional)",
+      "discord": "Discord-Name (optional)",
+      "references": "Referenzdateien (optional, höchstens 5)",
+      "referencesHint": "Mockups, Inspiration oder vorhandene Dateien hochladen (je 15 MB)."
+    },
+    "developers": {
+      "title": "Entwicklerportal",
+      "subtitle": "Öffentliche REST- und GraphQL-Schnittstellen für den Desktop-Client von {site} und Integrationen von Drittanbietern.",
+      "authTitle": "Authentifizierung",
+      "authText": "Schick deinen API-Schlüssel im Authorization-Header mit:",
+      "authHint": "Schlüssel vergibt ein Administrator im ACP unter API-Schlüssel. Ratenlimits gelten je Schlüssel.",
+      "desktopTitle": "Grundlagen für den Desktop-Client",
+      "desktopMeta": "Installationsdaten (SHA-256, Version, Spielkompatibilität) liefert <code>{path}</code>.",
+      "desktopDeps": "Abhängigkeiten vor einer Ein-Klick-Installation über die Mod-Details <code>{path}</code> auflösen.",
+      "desktopCollections": "Sammlungen unterstützen den Abgleich ganzer Bibliotheken und Downloads nacheinander.",
+      "endpointsTitle": "REST-Endpunkte",
+      "colMethod": "Methode",
+      "colPath": "Pfad",
+      "colScope": "Berechtigung",
+      "scopeVaries": "je nach Abfrage",
+      "graphqlTitle": "GraphQL",
+      "graphqlText": "POST an <code>{path}</code> mit JSON im Body:",
+      "graphqlRoots": "Unterstützte Abfragen: mods, games, collections, mod (mit slug-Variable)."
+    },
+    "exclusive": {
+      "byline": "{mod} · {game} · von {author}",
+      "signInTitle": "Anmeldung erforderlich",
+      "signInText": "Melde dich an, um dich für den exklusiven Zugang zu bewerben.",
+      "signIn": "Anmelden",
+      "alreadyApplied": "Du hast dich bereits für dieses Programm beworben.",
+      "waitlistOpen": "Warteliste offen",
+      "discordRequired": "Discord-Konto muss in den Einstellungen verknüpft sein",
+      "messageLabel": "Warum möchtest du Zugang?",
+      "inviteCodeLabel": "Einladungscode (optional)",
+      "ndaLabel": "Ich akzeptiere die Verschwiegenheitsvereinbarung und teile Builds oder Details nicht öffentlich.",
+      "joinWaitlist": "Auf die Warteliste",
+      "apply": "Zugang beantragen"
+    },
+    "faq": {
+      "emptyTitle": "Noch keine Fragen",
+      "emptyText": "Hier erscheinen bald Antworten auf häufige Fragen."
+    },
+    "games": {
+      "notFound": "Spiel nicht gefunden"
+    },
+    "leaderboards": {
+      "title": "Creator-Bestenliste",
+      "metaDescription": "Die besten Creator nach Downloads, Wachstum und Community-Interaktion.",
+      "subtitle": "Vergleiche Creator nach Downloads, Likes, Wachstum und Interaktion.",
+      "metricLabel": "Wertung",
+      "periodLabel": "Zeitraum",
+      "gameLabel": "Spiel",
+      "allGames": "Alle Spiele",
+      "searchLabel": "Creator suchen",
+      "topLabel": "Platz 1",
+      "tableCaption": "Rangliste der Creator",
+      "colRank": "Platz",
+      "colCreator": "Creator",
+      "colScore": "Punkte",
+      "colDownloads": "Downloads",
+      "colFollowers": "Follower",
+      "pinned": "Angeheftet",
+      "featured": "Empfohlen",
+      "emptyTitle": "Noch keine Einträge",
+      "emptyText": "Für diese Auswahl gibt es noch keine Creator in der Wertung.",
+      "metric": {
+        "DOWNLOADS": "Meiste Downloads",
+        "REVENUE": "Höchster Umsatz",
+        "LIKES": "Meiste Likes",
+        "GROWTH": "Schnellstes Wachstum",
+        "ACTIVE": "Am aktivsten",
+        "REVIEWED": "Meiste Bewertungen",
+        "TRENDING": "Im Trend",
+        "RATED": "Beste Bewertung"
+      },
+      "period": {
+        "DAILY": "Heute",
+        "WEEKLY": "Diese Woche",
+        "MONTHLY": "Dieser Monat",
+        "ALL_TIME": "Gesamt"
+      }
+    },
+    "legal": {
+      "privacy": {
+        "title": "Datenschutzerklärung",
+        "p1": "{site} verarbeitet Kontodaten, Download-Statistiken und Zahlungsinformationen; Zahlungen laufen sicher über Stripe. Wir verkaufen keine personenbezogenen Daten an Dritte.",
+        "p2": "Discord-OAuth nutzen wir für die Anmeldung und den Abgleich der Community-Rollen. Die Löschung deines Kontos kannst du über den Support beantragen."
+      },
+      "terms": {
+        "title": "Nutzungsbedingungen",
+        "p1": "Mit der Nutzung von {site} stimmst du diesen Bedingungen zu. Creator behalten die Rechte an ihren Inhalten. Premium-Abos verlängern sich automatisch, wenn du sie nicht vor dem Verlängerungsdatum kündigst.",
+        "p2": "Premium-Downloads dürfen nicht außerhalb der Plattform weitergegeben werden. Verstöße können zur Sperrung des Kontos führen."
+      }
+    },
+    "team": {
+      "title": "Unser Team",
+      "subtitle": "Die Menschen hinter Xumari Modz: Leitung, Support, Entwicklung und Inhalte.",
+      "emptyTitle": "Teamprofile folgen bald",
+      "emptyText": "Hier stellen wir bald unser Team vor.",
+      "openProfile": "Profil von {name} öffnen",
+      "discord": "Discord",
+      "email": "E-Mail",
+      "website": "Website",
+      "openTicket": "Support-Ticket eröffnen",
+      "group": {
+        "OWNER": "Inhaber",
+        "ADMINISTRATOR": "Administratoren",
+        "MANAGER": "Management",
+        "SUPPORT": "Support",
+        "MODERATOR": "Moderatoren",
+        "DESIGNER": "Designer",
+        "CREATOR": "Creator"
+      },
+      "role": {
+        "OWNER": "Inhaber",
+        "ADMINISTRATOR": "Administrator",
+        "MANAGER": "Manager",
+        "SUPPORT": "Support",
+        "MODERATOR": "Moderator",
+        "DESIGNER": "Designer",
+        "CREATOR": "Creator"
+      }
+    },
+    "tutorial": {
+      "views": "{count, plural, one {{value} Aufruf} other {{value} Aufrufe}}",
+      "likes": "{count, plural, one {{value} Like} other {{value} Likes}}",
+      "comments": "{count, plural, one {{value} Kommentar} other {{value} Kommentare}}",
+      "avgWatch": "Ø {seconds} s Wiedergabe",
+      "like": "Gefällt mir",
+      "commentsTitle": "Kommentare",
+      "commentLabel": "Dein Kommentar",
+      "commentPlaceholder": "Frage oder Feedback…",
+      "commentSubmit": "Kommentieren",
+      "noComments": "Noch keine Kommentare."
+    }
+  }
 }

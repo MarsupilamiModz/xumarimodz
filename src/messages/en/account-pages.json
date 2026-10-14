@@ -1,3 +1,230 @@
 {
-  "accountPages": {}
+  "accountPages": {
+    "overview": {
+      "levelValue": "Level {level}",
+      "xp": "{xp} XP"
+    },
+    "achievements": {
+      "progress": "Level {level} · {xp} XP",
+      "filterLabel": "Filter achievements",
+      "sortLabel": "Sort order",
+      "emptyTitle": "No matching achievements",
+      "emptyText": "No achievements match this filter.",
+      "unlockedOn": "Unlocked {date}",
+      "grantedBy": "by @{username}",
+      "feature": "Feature on your profile ({max} max)",
+      "unfeature": "Remove from your profile",
+      "moveUp": "Move {name} earlier",
+      "moveDown": "Move {name} later",
+      "rarity": {
+        "COMMON": "Common",
+        "UNCOMMON": "Uncommon",
+        "RARE": "Rare",
+        "EPIC": "Epic",
+        "LEGENDARY": "Legendary"
+      }
+    },
+    "downloads": {
+      "description": "Your 50 most recent downloads.",
+      "colMod": "Mod",
+      "colVersion": "Version",
+      "colDate": "Date",
+      "version": "v{version}",
+      "emptyTitle": "No downloads yet"
+    },
+    "favorites": {
+      "description": "Mods you have saved.",
+      "emptyTitle": "Nothing saved yet"
+    },
+    "following": {
+      "description": "Creators you follow.",
+      "emptyText": "Follow creators so you never miss their new mods."
+    },
+    "library": {
+      "description": "Owned mods and shop purchases.",
+      "ownedMods": "Owned mods ({count})",
+      "shopPurchases": "Shop purchases ({count})",
+      "emptyModsTitle": "No purchased mods yet",
+      "emptyModsText": "Mods you buy will show up here.",
+      "visitShop": "Visit the shop",
+      "emptyShopTitle": "No shop purchases yet",
+      "emptyShopText": "Purchases from the shop will show up here.",
+      "colProduct": "Product",
+      "colType": "Type",
+      "colDate": "Date",
+      "colPrice": "Price",
+      "productType": {
+        "CREDIT_PACK": "Credit pack",
+        "MEMBERSHIP": "Membership",
+        "MOD": "Mod",
+        "EXCLUSIVE": "Exclusive",
+        "BUNDLE": "Bundle",
+        "SUBSCRIPTION": "Subscription",
+        "ACCESS": "Access",
+        "CUSTOM": "Custom"
+      }
+    },
+    "licenses": {
+      "redeemText": "Keys are locked to one product and only unlock that product.",
+      "keyLabel": "License key",
+      "colProduct": "Product",
+      "colActivated": "Activated",
+      "colStatus": "Status",
+      "emptyTitle": "No licenses yet",
+      "emptyText": "Keys you redeem will show up here.",
+      "status": {
+        "ACTIVE": "Active",
+        "REDEEMED": "Redeemed",
+        "EXPIRED": "Expired",
+        "REVOKED": "Revoked",
+        "PAUSED": "Paused"
+      }
+    },
+    "notifications": {
+      "description": "Updates about tickets, orders and your account."
+    },
+    "orders": {
+      "description": "Your custom orders and where they stand.",
+      "colOrder": "Order",
+      "colType": "Type",
+      "colMessages": "Messages",
+      "colStatus": "Status",
+      "emptyTitle": "No orders yet",
+      "emptyText": "Send a request – you can follow its progress here.",
+      "back": "Back to orders",
+      "conversation": "Conversation",
+      "noMessages": "No messages yet.",
+      "replyLabel": "Your reply",
+      "replyPlaceholder": "Write a reply …",
+      "send": "Send",
+      "status": {
+        "PENDING": "New",
+        "PAID": "Paid",
+        "QUOTED": "Quoted",
+        "IN_REVIEW": "In review",
+        "ACCEPTED": "Accepted",
+        "ASSIGNED": "Assigned",
+        "IN_PROGRESS": "In progress",
+        "WAITING_FOR_CUSTOMER": "Waiting for you",
+        "REVISION_REQUESTED": "Revision requested",
+        "REVIEW": "Final review",
+        "COMPLETED": "Completed",
+        "DELIVERED": "Delivered",
+        "CANCELED": "Canceled",
+        "REFUNDED": "Refunded"
+      },
+      "payment": {
+        "title": "Payment",
+        "invoice": "Invoice",
+        "reference": "Payment reference",
+        "payWithCard": "Pay with card",
+        "payWithCredits": "Pay with credits",
+        "otherMethods": "Bank transfer and PayPal: use the invoice reference above and contact support after paying.",
+        "checkoutFailed": "Checkout failed: Stripe did not return a payment link.",
+        "download": "Download {file}",
+        "status": {
+          "UNPAID": "Unpaid",
+          "AWAITING_PAYMENT": "Awaiting payment",
+          "PAID": "Paid",
+          "REFUNDED": "Refunded"
+        }
+      }
+    },
+    "security": {
+      "description": "Two-factor sign-in and sign-in activity.",
+      "mfaTitle": "Two-factor authentication",
+      "required": "Required",
+      "enabled": "Enabled",
+      "notEnabled": "Not enabled",
+      "mfaOnText": "Your account is protected with an authenticator app.",
+      "mfaOffText": "Add an extra layer of security with a one-time code (e.g. Google Authenticator, Authy).",
+      "enabledSince": "Enabled since {date}",
+      "enable": "Set up authenticator app",
+      "scanQr": "Scan this QR code with your authenticator app:",
+      "qrLabel": "QR code for your authenticator app",
+      "secretLabel": "Secret",
+      "codeLabel": "6-digit code",
+      "codePlaceholder": "Code from the app",
+      "verify": "Verify and enable",
+      "regenerate": "Regenerate backup codes ({count} left)",
+      "disable": "Disable 2FA",
+      "disableTitle": "Disable two-factor authentication?",
+      "disableText": "Your account will then be protected by your password only.",
+      "disableConfirm": "Disable",
+      "backupTitle": "Save these backup codes – they are shown only once:",
+      "activityTitle": "Security activity",
+      "failedLogins": "Failed sign-in attempts (recent): {count}",
+      "colEvent": "Event",
+      "colDate": "Time",
+      "emptyTitle": "No events yet",
+      "emptyText": "Sign-ins and security changes will show up here.",
+      "event": {
+        "LOGIN_SUCCESS": "Signed in",
+        "LOGIN_FAILED": "Sign-in failed",
+        "MFA_ENABLED": "2FA enabled",
+        "MFA_DISABLED": "2FA disabled",
+        "MFA_CHALLENGE": "2FA challenge",
+        "BACKUP_CODE_USED": "Backup code used",
+        "PASSWORD_CHANGED": "Password changed",
+        "SESSION_REVOKED": "Session ended"
+      }
+    },
+    "settings": {
+      "description": "Profile, sign-in, newsletter and achievements.",
+      "passwordLabel": "New password"
+    },
+    "subscription": {
+      "description": "Lifetime access – no recurring billing.",
+      "currentTitle": "Current membership",
+      "none": "You don't have a lifetime membership yet.",
+      "lifetime": "{price} · lifetime access",
+      "benefitsTitle": "Your benefits",
+      "benefitDownloads": "Premium mod downloads and exclusive content",
+      "benefitAds": "Ad-free browsing across the marketplace",
+      "benefitDiscord": "Discord premium role (link Discord in settings)",
+      "benefitBeta": "Early access to beta releases (Premium Max)",
+      "compare": "Compare lifetime plans",
+      "upgrade": "Upgrade membership",
+      "historyTitle": "Payment history",
+      "colPlan": "Plan",
+      "colAmount": "Amount",
+      "colDate": "Date",
+      "colReceipt": "Receipt",
+      "receipt": "Receipt",
+      "receiptLabel": "Open receipt for {plan}"
+    },
+    "support": {
+      "description": "Track your support requests.",
+      "colTicket": "Ticket",
+      "colCategory": "Category",
+      "colMessages": "Messages",
+      "colStatus": "Status",
+      "emptyText": "We can help with mods, purchases and your account.",
+      "firstTicket": "Create your first ticket",
+      "back": "Back to help center"
+    },
+    "supportNew": {
+      "description": "We typically respond within 24–48 hours.",
+      "categoryLabel": "Category",
+      "subjectPlaceholder": "Brief summary",
+      "messagePlaceholder": "Describe your issue in detail …",
+      "sending": "Sending …"
+    },
+    "supportTicket": {
+      "category": "Category: {category}",
+      "priority": "Priority: {priority}",
+      "internal": "Internal",
+      "staff": "Staff",
+      "replyLabel": "Your reply",
+      "replyPlaceholder": "Write your reply …",
+      "sendReply": "Send reply",
+      "attach": "Attach files",
+      "close": "Close ticket",
+      "reopen": "Reopen ticket",
+      "internalTitle": "Internal note (staff only)",
+      "internalPlaceholder": "Add a note only staff can see …",
+      "addInternal": "Add internal note",
+      "download": "Download {file}"
+    }
+  }
 }

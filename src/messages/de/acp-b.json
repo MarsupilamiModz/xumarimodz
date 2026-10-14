@@ -1,3 +1,327 @@
 {
-  "admin": {}
+  "admin": {
+    "ownerFeatures": {
+      "title": "Feature-Flags",
+      "subtitle": "Plattform-Funktionen ohne neues Deployment ein- und ausschalten.",
+      "cardTitle": "Funktionen",
+      "cardText": "Ausgeschaltete Funktionen sind für alle Nutzer sofort ausgeblendet.",
+      "save": "Feature-Flags speichern",
+      "flag": {
+        "shop": "Shop",
+        "sounds": "Sounds",
+        "creator": "Creator-Programm",
+        "partner": "Partnerprogramm",
+        "premium": "Premium-Mitgliedschaften",
+        "ads": "Werbung",
+        "teamChat": "Team-Chat",
+        "tickets": "Support-Tickets",
+        "collections": "Sammlungen",
+        "modpacks": "Modpacks"
+      }
+    },
+    "ownerTranslations": {
+      "provider": "Aktiver Anbieter: {provider}",
+      "noMissing": "In keiner Sprache fehlen Texte.",
+      "missingCount": "{count, plural, one {# fehlt} other {# fehlen}}"
+    },
+    "ownerHealth": {
+      "subtitle": "Live-Zustand der Infrastruktur: aktive Nutzer, Upload-Warteschlangen, Speicher, Zahlungen und Integrationen.",
+      "ownerOnly": "Nur Owner",
+      "refresh": "Aktualisieren",
+      "overall": "Gesamtstatus",
+      "countsLabel": "Dienste nach Status",
+      "countHealthy": "{count} in Ordnung",
+      "countWarning": "{count} mit Warnung",
+      "countCritical": "{count} kritisch",
+      "autoRefresh": "Aktualisiert sich alle 15 Sekunden",
+      "lastChecked": "Zuletzt geprüft: {time}",
+      "services": "Dienste",
+      "level": {
+        "healthy": "In Ordnung",
+        "warning": "Warnung",
+        "critical": "Kritisch"
+      },
+      "service": {
+        "database": "Datenbank",
+        "api": "API",
+        "upload": "Upload",
+        "storage": "Speicher",
+        "email": "E-Mail",
+        "discord_oauth": "Discord-Anmeldung",
+        "virustotal": "VirusTotal",
+        "r2": "R2-Speicher",
+        "platform": "Plattform"
+      },
+      "perfTitle": "Leistung",
+      "perfText": "Cache, Server-Ressourcen und langsame Abfragen.",
+      "cacheHitRate": "Cache-Trefferquote",
+      "cacheHits": "{hits} Treffer / {misses} Fehlgriffe",
+      "serverRam": "Server-RAM",
+      "ramUsage": "{used} GB von {total} GB",
+      "hostUnavailable": "Auf Cloudflare Workers nicht verfügbar",
+      "dbLatency": "Datenbank-Latenz",
+      "cpuCores": "{count, plural, one {# CPU-Kern} other {# CPU-Kerne}}",
+      "slowQueries": "Langsame Abfragen (zuletzt)",
+      "avgMs": "Durchschnitt {ms} ms",
+      "slowQueriesCaption": "Langsamste Abfragen",
+      "colLabel": "Bezeichnung",
+      "colType": "Art",
+      "colDuration": "Dauer",
+      "kind": {
+        "query": "Abfrage",
+        "api": "API",
+        "action": "Aktion"
+      }
+    },
+    "ownerEmail": {
+      "emptyText": "Sobald E-Mails verschickt werden, erscheinen sie hier.",
+      "status": {
+        "SENT": "Gesendet",
+        "FAILED": "Fehlgeschlagen",
+        "PENDING": "Wartet"
+      }
+    },
+    "ownerAchievements": {
+      "noData": "Noch keine Daten.",
+      "massText": "Vergibt den gewählten Erfolg an eine ganze Gruppe oder an einzelne Nutzer-IDs.",
+      "achievement": "Erfolg",
+      "grantToGroup": "An Gruppe vergeben"
+    },
+    "ownerUserDetail": {
+      "section": "Owner-Ansicht",
+      "role": "Rolle",
+      "banScope": "Umfang der Sperre",
+      "noMembership": "Keine Mitgliedschaft",
+      "nothingYet": "Noch keine Einträge.",
+      "lifted": "Aufgehoben",
+      "banTitle": "@{username} sperren",
+      "banText": "Die Sperre gilt dauerhaft und wird mit Grund im Audit-Log gespeichert. Du kannst sie später wieder aufheben.",
+      "disableTitle": "Konto von @{username} deaktivieren",
+      "disableText": "Das Konto wird ausgeblendet und kann sich nicht mehr anmelden. Es lässt sich wiederherstellen.",
+      "scope": {
+        "ACCOUNT": "Konto",
+        "UPLOAD": "Uploads",
+        "COMMENT": "Kommentare",
+        "IP": "IP"
+      },
+      "banType": {
+        "PERMANENT": "Dauerhaft",
+        "TEMPORARY": "Befristet"
+      },
+      "membershipStatus": {
+        "ACTIVE": "Aktiv",
+        "CANCELED": "Gekündigt",
+        "PAST_DUE": "Zahlung überfällig",
+        "TRIALING": "Testphase",
+        "INCOMPLETE": "Unvollständig",
+        "EXPIRED": "Abgelaufen"
+      }
+    },
+    "userAchievements": {
+      "title": "Erfolge",
+      "earned": "{count, plural, one {# erhalten} other {# erhalten}}",
+      "grantLabel": "Erfolg vergeben",
+      "choose": "Erfolg wählen …",
+      "hidden": "versteckt",
+      "grant": "Vergeben",
+      "emptyTitle": "Noch keine Erfolge",
+      "emptyText": "Vergib oben einen Erfolg oder warte, bis das Konto einen freischaltet.",
+      "grantedBy": "von @{username}",
+      "showcased": "im Profil gezeigt",
+      "remove": "Entziehen",
+      "removeTitle": "„{name}“ entziehen?",
+      "removeText": "Der Erfolg wird aus dem Profil entfernt. Du kannst ihn später erneut vergeben."
+    },
+    "userDetail": {
+      "discordId": "ID",
+      "discordName": "Name"
+    },
+    "membershipManagerB": {
+      "plan": "Plan",
+      "tier": "Stufe direkt setzen",
+      "cancelTitle": "Mitgliedschaft kündigen?",
+      "cancelText": "Ein Stripe-Abo endet zum Ende des laufenden Zeitraums, andere Mitgliedschaften enden sofort."
+    },
+    "partnerDetail": {
+      "section": "Partnerprofil",
+      "profile": "Profil",
+      "levelLabel": "Level",
+      "level": {
+        "UNVERIFIED": "Nicht verifiziert",
+        "VERIFIED": "Verifiziert",
+        "TRUSTED": "Vertrauenswürdig",
+        "ELITE": "Elite",
+        "OFFICIAL_PARTNER": "Offizieller Partner"
+      },
+      "dangerZone": "Partnerprofil löschen",
+      "dangerText": "Entfernt das Partnerprofil. Das Nutzerkonto bleibt bestehen.",
+      "deleteText": "Profil, Code und Einstellungen werden entfernt. Das lässt sich nicht rückgängig machen."
+    },
+    "partnerNew": {
+      "title": "Partner anlegen",
+      "subtitle": "Wähle ein bestehendes Konto und lege dafür ein Partnerprofil an.",
+      "userStep": "Konto wählen",
+      "userStepText": "Suche nach E-Mail, Benutzername oder Anzeigename.",
+      "noUsers": "Kein passendes Konto gefunden.",
+      "profileStep": "Partnerprofil",
+      "website": "Website",
+      "pickUserFirst": "Wähle zuerst oben ein Konto.",
+      "submit": "Partner anlegen"
+    },
+    "referralsPage": {
+      "subtitle": "Einladungslinks mit Premium-Belohnung anlegen und auswerten.",
+      "code": "Code",
+      "tier": "Premium-Stufe",
+      "emptyText": "Lege oben den ersten Link an.",
+      "copyLink": "Link kopieren",
+      "copied": "Kopiert",
+      "reward": "{days, plural, one {# Tag} other {# Tage}} {tier}",
+      "saveDays": "Speichern",
+      "cancel": "Abbrechen",
+      "deleteText": "Der Link funktioniert danach nicht mehr. Bisherige Registrierungen bleiben erhalten."
+    },
+    "shopPage": {
+      "title": "Shop-Verwaltung",
+      "subtitle": "Credit-Pakete, Produkte, Preise und hervorgehobene Artikel verwalten.",
+      "stripePriceId": "Stripe-Preis-ID",
+      "categoryLabel": "Kategorie",
+      "typeLabel": "Produktart",
+      "products": "Produkte",
+      "emptyTitle": "Noch keine Produkte",
+      "emptyText": "Lege oben das erste Produkt an.",
+      "colProduct": "Produkt",
+      "colType": "Kategorie · Art",
+      "colPrice": "Preis",
+      "colSales": "Verkäufe",
+      "colActions": "Aktionen",
+      "editProduct": "{name} bearbeiten",
+      "deleteProduct": "{name} löschen",
+      "deleteTitle": "„{name}“ löschen?",
+      "deleteText": "Das Produkt verschwindet aus dem Shop. Bisherige Käufe bleiben erhalten.",
+      "category": {
+        "CREDITS": "Credits",
+        "MEMBERSHIP": "Mitgliedschaft",
+        "MODS": "Mods",
+        "EXCLUSIVE": "Exklusiv",
+        "BUNDLES": "Bundles",
+        "ACCESS": "Zugang"
+      },
+      "type": {
+        "CREDIT_PACK": "Credit-Paket",
+        "MEMBERSHIP": "Mitgliedschaft",
+        "MOD": "Mod",
+        "EXCLUSIVE": "Exklusiv",
+        "BUNDLE": "Bundle",
+        "SUBSCRIPTION": "Abo",
+        "ACCESS": "Zugang"
+      }
+    },
+    "teamPage": {
+      "title": "Team",
+      "subtitle": "Öffentliche Team-Seite pflegen und Mitarbeitern Rollen, Abteilungen und Gruppen zuweisen.",
+      "tabs": "Bereich wählen",
+      "tabPage": "Team-Seite",
+      "tabStaff": "Mitarbeiter und Rollen",
+      "addText": "Neue Mitglieder starten mit der Rolle Support.",
+      "addUser": "{name} zum Team hinzufügen",
+      "noUsers": "Kein passendes Konto gefunden.",
+      "emptyText": "Suche oben ein Konto und füge es dem Team hinzu.",
+      "role": "Rolle",
+      "department": "Abteilung",
+      "group": "Berechtigungsgruppe",
+      "removeText": "{name} verliert die Team-Rolle und wird wieder normaler Nutzer.",
+      "searchUsers": "Nutzer suchen",
+      "deleteCategory": "Kategorie {name} löschen",
+      "removeMember": "{name} entfernen",
+      "removeLink": "Link entfernen",
+      "moveUp": "{name} nach oben",
+      "moveDown": "{name} nach unten",
+      "noCategoriesTitle": "Noch keine Kategorien",
+      "noCategoriesText": "Kategorien gliedern die Team-Seite, z. B. Support oder Moderation.",
+      "noProfilesText": "Lege das erste Profil für die öffentliche Team-Seite an.",
+      "deleteCategoryText": "Mitglieder dieser Kategorie bleiben erhalten, stehen aber ohne Kategorie da.",
+      "removeMemberText": "Das Profil verschwindet von der Team-Seite. Ein verknüpftes Nutzerkonto bleibt bestehen.",
+      "confirmDelete": "Löschen",
+      "roleGroup": {
+        "OWNER": "Owner",
+        "ADMINISTRATOR": "Administratoren",
+        "MANAGER": "Manager",
+        "SUPPORT": "Support",
+        "MODERATOR": "Moderatoren",
+        "DESIGNER": "Designer",
+        "CREATOR": "Creator"
+      },
+      "media": {
+        "avatar": "Avatar",
+        "banner": "Banner",
+        "uploadAvatar": "Avatar hochladen",
+        "uploadBanner": "Banner hochladen",
+        "uploading": "Wird hochgeladen … {progress} %",
+        "failed": "Upload fehlgeschlagen"
+      }
+    },
+    "trustPage": {
+      "subtitle": "Meldungen, Malware-Hinweise, DMCA-Fälle und Such-Signale auf einen Blick.",
+      "statsLabel": "Kennzahlen",
+      "open": "Öffnen",
+      "stat": {
+        "openReports": "Offene Meldungen",
+        "malwareReports": "Malware-Meldungen",
+        "openDMCA": "Offene DMCA-Fälle",
+        "resolvedReports": "Erledigte Meldungen",
+        "searchQueries": "Suchanfragen",
+        "recommendationClicks": "Klicks auf Empfehlungen"
+      }
+    },
+    "tutorialsAdmin": {
+      "subtitle": "Anleitungen und ihre Kategorien anlegen und veröffentlichen.",
+      "tabs": "Bereich wählen",
+      "tabTutorials": "Tutorials",
+      "tabCategories": "Kategorien",
+      "createTitle": "Tutorial erstellen",
+      "titleLabel": "Titel",
+      "typeLabel": "Art",
+      "levelLabel": "Level",
+      "categoryLabel": "Kategorie",
+      "noCategory": "Keine",
+      "statusLabel": "Status",
+      "youtubeLabel": "YouTube-URL",
+      "videoUrlLabel": "Video-URL (R2, mp4/webm)",
+      "videoFileLabel": "Video hochladen",
+      "uploading": "Upload läuft …",
+      "videoReady": "Video bereit",
+      "descriptionLabel": "Kurzbeschreibung",
+      "contentLabel": "Artikel-Inhalt",
+      "save": "Speichern",
+      "listTitle": "Alle Tutorials",
+      "emptyTitle": "Noch keine Tutorials",
+      "emptyText": "Lege oben das erste Tutorial an.",
+      "colTitle": "Titel",
+      "colType": "Art",
+      "colStatus": "Status",
+      "colViews": "Aufrufe",
+      "colActions": "Aktionen",
+      "deleteLabel": "{title} löschen",
+      "deleteTitle": "„{title}“ löschen?",
+      "deleteText": "Das Tutorial wird entfernt und ist nicht mehr öffentlich erreichbar.",
+      "delete": "Löschen",
+      "categoriesTitle": "Kategorie anlegen",
+      "categoryName": "Name der Kategorie",
+      "add": "Hinzufügen",
+      "seedDefaults": "Standard-Kategorien anlegen",
+      "noCategoriesTitle": "Noch keine Kategorien",
+      "noCategoriesText": "Lege eine Kategorie an oder übernimm die Standard-Kategorien.",
+      "type": {
+        "YOUTUBE": "YouTube",
+        "VIDEO": "Video",
+        "ARTICLE": "Artikel",
+        "MIXED": "Gemischt"
+      },
+      "status": {
+        "DRAFT": "Entwurf",
+        "PUBLISHED": "Veröffentlicht",
+        "ARCHIVED": "Archiviert"
+      }
+    }
+  }
 }

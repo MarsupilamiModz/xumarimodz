@@ -1,11 +1,23 @@
 import Link from "next/link";
-import { Plus } from "lucide-react";
+import { Package, Plus } from "lucide-react";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { requireAuth } from "@/lib/auth";
 import { getUserOrders } from "@/actions/orders";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { PageHeader } from "@/components/ui/page-header";
+import { DataTable } from "@/components/ui/data-table";
+import { EmptyState } from "@/components/ui/empty-state";
+import { StatusBadge, type StatusTone } from "@/components/ui/status-badge";
 import { Button } from "@/components/ui/button";
+import { formatNumber } from "@/lib/format-locale";
 import type { Locale } from "@/i18n/config";
+
+/** Farbton je Auftragsstatus (wie im ACP). */
+function orderTone(status: string): StatusTone {
+  if (status === "COMPLETED" || status === "DELIVERED") return "success";
+  if (status === "CANCELED" || status === "REFUNDED") return "neutral";
+  if (status === "WAITING_FOR_CUSTOMER" || status === "REVISION_REQUESTED" || status === "QUOTED") return "warning";
+  return "pending";
+}
 
 export default async function OrdersPage(props: { params: Promise<{ locale: Locale }> }) {
   const params = await props.params;
@@ -14,39 +26,71 @@ export default async function OrdersPage(props: { params: Promise<{ locale: Loca
     locale
   } = params;
 
+  setRequestLocale(locale);
   await requireAuth(`/${locale}/login`);
+  const [t, ta, to] = await Promise.all([
+    getTranslations("dashboard"),
+    getTranslations("accountPages.orders"),
+    getTranslations("orders"),
+  ]);
   const result = await getUserOrders();
   const orders = result.success ? result.data : [];
+  const typeLabel = (type: string) => (to.has(`types.${type}`) ? to(`types.${type}`) : type);
 
   return (
     <div>
-      <div className="flex justify-between items-center">
-        <h1 className="h1-acp">Custom Orders</h1>
-        <Button size="sm" asChild>
-          <Link href={`/${locale}/custom-orders`}>
-            <Plus className="h-4 w-4 mr-1" /> New order
-          </Link>
-        </Button>
-      </div>
-      <div className="mt-8 space-y-3">
-        {orders.length === 0 ? (
-          <Card className="p-8 text-center text-muted-foreground">No orders yet</Card>
-        ) : (
-          orders.map((o) => (
-            <Link key={o.id} href={`/${locale}/dashboard/orders/${o.id}`}>
-              <Card className="p-4 hover:border-line-control">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <p className="font-medium">{o.title}</p>
-                    <p className="text-xs text-muted-foreground">{o.orderType} · {o._count.messages} messages</p>
-                  </div>
-                  <Badge variant="outline">{o.status}</Badge>
-                </div>
-              </Card>
+      <PageHeader
+        title={t("customOrders")}
+        description={ta("description")}
+        actions={
+          <Button size="sm" asChild>
+            <Link href={`/${locale}/custom-orders`}>
+              <Plus className="h-4 w-4" aria-hidden /> {to("newOrder")}
             </Link>
-          ))
-        )}
-      </div>
+          </Button>
+        }
+      />
+      <DataTable
+        caption={t("customOrders")}
+        rows={orders}
+        rowKey={(o) => o.id}
+        rowHref={(o) => `/${locale}/dashboard/orders/${o.id}`}
+        empty={<EmptyState icon={Package} title={ta("emptyTitle")} description={ta("emptyText")} />}
+        columns={[
+          {
+            key: "title",
+            header: ta("colOrder"),
+            width: "minmax(0,2fr)",
+            cell: (o) => <span className="block truncate font-medium text-ink">{o.title}</span>,
+          },
+          {
+            key: "type",
+            header: ta("colType"),
+            width: "minmax(0,1fr)",
+            hideOnMobile: true,
+            cell: (o) => <span className="block truncate text-ink-muted">{typeLabel(o.orderType)}</span>,
+          },
+          {
+            key: "messages",
+            header: ta("colMessages"),
+            width: "110px",
+            align: "right",
+            hideOnMobile: true,
+            cell: (o) => formatNumber(o._count.messages, locale),
+          },
+          {
+            key: "status",
+            header: ta("colStatus"),
+            width: "170px",
+            cell: (o) => (
+              <StatusBadge
+                tone={orderTone(o.status)}
+                label={ta.has(`status.${o.status}`) ? ta(`status.${o.status}`) : o.status}
+              />
+            ),
+          },
+        ]}
+      />
     </div>
   );
 }

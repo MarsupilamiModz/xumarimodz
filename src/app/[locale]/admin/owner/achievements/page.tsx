@@ -15,7 +15,7 @@ export default async function OwnerAchievementsPage(props: { params: Promise<{ l
 
   setRequestLocale(locale);
   await requireOwner();
-  const t = await getTranslations("admin");
+  const t = await getTranslations("admin.ui.ownerAchievements");
   const [analytics, achievements, sounds] = await Promise.all([
     getAchievementAnalytics(),
     getAdminAchievements(),
@@ -23,7 +23,7 @@ export default async function OwnerAchievementsPage(props: { params: Promise<{ l
   ]);
   return (
     <div>
-      <AdminPageHeader title={t("nav.achievements")} />
+      <AdminPageHeader title={t("pageTitle")} description={t("pageSubtitle")} />
       {analytics.success && achievements.success ? (
         <OwnerAchievementsPanel
           analytics={analytics.data}

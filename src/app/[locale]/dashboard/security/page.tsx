@@ -1,7 +1,8 @@
-import { setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { requireAuth } from "@/lib/auth";
 import { getSecurityDashboard } from "@/lib/user-security";
 import { SecurityDashboardPanel } from "@/components/dashboard/security-dashboard-panel";
+import { PageHeader } from "@/components/ui/page-header";
 import type { Locale } from "@/i18n/config";
 
 /**
@@ -17,6 +18,12 @@ export default async function DashboardSecurityPage(props: { params: Promise<{ l
 
  setRequestLocale(locale);
  const user = await requireAuth(`/${locale}/login`);
+ const [t, ta] = await Promise.all([getTranslations("dashboard"), getTranslations("accountPages.security")]);
  const dashboard = await getSecurityDashboard(user.id);
- return <SecurityDashboardPanel locale={locale} initial={{ ...dashboard, mfaEnabledAt: dashboard.mfaEnabledAt ?? null }} />;
+ return (
+  <div>
+   <PageHeader title={t("security")} description={ta("description")} />
+   <SecurityDashboardPanel locale={locale} initial={{ ...dashboard, mfaEnabledAt: dashboard.mfaEnabledAt ?? null }} />
+  </div>
+ );
 }

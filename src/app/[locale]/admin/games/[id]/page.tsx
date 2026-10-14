@@ -1,9 +1,8 @@
 import { requirePagePermission } from "@/lib/auth";
 import { notFound } from "next/navigation";
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { getAdminGame } from "@/actions/admin/games";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { GameForm } from "@/components/admin/game-form";
 import { GameBannerSettings } from "@/components/admin/game-banner-settings";
 import { CategoryTreeEditor } from "@/components/admin/category-tree-editor";
@@ -23,22 +22,19 @@ export default async function EditGamePage(
 
   await requirePagePermission("games.write");
   setRequestLocale(locale);
-  const t = await getTranslations("admin");
-  const tc = await getTranslations("common");
+  const [t, tg] = await Promise.all([getTranslations("admin.gameEdit"), getTranslations("admin.gamesAdmin")]);
   const result = await getAdminGame(id);
   if (!result.success) notFound();
 
   const game = result.data;
 
   return (
-    <div className="space-y-8">
-      <Link
-        href={`/${locale}/admin/games`}
-        className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
-      >
-        <ArrowLeft className="h-4 w-4" /> {tc("back")}
-      </Link>
-      <h1 className="h1-acp">{t("games")}: {game.name}</h1>
+    <div className="space-y-6">
+      <AdminPageHeader
+        title={game.name}
+        section={t("section")}
+        parent={{ label: tg("title"), href: `/${locale}/admin/games` }}
+      />
       <GameForm
         locale={locale}
         game={{

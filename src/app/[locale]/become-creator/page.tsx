@@ -1,10 +1,19 @@
-import { setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { requireAuth } from "@/lib/auth";
 import { getMyCreatorApplication } from "@/actions/applications";
 import { CreatorApplicationForm } from "@/components/applications/creator-application-form";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { PageHeader, SectionCard } from "@/components/ui/page-header";
+import { StatusBadge, type StatusTone } from "@/components/ui/status-badge";
+import { formatDate } from "@/lib/format-locale";
 import type { Locale } from "@/i18n/config";
+
+const STATUS_TONE: Record<string, StatusTone> = {
+  PENDING: "pending",
+  UNDER_REVIEW: "info",
+  NEEDS_CHANGES: "warning",
+  APPROVED: "success",
+  REJECTED: "danger",
+};
 
 export default async function BecomeCreatorPage(
   props: {
@@ -20,26 +29,37 @@ export default async function BecomeCreatorPage(
   setRequestLocale(locale);
   const user = await requireAuth(`/${locale}/login`);
   const existing = await getMyCreatorApplication(user.id);
+  const [t, te, ts] = await Promise.all([
+    getTranslations("publicPages.becomeCreator"),
+    getTranslations("ecosystem"),
+    getTranslations("status.application"),
+  ]);
 
   if (existing && existing.status !== "REJECTED") {
     return (
-      <div className="mx-auto max-w-2xl px-4 py-12">
-        <Card className="p-6">
-          <Badge className="mb-3">{existing.status.replace("_", " ")}</Badge>
-          <h1 className="h1-display">Creator application</h1>
-          <p className="text-muted-foreground mt-2">
-            Your application was submitted on {new Date(existing.createdAt).toLocaleDateString()}.
-            {existing.adminNotes && ` Note: ${existing.adminNotes}`}
-          </p>
-        </Card>
+      <div className="page-section">
+        <div className="max-w-2xl">
+          <PageHeader title={t("applicationTitle")} />
+          <SectionCard>
+            <StatusBadge tone={STATUS_TONE[existing.status] ?? "neutral"} label={ts(existing.status)} />
+            <p className="mt-3 text-sm text-ink-muted">
+              {t("submittedOn", { date: formatDate(existing.createdAt, locale) })}
+            </p>
+            {existing.adminNotes && (
+              <p className="mt-2 text-sm text-ink-muted">{t("note", { note: existing.adminNotes })}</p>
+            )}
+          </SectionCard>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-12">
-      <h1 className="h1-display mb-6">Become a Creator</h1>
-      <CreatorApplicationForm userEmail={user.email} />
+    <div className="page-section">
+      <div className="max-w-2xl">
+        <PageHeader title={te("becomeCreator")} description={t("intro")} />
+        <CreatorApplicationForm userEmail={user.email} />
+      </div>
     </div>
   );
 }

@@ -1,45 +1,16 @@
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
+import { ChipTabs, type ChipOption } from "@/components/ui/chip-tabs";
 import { buildCategoryTree, categoryBreadcrumb, type FlatCategory } from "@/lib/categories";
 
-function CategoryLinks({
-  nodes,
-  locale,
-  gameSlug,
-  activeSlug,
-  depth = 0,
-}: {
-  nodes: ReturnType<typeof buildCategoryTree>;
-  locale: string;
-  gameSlug: string;
-  activeSlug?: string;
-  depth?: number;
-}) {
-  return (
-    <>
-      {nodes.map((node) => (
-        <div key={node.id} className="flex flex-wrap items-center gap-2" style={{ marginLeft: depth * 12 }}>
-          <Link href={`/${locale}/games/${gameSlug}?category=${node.slug}`}>
-            <Badge
-              variant={activeSlug === node.slug ? "default" : "outline"}
-              className="hover:border-line-control transition-colors"
-            >
-              {node.name}
-            </Badge>
-          </Link>
-          {node.children.length > 0 && (
-            <CategoryLinks
-              nodes={node.children}
-              locale={locale}
-              gameSlug={gameSlug}
-              activeSlug={activeSlug}
-              depth={depth + 1}
-            />
-          )}
-        </div>
-      ))}
-    </>
-  );
+type Tree = ReturnType<typeof buildCategoryTree>;
+
+/** Kategoriebaum in Reihenfolge (Eltern vor Kindern) als flache Chip-Liste. */
+function flatten(nodes: Tree, out: ChipOption[] = []): ChipOption[] {
+  for (const node of nodes) {
+    out.push({ value: node.slug, label: node.name });
+    if (node.children.length > 0) flatten(node.children, out);
+  }
+  return out;
 }
 
 export function CategoryNav({
@@ -48,14 +19,19 @@ export function CategoryNav({
   categories,
   activeSlug,
   allLabel,
+  label,
+  breadcrumbLabel,
 }: {
   locale: string;
   gameSlug: string;
   categories: FlatCategory[];
   activeSlug?: string;
   allLabel: string;
+  label: string;
+  breadcrumbLabel: string;
 }) {
-  const tree = buildCategoryTree(categories);
+  const base = `/${locale}/games/${gameSlug}`;
+  const options: ChipOption[] = [{ value: "", label: allLabel }, ...flatten(buildCategoryTree(categories))];
   const breadcrumb = activeSlug
     ? categoryBreadcrumb(
         categories,
@@ -64,31 +40,28 @@ export function CategoryNav({
     : [];
 
   return (
-    <div className="page-container py-6 space-y-3">
+    <div className="page-container space-y-3 py-6">
       {breadcrumb.length > 0 && (
-        <nav className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
-          <Link href={`/${locale}/games/${gameSlug}`} className="hover:text-foreground transition-colors">
+        <nav aria-label={breadcrumbLabel} className="meta flex flex-wrap items-center gap-1.5">
+          <Link href={base} className="transition-colors duration-fast hover:text-ink">
             {allLabel}
           </Link>
           {breadcrumb.map((c) => (
             <span key={c.id} className="flex items-center gap-1.5">
-              <span>/</span>
-              <Link
-                href={`/${locale}/games/${gameSlug}?category=${c.slug}`}
-                className="hover:text-foreground transition-colors"
-              >
+              <span aria-hidden>/</span>
+              <Link href={`${base}?category=${c.slug}`} className="transition-colors duration-fast hover:text-ink">
                 {c.name}
               </Link>
             </span>
           ))}
         </nav>
       )}
-      <div className="flex flex-wrap gap-2 items-start">
-        <Link href={`/${locale}/games/${gameSlug}`}>
-          <Badge variant={!activeSlug ? "default" : "outline"}>{allLabel}</Badge>
-        </Link>
-        <CategoryLinks nodes={tree} locale={locale} gameSlug={gameSlug} activeSlug={activeSlug} />
-      </div>
+      <ChipTabs
+        label={label}
+        options={options}
+        value={activeSlug ?? ""}
+        hrefFor={(slug) => (slug ? `${base}?category=${slug}` : base)}
+      />
     </div>
   );
 }

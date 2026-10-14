@@ -3,18 +3,26 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useTransition } from "react";
 import Link from "next/link";
-import { SafeImage } from "@/components/ui/safe-image";
-import { Trophy, TrendingUp, Search } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
+import { useTranslations } from "next-intl";
+import { Pin, TrendingUp, Trophy } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { ChipTabs } from "@/components/ui/chip-tabs";
+import { DataTable, type DataColumn } from "@/components/ui/data-table";
+import { EmptyState } from "@/components/ui/empty-state";
+import { PageHeader } from "@/components/ui/page-header";
+import { SearchField } from "@/components/ui/search-field";
+import { UserAvatar } from "@/components/ui/user-avatar";
+import { controlClassName } from "@/components/ui/input";
 import { CreatorRankBadge } from "@/components/leaderboards/creator-rank-badge";
 import { CreatorLevelBadge } from "@/components/creator/creator-level-badge";
-import { METRIC_LABELS, PERIOD_LABELS, PUBLIC_LEADERBOARD_METRICS, type LeaderboardEntry } from "@/lib/leaderboard-labels";
+import { PUBLIC_LEADERBOARD_METRICS, type LeaderboardEntry } from "@/lib/leaderboard-labels";
 import { formatNumber } from "@/lib/format-locale";
+import { cn } from "@/lib/utils";
 import type { LeaderboardMetric, LeaderboardPeriod } from "@prisma/client";
 
 type Game = { slug: string; name: string };
+
+const PERIODS: LeaderboardPeriod[] = ["DAILY", "WEEKLY", "MONTHLY", "ALL_TIME"];
 
 export function LeaderboardClient({
   locale,
@@ -33,6 +41,7 @@ export function LeaderboardClient({
   initialGame?: string;
   initialSearch?: string;
 }) {
+  const t = useTranslations("publicPages.leaderboards");
   const router = useRouter();
   const searchParams = useSearchParams();
   const [, startTransition] = useTransition();
@@ -49,58 +58,87 @@ export function LeaderboardClient({
     [locale, router, searchParams]
   );
 
-  const periods = Object.keys(PERIOD_LABELS) as LeaderboardPeriod[];
+  const top = entries[0];
+
+  const columns: DataColumn<LeaderboardEntry>[] = [
+    {
+      key: "rank",
+      header: t("colRank"),
+      width: "48px",
+      cell: (e) => (
+        <span className={cn("font-semibold tabular-nums", e.rank <= 3 ? "text-ink" : "text-ink-muted")}>{e.rank}</span>
+      ),
+    },
+    {
+      key: "creator",
+      header: t("colCreator"),
+      width: "minmax(0,3fr)",
+      cell: (e) => (
+        <div className="flex min-w-0 items-center gap-3">
+          <UserAvatar src={e.avatarUrl} name={e.name} className="h-9 w-9" />
+          <div className="min-w-0">
+            <p className="truncate font-medium text-ink">{e.name}</p>
+            <div className="mt-1 flex flex-wrap gap-1.5">
+              <CreatorRankBadge tier={e.rankTier} size="sm" />
+              {e.isPinned && (
+                <Badge variant="secondary">
+                  <Pin className="h-3 w-3" aria-hidden />
+                  {t("pinned")}
+                </Badge>
+              )}
+              {e.isFeatured && (
+                <Badge variant="outline">
+                  <TrendingUp className="h-3 w-3" aria-hidden />
+                  {t("featured")}
+                </Badge>
+              )}
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    { key: "score", header: t("colScore"), align: "right", cell: (e) => <span className="font-semibold">{formatNumber(e.score, locale)}</span> },
+    { key: "downloads", header: t("colDownloads"), align: "right", hideOnMobile: true, cell: (e) => formatNumber(e.totalDownloads, locale) },
+    { key: "followers", header: t("colFollowers"), align: "right", hideOnMobile: true, cell: (e) => formatNumber(e.followerCount, locale) },
+  ];
 
   return (
-    <div className="space-y-8">
-      <div className="text-center">
-        <Trophy className="mx-auto h-12 w-12 text-violet-bright mb-4" />
-        <h1 className="h1-display">Creator Leaderboards</h1>
-        <p className="text-muted-foreground mt-2">Compete across downloads, likes, growth, and engagement.</p>
-      </div>
+    <div className="space-y-6">
+      <PageHeader className="mb-0" title={t("title")} description={t("subtitle")} />
 
-      <div className="flex flex-wrap gap-2 justify-center">
-        {PUBLIC_LEADERBOARD_METRICS.map((m) => (
-          <button
-            key={m}
-            type="button"
-            onClick={() => push({ metric: m })}
-            className={`rounded-full px-3 py-1.5 text-xs border transition-colors ${
- initialMetric === m ? "border-violet-bright bg-violet-soft text-violet-bright" : "border-border hover:bg-accent/20"
- }`}
+      <div className="space-y-3">
+        <ChipTabs
+          label={t("metricLabel")}
+          options={PUBLIC_LEADERBOARD_METRICS.map((m) => ({ value: m, label: t(`metric.${m}`) }))}
+          value={initialMetric}
+          onChange={(m) => push({ metric: m })}
+        />
+        <div className="flex flex-wrap items-center gap-3">
+          <ChipTabs
+            label={t("periodLabel")}
+            options={PERIODS.map((p) => ({ value: p, label: t(`period.${p}`) }))}
+            value={initialPeriod}
+            onChange={(p) => push({ period: p })}
+          />
+          <label htmlFor="leaderboard-game" className="sr-only">
+            {t("gameLabel")}
+          </label>
+          <select
+            id="leaderboard-game"
+            defaultValue={initialGame ?? ""}
+            onChange={(e) => push({ game: e.target.value || undefined })}
+            className={cn(controlClassName, "h-9 w-auto")}
           >
-            {METRIC_LABELS[m]}
-          </button>
-        ))}
-      </div>
-
-      <div className="flex flex-wrap gap-3 justify-center items-center">
-        {periods.map((p) => (
-          <button
-            key={p}
-            type="button"
-            onClick={() => push({ period: p })}
-            className={`text-sm px-3 py-1 rounded-md ${initialPeriod === p ? "bg-elevated text-ink-muted" : "text-muted-foreground hover:text-foreground"}`}
-          >
-            {PERIOD_LABELS[p]}
-          </button>
-        ))}
-        <select
-          defaultValue={initialGame ?? ""}
-          onChange={(e) => push({ game: e.target.value || undefined })}
-          className="h-9 rounded-md border border-input bg-background/50 px-2 text-sm"
-        >
-          <option value="">All games</option>
-          {games.map((g) => (
-            <option key={g.slug} value={g.slug}>{g.name}</option>
-          ))}
-        </select>
-        <div className="relative">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
+            <option value="">{t("allGames")}</option>
+            {games.map((g) => (
+              <option key={g.slug} value={g.slug}>{g.name}</option>
+            ))}
+          </select>
+          <SearchField
+            name="q"
+            label={t("searchLabel")}
             defaultValue={initialSearch}
-            placeholder="Search creators"
-            className="pl-8 w-48"
+            className="w-56"
             onKeyDown={(e) => {
               if (e.key === "Enter") push({ q: (e.target as HTMLInputElement).value || undefined });
             }}
@@ -108,69 +146,39 @@ export function LeaderboardClient({
         </div>
       </div>
 
-      {entries.length > 0 && entries[0] && (
-        <Card className="p-6 border-violet-bright/30 relative overflow-hidden">
-          <div className="absolute inset-0 pointer-events-none" />
-          <div className="relative flex items-center gap-4">
-            <span className="text-4xl font-bold text-violet-bright">#1</span>
-            {entries[0].avatarUrl ? (
-              <div className="relative h-16 w-16 rounded-full overflow-hidden border-2 border-violet-bright/50">
-                <SafeImage src={entries[0].avatarUrl} alt="" fill className="object-cover" sizes="64px" />
-              </div>
-            ) : (
-              <div className="h-16 w-16 rounded-full bg-violet-soft flex items-center justify-center text-xl font-bold">{entries[0].name[0]}</div>
-            )}
-            <div className="flex-1">
-              <Link href={`/${locale}/creators/${entries[0].slug}`} className="text-xl font-bold hover:text-violet-bright">
-                {entries[0].name}
+      {top && (
+        <section aria-label={t("topLabel")} className="rounded-lg border border-line bg-raised p-5">
+          <div className="flex flex-wrap items-center gap-4">
+            <span className="text-[26px] font-bold leading-8 tabular-nums text-ink" aria-hidden>
+              #1
+            </span>
+            <UserAvatar src={top.avatarUrl} name={top.name} className="h-14 w-14" />
+            <div className="min-w-0 flex-1">
+              <Link href={`/${locale}/creators/${top.slug}`} className="text-lg font-semibold text-ink hover:text-violet-bright">
+                {top.name}
               </Link>
-              {entries[0].tagline && <p className="text-sm text-muted-foreground">{entries[0].tagline}</p>}
-              <div className="flex gap-2 mt-2">
-                <CreatorRankBadge tier={entries[0].rankTier} size="sm" />
-                <CreatorLevelBadge level={entries[0].level} size="sm" />
+              {top.tagline && <p className="text-sm text-ink-muted">{top.tagline}</p>}
+              <div className="mt-2 flex gap-2">
+                <CreatorRankBadge tier={top.rankTier} size="sm" />
+                <CreatorLevelBadge level={top.level} size="sm" />
               </div>
             </div>
             <div className="text-right">
-              <p className="text-2xl font-bold text-ink-muted">{formatNumber(entries[0].score, locale)}</p>
-              <p className="text-xs text-muted-foreground">score</p>
+              <p className="text-[26px] font-bold leading-8 tabular-nums text-ink">{formatNumber(top.score, locale)}</p>
+              <p className="label-text">{t("colScore")}</p>
             </div>
           </div>
-        </Card>
+        </section>
       )}
 
-      <div className="space-y-2">
-        {entries.map((e) => (
-          <Card
-            key={e.creatorId}
-            className={`p-4 flex items-center gap-4 transition-all hover:border-line-control ${e.isPinned ? "border-violet-bright/40" : ""}`}
-          >
-            <span className={`w-8 text-center font-bold ${e.rank <= 3 ? "text-violet-bright" : "text-muted-foreground"}`}>
-              {e.rank}
-            </span>
-            {e.avatarUrl ? (
-              <div className="relative h-10 w-10 rounded-full overflow-hidden shrink-0">
-                <SafeImage src={e.avatarUrl} alt="" fill className="object-cover" sizes="40px" />
-              </div>
-            ) : (
-              <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center text-sm font-bold">{e.name[0]}</div>
-            )}
-            <div className="flex-1 min-w-0">
-              <Link href={`/${locale}/creators/${e.slug}`} className="font-medium hover:text-violet-bright truncate block">
-                {e.name}
-              </Link>
-              <div className="flex flex-wrap gap-1.5 mt-1">
-                <CreatorRankBadge tier={e.rankTier} size="sm" />
-                {e.isPinned && <Badge variant="premium">Pinned</Badge>}
-                {e.isFeatured && <Badge variant="outline"><TrendingUp className="h-3 w-3 mr-0.5" />Featured</Badge>}
-              </div>
-            </div>
-            <div className="text-right text-sm shrink-0 hidden sm:block">
-              <p className="font-semibold text-ink-muted">{formatNumber(e.score, locale)}</p>
-              <p className="text-xs text-muted-foreground">{formatNumber(e.totalDownloads, locale)} downloads · {formatNumber(e.followerCount, locale)} followers</p>
-            </div>
-          </Card>
-        ))}
-      </div>
+      <DataTable
+        caption={t("tableCaption")}
+        columns={columns}
+        rows={entries}
+        rowKey={(e) => e.creatorId}
+        rowHref={(e) => `/${locale}/creators/${e.slug}`}
+        empty={<EmptyState icon={Trophy} title={t("emptyTitle")} description={t("emptyText")} />}
+      />
     </div>
   );
 }

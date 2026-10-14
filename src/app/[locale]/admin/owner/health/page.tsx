@@ -18,7 +18,7 @@ export default async function OwnerHealthPage(props: { params: Promise<{ locale:
   const result = await getOwnerHealthMonitor();
   return (
     <div>
-      <AdminPageHeader title={t("nav.system")} />
+      <AdminPageHeader title={t("healthMonitor")} description={t("ownerHealth.subtitle")} />
       {result.success ? <SystemHealthMonitor initial={result.data} /> : <AdminLoadError message={result.error} />}
     </div>
   );

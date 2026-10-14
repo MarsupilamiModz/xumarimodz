@@ -1,10 +1,11 @@
 "use client";
 
 import { useTransition } from "react";
-import { useTranslations } from "next-intl";
-import { Card } from "@/components/ui/card";
+import { useLocale, useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { SectionCard } from "@/components/ui/page-header";
+import { KpiTile } from "@/components/ui/kpi-tile";
+import { StatusBadge } from "@/components/ui/status-badge";
 import {
   ownerClearTranslationCache,
   ownerProcessTranslationQueue,
@@ -12,6 +13,7 @@ import {
   ownerSyncMissingUiKeys,
 } from "@/actions/admin/translation-center";
 import { useAppToast } from "@/hooks/use-app-toast";
+import { formatNumber } from "@/lib/format-locale";
 import type { TranslationAuditResult } from "@/lib/i18n-audit";
 
 type Props = {
@@ -42,6 +44,9 @@ type Props = {
 
 export function TranslationCenterPanel({ queue, cache, missing, audit }: Props) {
   const t = useTranslations("admin");
+  const tp = useTranslations("admin.ownerTranslations");
+  const ts = useTranslations("ui.status");
+  const locale = useLocale();
   const appToast = useAppToast();
   const [pending, startTransition] = useTransition();
 
@@ -53,45 +58,41 @@ export function TranslationCenterPanel({ queue, cache, missing, audit }: Props) 
     });
   };
 
+  const engines = [
+    { name: "OpenAI", on: queue.engine.openai },
+    { name: "DeepL", on: queue.engine.deepl },
+    { name: "Google", on: queue.engine.google },
+  ];
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="h1-acp">{t("translationCenter")}</h1>
-        <p className="text-sm text-muted-foreground mt-1">{t("translationCenterHint")}</p>
-      </div>
-
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="p-4">
-          <p className="text-xs text-muted-foreground">{t("translationQueue")}</p>
-          <p className="text-2xl font-bold mt-1">{queue.pending}</p>
-          <p className="text-xs text-muted-foreground">{t("translationPending")}</p>
-        </Card>
-        <Card className="p-4">
-          <p className="text-xs text-muted-foreground">{t("translationApproved")}</p>
-          <p className="text-2xl font-bold mt-1">{queue.approved}</p>
-        </Card>
-        <Card className="p-4">
-          <p className="text-xs text-muted-foreground">{t("translationCache")}</p>
-          <p className="text-2xl font-bold mt-1">{cache.dbEntries}</p>
-        </Card>
-        <Card className="p-4">
-          <p className="text-xs text-muted-foreground">{t("translationMissingUi")}</p>
-          <p className="text-2xl font-bold mt-1">{missing.uiMissingKeys}</p>
-        </Card>
+        <KpiTile label={t("translationQueue")} value={formatNumber(queue.pending, locale)} hint={t("translationPending")} />
+        <KpiTile label={t("translationApproved")} value={formatNumber(queue.approved, locale)} />
+        <KpiTile label={t("translationCache")} value={formatNumber(cache.dbEntries, locale)} />
+        <KpiTile
+          label={t("translationMissingUi")}
+          value={formatNumber(missing.uiMissingKeys, locale)}
+          tone={missing.uiMissingKeys > 0 ? "warning" : undefined}
+        />
       </div>
 
-      <Card className="p-4 space-y-3">
-        <h2 className="font-semibold">{t("translationEngine")}</h2>
-        <div className="flex flex-wrap gap-2">
-          <Badge variant={queue.engine.openai ? "default" : "outline"}>OpenAI</Badge>
-          <Badge variant={queue.engine.deepl ? "default" : "outline"}>DeepL</Badge>
-          <Badge variant={queue.engine.google ? "default" : "outline"}>Google</Badge>
-          <Badge variant="secondary">{queue.engine.provider}</Badge>
-          <Badge variant={queue.engine.autoApprove ? "default" : "outline"}>
-            {queue.engine.autoApprove ? t("translationAutoApprove") : t("translationManualApprove")}
-          </Badge>
-        </div>
-        <div className="flex flex-wrap gap-2 pt-2">
+      <SectionCard title={t("translationEngine")} description={tp("provider", { provider: queue.engine.provider })}>
+        <ul className="flex flex-wrap gap-2" aria-label={t("translationEngine")}>
+          {engines.map((e) => (
+            <li key={e.name} className="flex items-center gap-2 rounded-md border border-line px-3 py-1.5 text-[13px] text-ink">
+              {e.name}
+              <StatusBadge tone={e.on ? "success" : "neutral"} label={e.on ? ts("active") : ts("inactive")} />
+            </li>
+          ))}
+          <li>
+            <StatusBadge
+              tone={queue.engine.autoApprove ? "success" : "pending"}
+              label={queue.engine.autoApprove ? t("translationAutoApprove") : t("translationManualApprove")}
+            />
+          </li>
+        </ul>
+        <div className="mt-4 flex flex-wrap gap-2">
           <Button size="sm" disabled={pending} onClick={() => run(ownerProcessTranslationQueue)}>
             {t("translationProcessQueue")}
           </Button>
@@ -101,23 +102,26 @@ export function TranslationCenterPanel({ queue, cache, missing, audit }: Props) 
           <Button size="sm" variant="outline" disabled={pending} onClick={() => run(ownerClearTranslationCache)}>
             {t("translationClearCache")}
           </Button>
-          <Button size="sm" disabled={pending} onClick={() => run(ownerSyncMissingUiKeys)}>
+          <Button size="sm" variant="outline" disabled={pending} onClick={() => run(ownerSyncMissingUiKeys)}>
             {t("translationSyncMissingKeys")}
           </Button>
         </div>
-      </Card>
+      </SectionCard>
 
-      <Card className="p-4">
-        <h2 className="font-semibold mb-2">{t("translationAudit")}</h2>
-        <p className="text-sm text-muted-foreground mb-3">{audit.summary}</p>
-        <ul className="text-sm space-y-1">
-          {missing.locales.map((row) => (
-            <li key={row.locale}>
-              <span className="font-mono">{row.locale}</span>: {row.missing} missing
-            </li>
-          ))}
-        </ul>
-      </Card>
+      <SectionCard title={t("translationAudit")} description={audit.summary}>
+        {missing.locales.length === 0 ? (
+          <p className="text-sm text-ink-muted">{tp("noMissing")}</p>
+        ) : (
+          <dl className="divide-y divide-line rounded-md border border-line text-[13px]">
+            {missing.locales.map((row) => (
+              <div key={row.locale} className="flex justify-between gap-3 px-4 py-2.5">
+                <dt className="mono-id text-ink">{row.locale}</dt>
+                <dd className="tabular-nums text-ink-muted">{tp("missingCount", { count: row.missing })}</dd>
+              </div>
+            ))}
+          </dl>
+        )}
+      </SectionCard>
     </div>
   );
 }

@@ -1,3 +1,197 @@
 {
-  "publicPages": {}
+  "publicPages": {
+    "banned": {
+      "label": "Account suspended",
+      "title": "Your account has been suspended",
+      "text": "You can no longer use Xumari Modz with this account. If you believe this is a mistake, please contact support."
+    },
+    "becomeCreator": {
+      "applicationTitle": "Your creator application",
+      "submittedOn": "Submitted on {date}.",
+      "note": "Note from the team: {note}",
+      "intro": "Tell us about your work. Our team reviews every application and gets back to you by email.",
+      "email": "Email address"
+    },
+    "becomePartner": {
+      "note": "Note from the team: {note}",
+      "intro": "Apply as a partner. Our team reviews your application; a partner profile is only created after approval.",
+      "updateTitle": "Update your application",
+      "updateText": "Adjust your details and submit the application again.",
+      "selectPlaceholder": "Please choose",
+      "submit": "Submit application",
+      "resubmit": "Resubmit application"
+    },
+    "blog": {
+      "title": "News and updates",
+      "subtitle": "What is happening at Xumari Modz: new features, games and announcements.",
+      "emptyTitle": "No posts yet",
+      "emptyText": "Check back soon.",
+      "byline": "{author} · {date}"
+    },
+    "collections": {
+      "title": "Collections and modpacks",
+      "subtitle": "Curated mod lists from creators and the community.",
+      "emptyTitle": "No collections yet",
+      "emptyText": "Public collections will appear here once they are available.",
+      "stats": "{mods, plural, one {# mod} other {# mods}} · {followers, plural, one {# follower} other {# followers}} · {downloads, plural, one {# download} other {# downloads}}",
+      "byline": "by <owner>{name}</owner> · {views, plural, one {# view} other {# views}} · {followers, plural, one {# follower} other {# followers}} · {installs, plural, one {# install} other {# installs}}",
+      "addedToLibrary": "{count, plural, one {# mod} other {# mods}} added to your library",
+      "downloadAll": "Download entire collection",
+      "follow": "Follow collection",
+      "unfollow": "Unfollow"
+    },
+    "contact": {
+      "title": "Contact {site}",
+      "subtitle": "Write to us – we usually reply within 48 hours.",
+      "sentTitle": "Message sent",
+      "sentText": "We will get back to you by email within 48 hours.",
+      "name": "Name",
+      "email": "Email address",
+      "message": "Message",
+      "error": "Your message could not be sent. Check your input (message at least 10 characters) and try again later.",
+      "sending": "Sending…",
+      "submit": "Send message"
+    },
+    "customOrders": {
+      "toOrders": "Go to my orders",
+      "projectTitle": "Project title",
+      "orderType": "Order type",
+      "description": "Description",
+      "descriptionPlaceholder": "Describe scope, references and timeline…",
+      "budget": "Budget in credits (optional)",
+      "discord": "Discord username (optional)",
+      "references": "Reference files (optional, max. 5)",
+      "referencesHint": "Upload mockups, inspiration or existing assets (15 MB each)."
+    },
+    "developers": {
+      "title": "Developer portal",
+      "subtitle": "Public REST and GraphQL APIs for the {site} desktop client and third-party integrations.",
+      "authTitle": "Authentication",
+      "authText": "Include your API key in the Authorization header:",
+      "authHint": "Keys are issued by an administrator in the ACP under API keys. Rate limits apply per key.",
+      "desktopTitle": "Desktop client foundation",
+      "desktopMeta": "Use <code>{path}</code> for install metadata (SHA-256, version, game compatibility).",
+      "desktopDeps": "Resolve dependencies via the mod details <code>{path}</code> before one-click installs.",
+      "desktopCollections": "Collections support bulk library sync and sequential downloads.",
+      "endpointsTitle": "REST endpoints",
+      "colMethod": "Method",
+      "colPath": "Path",
+      "colScope": "Scope",
+      "scopeVaries": "varies",
+      "graphqlTitle": "GraphQL",
+      "graphqlText": "POST to <code>{path}</code> with a JSON body:",
+      "graphqlRoots": "Supported query roots: mods, games, collections, mod (with slug variable)."
+    },
+    "exclusive": {
+      "byline": "{mod} · {game} · by {author}",
+      "signInTitle": "Sign-in required",
+      "signInText": "Sign in to apply for exclusive access.",
+      "signIn": "Sign in",
+      "alreadyApplied": "You have already applied to this program.",
+      "waitlistOpen": "Waitlist open",
+      "discordRequired": "Discord account must be linked in your settings",
+      "messageLabel": "Why do you want access?",
+      "inviteCodeLabel": "Invite code (optional)",
+      "ndaLabel": "I accept the NDA and agree not to share builds or details publicly.",
+      "joinWaitlist": "Join waitlist",
+      "apply": "Apply for access"
+    },
+    "faq": {
+      "emptyTitle": "No questions yet",
+      "emptyText": "Answers to common questions will appear here soon."
+    },
+    "games": {
+      "notFound": "Game not found"
+    },
+    "leaderboards": {
+      "title": "Creator leaderboards",
+      "metaDescription": "Top creators ranked by downloads, growth and community engagement.",
+      "subtitle": "Compare creators by downloads, likes, growth and engagement.",
+      "metricLabel": "Ranking",
+      "periodLabel": "Period",
+      "gameLabel": "Game",
+      "allGames": "All games",
+      "searchLabel": "Search creators",
+      "topLabel": "Rank 1",
+      "tableCaption": "Creator ranking",
+      "colRank": "Rank",
+      "colCreator": "Creator",
+      "colScore": "Score",
+      "colDownloads": "Downloads",
+      "colFollowers": "Followers",
+      "pinned": "Pinned",
+      "featured": "Featured",
+      "emptyTitle": "No entries yet",
+      "emptyText": "There are no ranked creators for this selection yet.",
+      "metric": {
+        "DOWNLOADS": "Top downloads",
+        "REVENUE": "Highest revenue",
+        "LIKES": "Most likes",
+        "GROWTH": "Fastest growth",
+        "ACTIVE": "Most active",
+        "REVIEWED": "Most reviewed",
+        "TRENDING": "Trending creators",
+        "RATED": "Highest rated"
+      },
+      "period": {
+        "DAILY": "Daily",
+        "WEEKLY": "Weekly",
+        "MONTHLY": "Monthly",
+        "ALL_TIME": "All time"
+      }
+    },
+    "legal": {
+      "privacy": {
+        "title": "Privacy policy",
+        "p1": "{site} collects account data, download analytics, and payment information processed securely via Stripe. We do not sell personal data to third parties.",
+        "p2": "Discord OAuth is used for login and community role sync. You can request account deletion by contacting support."
+      },
+      "terms": {
+        "title": "Terms of service",
+        "p1": "By using {site} you agree to these terms. Mod creators retain intellectual property rights to their content. Premium subscriptions renew automatically unless canceled before the renewal date.",
+        "p2": "You may not redistribute premium downloads outside the platform. Violations may result in account suspension."
+      }
+    },
+    "team": {
+      "title": "Our team",
+      "subtitle": "The people behind Xumari Modz: leadership, support, product and content.",
+      "emptyTitle": "Team profiles coming soon",
+      "emptyText": "We will introduce our team here soon.",
+      "openProfile": "Open profile of {name}",
+      "discord": "Discord",
+      "email": "Email",
+      "website": "Website",
+      "openTicket": "Open support ticket",
+      "group": {
+        "OWNER": "Owner",
+        "ADMINISTRATOR": "Administrators",
+        "MANAGER": "Managers",
+        "SUPPORT": "Support",
+        "MODERATOR": "Moderators",
+        "DESIGNER": "Designers",
+        "CREATOR": "Creators"
+      },
+      "role": {
+        "OWNER": "Owner",
+        "ADMINISTRATOR": "Administrator",
+        "MANAGER": "Manager",
+        "SUPPORT": "Support",
+        "MODERATOR": "Moderator",
+        "DESIGNER": "Designer",
+        "CREATOR": "Creator"
+      }
+    },
+    "tutorial": {
+      "views": "{count, plural, one {{value} view} other {{value} views}}",
+      "likes": "{count, plural, one {{value} like} other {{value} likes}}",
+      "comments": "{count, plural, one {{value} comment} other {{value} comments}}",
+      "avgWatch": "Avg. {seconds} s watched",
+      "like": "Like",
+      "commentsTitle": "Comments",
+      "commentLabel": "Your comment",
+      "commentPlaceholder": "Question or feedback…",
+      "commentSubmit": "Comment",
+      "noComments": "No comments yet."
+    }
+  }
 }

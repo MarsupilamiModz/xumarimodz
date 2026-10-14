@@ -1,8 +1,11 @@
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 import { requireAuth } from "@/lib/auth";
 import { getCreatorModsForExclusive } from "@/actions/exclusive";
 import { ExclusiveProgramForm } from "@/components/exclusive/exclusive-program-form";
 import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/ui/page-header";
 import type { Locale } from "@/i18n/config";
 
 export default async function CreatorExclusiveNewPage(props: { params: Promise<{ locale: Locale }> }) {
@@ -15,18 +18,23 @@ export default async function CreatorExclusiveNewPage(props: { params: Promise<{
   await requireAuth(`/${locale}/login`);
   const result = await getCreatorModsForExclusive();
   const mods = result.success ? result.data : [];
+  const tp = await getTranslations("creatorPages.exclusive");
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-xl font-semibold">Launch exclusive program</h2>
-          <p className="text-sm text-muted-foreground">Closed alpha, beta, or invite-only release.</p>
-        </div>
-        <Button variant="outline" asChild>
-          <Link href={`/${locale}/creator/exclusive`}>Back</Link>
-        </Button>
-      </div>
+    <div>
+      <PageHeader
+        level="h2"
+        title={tp("newTitle")}
+        description={tp("newDescription")}
+        actions={
+          <Button variant="ghost" asChild>
+            <Link href={`/${locale}/creator/exclusive`}>
+              <ArrowLeft className="h-4 w-4" aria-hidden />
+              {tp("backToHub")}
+            </Link>
+          </Button>
+        }
+      />
       <ExclusiveProgramForm locale={locale} mods={mods} />
     </div>
   );

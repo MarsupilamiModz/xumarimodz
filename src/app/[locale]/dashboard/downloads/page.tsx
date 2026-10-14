@@ -1,7 +1,13 @@
 import Link from "next/link";
+import { Download } from "lucide-react";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { requireAuth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { Card } from "@/components/ui/card";
+import { PageHeader } from "@/components/ui/page-header";
+import { DataTable } from "@/components/ui/data-table";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Button } from "@/components/ui/button";
+import { formatDateTime } from "@/lib/format-locale";
 import type { Locale } from "@/i18n/config";
 
 export default async function DownloadsPage(props: { params: Promise<{ locale: Locale }> }) {
@@ -11,7 +17,13 @@ export default async function DownloadsPage(props: { params: Promise<{ locale: L
     locale
   } = params;
 
+  setRequestLocale(locale);
   const user = await requireAuth(`/${locale}/login`);
+  const [t, ta, tc] = await Promise.all([
+    getTranslations("dashboard"),
+    getTranslations("accountPages.downloads"),
+    getTranslations("common"),
+  ]);
 
   const downloads = await prisma.download.findMany({
     where: { userId: user.id },
@@ -25,26 +37,47 @@ export default async function DownloadsPage(props: { params: Promise<{ locale: L
 
   return (
     <div>
-      <h1 className="h1-acp">Downloads</h1>
-      <div className="mt-8 space-y-2">
-        {downloads.length === 0 ? (
-          <Card className="p-8 text-center text-muted-foreground">No downloads yet</Card>
-        ) : (
-          downloads.map((d) => (
-            <Card key={d.id} className="p-4 flex justify-between items-center">
-              <div>
-                <Link href={`/${locale}/mods/${d.mod.slug}`} className="font-medium hover:text-violet-bright">
-                  {d.mod.title}
-                </Link>
-                <p className="text-xs text-muted-foreground">v{d.version.version}</p>
-              </div>
-              <span className="text-xs text-muted-foreground">
-                {new Date(d.createdAt).toLocaleString()}
-              </span>
-            </Card>
-          ))
-        )}
-      </div>
+      <PageHeader title={t("downloads")} description={ta("description")} />
+      <DataTable
+        caption={t("downloads")}
+        rows={downloads}
+        rowKey={(d) => d.id}
+        rowHref={(d) => `/${locale}/mods/${d.mod.slug}`}
+        empty={
+          <EmptyState
+            icon={Download}
+            title={ta("emptyTitle")}
+            description={t("emptyDownloads")}
+            action={
+              <Button variant="outline" size="sm" asChild>
+                <Link href={`/${locale}/mods`}>{tc("browseMods")}</Link>
+              </Button>
+            }
+          />
+        }
+        columns={[
+          {
+            key: "mod",
+            header: ta("colMod"),
+            width: "minmax(0,2fr)",
+            cell: (d) => <span className="block truncate font-medium text-ink">{d.mod.title}</span>,
+          },
+          {
+            key: "version",
+            header: ta("colVersion"),
+            width: "120px",
+            hideOnMobile: true,
+            cell: (d) => <span className="mono-id">{ta("version", { version: d.version.version })}</span>,
+          },
+          {
+            key: "date",
+            header: ta("colDate"),
+            width: "160px",
+            align: "right",
+            cell: (d) => <span className="text-ink-muted">{formatDateTime(d.createdAt, locale)}</span>,
+          },
+        ]}
+      />
     </div>
   );
 }

@@ -18,7 +18,7 @@ export default async function AdminPayoutSettingsPage(props: { params: Promise<{
   const result = await getAdminRevenueShareDashboard();
   return (
     <div>
-      <AdminPageHeader title={t("nav.commissions")} />
+      <AdminPageHeader title={t("ui.revenueSharing.heading")} description={t("ui.revenueSharing.subheading")} />
       {result.success ? <RevenueSharingPanel data={result.data} /> : <AdminLoadError message={result.error} />}
     </div>
   );

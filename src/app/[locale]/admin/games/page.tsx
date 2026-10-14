@@ -1,10 +1,12 @@
 import Link from "next/link";
-import { Plus } from "lucide-react";
+import { Gamepad2, Plus } from "lucide-react";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { requirePagePermission } from "@/lib/auth";
 import { getAdminGames } from "@/actions/admin/games";
+import { AdminPageHeader, AdminLoadError } from "@/components/admin/admin-page-header";
 import { AdminGamesList } from "@/components/admin/admin-games-list";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 import type { Locale } from "@/i18n/config";
 
 export default async function AdminGamesPage(props: { params: Promise<{ locale: Locale }> }) {
@@ -14,40 +16,32 @@ export default async function AdminGamesPage(props: { params: Promise<{ locale: 
     locale
   } = params;
 
+  setRequestLocale(locale);
   await requirePagePermission("games.write");
-  const result = await getAdminGames();
-  const games = result.success ? result.data : [];
-  const loadError = result.success ? null : result.error;
+  const [t, result] = await Promise.all([getTranslations("admin.gamesAdmin"), getAdminGames()]);
+  const newHref = `/${locale}/admin/games/new`;
 
   return (
     <div>
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="h1-acp">Supported Games</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Manage homepage visibility, order, featured games, and categories
-          </p>
-        </div>
-        <Button asChild>
-          <Link href={`/${locale}/admin/games/new`}>
-            <Plus className="h-4 w-4 mr-2" /> Add Game
-          </Link>
-        </Button>
-      </div>
+      <AdminPageHeader
+        title={t("title")}
+        description={t("subtitle")}
+        actions={
+          <Button asChild>
+            <Link href={newHref}>
+              <Plus className="h-4 w-4" aria-hidden /> {t("add")}
+            </Link>
+          </Button>
+        }
+      />
 
-      {loadError && (
-        <div className="mt-6 rounded-lg border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-          {loadError}
-        </div>
+      {!result.success ? (
+        <AdminLoadError message={result.error} />
+      ) : result.data.length === 0 ? (
+        <EmptyState icon={Gamepad2} title={t("emptyTitle")} description={t("emptyText")} />
+      ) : (
+        <AdminGamesList locale={locale} games={result.data} />
       )}
-
-      {!loadError && games.length === 0 ? (
-        <Card className="p-12 text-center text-muted-foreground mt-8">
-          No games yet. Run <code className="text-violet-bright">npm run db:seed</code> or add a game.
-        </Card>
-      ) : !loadError ? (
-        <AdminGamesList locale={locale} games={games} />
-      ) : null}
     </div>
   );
 }
